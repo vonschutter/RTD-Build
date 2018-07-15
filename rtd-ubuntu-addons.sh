@@ -29,112 +29,23 @@
 #
 # You may comment out or edit items as you deem necessary.
 
-YELLOW="\033[1;33m"
-RED="\033[0;31m"
-ENDCOLOR="\033[0m"
-
-# Ensure administrative privileges.
-[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
-[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-
-# add global install command for portability and convenience
-# If you need to use this script in an rpm based system you could modify the install
-# command here to dnf, yum, zypper... By default packages of patternd that do not
-# match should be skipped. Use "export option" so child processes also see the variiables.
-export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-
-# Tell Debian based systems to not ask so much since this is a script. Some packages
-# insist on asking questions though and are handled in the end of this script.
-export DEBIAN_FRONTEND=noninteractive
+# Use the RTD function library. This contains most of the intelligence used to perform this systems
+# maintenance. This will allso enable color some easily referenced color prompts:
+# $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
+source _rtd_functions
 
 # Decide where to put log files.
 # Default: log in to "name of this script".log and -error.login the home dir.
 export _LOGFILE=$0.log
 export _ERRLOGFILE=$0-error.log
 
-# Enable all repositories while disabling source repository list downloads in sources.list
-	sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
-	sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
-
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Functions                       ::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-# function to simplify downloading debs from a website
-# First param is the URL, second is the name of the deb, to bypass version
-# naming issues, use wildcards like skype*.deb
-function dl ()
-{
-	echo    - geting package $2 ...
-	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	echo "   - Installing package $2 ..."
-	dpkg -i /var/apt/cache/archives/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	echo "   - Installing dependencies for $2..."
-	apt-get -f install -y -qq --allow-change-held-packages 1>>$_LOGFILE 2>>$_ERRLOGFILE
-}
-
-# Function to check and see if the system software managment is available and make
-# available if it is not.
-function SofwareManagmentAvailabilityCHK ()
-{
-echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
-if [ ! -f '/var/lib/dpkg/lock' ]
-	then
-		echo Software package system is free... Continuing...
-	else
-		echo The software managment system is locked...
-		echo Waiting 10 seconds for software managment system to be ready:
-		for i in {0..20}; do echo -ne "$i"'\r'; sleep 1; done; echo
-		echo force unlocking package managment...
-		rm -f /var/lib/apt/lists/lock
-		rm -f /var/lib/dpkg/lock
-	fi
-}
-
-# Function to simplify updating system completely...
-function up2date ()
-{
-	echo -e $YELLOW"---Running up2date function:" $ENDCOLOR
-
-	echo "--- Refreshing Software repositories; this may take a minute..."
-	apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
-	echo "--- Installing System Updates; this may take a minute..."
-	apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
-	echo "--- Cleaning up unused software; this may take a minute..."
-	apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-}
-
-
-function InstallSoftwareFromRepo ()
-#Function to simplify the installation of software
-{
-		echo --- Installing "$@"
-		$_INSTCMD "$@" 1>>$_LOGFILE 2>>$_ERRLOGFILE
-		sleep 2
-		[ -e /var/lib/apt/lists/lock ] && rm -f  /var/lib/apt/lists/lock
-		[ -e /var/lib/dpkg/lock ] && rm -f /var/lib/dpkg/lock
-}
-
-function display.log () {
-    if hash xterm 2>/dev/null; then
-		xterm  -geometry 110x30-0+0 -e 'tail -f $_LOGFILE ' &
-		xterm  -geometry 110x30-0-0 -e 'tail -f $_ERRLOGFILE '& 
-    else
-        $_INSTCMD xterm 
-            if [ $? != 0 ];
-            then
-                exit
-            fi
-		xterm  -geometry 110x30-0+0 -e 'tail -f $_LOGFILE ' &
-		xterm  -geometry 110x30-0-0 -e 'tail -f $_ERRLOGFILE '& 
-    fi
-}
-
+# Ensure that this script is run with administrative priveledges such that it may
+# alter system wide configuration.
+ensure_admin
+set_install_command deb
+enable_firewall
+up2date
+SofwareManagmentAvailabilityCHK
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -144,24 +55,16 @@ function display.log () {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
 #
-## Attempt to ensure system health and update...
-
-# Enable firewall
-echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
-ufw enable && ufw allow ssh
-
-
-up2date
-SofwareManagmentAvailabilityCHK
 
 echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
 
 for i in build-essential linux-headers-generic \
-p7zip-full p7zip-rar rar zip \
-gourmet dreamchess supertuxkart pioneers 0ad \
-terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
-vim vim-scripts gufw gnome-tweak-tool \
-samba wine-stable playonlinux winetricks variety diodon shutter gnome-shell-extension-caffeine nautilus-dropbox gnome-twitch polari skypeforlinux chromium-browser chromium-codecs-ffmpeg-extra filezilla corebird vlc banshee libdvdcss2 ffmpeg
+			p7zip-full p7zip-rar rar zip \
+			gourmet dreamchess supertuxkart pioneers 0ad \
+			terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
+			vim vim-scripts gufw gnome-tweak-tool \
+			samba wine-stable playonlinux winetricks variety diodon shutter gnome-shell-extension-caffeine nautilus-dropbox\
+			gnome-twitch polari skypeforlinux chromium-browser chromium-codecs-ffmpeg-extra filezilla corebird vlc banshee libdvdcss2 ffmpeg
 do
      InstallSoftwareFromRepo $i
 done
