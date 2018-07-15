@@ -32,7 +32,7 @@
 # Use the RTD function library. This contains most of the intelligence used to perform this systems
 # maintenance. This will allso enable color some easily referenced color prompts:
 # $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
-source _rtd_functions
+source /opt/rtd/scripts/_rtd_functions
 
 # Decide where to put log files.
 # Default: log in to "name of this script".log and -error.login the home dir.
