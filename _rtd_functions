@@ -30,6 +30,9 @@ while [ -f /var/lib/dpkg/lock ] ;
 			echo force unlocking package managment...
 			rm -f  /var/lib/apt/lists/lock
 			rm -f /var/lib/dpkg/lock
+			killall dpkg -y
+			dpkg-reconfigure -a
+			apt-get install -f
 	done
 }
 
