@@ -144,8 +144,7 @@ function up2date ()
 function InstallSoftwareFromRepo ()
 {
 		echo --- Installing "$@"
-		# echo --- Installing "$@" & $_INSTCMD "$@" >>$0.log 2>&1 && echo -e "$GREEN --- OK $ENDCOLOR" || echo -e "$RED --- FAIL $ENDCOLOR"
-		$_INSTCMD "$@" 1>>$_LOGFILE 2>>$_ERRLOGFILE && echo -e "$@ 	OK!" ||echo -e "$@ 	FAIL!"
+		echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && echo -e "---$GREEN [OK!] $ENDCOLOR" || echo -e "---$RED [FAIL!] $ENDCOLOR"
 		sleep 2
 		[ -e /var/lib/apt/lists/lock ] && rm -f  /var/lib/apt/lists/lock
 		[ -e /var/lib/dpkg/lock ] && rm -f /var/lib/dpkg/lock
@@ -156,7 +155,8 @@ function InstallSoftwareFromRepo ()
 
 
 # Function to check that a piece of software is installed and if not install it.
-# Works for apt based systems.
+# Works for apt based systems currently. The function will take a parameter that is expected to
+# match the softwre command line name. 
 function check_dependencies ()
 {
 #---------------------------------------------------------------
