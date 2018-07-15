@@ -52,7 +52,7 @@ function up2date ()
 function InstallSoftwareFromRepo ()
 {
 		echo --- Installing "$@"
-		$_INSTCMD "$@" >>$0.log 2>&1
+		$_INSTCMD "$@" >>$0.log 2>&1 && echo -e "--- OK" || echo -e "--- Failed"
 		sleep 2
 		rm -f  /var/lib/apt/lists/lock
 		rm -f /var/lib/dpkg/lock
