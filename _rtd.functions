@@ -1,0 +1,77 @@
+#!/bin/bash
+###########################################################################
+##                                                                       ##
+##                         Functions                                     ##
+##                                                                       ##
+###########################################################################
+#
+# function to simplify downloading debs from a website
+# First param is the URL, second is the name of the deb, to bypass version
+# naming issues, use wildcards like skype*.deb
+function dl ()
+{
+	echo geting package $2 ...
+	wget -P /var/apt/cache/archives/$1 >>$0.log 2>&1
+	echo Installing package $2 ...
+	dpkg -i /var/apt/cache/archives/$2 >>$0.log 2>&1
+	echo -- Installing dependencies for $2...
+	apt-get -f install -y --force-yes >>$0.log 2>&1
+}
+
+# Function to check and see if the system software managment is available
+function SofwareManagmentAvailabilityCHK ()
+{
+echo Checking if software maintenance system is available...
+while [ -f /var/lib/dpkg/lock ] ;
+		do
+			echo The software managment system is locked...
+			echo Waiting 10 seconds for software managment system to be ready:
+			for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo
+			echo force unlocking package managment...
+			rm -f  /var/lib/apt/lists/lock
+			rm -f /var/lib/dpkg/lock
+	done
+}
+
+# Function to simplify updating system completely...
+function up2date ()
+{
+	echo Running up2date on behalf of $0
+	echo -- Refreshing Software repositories...
+	apt-get update  >>$0.log 2>&1
+	echo -- Installing System Updates...
+	apt-get dist-upgrade -y --force-yes >>$0.log 2>&1
+	echo -- Cleaning up unused software...
+	apt-get autoremove -y >>$0.log 2>&1
+}
+
+#Function to simplify the installation of software
+function InstallSoftwareFromRepo ()
+{
+		echo --- Installing "$@"
+		$_INSTCMD "$@" >>$0.log 2>&1
+		sleep 2
+		rm -f  /var/lib/apt/lists/lock
+		rm -f /var/lib/dpkg/lock
+}
+# Function to check that a piece of software is installed and if not install it.
+# Works for apt based systems.
+function check.dependencies ()
+{
+#---------------------------------------------------------------
+echo "Checking for script dependencies and install if not there..."
+#---------------------------------------------------------------
+    if hash $1 2>/dev/null; then
+        echo "I found that $1 is present on this system... thankyou for that! "
+    else
+        echo "You seem to have no $1... I will try to get it... "
+        apt install $1 -y
+            if [ $? != 0 ];
+            then
+                echo "That install didn't work out so well."
+                echo "Please manually try to add the software since I couldn't do it."
+                exit
+            fi
+        echo "OK Done! Continuing..."
+    fi
+}
