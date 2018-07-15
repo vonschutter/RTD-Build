@@ -102,15 +102,31 @@ function dl ()
 function SofwareManagmentAvailabilityCHK ()
 {
 echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
-while [ -f /var/lib/dpkg/lock ] ;
-		do
-			echo The software managment system is locked...
-			echo Waiting 10 seconds for software managment system to be ready:
-			for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo
-			echo force unlocking package managment...
-			rm -f  /var/lib/apt/lists/lock
-			rm -f /var/lib/dpkg/lock
-	done
+i=0
+tput sc
+while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
+    case $(($i % 4)) in
+        0 ) j="-" ;;
+        1 ) j="\\" ;;
+        2 ) j="|" ;;
+        3 ) j="/" ;;
+    esac
+    tput rc
+    echo -en "\r[$j] Waiting for other software managers to finish..."
+    sleep 0.5
+    ((i=i+1))
+done
+
+# Deprecated code below:
+# while [ -f /var/lib/dpkg/lock ] ;
+#		do
+#			echo The software managment system is locked...
+#			echo Waiting 10 seconds for software managment system to be ready:
+#			for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo
+#			echo force unlocking package managment...
+#			rm -f  /var/lib/apt/lists/lock
+#			rm -f /var/lib/dpkg/lock
+#	done
 }
 
 
@@ -144,8 +160,9 @@ function up2date ()
 function InstallSoftwareFromRepo ()
 {
 		# echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && echo -e "---$GREEN [OK!] $ENDCOLOR" || echo -e "---$RED [FAIL!] $ENDCOLOR"
-		echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%-50s %s\n" $GREEN [OK!] $ENDCOLOR || printf "%-50s %s\n" $RED [FAIL!] $ENDCOLOR
-		sleep 2
+		# echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%-50s %s\n $GREEN"  [OK!] $ENDCOLOR || printf "%-50s %s\n" $RED [FAIL!] $ENDCOLOR
+		echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && echo -n "$@ "; printf "%$((48-${#@}))s " | tr ' ' -; echo " [OK]"; ||echo -n "$@ "; printf "%$((48-${#@}))s " | tr ' ' -; echo " [FAIL]";
+		sleep 1
 		[ -e /var/lib/apt/lists/lock ] && rm -f  /var/lib/apt/lists/lock
 		[ -e /var/lib/dpkg/lock ] && rm -f /var/lib/dpkg/lock
 }
