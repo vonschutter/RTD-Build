@@ -160,7 +160,7 @@ function up2date ()
 function InstallSoftwareFromRepo ()
 {
 		PAD="--------------------------------------------------"
-		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+		LINE=$(printf "%s %s" ":" "$PAD" | cut -c 1-${#PAD})
 		# echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && echo -e "---$GREEN [OK!] $ENDCOLOR" || echo -e "---$RED [FAIL!] $ENDCOLOR"
 		# echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%-50s %s\n $GREEN"  [OK!] $ENDCOLOR || printf "%-50s %s\n" $RED [FAIL!] $ENDCOLOR
 		echo -ne "--- Installing "$@" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%s %s\n" "$LINE" "[OK]" ||printf "%s %s\n" "$LINE" "[FAIL]"
