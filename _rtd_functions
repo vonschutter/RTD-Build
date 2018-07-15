@@ -44,12 +44,12 @@ function set_install_command () {
 	# command here to dnf, yum, zypper... By default packages of patternd that do not
 	# match should be skipped. Use "export option" so child processes also see the variiables.
 				if [[ "$1" == "deb" ]]; then
-									# tell debian based installers (Ubuntu, Mint etc.) to be quiet.
-									export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-									export DEBIAN_FRONTEND=noninteractive
-									# Enable all repositories while disabling source repository list downloads in sources.list
-										sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
-										sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
+						# tell debian based installers (Ubuntu, Mint etc.) to be quiet.
+						export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+						export DEBIAN_FRONTEND=noninteractive
+						# Enable all repositories while disabling source repository list downloads in sources.list
+						sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
+						sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
 
 				elif [[ "$1" == "darwin" ]]; then
 				        echo "Mac OSX is currently not supported..."
@@ -69,13 +69,13 @@ function set_install_command () {
 
 
 function enable_firewall () {
-					# Enable firewall in Ubuntu systems
-					if hash ufw 2>/dev/null; then
-						echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
-						ufw enable && ufw allow ssh
-					else
-						echo UFW not present on this system...
-					fi
+		# Enable firewall in Ubuntu systems
+		if hash ufw 2>/dev/null; then
+				echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
+				ufw enable && ufw allow ssh
+		else
+				echo UFW not present on this system...
+		fi
 }
 
 
@@ -161,7 +161,7 @@ function InstallSoftwareFromRepo ()
 {
 		PAD="--------------------------------------------------"
 		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-		echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b %-6s %b $GREEN [ OK ] $ENDCOLOR \n" ||printf "%b %-6s %b $RED [FAIL] $ENDCOLOR \n"
+		echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b$GREEN [ OK ] $ENDCOLOR \n" ||printf "%b%-6s%b$RED [FAIL] $ENDCOLOR \n"
 		sleep 1
 		[ -e /var/lib/apt/lists/lock ] && rm -f  /var/lib/apt/lists/lock
 		[ -e /var/lib/dpkg/lock ] && rm -f /var/lib/dpkg/lock
