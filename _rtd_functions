@@ -88,11 +88,11 @@ function dl ()
 {
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
 	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
-	echo    - geting package $2 ...
+	echo  "   - geting package $2 ..."
 	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	echo "   - Installing package $2 ..."
+	echo "    - Installing package $2 ..."
 	dpkg -i /var/apt/cache/archives/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	echo "   - Installing dependencies for $2..."
+	echo "    - Installing dependencies for $2..."
 	apt-get -f install -y -qq --allow-change-held-packages 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
@@ -145,7 +145,7 @@ function up2date ()
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
 	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
 
-	echo -e $YELLOW"---Running up2date function:" $ENDCOLOR
+	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
 
 	echo "--- Refreshing Software repositories; this may take a minute..."
 	apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
