@@ -40,12 +40,17 @@ export _LOGFILE=$0.log
 export _ERRLOGFILE=$0-error.log
 
 # Ensure that this script is run with administrative priveledges such that it may
-# alter system wide configuration.
+# alter system wide configuration. 
 ensure_admin
+# Set the install instructions. This accepts deb or rpm. 
 set_install_command deb
+# Enable firewall. This presently expects ufw only. 
 enable_firewall
-up2date
+# Check that the relevant software maintenance system is available and ready, 
+# and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
+up2date
+
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -58,21 +63,29 @@ SofwareManagmentAvailabilityCHK
 
 echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
 
+# Loop through each item in this list of softwar and perform an install 
+# using the relevant packaging system. 
 for i in build-essential linux-headers-generic \
-			p7zip-full p7zip-rar rar zip \
-			gourmet dreamchess supertuxkart pioneers 0ad \
-			terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
-			vim vim-scripts gufw gnome-tweak-tool \
-			samba wine-stable playonlinux winetricks variety diodon shutter gnome-shell-extension-caffeine nautilus-dropbox\
-			gnome-twitch polari skypeforlinux chromium-browser chromium-codecs-ffmpeg-extra filezilla corebird vlc banshee libdvdcss2 ffmpeg
+	p7zip-full p7zip-rar rar zip \
+	gourmet dreamchess supertuxkart pioneers 0ad \
+	terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
+	vim vim-scripts gufw gnome-tweak-tool \
+	samba wine-stable playonlinux winetricks variety diodon shutter nautilus-dropbox\
+	gnome-twitch polari filezilla corebird vlc banshee libdvdcss2 ffmpeg
 do
      InstallSoftwareFromRepo $i
 done
 
 echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
+# Ensure that snap is available prior to attempting to use it. 
+check_dependencies snap
 snap install atom --classic 1>>$_LOGFILE 2>>$_ERRLOGFILE
 snap install spotify 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
+snap install skype --classic 1>>$_LOGFILE 2>>$_ERRLOGFILE
+snap install screencloudplayer 1>>$_LOGFILE 2>>$_ERRLOGFILE
+snap install picard 1>>$_LOGFILE 2>>$_ERRLOGFILE
+snap install google-play-music-desktop-player 1>>$_LOGFILE 2>>$_ERRLOGFILE
+snap install signal-desktop 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 
 ###########################################################################
@@ -81,63 +94,76 @@ snap install spotify 1>>$_LOGFILE 2>>$_ERRLOGFILE
 ##                                                                       ##
 ###########################################################################
 #
+# Shamefully some organizations and maintainers absolutely insist on strict 
+# legal interpretations of licence models etc. such that they insist on 
+# somebody physically agreeing to the licence. This does not apply to RPM 
+# based system though since the speciffication does not allow for any user input
+# during install. Moreover, some refuse to include their software in official repositories
+# or in snap or flatpack stores ad prefer to have their own downoads. This causes
+# headaches for admins that want to install said software... so here is the hall of shame 
+# for those software packages. 
 #
+
+
 # Special case for installing Oracle Java...
 echo -e $YELLOW"--- Adding Oracle repository..." $ENDCOLOR
-				add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-				echo --- Installing java-8...
-				echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-				InstallSoftwareFromRepo oracle-java8-installer oracle-java8-set-default
+                # Add the Oracle repository and pre-answer the licens questions.
+		add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+		echo --- Installing java-8...
+		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+		InstallSoftwareFromRepo oracle-java8-installer oracle-java8-set-default
 
 echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
-				# auto accept microsoft corefonts eula
-				echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
-				InstallSoftwareFromRepo ubuntu-restricted-extras
+		# Auto accept microsoft corefonts eula
+		echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
+		InstallSoftwareFromRepo ubuntu-restricted-extras
 
+# :::::::::::::::::::::   Disabled due to lack of maintenance :::::::::::::::::::::::::::::
 # Special Case for installing green recorder...
-echo -e $YELLOW"--- Installing "greenrecorder" screen recorder..." $ENDCOLOR
-				add-apt-repository -y ppa:mhsabbagh/greenproject 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo  green-recorder
+#echo -e $YELLOW"--- Installing "greenrecorder" screen recorder..." $ENDCOLOR
+#		add-apt-repository -y ppa:mhsabbagh/greenproject 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		InstallSoftwareFromRepo  green-recorder
 
 # Special case for installing Vidcutter
 echo -e $YELLOW"--- Adding Vidcutter repository..." $ENDCOLOR
-				add-apt-repository -y ppa:ozmartian/apps 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo vidcutter
+		add-apt-repository -y ppa:ozmartian/apps 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		InstallSoftwareFromRepo vidcutter
 
 # Special case for installing Google Chrome
 echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb
+		dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb
 
 # Special case for installing Openshot video editor
 echo -e $YELLOW"--- Installing Openshot vieo editor..." $ENDCOLOR
-			add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			InstallSoftwareFromRepo openshot openshot-doc
+	        add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        InstallSoftwareFromRepo openshot openshot-doc
 
 # Special case for installing MEGA nz file sync utility (better than Drop Box)...
 echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
-			FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-			URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
-			dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
+	        URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
+	        dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 # Special case for installing VirtualBox
 echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
-			echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
-			echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-			InstallSoftwareFromRepo  virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
-			if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
-			    echo $SUDO_USER already belongs to vboxusers group
-			else
-			    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			fi
+	        echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
+	        echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
+	        InstallSoftwareFromRepo  virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
+	        if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
+	            echo $SUDO_USER already belongs to vboxusers group
+	        else
+	            usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        fi
 
+# ::::::::::::::::::::: Disabled since available in snap store ::::::::::::::::::::::::::::::
 # Special case for installing signal secure messenger
-echo -e $YELLOW "--- Installing signal secure messenger..." $ENDCOLOR
-				curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
-				echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-				InstallSoftwareFromRepo signal-desktop
+# echo -e $YELLOW "--- Installing signal secure messenger..." $ENDCOLOR
+# 		curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
+#		echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+#		InstallSoftwareFromRepo signal-desktop
 
 # Clean up and Finalize
 echo -e $YELLOW "--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
