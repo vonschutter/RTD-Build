@@ -1,20 +1,37 @@
 #!/bin/bash
+#
+#::             Linux deb and rpm based distro functions that may be usefull for admin 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:   	Stephan S. & Nate B. Buffalo Center, IA
+#:: Version 1.01
+#::
+#::
+#::	Purpose: to collect and enable the use of code snipplets in other scripts. 
+#::     Usage: call this file using the "source" statment in bash.
+#:: 
+#::     This script is shared in the hopes that
+#::     someone will find it usefull.
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ###########################################################################
 ##                                                                       ##
 ##                         Functions                                     ##
 ##                                                                       ##
 ###########################################################################
 #
-# function to simplify downloading debs from a website
-# First param is the URL, second is the name of the deb, to bypass version
-# naming issues, use wildcards like skype*.deb
 
 
 
 
 
+# Set colors for prompting on screen in human readable variables. These will be set globally
+# and can be can be used by in echo statements to modify the color of the message. 
+# Examples:  $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
 function set_colors () {
-	# Set colors for prompting on screen.
 	YELLOW="\033[1;33m"
 	RED="\033[0;31m"
 	ENDCOLOR="\033[0m"
@@ -26,9 +43,10 @@ function set_colors () {
 
 
 
-
+# Function to ensure administrative privileges such that system wide settings 
+# or configuration may be done. This function will make the script call itself 
+# with sudo if the user ID is not 0 e.g. root.
 function ensure_admin () {
-	# Ensure administrative privileges.
 	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 }
@@ -81,9 +99,12 @@ function enable_firewall () {
 
 
 
+
 # Function to ease and make consistent the downloading of the non repository packages and
 # install them. This function presently only works with apt. This should be expanded to include
 # RPM packages as well. 
+# First parameter is the URL, second is the name of the deb, to bypass version
+# naming issues, use wildcards like skype*.deb
 function dl ()
 {
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
@@ -142,8 +163,8 @@ function SofwareManagmentAvailabilityCHK ()
 function up2date ()
 {
 	# Ensure that the expected variables are defined.
-	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
-	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
+	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
 	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
 

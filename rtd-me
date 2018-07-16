@@ -33,12 +33,12 @@ echo "Attempting to detect version of POSIX based system..."
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux OS: Attempting to get instructions..."
           mkdir -p /opt/rtd/scripts
-            for i in rtd-ubuntu-addons.sh _rtd_functions
+            for i in rtd-oem-linux-config.sh _rtd_functions
             do
-                rm -f /opt/rtd/scripts/"$1"
+                rm -f /opt/rtd/scripts/$1
                 wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/"$i"
             done
-        /opt/rtd/scripts/rtd-ubuntu-addons.sh
+        /opt/rtd/scripts/rtd-oem-linux-config.sh
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
