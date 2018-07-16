@@ -79,13 +79,16 @@ done
 echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
 # Ensure that snap is available prior to attempting to use it. 
 check_dependencies snap
-snap install atom --classic 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install spotify 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install skype --classic 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install screencloudplayer 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install picard 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install google-play-music-desktop-player 1>>$_LOGFILE 2>>$_ERRLOGFILE
-snap install signal-desktop 1>>$_LOGFILE 2>>$_ERRLOGFILE
+
+
+# 1>>$_LOGFILE
+snap install atom --classic  2>>$_ERRLOGFILE
+snap install spotify  2>>$_ERRLOGFILE
+snap install skype --classic  2>>$_ERRLOGFILE
+snap install screencloudplayer  2>>$_ERRLOGFILE
+snap install picard  2>>$_ERRLOGFILE
+snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
+snap install signal-desktop 2>>$_ERRLOGFILE
 
 
 ###########################################################################
