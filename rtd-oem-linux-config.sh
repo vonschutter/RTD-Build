@@ -204,7 +204,7 @@ cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gno
 # clear now
 rm mybackgrounds.xml
 rm lspictures.txt
-
+gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/gsettings/Wayland.jpg
 #  Complete script
 exit
 
