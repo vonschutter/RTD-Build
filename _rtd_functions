@@ -265,7 +265,7 @@ function InstallSoftwareFromRepo ()
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$@"; then
                 # See if it's in a repo and then...
-                if is_software_package_available"$@"; then  
+                if is_software_package_available "$@"; then  
                     # Install the package metching the name passed as variable       
                     echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
                 else
