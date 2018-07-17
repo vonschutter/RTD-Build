@@ -241,13 +241,10 @@ function is_software_package_available ()
         if hash yum 2>/dev/null; then
 	        return yum list available "$1" &> /dev/null
         elif hash apt 2>/dev/null; then
-                if apt -qq list "$1" 2>/dev/null | grep -q installed; then
-			echo ret is 0
-	        else
-			echo ret is 1
-	        fi
+                apt -qq list "$1" 2>/dev/null | grep -q installed && return 0 || return 1
+
 	        read -p "Press enter to continue"
-                return apt -qq list "$1" 2>/dev/null | grep -q installed
+                # return apt -qq list "$1" 2>/dev/null | grep -q installed
         elif hash zypper 2>/dev/null; then
                 return zypper info "$1" &> /dev/null
 	else
@@ -274,7 +271,7 @@ function InstallSoftwareFromRepo ()
         if ! is_software_package_installed "$@"; then
                 echo software is not installed...
                 if is_software_package_available   "$@"; then  
-                     echo software is available...
+                     echo software is available... $?
                     # Install the package matching the name passed as variable       
                     echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
                 else
