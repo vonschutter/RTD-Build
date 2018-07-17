@@ -155,6 +155,7 @@ function SofwareManagmentAvailabilityCHK ()
             esac
             tput rc
             echo -en "\r[$j] Waiting for other software managers to finish..."
+            echo " "
             sleep 0.5
             ((i=i+1))
         done
@@ -262,19 +263,19 @@ function InstallSoftwareFromRepo ()
         # make some decent display terminal fraphics... 
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	# Test if package name is installed, if not then...
+	echo # Test if package name is installed, if not then...
         if ! is_software_package_installed "$@"; then
-                # See if it's in a repo and then...
-                if is_software_package_available "$@"; then  
-                    # Install the package metching the name passed as variable       
+                echo # See if it's in a repo and then...
+                if is_software_package_available  " " "$@"; then  
+                    echo # Install the package matching the name passed as variable       
                     echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
                 else
-                    #If it is not available in repo say...
-                    echo -ne "--- Installing "$LINE" ":" "\ printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
+                    echo #If it is not available in repo say...
+                    echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
                 fi
         else
-            # If package is installed allready, say OK in yellow... 
-            echo -ne "--- Installing "$LINE" ":" "\ printf "%b%-6s%b [ $YELLOW OK$ENDCOLOR  ]  \n"
+            echo # If package is installed allready, say OK in yellow... 
+            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ $YELLOW OK$ENDCOLOR  ]  \n"
         fi
 
 }
