@@ -42,8 +42,8 @@ export _ERRLOGFILE=$0-error.log
 # Ensure that this script is run with administrative priveledges such that it may
 # alter system wide configuration. 
 ensure_admin
-# Set the install instructions. This accepts deb or rpm. 
-set_install_command deb
+# Set the install instructions. This accepts apt, yum, or zypper.. 
+set_install_command
 # Enable firewall. This presently expects ufw only. 
 enable_firewall
 # Check that the relevant software maintenance system is available and ready, 
@@ -115,7 +115,7 @@ echo -e $YELLOW"--- Adding Oracle repository..." $ENDCOLOR
 		apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
 		echo --- Installing java-8...
 		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-		InstallSoftwareFromRepo oracle-java8-installer oracle-java8-set-default
+		apt-get -y -qq --allow-change-held-packages --ignore-missing install oracle-java8-installer oracle-java8-set-default
 
 echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 		# Auto accept microsoft corefonts eula
@@ -132,7 +132,8 @@ echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 # Special case for installing Vidcutter
 echo -e $YELLOW"--- Adding Vidcutter repository..." $ENDCOLOR
 		add-apt-repository -y ppa:ozmartian/apps 1>>$_LOGFILE 2>>$_ERRLOGFILE
-		InstallSoftwareFromRepo vidcutter
+		apt update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		apt-get -y -qq --allow-change-held-packages --ignore-missing install  vidcutter
 
 # Special case for installing Google Chrome
 echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
@@ -142,7 +143,7 @@ echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $E
 echo -e $YELLOW"--- Installing Openshot vieo editor..." $ENDCOLOR
 	        add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        InstallSoftwareFromRepo openshot openshot-doc
+	        apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc
 
 # Special case for installing MEGA nz file sync utility (better than Drop Box)...
 echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
@@ -154,7 +155,7 @@ echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
 echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 	        echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
 	        echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-	        InstallSoftwareFromRepo  virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
+	        apt-get -y -qq --allow-change-held-packages --ignore-missing install  virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 	        if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 	            echo      $SUDO_USER already belongs to vboxusers group
 	        else
