@@ -241,10 +241,7 @@ function is_software_package_available ()
         if hash yum 2>/dev/null; then
 	        return yum list available "$1" &> /dev/null
         elif hash apt 2>/dev/null; then
-                apt -qq list "$1" 2>/dev/null | grep -q installed && return 0 || return 1
-
-	        read -p "Press enter to continue"
-                # return apt -qq list "$1" 2>/dev/null | grep -q installed
+                return apt -qq list "$1" 2>/dev/null | grep -q "$1"
         elif hash zypper 2>/dev/null; then
                 return zypper info "$1" &> /dev/null
 	else
