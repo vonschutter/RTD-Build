@@ -79,15 +79,7 @@ function set_install_command () {
 		else
 		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
 	        fi
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-                echo "Mac OSX is currently not supported..."
-                export _INSTCMD="echo I dont know how to install suff on Mac!"
-        elif [[ "$OSTYPE" == "cygwin" ]]; then
-                echo "CYGWIN is currently unsupported..."
-                export _INSTCMD="echo I dont know how to install suff on CYGWIN!"
-        elif [[ "$OSTYPE" == "msys" ]]; then
-                echo "Lightweight shell is currently unsupported... "
-                export _INSTCMD="echo I dont know how to install suff on MSYS!"               
+
         elif [[ "$OSTYPE" == "freebsd"* ]]; then
                 echo "Free BSD is currently unsupported... "
                 export _INSTCMD="echo I dont know how to install suff on FreeBSD!"
@@ -180,20 +172,30 @@ function SofwareManagmentAvailabilityCHK ()
 # uses apt but should be modified to update RPM if that is used on the system. 
 function up2date ()
 {
-	# Ensure that the expected variables are defined.
-	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
-
-	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
-
-	echo "--- Refreshing Software repositories; this may take a minute..."
-	apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
-	echo "--- Installing System Updates; this may take a minute..."
-	apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
-	echo "--- Cleaning up unused software; this may take a minute..."
-	apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+        if hash yum 2>/dev/null; then
+	        # Ensure that the expected variables are defined.
+	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+	        yum update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+        elif hash apt 2>/dev/null; then
+	        # Ensure that the expected variables are defined.
+	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+	        echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
+	        echo "--- Refreshing Software repositories; this may take a minute..."
+	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        echo "--- Installing System Updates; this may take a minute..."
+	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        echo "--- Cleaning up unused software; this may take a minute..."
+	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+        elif hash zypper 2>/dev/null; then
+        	# Ensure that the expected variables are defined.
+	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+                return zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+	else
+	        return 3
+        fi
 }
 
 
@@ -213,11 +215,11 @@ function up2date ()
 function is_software_package_installed () 
 {
         if hash yum 2>/dev/null; then
-	        return rpm -q "$1" &> /dev/null
+	        rpm -q "$1" &> /dev/null && return 0 || return 1
         elif hash apt 2>/dev/null; then
-	        return dpkg -l "$1" &> /dev/null 
+	        dpkg -l "$1" &> /dev/null && return 0 || return 1
         elif hash zypper 2>/dev/null; then
-                return zypper se "$1" &> /dev/null
+                zypper se "$1" &> /dev/null && return 0 || return 1
 	else
 	        return 3
         fi
@@ -243,7 +245,7 @@ function is_software_package_available ()
         elif hash apt 2>/dev/null; then
                 apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
         elif hash zypper 2>/dev/null; then
-                return zypper info "$1" &> /dev/null
+                return zypper info "$1" &> /dev/null && return 0 || return 1
 	else
 	        return 3
         fi
@@ -266,7 +268,7 @@ function InstallSoftwareFromRepo ()
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$@"; then
-                if is_software_package_available   "$@"; then  
+                if is_software_package_available   "$@"; then
                     echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
                 else
                     echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
