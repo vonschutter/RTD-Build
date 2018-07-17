@@ -199,21 +199,84 @@ function up2date ()
 
 
 
+# Function to check if a piece of software is installed. This function will first check
+# if the package manager is deb, zypper or rpm, and then take one parameter passed
+# and evauate if a software package by that name is installed. This function
+# will return a "0" or "1" return based on the package managers return code.
+# Call this function by: 
+# is_software_package_installed "package name" 
+#                 or 
+# is_software_package_installed "$1" if calling this function from a script
+# or another function receiving a parameter.
+#
+function is_software_package_installed () 
+{
+        if hash yum 2>/dev/null; then
+	        return rpm -q "$1" &> /dev/null
+        elif hash apt 2>/dev/null; then
+	        return dpkg -l "$1" &> /dev/null
+        elif hash zypper 2>/dev/null; then
+                return zypper se "$1" &> /dev/null
+	else
+	        return 3
+        fi
+
+}
+
+
+
+# Function to chek if a package is available in whetever repository, and 
+# if there return a "0" and if not return a "1" or a "3" if there is no recognizable 
+# package manager found. the function expects the name of the package 
+# to be a parameter passed to this fuction. Call this function by: 
+# iis_software_package_available "package name" 
+#                 or 
+# is_software_package_available "$1" if calling this function from a script
+# or another function receiving a parameter.
+#
+function is_software_package_available () 
+{
+        if hash yum 2>/dev/null; then
+	        return yum list available "$1" &> /dev/null
+        elif hash apt 2>/dev/null; then
+                return apt -qq list "$1" 2>/dev/null | grep -q installed 
+        elif hash zypper 2>/dev/null; then
+                return zypper info "$1" &> /dev/null
+	else
+	        return 3
+        fi
+
+}
+
+
+
+
 # Function to simplify the installation of software by including all display and 
 # installation logic for a given software provider. This should be expanded to include flatpack
-# snap and rpm for example. It should be the same consistent way no matter flavor of Linux. 
+# snap for example. It should be the same consistent way no matter flavor of Linux. 
 # This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley and could 
 # be an RPM or deb string, or even snap or flatpack. A preference order between package system and
 # snap or flatpack use. 
 function InstallSoftwareFromRepo ()
 {
-	PAD="--------------------------------------------------"
+        # make some decent display terminal fraphics... 
+        PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b$GREEN [ OK ] $ENDCOLOR \n" ||printf "%b%-6s%b$RED [FAIL] $ENDCOLOR \n"
-	# wait a small ammount of time to ensure that slow systems can catch up...
-	sleep 1
-	[ -e /var/lib/apt/lists/lock ] && rm -f  /var/lib/apt/lists/lock
-	[ -e /var/lib/dpkg/lock ] && rm -f /var/lib/dpkg/lock
+	# Test if package name is installed, if not then...
+        if ! is_software_package_installed "$@"; then
+                # See if it's in a repo and then...
+                if is_software_package_available"$@"; then  
+                    # Install the package metching the name passed as variable       
+                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
+                else
+                    #If it is not available in repo say...
+                    echo -ne "--- Installing "$LINE" ":" "\ printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
+                fi
+        else
+            # If package is installed allready, say OK in yellow... 
+            echo -ne "--- Installing "$LINE" ":" "\ printf "%b%-6s%b [ $YELLOW OK$ENDCOLOR  ]  \n"
+        fi
+
 }
 
 
