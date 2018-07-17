@@ -261,22 +261,17 @@ function is_software_package_available ()
 # snap or flatpack use. 
 function InstallSoftwareFromRepo ()
 {
-        # make some decent display terminal fraphics... 
+        # make some decent display terminal fraphics...
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$@"; then
-                echo software is not installed...
                 if is_software_package_available   "$@"; then  
-                     echo software is available... $?
-                    # Install the package matching the name passed as variable       
                     echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
                 else
-                    echo software is not available in repo say...
                     echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
                 fi
         else
-            echo If package is installed allready, say OK in yellow... 
             echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ $YELLOW OK$ENDCOLOR  ]  \n"
         fi
 
