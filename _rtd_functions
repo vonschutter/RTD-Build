@@ -269,12 +269,12 @@ function InstallSoftwareFromRepo ()
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$@"; then
                 if is_software_package_available   "$@"; then
-                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ $GREEN OK $ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR  ] \n"
+                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [  $GREEN OK$ENDCOLOR  ] \n" ||printf "%b%-6s%b [ $RED FAIL$ENDCOLOR ] \n"
                 else
                     echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [$YELLOW NOT AVAILABLE$ENDCOLOR ]  \n"
                 fi
         else
-            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ $YELLOW OK$ENDCOLOR  ]  \n"
+            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [  $YELLOW OK$ENDCOLOR  ]  \n"
         fi
 
 }
