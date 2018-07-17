@@ -215,7 +215,7 @@ function is_software_package_installed ()
         if hash yum 2>/dev/null; then
 	        return rpm -q "$1" &> /dev/null
         elif hash apt 2>/dev/null; then
-	        return dpkg -l "$1" &> /dev/null
+	        return dpkg -l "$1" &> /dev/null 
         elif hash zypper 2>/dev/null; then
                 return zypper se "$1" &> /dev/null
 	else
@@ -225,6 +225,7 @@ function is_software_package_installed ()
 }
 
 
+	
 
 # Function to chek if a package is available in whetever repository, and 
 # if there return a "0" and if not return a "1" or a "3" if there is no recognizable 
@@ -240,7 +241,13 @@ function is_software_package_available ()
         if hash yum 2>/dev/null; then
 	        return yum list available "$1" &> /dev/null
         elif hash apt 2>/dev/null; then
-                return apt -qq list "$1" 2>/dev/null | grep -q installed 
+                if apt -qq list "$1" 2>/dev/null | grep -q installed; then
+			echo ret is 0
+	        else
+			echo ret is 1
+	        fi
+	        read -p "Press enter to continue"
+                return apt -qq list "$1" 2>/dev/null | grep -q installed
         elif hash zypper 2>/dev/null; then
                 return zypper info "$1" &> /dev/null
 	else
