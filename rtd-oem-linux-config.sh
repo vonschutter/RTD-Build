@@ -173,7 +173,37 @@ echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
 		up2date
 
+RTDCP=/opt/rtd/cache
+mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
+pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
 
+mkdir -p /usr/local/share/gnome-background-properties
+DIRECTORY=$RTDCP/Wallpaper/
+ls $DIRECTORY > lspictures.txt
+
+# creating the head of mybackgrounds.xml
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
+<wallpapers>" > mybackgrounds.xml
+# looking for all pictures in $DIRECTORY
+
+for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
+echo "<wallpaper>
+<name>$i</name>
+<filename>$i</filename>
+  <options>stretched</options>
+    <pcolor>#8f4a1c</pcolor>
+    <scolor>#8f4a1c</scolor>
+    <shade_type>solid</shade_type>
+  </wallpaper>" >> mybackgrounds.xml
+done
+# creating the bottom of mybackgrounds.xml
+echo "</wallpapers>" >> mybackgrounds.xml
+sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
+cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+# clear now
+rm mybackgrounds.xml
+rm lspictures.txt
 
 #  Complete script
 exit
