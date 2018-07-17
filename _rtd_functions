@@ -59,25 +59,42 @@ function ensure_admin () {
 function set_install_command () {
 	# add global install command for portability and convenience
 	# If you need to use this script in an rpm based system you could modify the install
-	# command here to dnf, yum, zypper... By default packages of patternd that do not
+	# command here to suit dnf, yum, zypper... By default packages of patternd that do not
 	# match should be skipped. Use "export option" so child processes also see the variiables.
-	if [[ "$1" == "deb" ]]; then
-	        # tell debian based installers (Ubuntu, Mint etc.) to be quiet.
-	        export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-	        export DEBIAN_FRONTEND=noninteractive
-	        # Enable all repositories while disabling source repository list downloads in sources.list
-	        sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
-	        sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
-
-	elif [[ "$1" == "darwin" ]]; then
-	        echo "Mac OSX is currently not supported..."
-	elif [[ "$1" == "rpm" ]]; then
-	        echo "RPM is not yet supported..."
-	elif [[ "$1" == "freebsd"* ]]; then
-	        echo "Free BSD is currently unsupported... "
-	else
-	       echo "This function talkes the parameters: deb, rpm, darwin, freebsd, please provide a parameter..."
-	fi
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+	        if hash yum 2>/dev/null; then
+		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
+		        export _INSTCMD="yum install -y "
+	        elif hash apt 2>/dev/null; then
+		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
+		        # tell debian based installers (Ubuntu, Mint etc.) to be quiet.
+	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+	                export DEBIAN_FRONTEND=noninteractive
+	                # Enable all repositories while disabling source repository list downloads in sources.list
+	                sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
+	                sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
+	        elif hash zypper 2>/dev/null; then
+	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
+		        export _INSTCMD="zypper install -y "
+		else
+		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+	        fi
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+                echo "Mac OSX is currently not supported..."
+                export _INSTCMD="echo I dont know how to install suff on Mac!"
+        elif [[ "$OSTYPE" == "cygwin" ]]; then
+                echo "CYGWIN is currently unsupported..."
+                export _INSTCMD="echo I dont know how to install suff on CYGWIN!"
+        elif [[ "$OSTYPE" == "msys" ]]; then
+                echo "Lightweight shell is currently unsupported... "
+                export _INSTCMD="echo I dont know how to install suff on MSYS!"               
+        elif [[ "$OSTYPE" == "freebsd"* ]]; then
+                echo "Free BSD is currently unsupported... "
+                export _INSTCMD="echo I dont know how to install suff on FreeBSD!"
+        else
+               echo "I have no Idea what this system is"
+                export _INSTCMD="echo Whatever!"
+        fi
 }
 
 
@@ -85,7 +102,7 @@ function set_install_command () {
 
 
 
-
+# Function to enable system firewall and add a given rule. 
 function enable_firewall () {
 	# Enable firewall in Ubuntu systems
 	if hash ufw 2>/dev/null; then
