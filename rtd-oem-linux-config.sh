@@ -178,7 +178,7 @@ mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Me
 pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
 
 mkdir -p /usr/local/share/gnome-background-properties
-DIRECTORY=$RTDCP/Wallpaper/
+DIRECTORY=/opt/rtd/Wallpaper/
 ls $DIRECTORY > lspictures.txt
 
 # creating the head of mybackgrounds.xml
