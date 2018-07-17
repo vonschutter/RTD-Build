@@ -109,13 +109,13 @@ snap install signal-desktop 2>>$_ERRLOGFILE
 
 
 # Special case for installing Oracle Java...
-echo -e $YELLOW"--- Adding Oracle repository..." $ENDCOLOR
-                # Add the Oracle repository and pre-answer the licens questions.
-		add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-		echo --- Installing java-8...
-		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-		apt-get -y -qq --allow-change-held-packages --ignore-missing install oracle-java8-installer oracle-java8-set-default
+#echo -e $YELLOW"--- Adding Oracle repository..." $ENDCOLOR
+#               # Add the Oracle repository and pre-answer the licens questions.
+#		add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		echo --- Installing java-8...
+#		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+#		apt-get -y -qq --allow-change-held-packages --ignore-missing install oracle-java8-installer oracle-java8-set-default
 
 echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 		# Auto accept microsoft corefonts eula
@@ -155,7 +155,7 @@ echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
 echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 	        echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
 	        echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-	        apt-get -y -qq --allow-change-held-packages --ignore-missing install  virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
+	        apt-get -y -qq --allow-change-held-packages --ignore-missing install virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 	        if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 	            echo      $SUDO_USER already belongs to vboxusers group
 	        else
