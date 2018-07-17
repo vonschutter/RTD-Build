@@ -89,7 +89,7 @@ snap install screencloudplayer  2>>$_ERRLOGFILE
 snap install picard  2>>$_ERRLOGFILE
 snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 snap install signal-desktop 2>>$_ERRLOGFILE
-
+snap install vidcutter
 
 ###########################################################################
 ##                                                                       ##
@@ -130,20 +130,20 @@ echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 #		InstallSoftwareFromRepo  green-recorder
 
 # Special case for installing Vidcutter
-echo -e $YELLOW"--- Adding Vidcutter repository..." $ENDCOLOR
-		add-apt-repository -y ppa:ozmartian/apps 1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt-get -y -qq --allow-change-held-packages --ignore-missing install  vidcutter
+#echo -e $YELLOW"--- Adding Vidcutter repository..." $ENDCOLOR
+#		add-apt-repository -y ppa:ozmartian/apps 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		apt update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#		apt-get -y -qq --allow-change-held-packages --ignore-missing install  vidcutter
 
 # Special case for installing Google Chrome
 echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-		dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb
+		dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 # Special case for installing Openshot video editor
 echo -e $YELLOW"--- Installing Openshot vieo editor..." $ENDCOLOR
 	        add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc
+	        apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 # Special case for installing MEGA nz file sync utility (better than Drop Box)...
 echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
@@ -155,7 +155,7 @@ echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
 echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 	        echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
 	        echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-	        apt-get -y -qq --allow-change-held-packages --ignore-missing install virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
+	        apt-get -y -qq --allow-change-held-packages --ignore-missing install virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	        if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 	            echo      $SUDO_USER already belongs to vboxusers group
 	        else
