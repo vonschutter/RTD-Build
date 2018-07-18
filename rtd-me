@@ -35,7 +35,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
           mkdir -p /opt/rtd/scripts
             for i in rtd-oem-linux-config.sh _rtd_functions
             do
-                rm -f "/opt/rtd/scripts/$1" 
+                rm -f "/opt/rtd/scripts/$1"
                 wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/"$i"
             done
         /opt/rtd/scripts/rtd-oem-linux-config.sh
@@ -91,8 +91,8 @@ ECHO This is a windows script!
 :GetInterestingThigsToDoOnThisSystem
 :: Use power shell to grab the nest staage of his script from a common server...
 @echo off
-ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr XP is not supported & goto end )
-ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr vista is not supported & goto end )
+ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr "XP is not supported" & goto end )
+ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr "vista is not supported" & goto end )
 ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
 ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
@@ -113,8 +113,8 @@ powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFi
 
 :ExtractAndRunStage2
 :: Extract the stage 2 och RTD OEM configuration
-:: 
-:: 
+::
+::
 
 
 
@@ -122,19 +122,18 @@ powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFi
 
 
 :DispErr
-	cls
-	if {%1}=={!} color 4e
+	set _ERRMSG=%1
 	@title %0 -- !!%_ERRMSG%!!
-	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยป
-	echo ยบ                    ERROR...                                               ยบ
-	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยผ
-	echo ยบ                                                                           ยบ
-	echo ยบ                                                                           ยบ
+	echo ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+	echo บ                    ERROR...                                               บ
+	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+	echo บ                                                                           บ
+	echo บ                                                                           บ
 	echo      %_ERRMSG%
-	echo ยบ                                                                           ยบ
-	echo ยบ                                                                           ยบ
-	echo ยบ                                                                           ยบ
-	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยผ
+	echo บ                                                                           บ
+	echo บ                                                                           บ
+	echo บ                                                                           บ
+	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 goto eof
 
 
