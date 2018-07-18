@@ -91,8 +91,8 @@ ECHO This is a windows script!
 :GetInterestingThigsToDoOnThisSystem
 :: Use power shell to grab the nest staage of his script from a common server...
 @echo off
-ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr "XP is not supported" & goto end )
-ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr "vista is not supported" & goto end )
+ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr Windows XP is regretably not supported & goto end )
+ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr Vista is not supported & goto end )
 ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
 ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
@@ -125,13 +125,13 @@ powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFi
 	set _ERRMSG=%1
 	@title %0 -- !!%_ERRMSG%!!
 	echo ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-	echo บ                    ERROR...                                               บ
+	echo บ                            Message                                        บ
 	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
-	echo บ                                                                           บ
-	echo บ                                                                           บ
-	echo      %_ERRMSG%
-	echo บ                                                                           บ
-	echo บ                                                                           บ
+	echo.
+	echo.
+	echo        %_ERRMSG%
+	echo.
+	echo.
 	echo บ                                                                           บ
 	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 goto eof
