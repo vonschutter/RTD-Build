@@ -91,19 +91,53 @@ ECHO This is a windows script!
 :GetInterestingThigsToDoOnThisSystem
 :: Use power shell to grab the nest staage of his script from a common server...
 @echo off
-ver | find "5.1" > nul && ( set OSV=XP&  echo XP is not supported & exit )
-ver | find "6.0" > nul && ( set OSV=vista&  echo vista is not supported & exit )
+ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr XP is not supported & goto end )
+ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr vista is not supported & goto end )
 ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
 ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
 
+
 :PS1
 :: get stage 2 and run it...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('http://www.example.com/package.zip', 'package.zip')"
+
+
 :PS2
 :: get stage 2 and run it...
 powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFile package.zip"
 
+
+
 :ExtractAndRunStage2
+:: Extract the stage 2 och RTD OEM configuration
+:: 
+:: 
+
+
+
+:goto end
+
+
+:DispErr
+	cls
+	if {%1}=={!} color 4e
+	@title %0 -- !!%_ERRMSG%!!
+	echo ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+	echo º                    ERROR...                                               º
+	echo ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+	echo º                                                                           º
+	echo º                                                                           º
+	echo      %_ERRMSG%
+	echo º                                                                           º
+	echo º                                                                           º
+	echo º                                                                           º
+	echo ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+goto eof
+
+
+
+:end
+:eof
