@@ -65,13 +65,12 @@ echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
 
 # Loop through each item in this list of softwar and perform an install 
 # using the relevant packaging system. 
-for i in build-essential linux-headers-generic \
-	p7zip-full p7zip-rar rar zip \
-	gourmet dreamchess supertuxkart pioneers 0ad \
+for i in p7zip-full p7zip-rar rar zip \
+	dreamchess supertuxkart 0ad \
 	terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
 	vim vim-scripts gufw gnome-tweak-tool \
-	samba wine-stable playonlinux winetricks variety diodon shutter nautilus-dropbox\
-	gnome-twitch polari filezilla corebird vlc banshee libdvdcss2 ffmpeg
+	samba wine-stable variety diodon shutter nautilus-dropbox\
+	gnome-twitch polari filezilla vlc libdvdcss2 ffmpeg
 do
      InstallSoftwareFromRepo $i
 done
@@ -80,7 +79,7 @@ echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
 # Ensure that snap is available prior to attempting to use it. 
 check_dependencies snap
 
-
+snap list
 # 1>>$_LOGFILE
 snap install atom --classic  2>>$_ERRLOGFILE
 snap install spotify  2>>$_ERRLOGFILE
@@ -89,7 +88,7 @@ snap install screencloudplayer  2>>$_ERRLOGFILE
 snap install picard  2>>$_ERRLOGFILE
 snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 snap install signal-desktop 2>>$_ERRLOGFILE
-snap install vidcutter
+snap install vidcutter 2>>$_ERRLOGFILE
 
 ###########################################################################
 ##                                                                       ##
@@ -171,8 +170,9 @@ echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 
 # Clean up and Finalize
 echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
-		up2date
+	up2date
 
+# Install Wallpapers and configur Gnome to see them. ...
 RTDCP=/opt/rtd/cache
 mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
 pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
@@ -204,7 +204,7 @@ cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gno
 # clear now
 rm mybackgrounds.xml
 rm lspictures.txt
-gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/gsettings/Wayland.jpg
+gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 #  Complete script
 exit
 
