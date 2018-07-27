@@ -11,7 +11,8 @@ GOTO :CMDSCRIPT
 #:: Version 1.00
 #::
 #::
-#:: Purpose: The purpose of the script is to perform managment tasks on both Windows and Linux systems
+#:: Purpose: The purpose of the script is to decide what scripts to dowload based 
+#::          on the host OS found, works with both Windows, MAC  and Linux systems. 
 #::
 #::
 #:: This system configuration and installation script was originally developed
@@ -102,12 +103,12 @@ ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
 
 :PS1
 :: get stage 2 and run it...
-powershell -Command "(New-Object Net.WebClient).DownloadFile('http://www.example.com/package.zip', 'package.zip')"
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
 
 
 :PS2
 :: get stage 2 and run it...
-powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFile package.zip"
+powershell -Command "Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
 
 
 
@@ -116,6 +117,7 @@ powershell -Command "Invoke-WebRequest http://www.example.com/package.zip -OutFi
 ::
 ::
 
+rtd-oem-windows-config.cmd
 
 
 :goto end
