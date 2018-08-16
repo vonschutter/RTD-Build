@@ -96,7 +96,7 @@ function update_me ()
         	rm $0.bak
 		mv $0 $0.bak
                 wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/${0##*/} -P ${0%/*} 
-                chmod +x $SCRIPT 
+                chmod +x $0
 }
 
 function config_me ()
