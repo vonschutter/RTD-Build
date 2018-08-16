@@ -2,7 +2,7 @@
 #
 #	RTD Ubuntu + derivatives software update script
 #   	Stephan S. Särö, Sweden
-#			Nate B. Buffalo Center, IA
+#	Nate B. Buffalo Center, IA
 #
 # Version 1.10
 #
@@ -32,7 +32,13 @@
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # get parameter if this script was called with one... 
-INSTRUCTION=$1
+if [ "$1" == "update" ]; then 
+       	INSTRUCTION=update_me
+fi
+
+if [ "$1" == "config" ]; then 
+       	INSTRUCTION=config_me
+fi
 
 
 ###########################################################################
@@ -80,16 +86,27 @@ echo "$DATE --- : $@" >> $0.log
 
 function update_me ()
 {
+	# Documentation: Paths and the such... 
+	# "# arguments called with ---->  ${@}     "
+	# "# \$1 ---------------------->  $1       "
+	# "# \$2 ---------------------->  $2       "
+	# "# path to me --------------->  ${0}     "
+	# "# parent path -------------->  ${0%/*}  "
+	# "# my name ------------------>  ${0##*/} "
         echo "Updating myself (%0)"
         SCRIPT=$(readlink -f "$0")
         SCRIPTPATH=$(dirname "$SCRIPT")
-            for i in rtd-oem-linux-config.sh _rtd_functions
-            do
-                wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$0" -P $SCRIPTPATH && chmod +x $SCRIPT ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-            done
-        echo -e 
-        exit 
+        	rm $0.bak
+		mv $0 $0.bak
+                wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/${0##*/} -P ${0%/*} 
+                chmod +x $SCRIPT 
 }
+
+function config_me ()
+{
+ echo "::!::"
+}
+
 
 ###########################################################################
 ##                                                                       ##
@@ -100,8 +117,12 @@ function update_me ()
 #
 
 # Execute the fist instruction passed to this script... 
-$INSTRUCTION
-
+if [ ! -z $INSTRUCTION ]; then
+	log_item The instruction $INSTRUCTION was given... 
+	$INSTRUCTION
+else
+	log_item No instructions passed to $0... 
+fi
 
 echo -e $YELLOW "Updating installed software..." $ENDCOLOR
 # Updating software managed by distributin speciffic software manager...
@@ -132,3 +153,7 @@ if hash flatpack 2>/dev/null; then
 ###########################################################################
 #
 
+
+
+
+#END
