@@ -93,9 +93,6 @@ function update_me ()
 	# "# path to me --------------->  ${0}     "
 	# "# parent path -------------->  ${0%/*}  "
 	# "# my name ------------------>  ${0##*/} "
-        echo "Updating myself (%0)"
-        SCRIPT=$(readlink -f "$0")
-        SCRIPTPATH=$(dirname "$SCRIPT")
         	rm $0.bak
 		mv $0 $0.bak
                 wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/${0##*/} -P ${0%/*} 
