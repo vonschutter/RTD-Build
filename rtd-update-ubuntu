@@ -40,6 +40,9 @@ if [ "$1" == "config" ]; then
        	INSTRUCTION=config_me
 fi
 
+if [ "$1" == "setup" ]; then 
+       	INSTRUCTION=setup_me
+fi
 
 ###########################################################################
 ##                                                                       ##
@@ -104,6 +107,13 @@ function config_me ()
  echo "::!::"
 }
 
+function setup_me ()
+{
+	check.dependencies flatpak
+	check.dependencies gnome-software-plugin-flatpak
+	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	check.dependencies snap
+}
 
 ###########################################################################
 ##                                                                       ##
