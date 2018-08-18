@@ -136,9 +136,13 @@ echo -e $YELLOW "Updating installed software..." $ENDCOLOR
 # Updating software managed by distributin speciffic software manager...
 	deb_software_task apt-get update
 	UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
-	[ "$UPGRADABLE" -eq 0 ] && echo "--- $UPGRADABLE packages that need updates; Skipping update task... " || echo $UPGRADABLE packages that need updates & deb_software_task apt-get upgrade -y
-	deb_software_task apt-get autoremove -y
-
+	if [ "$UPGRADABLE" -eq 0 ]; then
+		echo "--- $UPGRADABLE packages that need updates; Skipping update task... " 
+	else
+		echo $UPGRADABLE packages that need updates 
+		deb_software_task apt-get upgrade -y
+		deb_software_task apt-get autoremove -y
+	fi
 # updating snaps if snap is present on the system... 
 if hash snap 2>/dev/null; then
 	  deb_software_task snap refresh
