@@ -172,6 +172,13 @@ echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
 	up2date
 
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Desktop Settings                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Install Wallpapers and configure Gnome to see them. ...
 RTDCP=/opt/rtd/cache
 mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
@@ -181,11 +188,11 @@ mkdir -p /usr/local/share/gnome-background-properties
 DIRECTORY=/opt/rtd/Wallpaper/
 ls $DIRECTORY > lspictures.txt
 
-# creating the head of mybackgrounds.xml
+# creating the header
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
 <wallpapers>" > mybackgrounds.xml
-# looking for all pictures in $DIRECTORY
+# Registering all pictures in $DIRECTORY
 
 for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
 echo "<wallpaper>
@@ -197,19 +204,20 @@ echo "<wallpaper>
     <shade_type>solid</shade_type>
   </wallpaper>" >> mybackgrounds.xml
 done
-# creating the bottom of mybackgrounds.xml
-echo "</wallpapers>" >> mybackgrounds.xml
-sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
-cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+
+# creating the footer
+	echo "</wallpapers>" >> mybackgrounds.xml
+	sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
+	cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
 # clear now
-rm mybackgrounds.xml
-rm lspictures.txt
-gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
+	rm mybackgrounds.xml
+	rm lspictures.txt
+	gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 #  Complete script
 exit
 
 # Configure Gnome settings for users.
-gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+	gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 
 
 ###########################################################################
