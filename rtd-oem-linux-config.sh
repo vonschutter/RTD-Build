@@ -172,7 +172,7 @@ echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
 	up2date
 
-# Install Wallpapers and configur Gnome to see them. ...
+# Install Wallpapers and configure Gnome to see them. ...
 RTDCP=/opt/rtd/cache
 mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
 pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
@@ -207,6 +207,10 @@ rm lspictures.txt
 gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 #  Complete script
 exit
+
+# Configure Gnome settings for users.
+gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+
 
 ###########################################################################
 ##                                                                       ##
