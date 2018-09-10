@@ -1,10 +1,11 @@
 #!/bin/bash
+PUBLICATION="RuntimeData Update Manager for Ubuntu"
+VERSION="1.10"
 #
 #	RTD Ubuntu + derivatives software update script
 #   	Stephan, Sweden
 #	Nate B. Buffalo Center, IA
 #
-# Version 1.10
 #
 # This system configuration and installation script was originally developed
 # for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
@@ -32,6 +33,7 @@
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # get parameter if this script was called with one... 
+echo " ${0##*/} - $PUBLICATION: Version $VERSION
 echo This update script supports the following features:
 echo " "	
 echo " - Self-update: pass the parameter "update" to get the latest version. "
