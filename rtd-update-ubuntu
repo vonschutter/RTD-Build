@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #	RTD Ubuntu + derivatives software update script
-#   	Stephan S. Särö, Sweden
+#   	Stephan, Sweden
 #	Nate B. Buffalo Center, IA
 #
 # Version 1.10
@@ -32,6 +32,13 @@
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # get parameter if this script was called with one... 
+echo This update script supports the following features:
+echo 	
+echo - Self-update: pass the parameter "update" to get the latest version. 
+echo - Self-setup: pass the parameter "setup" to make sure that you are using 
+echo   all software channels; apt (default), "snap" and "flatpack". 
+echo 
+
 if [ "$1" == "update" ]; then 
        	INSTRUCTION=update_me
 fi
@@ -129,11 +136,11 @@ if [ ! -z $INSTRUCTION ]; then
 	$INSTRUCTION
 	exit
 else
-	log_item No instructions passed to $0... 
+	log_item No instructions passed to $0... Continuing with default behavior. 
 fi
 
 echo -e $YELLOW "Updating installed software..." $ENDCOLOR
-# Updating software managed by distributin speciffic software manager...
+# Updating software managed by distribution speciffic software manager...
 	deb_software_task apt-get update
 	UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
 	if [ "$UPGRADABLE" -eq 0 ]; then
