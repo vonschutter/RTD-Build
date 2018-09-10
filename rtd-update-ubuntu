@@ -33,11 +33,11 @@
 
 # get parameter if this script was called with one... 
 echo This update script supports the following features:
-echo 	
-echo - Self-update: pass the parameter "update" to get the latest version. 
-echo - Self-setup: pass the parameter "setup" to make sure that you are using 
-echo   all software channels; apt (default), "snap" and "flatpack". 
-echo 
+echo " "	
+echo " - Self-update: pass the parameter "update" to get the latest version. "
+echo " - Self-setup: pass the parameter "setup" to make sure that you are using "
+echo "   all software channels; apt (default), "snap" and "flatpack". "
+echo " "
 
 if [ "$1" == "update" ]; then 
        	INSTRUCTION=update_me
