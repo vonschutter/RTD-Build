@@ -139,7 +139,7 @@ echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $E
 		dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 # Special case for installing Openshot video editor
-echo -e $YELLOW"--- Installing Openshot vieo editor..." $ENDCOLOR
+echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
 	        add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	        apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
