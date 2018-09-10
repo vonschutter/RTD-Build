@@ -34,7 +34,7 @@ echo "Attempting to detect version of POSIX based system..."
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux OS: Attempting to get instructions..."
           mkdir -p /opt/rtd/scripts
-            for i in rtd-oem-linux-config.sh _rtd_functions
+            for i in rtd-oem-linux-config.sh _rtd_functions rtd-update-ubuntu 
             do
                 rm -f "/opt/rtd/scripts/$1"
                 wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/"$i"
@@ -126,16 +126,16 @@ rtd-oem-windows-config.cmd
 :DispErr
 	set _ERRMSG=%*
 	@title %0 -- !!%_ERRMSG%!!
-	echo ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-	echo บ                            Message                                        บ
-	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยป
+	echo ยบ                            Message                                        ยบ
+	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยผ
 	echo.
 	echo.
 	echo        %_ERRMSG%
 	echo        Presently I know what to do for Linux, and Windows 7 and beyond...
 	echo.
-	echo บ                                                                           บ
-	echo ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+	echo ยบ                                                                           ยบ
+	echo รรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรรยผ
 goto eof
 
 
