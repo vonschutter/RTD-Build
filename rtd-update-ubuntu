@@ -33,7 +33,7 @@ VERSION="1.10"
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # get parameter if this script was called with one... 
-echo " ${0##*/} - $PUBLICATION: Version $VERSION
+echo " ${0##*/} - $PUBLICATION: Version $VERSION"
 echo This update script supports the following features:
 echo " "	
 echo " - Self-update: pass the parameter "update" to get the latest version. "
