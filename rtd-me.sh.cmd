@@ -93,7 +93,7 @@ ECHO This is a windows script!
 :GetInterestingThigsToDoOnThisSystem
 :: Use power shell to grab the nest staage of his script from a common server...
 @echo off
-ver | find "5.1" > nul && ( set OSV=XP&  call :DispErr Windows XP is regretably not supported & goto end )
+ver | find "5.1" > nul && ( set OSV=XP&  call :CMD1 )
 ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr Vista is not supported & goto end )
 ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
 ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
