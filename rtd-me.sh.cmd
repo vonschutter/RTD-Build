@@ -111,6 +111,11 @@ powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com
 :: get stage 2 and run it...
 powershell -Command "Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
 
+:CMD1
+:: Pre windows 7 instruction go here (except vista)... 
+echo executing PRE Windows 7 instructions... 
+
+:goto end
 
 
 :ExtractAndRunStage2
