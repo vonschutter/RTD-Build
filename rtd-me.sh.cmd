@@ -27,6 +27,7 @@ GOTO :CMDSCRIPT
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+
 clear
 echo "This is now a ${SHELL} environment..."
 echo "Attempting to detect version of POSIX based system..."
