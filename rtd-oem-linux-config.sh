@@ -188,7 +188,7 @@ mkdir -p /usr/local/share/gnome-background-properties
 DIRECTORY=/opt/rtd/Wallpaper/
 ls $DIRECTORY > lspictures.txt
 
-# creating the header
+# Make a header
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
 <wallpapers>" > mybackgrounds.xml
@@ -209,11 +209,9 @@ done
 	echo "</wallpapers>" >> mybackgrounds.xml
 	sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
 	cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
-# clear now
 	rm mybackgrounds.xml
 	rm lspictures.txt
 	gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-#  Complete script
 exit
 
 # Configure Gnome settings for users.
