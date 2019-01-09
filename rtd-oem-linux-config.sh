@@ -212,7 +212,6 @@ done
 	rm mybackgrounds.xml
 	rm lspictures.txt
 	gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-exit
 
 # Configure Gnome settings for users.
 	gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
@@ -223,7 +222,6 @@ if [ $? = 0 ];
       then
           echo "OK Rebooting."
 	  reboot
-      exit
 fi
 
 ###########################################################################
