@@ -51,8 +51,8 @@ enable_firewall
 
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
-SofwareManagmentAvailabilityCHK
-up2date
+#SofwareManagmentAvailabilityCHK
+#up2date
 
 
 
