@@ -244,14 +244,14 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 				echo "Installing Paper GTK Theme"
 				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-gtk-theme -y 
-				InstallSoftwareFromRepo paper-icon-theme -y
+				InstallSoftwareFromRepo paper-gtk-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo paper-icon-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				;;
 			16)
 				#Arc Theme
 				echo "Installing Arc Theme"
-				add-apt-repository ppa:noobslab/themes -y
-				apt-get update
+				add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				InstallSoftwareFromRepo arc-theme
 				;;
 			17)
