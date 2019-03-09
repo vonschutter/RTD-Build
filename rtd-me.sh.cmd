@@ -37,7 +37,11 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
           mkdir -p /opt/rtd/scripts
             for i in rtd-oem-linux-config.sh _rtd_functions rtd-update-ubuntu 
             do
-                rm -f "/opt/rtd/scripts/$1"
+                # if the file to be downloaded already exists delete the exisitng one first... 
+                if [ -f "/opt/rtd/scripts/$1" ]; then
+                    rm -f "/opt/rtd/scripts/$1"
+                fi
+                # Then get the file requested...
                 wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/"$i"
             done
         /opt/rtd/scripts/rtd-oem-linux-config.sh
