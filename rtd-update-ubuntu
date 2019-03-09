@@ -124,6 +124,29 @@ function setup_me ()
 	check.dependencies snap
 }
 
+# Function to check and see if the system software managment is available. In some cases 
+# the sofware managment system may be in use. Should this be the case, this function will
+# wait undill the system is free for use. 
+function SofwareManagmentAvailabilityCHK ()
+{
+        echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
+        i=0
+        tput sc
+        while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
+            case $(($i % 4)) in
+                0 ) j="-" ;;
+                1 ) j="\\" ;;
+                2 ) j="|" ;;
+                3 ) j="/" ;;
+            esac
+            tput rc
+            echo -en "\r[$j] Waiting for other software managers to finish..."
+            echo " "
+            sleep 0.5
+            ((i=i+1))
+        done
+}
+
 ###########################################################################
 ##                                                                       ##
 ##                        Execute updates                                ##
@@ -149,7 +172,9 @@ echo -e $YELLOW "Updating installed software..." $ENDCOLOR
 		echo "--- $UPGRADABLE packages that need updates; Skipping update task... " 
 	else
 		echo $UPGRADABLE packages that need updates 
+		SofwareManagmentAvailabilityCHK 
 		deb_software_task apt-get upgrade -y
+		SofwareManagmentAvailabilityCHK 
 		deb_software_task apt-get autoremove -y
 	fi
 # updating snaps if snap is present on the system... 
