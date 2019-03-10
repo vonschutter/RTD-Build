@@ -152,17 +152,6 @@ function SofwareManagmentAvailabilityCHK ()
             sleep 0.5
             ((i=i+1))
         done
-
-        # Deprecated code below:
-        # while [ -f /var/lib/dpkg/lock ] ;
-        #		do
-        #			echo The software managment system is locked...
-        #			echo Waiting 10 seconds for software managment system to be ready:
-        #			for i in {0..10}; do echo -ne "$i"'\r'; sleep 1; done; echo
-        #			echo force unlocking package managment...
-        #			rm -f  /var/lib/apt/lists/lock
-        #			rm -f /var/lib/dpkg/lock
-        #	done
 }
 
 
