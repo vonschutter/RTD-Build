@@ -117,11 +117,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
 				# Ensure that snap is available prior to attempting to use it. 
 				check_dependencies snap
-
-				snap install spotify  2>>$_ERRLOGFILE
 				snap install screencloudplayer  2>>$_ERRLOGFILE
-				snap install picard  2>>$_ERRLOGFILE
-				snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 				snap install signal-desktop 2>>$_ERRLOGFILE
 				snap install vidcutter 2>>$_ERRLOGFILE
 				;;
