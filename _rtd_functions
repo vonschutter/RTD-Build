@@ -133,6 +133,7 @@ function dl ()
 # Function to check and see if the system software managment is available. In some cases 
 # the sofware managment system may be in use. Should this be the case, this function will
 # wait undill the system is free for use. 
+# TODO: Add support for fedora, Centos, SuSE.
 function SofwareManagmentAvailabilityCHK ()
 {
         echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
@@ -181,14 +182,13 @@ function up2date ()
 	        # Ensure that the expected variables are defined.
 	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
 	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
-		/opt/rtd/scripts/rtd-update-ubuntu
-	        #echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
-	        #echo "--- Refreshing Software repositories; this may take a minute..."
-	        #apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        #echo "--- Installing System Updates; this may take a minute..."
-	        #apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        #echo "--- Cleaning up unused software; this may take a minute..."
-	        #apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+	        echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
+	        echo "--- Refreshing Software repositories; this may take a minute..."
+	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        echo "--- Installing System Updates; this may take a minute..."
+	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	        echo "--- Cleaning up unused software; this may take a minute..."
+	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
         elif hash zypper 2>/dev/null; then
         	# Ensure that the expected variables are defined.
 	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
@@ -218,7 +218,7 @@ function is_software_package_installed ()
         if hash yum 2>/dev/null; then
 	        rpm -q "$1" &> /dev/null && return 0 || return 1
         elif hash apt 2>/dev/null; then
-	        dpkg -l "$1" &> /dev/null && return 0 || return 1
+	        dpkg -l "$1"|tail -1 |grep "ii  $1" &> /dev/null && return 0 || return 1
         elif hash zypper 2>/dev/null; then
                 zypper se "$1" &> /dev/null && return 0 || return 1
 	else
@@ -234,11 +234,12 @@ function is_software_package_installed ()
 # if there return a "0" and if not return a "1" or a "3" if there is no recognizable 
 # package manager found. the function expects the name of the package 
 # to be a parameter passed to this fuction. Call this function by: 
-# iis_software_package_available "package name" 
+# is_software_package_available "package name" 
 #                 or 
 # is_software_package_available "$1" if calling this function from a script
 # or another function receiving a parameter.
 #
+# Supported base distributions: Fedora . SuSE . Debian
 function is_software_package_available () 
 {
         if hash yum 2>/dev/null; then
