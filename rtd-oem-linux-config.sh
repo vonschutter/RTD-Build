@@ -70,12 +70,12 @@ up2date
 # Option defaults may be set to "on" or "off"
 
 check_dependencies dialog
-cmd=(dialog --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16)
+cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16 )
 options=(1 "Base RTD OEM Productivity Software" on    
          2 "Developer Software: LAMP Stack" off
          3 "Developer Software: IDE Tools and Compilers" off
          4 "OEM Comression Tools (zip, 7zip rar etc.)" on
-         5 "OEM Selection of quality games" on
+         5 "OEM Selection of Quality Games" on
          6 "OEM System Administrative Tools" on
          7 "Oracle Java" on
          8 "Bleachbit System Cleaning Tool" on
@@ -104,7 +104,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				# Loop through each item in this list of software and perform an install 
 				# using the relevant packaging system. 
 				for i in samba wine-stable diodon shutter \
-					gnome-twitch polari filezilla vlc libdvdcss2 ffmpeg
+					gnome-twitch polari filezilla libdvdcss2 ffmpeg
 				do
 				     InstallSoftwareFromRepo $i
 				done
@@ -158,14 +158,15 @@ options=(1 "Base RTD OEM Productivity Software" on
 				# Install games from native repositories... 
 				echo -e $YELLOW"--- OEM Selection of Quality Games..." $ENDCOLOR
 				for i in dreamchess supertuxkart 0ad dosbox armagetronad \
-					 warzone2100 mesa-utils:i386 openarena assaultcube marsshooter
+					 warzone2100 mesa-utils openarena assaultcube marsshooter
 				do
 				     InstallSoftwareFromRepo $i
 				done
 				# Install Valves Steam Client for gaming. 
 				dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
 				# Install additional quality games from Flathub
-				flatpak install flathub com.moddb.TotalChaos -y				;;
+				flatpak install flathub com.moddb.TotalChaos -y				
+				;;
 			6)
 				echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
 				# Loop through each item in this list of software and perform an install 
@@ -191,7 +192,6 @@ options=(1 "Base RTD OEM Productivity Software" on
 			8)
 				#Bleachbit
 				echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
-				echo "Installing BleachBit"
 				InstallSoftwareFromRepo bleachbit 
 				;;
 			9)
@@ -213,16 +213,16 @@ options=(1 "Base RTD OEM Productivity Software" on
 			12)
 				# Special case for installing Google Chrome
 				echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 
+				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				;;
 			13)
 				#Teamviewer
-				echo "Installing Teamviewer"
-				dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 
+				echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
+				dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				;;
 			14)
 				#Skype for Linux
-				echo "Installing Skype For Linux"
+				echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
 				snap install skype --classic  2>>$_ERRLOGFILE
 				;;
 			15)
