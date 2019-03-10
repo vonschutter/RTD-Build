@@ -188,7 +188,6 @@ options=(1 "Base RTD OEM Productivity Software" on
 				echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 				InstallSoftwareFromRepo oracle-java8-installer 
 				InstallSoftwareFromRepo	oracle-java8-set-default
-				oracle-java8-set-default
 				;;
 			8)
 				#Bleachbit
