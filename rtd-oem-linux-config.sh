@@ -330,13 +330,13 @@ options=(1 "Base RTD OEM Productivity Software" on
 					cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
 					rm mybackgrounds.xml
 					rm lspictures.txt
+				# Set the default wallpaper... 
 					gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 
-				# Configure Gnome settings for users.
+				# Configure Gnome settings for current user.
 					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
 				;;
-							
-
 		esac
 	done
 
