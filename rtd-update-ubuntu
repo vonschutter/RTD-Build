@@ -33,7 +33,7 @@ VERSION="1.11"
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # Identify 
-clear	
+# clear	
 echo -e $GREEN"$PUBLICATION: Version $VERSION" $ENDCOLOR
 echo -e $GREEN"--------------------------------------------------------" $ENDCOLOR
 
