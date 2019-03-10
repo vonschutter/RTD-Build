@@ -58,7 +58,7 @@ up2date
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Base Software                   ::::::::::::::::::::::
+#::::::::::::::          Base OEM Configuration          ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
@@ -69,7 +69,11 @@ up2date
 #
 # Option defaults may be set to "on" or "off"
 
+# "dialog" will be used to request interactive configuration...
+# Ensure that it is available: 
 check_dependencies dialog
+
+# List Options to be available for choice in the RTD System Configurator...
 cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16 )
 options=(1 "Base RTD OEM Productivity Software" on    
          2 "Developer Software: LAMP Stack" off
@@ -89,11 +93,12 @@ options=(1 "Base RTD OEM Productivity Software" on
          16 "Dropbox Cloud Storage" on
          17 "Optional Gnome Themes Plus!" on
 	 18 "Openshot video editor" on
-	 19 "Netspeed Indicator" off
+	 19 "Music Players and Audio Software" off
 	 20 "Generate SSH Keys" off
 	 21 "Oracle VirtualBox" on
 	 22 "Runtime Data OEM Configuration" on
 )
+
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
 		for choice in $choices
@@ -112,9 +117,6 @@ options=(1 "Base RTD OEM Productivity Software" on
 				echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
 				# Ensure that snap is available prior to attempting to use it. 
 				check_dependencies snap
-
-				snap list
-				# 1>>$_LOGFILE
 
 				snap install spotify  2>>$_ERRLOGFILE
 				snap install screencloudplayer  2>>$_ERRLOGFILE
@@ -176,6 +178,9 @@ options=(1 "Base RTD OEM Productivity Software" on
 				do
 				     InstallSoftwareFromRepo $i
 				done
+				apt-add-repository ppa:fixnix/netspeed -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo indicator-netspeed-unity
 				;;
 			7)
 				# Special case for installing Oracle Java...
@@ -202,7 +207,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				;;
 			10)
 				#VLC Media Player
-				echo "Installing VLC Media Player"
+				echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
 				InstallSoftwareFromRepo vlc
 				;;
 			11)
@@ -264,10 +269,10 @@ options=(1 "Base RTD OEM Productivity Software" on
 				apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				;;
 			19)
-				echo "Installing NetSpeed Indicator"
-				apt-add-repository ppa:fixnix/netspeed -y1 >>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo indicator-netspeed-unity
+				echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
+				snap install spotify  2>>$_ERRLOGFILE
+				snap install picard  2>>$_ERRLOGFILE
+				snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 				;;
 			20)
 				echo "Generating SSH keys"
