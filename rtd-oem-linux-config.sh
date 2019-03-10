@@ -63,33 +63,36 @@ up2date
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
 #
+# Software and configuration selections dialog. This will present a number of OEM defaults
+# and other preferences that can be added to a system at will. To remove software it is 
+# recommended to use the native software tool (Gnome Software, Yast, or Discover).
+#
+# Option defaults may be set to "on" or "off"
 
 check_dependencies dialog
 cmd=(dialog --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16)
-options=(1 "Base OEM Software" on    # any option can be set to default to "on"
+options=(1 "Base RTD OEM Productivity Software" on    
          2 "Developer Software: LAMP Stack" off
-         3 "Developer Software: Build Essentials" off
-         4 "Developer Software: Node.js" off
-         5 "Developer Software: Git" off
-         6 "Developer Software: Composer" off
+         3 "Developer Software: IDE Tools and Compilers" off
+         4 "OEM Comression Tools (zip, 7zip rar etc.)" on
+         5 "OEM Selection of quality games" on
+         6 "OEM System Administrative Tools" on
          7 "Oracle Java" on
-         8 "Bleachbit System Cleaning Tool" off
-         9 "Ubuntu Restricted Extras (To play prorietary video and audio formats)" on
+         8 "Bleachbit System Cleaning Tool" on
+         9 "Commercially Restricted Extras (To play prorietary video and audio formats)" on
          10 "VLC Media Player" on
          11 "Gnome Tweak Tool" on
          12 "Google Chrome" on
          13 "Teamiewer" on
          14 "Skype" on
-         15 "Paper GTK Theme" on
-         16 "Arch Theme" on
-         17 "Arc Icons" on
-         18 "Numix Icons" on
-	 19 "MEGA nz Encrypted Cloud Storage" on
-	 20 "Openshot video editor" off
-	 21 "Netspeed Indicator" off
-	 22 "Generate SSH Keys" off
-	 23 "Oracle VirtualBox" on
-	 24 "Runtime Data OEM Configuration" on
+         15 "MEGA nz Encrypted Cloud Storage" on
+         16 "Dropbox Cloud Storage" on
+         17 "Optional Gnome Themes Plus!" on
+	 18 "Openshot video editor" on
+	 19 "Netspeed Indicator" off
+	 20 "Generate SSH Keys" off
+	 21 "Oracle VirtualBox" on
+	 22 "Runtime Data OEM Configuration" on
 )
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
@@ -97,15 +100,10 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 		do
 		    case $choice in
 	        	1)
-			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
-
-				# Loop through each item in this list of softwar and perform an install 
+				echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
+				# Loop through each item in this list of software and perform an install 
 				# using the relevant packaging system. 
-				for i in p7zip-full p7zip-rar rar zip \
-					dreamchess supertuxkart 0ad \
-					terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
-					vim vim-scripts gufw gnome-tweak-tool \
-					samba wine-stable variety diodon shutter nautilus-dropbox\
+				for i in samba wine-stable diodon shutter \
 					gnome-twitch polari filezilla vlc libdvdcss2 ffmpeg
 				do
 				     InstallSoftwareFromRepo $i
@@ -117,94 +115,86 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 
 				snap list
 				# 1>>$_LOGFILE
-				snap install atom --classic  2>>$_ERRLOGFILE
-				snap install spotify  2>>$_ERRLOGFILE
 
+				snap install spotify  2>>$_ERRLOGFILE
 				snap install screencloudplayer  2>>$_ERRLOGFILE
 				snap install picard  2>>$_ERRLOGFILE
 				snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 				snap install signal-desktop 2>>$_ERRLOGFILE
 				snap install vidcutter 2>>$_ERRLOGFILE
-
 				;;
 
 			2)
-			    	#Install LAMP stack
-				echo "Installing Apache"
-				apt install apache2 -y
-	            
-    				echo "Installing Mysql Server"
-	 			apt install mysql-server -y
-
-        			echo "Installing PHP"
-				apt install php libapache2-mod-php php-mcrypt php-mysql -y
-	            
-        			echo "Installing Phpmyadmin"
-				apt install phpmyadmin -y
-
+				echo -e $YELLOW"--- Adding Developer Software: LAMP Stack..." $ENDCOLOR
+			    	for i in apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql \
+					phpmyadmin nodejs
+				do
+				     InstallSoftwareFromRepo $i
+				done
 				echo "Cofiguring apache to run Phpmyadmin"
 				echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
-				
-				echo "Enabling module rewrite"
-				sudo a2enmod rewrite
-				echo "Restarting Apache Server"
+				a2enmod rewrite
 				service apache2 restart
 				;;
     			3)	
-				#Install Build Essentials
-				echo "Installing Build Essentials"
-				InstallSoftwareFromRepo build-essential
+				echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
+				for i in build-essential git
+				do
+				     InstallSoftwareFromRepo $i
+				done
+				snap install atom --classic  2>>$_ERRLOGFILE
 				;;
 				
 			4)
-				#Install Nodejs
-				echo "Installing Nodejs"
-				curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-				InstallSoftwareFromRepo nodejs
+				echo -e $YELLOW"--- OEM Comression Tools (zip, 7zip rar etc.)..." $ENDCOLOR	
+				for i in p7zip-full p7zip-rar rar zip 
+
+				do
+				     InstallSoftwareFromRepo $i
+				done
 				;;
 
 			5)
-				#Install git
-				echo "Installing Git, please congiure git later..."
-				InstallSoftwareFromRepo git -y
-				;;
+				# Install games from native repositories... 
+				echo -e $YELLOW"--- OEM Selection of Quality Games..." $ENDCOLOR
+				for i in dreamchess supertuxkart 0ad dosbox armagetronad \
+					 warzone2100 mesa-utils:i386 openarena assaultcube marsshooter
+				do
+				     InstallSoftwareFromRepo $i
+				done
+				# Install Valves Steam Client for gaming. 
+				dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+				# Install additional quality games from Flathub
+				flatpak install flathub com.moddb.TotalChaos -y				;;
 			6)
-				#Composer
-				echo "Installing Composer"
-				EXPECTED_SIGNATURE=$(wget https://composer.github.io/installer.sig -O - -q)
-				php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-				ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
-
-				if [ "$EXPECTED_SIGNATURE" = "$ACTUAL_SIGNATURE" ]
-				  then
-				php composer-setup.php --quiet --install-dir=/bin --filename=composer
-				RESULT=$?
-				rm composer-setup.php
-				else
-				  >&2 echo 'ERROR: Invalid installer signature'
-				  rm composer-setup.php
-				fi
+				echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
+				# Loop through each item in this list of software and perform an install 
+				# using the relevant packaging system. 
+				for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
+					vim vim-scripts gufw variety
+				do
+				     InstallSoftwareFromRepo $i
+				done
 				;;
 			7)
-				#JDK 8
-				echo "Installing JDK 8"
 				# Special case for installing Oracle Java...
-				echo -e $YELLOW"--- Adding Oracle repository..." $ENDCOLOR
+				echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
 				# Add the Oracle repository and pre-answer the licens questions.
 				add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
 				echo --- Installing java-8...
 				echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-				apt-get -y -qq --allow-change-held-packages --ignore-missing install oracle-java8-installer oracle-java8-set-default
+				InstallSoftwareFromRepo oracle-java8-installer 
+				InstallSoftwareFromRepo	oracle-java8-set-default
+				oracle-java8-set-default
 				;;
 			8)
 				#Bleachbit
+				echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
 				echo "Installing BleachBit"
 				InstallSoftwareFromRepo bleachbit 
 				;;
 			9)
-				#Ubuntu Restricted Extras
-				echo "Installing Ubuntu Restricted Extras"
 				echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 				# Auto accept microsoft corefonts eula
 				echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
@@ -216,13 +206,11 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 				InstallSoftwareFromRepo vlc
 				;;
 			11)
-				#Unity tweak tool
-				echo "Installing Unity Tweak Tool"
-				InstallSoftwareFromRepo unity-tweak-tool
+				# Tweak tool
+				echo -e $YELLOW"--- Install Installing Gnome Tweak Tool..." $ENDCOLOR
+				InstallSoftwareFromRepo gnome-tweak-tool
 				;;
 			12)
-
-				#Chrome
 				# Special case for installing Google Chrome
 				echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
 				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 
@@ -233,69 +221,59 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 				dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 
 				;;
 			14)
-
 				#Skype for Linux
 				echo "Installing Skype For Linux"
 				snap install skype --classic  2>>$_ERRLOGFILE
 				;;
 			15)
-
-				#Paper GTK Theme
-				echo "Installing Paper GTK Theme"
-				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-gtk-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-icon-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				;;
-			16)
-				#Arc Theme
-				echo "Installing Arc Theme"
-				add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo arc-theme
-				;;
-			17)
-
-				#Arc Icons
-				echo "Installing Arc Icons"
-				add-apt-repository ppa:noobslab/icons -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo arc-icons
-				;;
-			18)
-				#Numix Icons
-				echo "Installing Numic Icons"
-				apt-add-repository ppa:numix/ppa -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo numix-icon-theme numix-icon-theme-circle 
-				;;
-			19)	
 				# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 				echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
 				FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
 				URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
 				dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
-
 				;;
-			20)
+			16)
+				# Install Dropbox
+				echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
+				InstallSoftwareFromRepo nautilus-dropbox
+				;;
+			17)
+				# Special case for installing Google Chrome
+				echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+				#Paper GTK Theme
+				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo paper-gtk-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo paper-icon-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo arc-theme
+				add-apt-repository ppa:noobslab/icons -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo arc-icons
+				apt-add-repository ppa:numix/ppa -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo numix-icon* 
+				InstallSoftwareFromRepo adwaita*
+				;;
+			18)
 				# Special case for installing Openshot video editor
 				echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
 				add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				;;
-			21)
+			19)
 				echo "Installing NetSpeed Indicator"
 				apt-add-repository ppa:fixnix/netspeed -y1 >>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				InstallSoftwareFromRepo indicator-netspeed-unity
 				;;
-			22)
+			20)
 				echo "Generating SSH keys"
 				ssh-keygen -t rsa -b 4096
 				;;
-			23)
+			21)
 				# Special case for installing VirtualBox
 				echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 				echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
@@ -313,7 +291,7 @@ options=(1 "Base OEM Software" on    # any option can be set to default to "on"
 				    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				fi
 				;;
-			24)	
+			22)	
 				echo "Applying OEM Configuration..."
 				#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 				#::::::::::::::                                          ::::::::::::::::::::::
