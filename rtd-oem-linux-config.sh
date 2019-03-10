@@ -74,7 +74,7 @@ up2date
 check_dependencies dialog
 
 # List Options to be available for choice in the RTD System Configurator...
-cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16 --timeout 20 )
+cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --timeout 20 --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16 )
 options=(1 "Base RTD OEM Productivity Software" on    
          2 "Developer Software: LAMP Stack" off
          3 "Developer Software: IDE Tools and Compilers" off
