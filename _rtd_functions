@@ -207,7 +207,7 @@ function is_software_package_installed ()
         if hash yum 2>/dev/null; then
 	        rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
         elif hash apt 2>/dev/null; then
-	        dpkg -l "$1"|tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
+	        dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
         elif hash zypper 2>/dev/null; then
                 zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
 	else
