@@ -332,7 +332,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 					rm lspictures.txt
 				# Set the default wallpaper... 
 					gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-
+				# Add proffessional and crisp looking icons...
+					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Configure Gnome settings for current user.
 					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
@@ -362,8 +363,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 					#Gnome Shell Theming
 					gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Dark'
 					gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
-					gsettings set org.gnome.desktop.interface icon-theme 'Pop'
-					gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
+					gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+					#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
 					#Set SCP as Monospace (Code) Font
 					gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
