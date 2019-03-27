@@ -4,4 +4,4 @@ Here you will find some scripts for windows and Linux that I have created and/or
 
 It would make me happy if any modification are shared back. 
 
-![RTD Update Screenshot](RTD-Build/Media_files/Scr1.png?raw=true "Executing the Script")
+![RTD Update Screenshot](Media_files/Scr1.png?raw=true "Executing the Script")
