@@ -301,3 +301,9 @@ function check_dependencies ()
 
 # make prompt colors avaiable to any script that includes this function lbrary.
 set_colors
+
+# List all functions loaded
+echo -e $BLUE "RTD Functions Loaded:"
+
+declare -F | awk '{print $NF}' | sort | egrep -v "^_" 
+
