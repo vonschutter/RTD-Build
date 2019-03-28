@@ -141,6 +141,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				     InstallSoftwareFromRepo $i
 				done
 				snap install atom --classic  2>>$_ERRLOGFILE
+				snap install gitkraken 2>>$_ERRLOGFILE
 				;;
 				
 			4)
