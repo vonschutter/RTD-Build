@@ -104,7 +104,7 @@ ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
-
+goto eof
 
 :PS1
 :: get stage 2 and run it...
