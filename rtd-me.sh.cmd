@@ -104,7 +104,7 @@ ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
-
+goto end
 
 :PS1
 :: get stage 2 and run it...
@@ -119,7 +119,7 @@ powershell -Command "Invoke-WebRequest https://github.com/vonschutter/RTD-Build/
 :: Pre windows 7 instruction go here (except vista)... 
 echo executing PRE Windows 7 instructions... 
 
-:goto end
+goto end
 
 
 :ExtractAndRunStage2
@@ -130,22 +130,24 @@ echo executing PRE Windows 7 instructions...
 rtd-oem-windows-config.cmd
 
 
-:goto end
+goto end
 
 
 :DispErr
 	set _ERRMSG=%*
 	@title %0 -- !!%_ERRMSG%!!
-	echo ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-	echo º                            Message                                        º
-	echo ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+	echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	echo ::                            Message                                          ::
+	echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	echo.
 	echo.
 	echo        %_ERRMSG%
 	echo        Presently I know what to do for Linux, and Windows 7 and beyond...
 	echo.
-	echo º                                                                           º
-	echo ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+	echo ::                                                                             ::
+	echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 goto eof
 
 
