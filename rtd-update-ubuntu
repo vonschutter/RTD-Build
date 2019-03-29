@@ -1,6 +1,6 @@
 #!/bin/bash
 PUBLICATION="RuntimeData Update Manager for Ubuntu"
-VERSION="1.11"
+VERSION="1.12"
 #
 #	RTD Ubuntu + derivatives software update script
 #   	Stephan, Sweden
@@ -20,7 +20,7 @@ VERSION="1.11"
 ##                       Set Environment                                 ##
 ##                                                                       ##
 ###########################################################################
-#
+# Test comment...
 # Set colors for prompting on screen.
 	YELLOW="\033[1;33m"
 	RED="\033[1;31m"
@@ -43,12 +43,12 @@ echo This tool makes it simple to update software from all channels
 echo available on the system at once. It will update via the native
 echo -e "package manager as well as newer formats like $YELLOW"snap"$ENDCOLOR and $YELLOW"flatpak"$ENDCOLOR..."
 echo " " 
-echo This update script supports the following features:
+echo This update script supports the following instructions:
 echo " "
-echo " - Default option: Update via all configured channels."	
-echo " - Self-update: pass the parameter "update" to get the latest version. "
-echo " - Self-setup: pass the parameter "setup" to make sure that you are using "
-echo "   all software channels; apt (default), "snap" and "flatpack". "
+echo -e " - $YELLOW"Default"$ENDCOLOR : Just running this script will update via all configured channels."	
+echo -e " - $YELLOW"update"$ENDCOLOR :  Parameter "update" will update the updater to the latest version. "
+echo -e " - $YELLOW"setup"$ENDCOLOR :   Parameter "setup" make sure that you are using all software channels "
+echo -e "      "
 echo " "
 
 if [ "$1" == "update" ]; then 

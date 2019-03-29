@@ -336,6 +336,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				# Add proffessional and crisp looking icons...
 					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Configure Gnome settings for current user.
+				        sudo $USER
 					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
 
@@ -357,7 +358,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 					###
 					# Theming and GNOME Options
 					###
-
+                                        
 					# Tilix Dark Theme
 					gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 
@@ -412,7 +413,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 					gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
 					gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 					gsettings set org.gnome.nautilus.list-view use-tree-view true
-
+                                        exit
 					# Transfer settings for all users... 
 					cp -r ~/.* /etc/skel/
 
