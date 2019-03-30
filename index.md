@@ -1,28 +1,15 @@
-## Welcome to GitHub Pages
+## Enroll Your Computer
+
+Enrolling your computer in the Runtime Data management will allow your computer to be managed effortlessly. You will no longer need to manage software installs or security. :) 
 
 You can use the [editor on GitHub](https://github.com/vonschutter/RTD-Build/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### How to enroll...
+Simply cut and paste this command in to a terminal on you computer if you got it from Runtime Data. 
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
 
+wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd -O - |sudo bash 
+
+```
+This will add your comuter as a mobil device and give you the option to add lots of software bundles. 
