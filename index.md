@@ -9,7 +9,7 @@ Simply cut and paste this command in to a terminal on you computer if you got it
 
 ```
 
-wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd -O - |sudo bash 
+wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd -O - |bash 
 
 ```
 This will add your comuter as a mobile device and give you the option to add lots of software bundles. 
