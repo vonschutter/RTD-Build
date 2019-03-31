@@ -314,16 +314,16 @@ options=(1 "Base RTD OEM Productivity Software" on
 				<wallpapers>" > mybackgrounds.xml
 				# Registering all pictures in $DIRECTORY
 
-				        for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
-				        echo "<wallpaper>
-				        <name>$i</name>
-				        <filename>$i</filename>
-				          <options>stretched</options>
-				            <pcolor>#8f4a1c</pcolor>
-				            <scolor>#8f4a1c</scolor>
-				            <shade_type>solid</shade_type>
-				          </wallpaper>" >> mybackgrounds.xml
-				        done
+				for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
+				echo "<wallpaper>
+				<name>$i</name>
+				<filename>$i</filename>
+				  <options>stretched</options>
+				    <pcolor>#8f4a1c</pcolor>
+				    <scolor>#8f4a1c</scolor>
+				    <shade_type>solid</shade_type>
+				  </wallpaper>" >> mybackgrounds.xml
+				done
 
 				# creating the footer
 					echo "</wallpapers>" >> mybackgrounds.xml
@@ -333,12 +333,13 @@ options=(1 "Base RTD OEM Productivity Software" on
 					rm lspictures.txt
 				# Set the default wallpaper... 
 					gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-
+				# Add proffessional and crisp looking icons...
+					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Configure Gnome settings for current user.
-				        su $SUDO_USER
+				        sudo $USER
 					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
-                                        InstallSoftwareFromRepo tuned
+
 					sudo systemctl enable --now tuned
 					sudo tuned-adm profile balanced
 					#Performance:
@@ -361,10 +362,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 					# Tilix Dark Theme
 					gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 
-					# Gnome Shell Theming
-					# Add proffessional and crisp looking icons...
-					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
-					gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
+					#Gnome Shell Theming
+					gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Dark'
 					gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
 					gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
 					#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
@@ -373,7 +372,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 					gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
 
 					#Set Extensions for gnome
-					gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net']"
+					gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
 
 					#Better Font Smoothing
 					gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
@@ -416,7 +415,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 					gsettings set org.gnome.nautilus.list-view use-tree-view true
                                         exit
 					# Transfer settings for all users... 
-					cp -r /home/$SUDO_USER/.* /etc/skel/
+					cp -r ~/.* /etc/skel/
 
 				;;
 		esac
