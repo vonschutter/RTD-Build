@@ -333,11 +333,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 					rm lspictures.txt
 				# Set the default wallpaper... 
 					gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-
-				# Configure Gnome settings for current user.
-				        su $SUDO_USER
-					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
-					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
+					
+				# Power managment profile
                                         InstallSoftwareFromRepo tuned
 					sudo systemctl enable --now tuned
 					sudo tuned-adm profile balanced
@@ -353,11 +350,20 @@ options=(1 "Base RTD OEM Productivity Software" on
 					# sudo systemctl enable --now libvirtd
 					# Management of local/remote system(s) - available via http://localhost:9090
 					# sudo systemctl enable --now cockpit.socket
+					
+					
+				# Configure Gnome for OEM look and feel. This is completely as desired. 
+				# These setings will then be copied to the "/etsc/skel" directory where user templates
+				# are stored. This will allow new users to get the same themes and settings as the 
+				# current user. This should likely only be done right after a PC has been installed
+				# otherwise all user configuration settings will be trasferred to any user 
+			        # subsequently created.  
+                                function set_user_gnome_ui ()
+                                {
+					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
 
-					###
-					# Theming and GNOME Options
-					###
-                                        
+                                       
 					# Tilix Dark Theme
 					gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 
@@ -414,9 +420,14 @@ options=(1 "Base RTD OEM Productivity Software" on
 					gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
 					gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 					gsettings set org.gnome.nautilus.list-view use-tree-view true
-                                        exit
+                                        }
+                                        
+                                        export -f set_user_gnome_ui;
+                                        echo "Modifying setings for: ´/usr/bin/whoami´"
+                                        sudo -u $SUDO_USER -c "set_user_gnome_ui"
+                                        
 					# Transfer settings for all users... 
-					cp -r /home/$SUDO_USER/.* /etc/skel/
+					cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
 
 				;;
 		esac
