@@ -376,7 +376,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 					#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
 					#Set SCP as Monospace (Code) Font
-					gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+					# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
 
 					#Set Extensions for gnome
 					gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net']"
@@ -424,7 +424,7 @@ options=(1 "Base RTD OEM Productivity Software" on
                                         
                                         export -f set_user_gnome_ui;
                                         echo "Modifying setings for: ´/usr/bin/whoami´"
-                                        sudo -u $SUDO_USER -c "set_user_gnome_ui"
+                                        su -l -u $SUDO_USER -c "set_user_gnome_ui & exit"
                                         
 					# Transfer settings for all users... 
 					cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
