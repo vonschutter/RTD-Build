@@ -109,8 +109,8 @@ exit $?
 	::
         ECHO Welcome to %COMSPEC%
         ECHO This is a windows script!
-	setlocal &  pushd %~dp0 
-	%debug%
+	:: setlocal &  pushd %~dp0 
+	:: %debug%
 
 :SETINGS
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -118,12 +118,12 @@ exit $?
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	::
 	set temp=c:\rtd\temp
-	set _LOG=%temp%\%_IN1:~1,100%\%_ME:~1,30%.log
-	set _P=q0
-	set _LOGDIR=c:\rtd\log
+        if not exits %temp% md %temp%
+        set _LOGDIR=c:\rtd\log
+        if not exists %_LOGDIR% md %_OGDIR%
         set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master
         set _STAGE2FILE=rtd-oem-windows-config.cmd
-        echo _STAGE2LOC\_STAGE2FILE
+        echo %_STAGE2LOC%\%_STAGE2FILE%
 
 
 :GetInterestingThigsToDoOnThisSystem
