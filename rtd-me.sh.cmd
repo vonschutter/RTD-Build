@@ -68,6 +68,7 @@ exit $?
 # Make sure to exit no matter what...
 exit $?
 :CMDSCRIPT
+@echo off
 :: --    --
 :: Windows CMD Shell Script Section
 ::
@@ -88,54 +89,100 @@ exit $?
 :: 	call <path>\command.cmd or command...
 ::
 ::
+:: The preferred method of coding well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7 
+:: 
+:: Example 1
+::
+:: for %%d in (%_dependencies%) do (call :VfyPath %%d)
+::	if not {%RET%}=={0} (set _ERRMSG="An unrecoverable error has occured..." & call :DispErr !
+::			) else (
+::			goto MAIN)
+:: endlocal & goto eof
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-ECHO Welcome to %COMSPEC%
-ECHO This is a windows script!
+
+:INIT 
+	:::::::::::::::::::::::::::::::::::::::::::::::::::
+	::	Script startup components; tasks that always 
+	::	need to be done when the initializes. 
+	::
+        ECHO Welcome to %COMSPEC%
+        ECHO This is a windows script!
+	setlocal &  pushd %~dp0 
+	%debug%
+
+:SETINGS
+	::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	::  ***             Settings               ***      ::
+	::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	::
+	set temp=c:\rtd\temp
+	set _LOG=%temp%\%_IN1:~1,100%\%_ME:~1,30%.log
+	set _P=q0
+	set _LOGDIR=c:\rtd\log
+        set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master
+        set _STAGE2FILE=rtd-oem-windows-config.cmd
+        echo _STAGE2LOC\_STAGE2FILE
+
 
 :GetInterestingThigsToDoOnThisSystem
-:: Use power shell to grab the nest staage of his script from a common server...
-@echo off
-ver | find "5.1" > nul && ( set OSV=XP&  call :CMD1 )
-ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr Vista is not supported & goto end )
-ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
-ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
-ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
-ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
-ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
-goto end
+        :: Given that Microsoft windows hat been detected and the CMD chell portion of this script is executed,
+        :: the second stage script must be downloaded from an online location. Depending on the version of windows 
+        :: there are different methods available to get and run remote files. All versions of windows do not neccesarily 
+        :: support powershell scripting. Therefore the base of this activity is coded in simple command CMD.EXE shell scripting
+        :: 
+        :: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found. 
+        :: In this case it is easier to manage a straight table than a for loop or array: 
+
+        ver | find "5.1" > nul && ( set OSV=XP&  call :CMD1 )
+        ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr Vista is not supported & goto end )
+        ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
+        ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
+        ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
+        ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
+        ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
+        goto end
 
 
 :PS1
-:: get stage 2 and run it...
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
-	call :ExtractAndRunStage2
-goto end
+        :: get stage 2 and run it...
+        powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
+                call :ExtractAndRunStage2
+        goto end
 
 
 :PS2
-:: get stage 2 and run it...
-powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
-	call :ExtractAndRunStage2
-goto end
+        :: get stage 2 and run it...
+        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
+                call :ExtractAndRunStage2
+        goto end
 
 
 :CMD1
-:: Pre windows 7 instruction go here (except vista)... 
-echo executing PRE Windows 7 instructions... 
+        :: Pre windows 7 instruction go here (except vista)... 
+        echo executing PRE Windows 7 instructions... 
 
-goto end
+        goto end
 
 
 :ExtractAndRunStage2
-:: Extract the stage 2 och RTD OEM configuration
-::
-::
+        :: Extract the stage 2 och RTD OEM configuration
+        ::
+        ::
 
-	rtd-oem-windows-config.cmd
+                rtd-oem-windows-config.cmd
 
-goto end
+        goto end
+
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::                                          ::::::::::::::::::::::
+::::::::::::::            ERROR handling Below          ::::::::::::::::::::::
+::::::::::::::                                          ::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 
 
 :DispErr
