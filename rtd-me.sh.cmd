@@ -106,17 +106,20 @@ ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
 ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
 goto end
 
+
 :PS1
 :: get stage 2 and run it...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
-rtd-oem-windows-config.cmd
+	call :ExtractAndRunStage2
 goto end
+
 
 :PS2
 :: get stage 2 and run it...
 powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
-rtd-oem-windows-config.cmd
+	call :ExtractAndRunStage2
 goto end
+
 
 :CMD1
 :: Pre windows 7 instruction go here (except vista)... 
@@ -130,8 +133,7 @@ goto end
 ::
 ::
 
-rtd-oem-windows-config.cmd
-
+	rtd-oem-windows-config.cmd
 
 goto end
 
