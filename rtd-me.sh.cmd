@@ -118,11 +118,12 @@ exit $?
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	::
 	set temp=c:\rtd\temp
-        if not exits %temp% md %temp%
-        set _LOGDIR=c:\rtd\log
-        if not exists %_LOGDIR% md %_OGDIR%
+        ::if not exit %temp% md %temp%
+        ::set _LOGDIR=c:\rtd\log
+        ::if not exist %_LOGDIR% md %_OGDIR%
         set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master
         set _STAGE2FILE=rtd-oem-windows-config.cmd
+	echo Staget 2 file is located at: 
         echo %_STAGE2LOC%\%_STAGE2FILE%
 
 
@@ -135,28 +136,32 @@ exit $?
         :: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found. 
         :: In this case it is easier to manage a straight table than a for loop or array: 
 
-        ver | find "5.1" > nul && ( set OSV=XP&  call :CMD1 )
-        ver | find "6.0" > nul && ( set OSV=vista&  call :DispErr Vista is not supported & goto end )
-        ver | find "6.1" > nul && ( set OSV=win7&  call :PS1 )
-        ver | find "6.2" > nul && ( set OSV=win8&  call :PS2 )
-        ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
-        ver | find "6.3" > nul && ( set OSV=win8&  call :PS2 )
-        ver | find "10.0" > nul && ( set OSV=win10&  call :PS2 )
+        ver | find "5.1" > nul && ( set OSV=XP& goto CMD1 )
+        ver | find "6.0" > nul && ( set OSV=vista& call :DispErr Vista is not supported  )
+        ver | find "6.1" > nul && ( set OSV=win7& goto PS1 )
+        ver | find "6.2" > nul && ( set OSV=win8& goto PS2 )
+        ver | find "6.3" > nul && ( set OSV=win8& goto PS2 )
+        ver | find "6.3" > nul && ( set OSV=win8& goto PS2 )
+        ver | find "10.0" > nul && ( set OSV=win10& goto PS2 )
         goto end
 
 
 :PS1
         :: get stage 2 and run it...
-        powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
+		echo Fetching %_STAGE2FILE%...
+        powershell -Command "(New-Object Net.WebClient).DownloadFile('%_STAGE2LOC%\%_STAGE2FILE%', '%_STAGE2FILE%')"
                 rtd-oem-windows-config.cmd
         goto end
 
 
 :PS2
         :: get stage 2 and run it...
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
+		echo fetching %_STAGE2FILE%...
+        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
                 rtd-oem-windows-config.cmd
         goto end
+
+
 
 
 :CMD1
