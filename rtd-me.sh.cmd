@@ -148,14 +148,14 @@ exit $?
 :PS1
         :: get stage 2 and run it...
         powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd', 'rtd-oem-windows-config.cmd')"
-                call :ExtractAndRunStage2
+                rtd-oem-windows-config.cmd
         goto end
 
 
 :PS2
         :: get stage 2 and run it...
         powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest https://github.com/vonschutter/RTD-Build/raw/master/rtd-oem-windows-config.cmd -OutFile rtd-oem-windows-config.cmd"
-                call :ExtractAndRunStage2
+                rtd-oem-windows-config.cmd
         goto end
 
 
@@ -165,15 +165,6 @@ exit $?
 
         goto end
 
-
-:ExtractAndRunStage2
-        :: Extract the stage 2 och RTD OEM configuration
-        ::
-        ::
-
-                rtd-oem-windows-config.cmd
-
-        goto end
 
 
 
