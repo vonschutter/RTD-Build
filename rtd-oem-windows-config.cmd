@@ -32,7 +32,7 @@
         set _STAGE2FILE=InstallerHook.exe
 
 
-@echo Cinfiguring windows with the RTD cusomizations...
+@echo Configuring windows with the RTD cusomizations...
     powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
     InstallerHook.exe
 
