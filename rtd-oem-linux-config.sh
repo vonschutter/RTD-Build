@@ -120,6 +120,11 @@ options=(1 "Base RTD OEM Productivity Software" on
 				snap install screencloudplayer  2>>$_ERRLOGFILE
 				snap install signal-desktop 2>>$_ERRLOGFILE
 				snap install vidcutter 2>>$_ERRLOGFILE
+				snap install telegram-desktop 2>>$_ERRLOGFILE
+				snap install dosbox-x  2>>$_ERRLOGFILE
+				snap install simplenote 2>>$_ERRLOGFILE
+				snap install tusk 2>>$_ERRLOGFILE
+				snap install zenkit 2>>$_ERRLOGFILE
 				;;
 
 			2)
@@ -142,6 +147,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				done
 				snap install atom --classic  2>>$_ERRLOGFILE
 				snap install gitkraken 2>>$_ERRLOGFILE
+				snap install sublime-text --classic 2>>$_ERRLOGFILE
 				;;
 				
 			4)
@@ -225,6 +231,7 @@ options=(1 "Base RTD OEM Productivity Software" on
 				#Skype for Linux
 				echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
 				snap install skype --classic  2>>$_ERRLOGFILE
+				snap install viber-mtd
 				;;
 			15)
 				# Special case for installing MEGA nz file sync utility (better than Drop Box)...
@@ -251,8 +258,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 				#Paper GTK Theme
 				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-gtk-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-icon-theme -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo paper-gtk-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
+				InstallSoftwareFromRepo paper-icon-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
 				add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				InstallSoftwareFromRepo arc-theme
@@ -276,6 +283,8 @@ options=(1 "Base RTD OEM Productivity Software" on
 				snap install spotify  2>>$_ERRLOGFILE
 				snap install picard  2>>$_ERRLOGFILE
 				snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
+				snap install winds
+	
 				;;
 			20)
 				echo "Generating SSH keys"
