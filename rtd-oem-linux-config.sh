@@ -241,6 +241,13 @@ options=(1 "Base RTD OEM Productivity Software" on
 			17)
 				# Special case for installing Google Chrome
 				echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+				InstallSoftwareFromRepo gnome-shell-extension-appindicator
+				InstallSoftwareFromRepo gnome-shell-extension-suspend-button gnome-shell-extension-log-out-button 
+				InstallSoftwareFromRepo gnome-shell-extension-tilix-dropdown
+				InstallSoftwareFromRepo gnome-shell-extension-multi-monitors 
+				InstallSoftwareFromRepo gnome-shell-extension-caffeine
+				InstallSoftwareFromRepo gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers
+				InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel gnome-shell-extension-dashtodock  
 				#Paper GTK Theme
 				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
 				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
