@@ -125,6 +125,14 @@ options=(1 "Base RTD OEM Productivity Software" on
 				snap install simplenote 2>>$_ERRLOGFILE
 				snap install tusk 2>>$_ERRLOGFILE
 				snap install zenkit 2>>$_ERRLOGFILE
+				wget --show-progress http://kdl.cc.ksosoft.com/wps-community/download/8392/wps-office_11.1.0.8392_amd64.deb -P /opt/rtd/cache/
+				dpkg -i /opt/rtd/cache/wps*
+				wget --show-progress "https://mega.nz/#!DwoUBAJQ!2g5gKBrjT_Evs80LGMKT-a2bFmo_vaVNCb3sNBo2SZ8" -P /opt/rtd/cache/
+				dpkg -i /opt/rtd/cache/mint*.deb
+				wget --show-progress "https://mega.nz/#!XtpgECJS!tWpTGTi1iOfI78mI1CzMEGOOoCGL8MbP917fyjYd8yA" -P /opt/rtd/cache/
+				mkdir -p /usr/share/fonts/truetype/msttcorefonts
+				7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
+
 				;;
 
 			2)
