@@ -4,22 +4,30 @@ cls
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
-#::             RTD System System Managment Bootstrap Script
+echo     -        RTD System System Managment Bootstrap Script      -
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author:   	Stephan S. & Nate B. Buffalo Center, IA
 #:: Version 1.00
 #::
 #::
-#:: Purpose: The purpose of the script is to decide what scripts to dowload based 
-#::          on the host OS found, works with both Windows, MAC  and Linux systems. 
+#:: Purpose: 	The purpose of the script is to decide what scripts to download based 
+#::          	on the host OS found; works with both Windows, MAC and Linux systems. 
+#::		The focus of this script is to be compatible enough that it could be run on any 
+#::		system and compete it's job. In this case it is simply to identify the OS
+#::		and get the appropriate script files to run on the system in question;
+#::		In its original configuration this bootstrap script was used to install and 
+#::		configure software appropriate for the system in question. It accomplishes this 
+#::		by using the idiosyncrasies of the default scripting languages found in 
+#::		the most popular operating systems around *NIX (MAC, Linux, BSD etc.) and 
+#::		CMD (Windows NT, 2000, 2003, XP, Vista, 8, and 10. 
 #::
-#::
-#:: This system configuration and installation script was originally developed
-#:: for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
-#:: was to install and/or configure Ubuntu, Zorin, or Microsoft OS PC's. This OEM and store nolonger
-#:: exists as its owner has passed away. This script is shared in the hopes that
-#:: someone will find it usefull.
+#:: 
+#:: Background: This system configuration and installation script was originally developed
+#:: 		for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
+#:: 		was to install and/or configure Ubuntu, Zorin, or Microsoft OS PC's. This OEM and store nolonger
+#:: 		exists as its owner has passed away. This script is shared in the hopes that
+#:: 		someone will find it usefull.
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -62,14 +70,16 @@ exit $?
 
 
 
-
+# -----------------------------------------------------------------------------------------------------------------------
 # Anything after this exit statment below will be dangerous and meaningless
 # command syntax to POSIX based systems...
 # Make sure to exit no matter what...
 exit $?
 :CMDSCRIPT
 @echo off
-:: --    --
+echo     -        RTD System System Managment Bootstrap Script      -
+::
+::
 :: Windows CMD Shell Script Section
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -77,7 +87,7 @@ exit $?
 :: Variables and Assignments
 :: Passed From CONSOLE!
 ::		%0 		-> %Scriptname%
-:: Common TS
+:: 		Common TS
 ::		%DEBUG% 	-> 1 value to turn on tracing
 ::		%ECHO% 		-> On Value to turn on echo
 ::		%RET% 		-> Argument Passing Value
@@ -90,7 +100,12 @@ exit $?
 ::
 ::
 :: The preferred method of coding well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7 
-:: 
+:: This is to ensure a secure and controlled way to execute components in the script. This may be an old way
+:: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more poserfull 
+:: scripting languages are available. These should be used where appropriate in the stage 2 of this process. 
+:: This bootstrap sctipt is intended for compatibility and this section therefore focuses on Windows CMD as this
+:: works in all earlite 32 and 64 bit versions of Windows. 
+::
 :: Example 1
 ::
 :: for %%d in (%_dependencies%) do (call :VfyPath %%d)
@@ -128,7 +143,7 @@ exit $?
 
 
 :GetInterestingThigsToDoOnThisSystem
-        :: Given that Microsoft windows hat been detected and the CMD chell portion of this script is executed,
+        :: Given that Microsoft Windows has been detected and the CMD chell portion of this script is executed,
         :: the second stage script must be downloaded from an online location. Depending on the version of windows 
         :: there are different methods available to get and run remote files. All versions of windows do not neccesarily 
         :: support powershell scripting. Therefore the base of this activity is coded in simple command CMD.EXE shell scripting
@@ -136,13 +151,28 @@ exit $?
         :: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found. 
         :: In this case it is easier to manage a straight table than a for loop or array: 
 
-        ver | find "5.1" > nul && goto CMD1 
+	:: DOS Based versions of Windows: 
+        :: ver | find "4.0" > nul && goto CMD1 	rem Windows 95
+        :: ver | find "4.10" > nul && goto CMD1 rem Windows 98
+        :: ver | find "4.90" > nul && goto CMD1	rem Windows ME
+	
+	:: Windows 32 and 64 Bit versions:
+	ver | find "NT 4.0" > nul && call :CMD1 Windows NT 4.0
+	ver | find "5.0" > nul && call :CMD1 Windows 2000
+        ver | find "5.1" > nul && call :CMD1 Windows XP 
+	ver | find "5.2" > nul && call :CMD1 Windows XP 64 Bit
         ver | find "6.0" > nul && call :DispErr Vista is not supported!!!  
         ver | find "6.1" > nul && call :PS1 Windows 7
         ver | find "6.2" > nul && call :PS2 Windows 8
         ver | find "6.3" > nul && call :PS2 Windows 8
         ver | find "6.3" > nul && call :PS2 Windows 8
         ver | find "10.0" > nul && call :PS2 Windows 10
+
+	:: Windows Server OS Versions:
+	ver | find "NT 6.2" > nul && call :PS2 Windows Server 2012
+	ver | find "NT 6.3" > nul && call :PS2 Windows Server 2012 R2
+	ver | find "NT 10.0" > nul && call :PS2 Windows Server 2016 and up... 
+	
         goto end
 
 
@@ -176,7 +206,7 @@ exit $?
 
 :CMD1
         :: Pre windows 7 instruction go here (except vista)... 
-	:: Windows NT, and 2000 etc. do not have powershell and must find a different way to 
+	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to 
 	:: fetch a script over the internet and execute it. 
         echo executing PRE Windows 7 instructions... 
 
