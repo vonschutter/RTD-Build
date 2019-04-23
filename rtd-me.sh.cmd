@@ -136,29 +136,39 @@ exit $?
         :: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found. 
         :: In this case it is easier to manage a straight table than a for loop or array: 
 
-        ver | find "5.1" > nul && ( set OSV=XP& goto CMD1 )
-        ver | find "6.0" > nul && ( set OSV=vista& call :DispErr Vista is not supported  )
-        ver | find "6.1" > nul && ( set OSV=win7& goto PS1 )
-        ver | find "6.2" > nul && ( set OSV=win8& goto PS2 )
-        ver | find "6.3" > nul && ( set OSV=win8& goto PS2 )
-        ver | find "6.3" > nul && ( set OSV=win8& goto PS2 )
-        ver | find "10.0" > nul && ( set OSV=win10& goto PS2 )
+        ver | find "5.1" > nul && goto CMD1 
+        ver | find "6.0" > nul && call :DispErr Vista is not supported!!!  
+        ver | find "6.1" > nul && call :PS1 Windows 7
+        ver | find "6.2" > nul && call :PS2 Windows 8
+        ver | find "6.3" > nul && call :PS2 Windows 8
+        ver | find "6.3" > nul && call :PS2 Windows 8
+        ver | find "10.0" > nul && call :PS2 Windows 10
         goto end
 
 
 :PS1
-        :: get stage 2 and run it...
-		echo Fetching %_STAGE2FILE%...
+        :: Procedure to get the second stage in Windows 7. Windows 7, by default has a different version of 
+	:: PowerShell installed. Therefore a slightly different syntax must be used. 
+	:: get stage 2 and run it...
+	echo Found %*
+	echo Fetching %_STAGE2FILE%...
+	echo Please wait... 
         powershell -Command "(New-Object Net.WebClient).DownloadFile('%_STAGE2LOC%\%_STAGE2FILE%', '%_STAGE2FILE%')"
-                rtd-oem-windows-config.cmd
+		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Faile to get stage 2!...)
+		rtd-oem-windows-config.cmd
         goto end
 
 
 :PS2
+	:: Precedure to get the second stage configuration script in all version of windows after 7.
+	:: These version of windows hae a more modern version of PowerShell. 
         :: get stage 2 and run it...
-		echo fetching %_STAGE2FILE%...
+	echo Found %*
+	echo Fetching %_STAGE2FILE%...
+	echo Please wait... 
         powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
-                rtd-oem-windows-config.cmd
+		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Faile to get stage 2!...)
+		rtd-oem-windows-config.cmd
         goto end
 
 
@@ -166,6 +176,8 @@ exit $?
 
 :CMD1
         :: Pre windows 7 instruction go here (except vista)... 
+	:: Windows NT, and 2000 etc. do not have powershell and must find a different way to 
+	:: fetch a script over the internet and execute it. 
         echo executing PRE Windows 7 instructions... 
 
         goto end
