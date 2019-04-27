@@ -23,8 +23,34 @@
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
-funcion recipie_baseapps () {
+funcion recipie_baseapps (){
+		# Add several software items that are almost alwasys used 
+		# in one way or another... 
+			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
+			# Loop through each item in this list of software and perform an install 
+			# using the relevant packaging system. 
+			for i in samba wine-stable diodon shutter \
+				gnome-twitch polari filezilla libdvdcss2 ffmpeg
+			do
+			     InstallSoftwareFromRepo $i
+			done
 
+			check_dependencies snap
+			snap install screencloudplayer  2>>$_ERRLOGFILE
+			snap install signal-desktop 2>>$_ERRLOGFILE
+			snap install vidcutter 2>>$_ERRLOGFILE
+			snap install telegram-desktop 2>>$_ERRLOGFILE
+			snap install dosbox-x  2>>$_ERRLOGFILE
+			snap install simplenote 2>>$_ERRLOGFILE
+			snap install tusk 2>>$_ERRLOGFILE
+			snap install zenkit 2>>$_ERRLOGFILE
+			wget --show-progress http://kdl.cc.ksosoft.com/wps-community/download/8392/wps-office_11.1.0.8392_amd64.deb -P /opt/rtd/cache/
+			dpkg -i /opt/rtd/cache/wps*
+			wget --show-progress "https://mega.nz/#!DwoUBAJQ!2g5gKBrjT_Evs80LGMKT-a2bFmo_vaVNCb3sNBo2SZ8" -P /opt/rtd/cache/
+			dpkg -i /opt/rtd/cache/mint*.deb
+			wget --show-progress "https://mega.nz/#!XtpgECJS!tWpTGTi1iOfI78mI1CzMEGOOoCGL8MbP917fyjYd8yA" -P /opt/rtd/cache/
+			mkdir -p /usr/share/fonts/truetype/msttcorefonts
+			7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
 }
 
 
