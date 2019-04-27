@@ -16,6 +16,12 @@
 #:: exists as its owner has passed away. This script is shared in the hopes that
 #:: someone will find it usefull.
 #::
+#:: RTD admin scrips are placed in /opt/rtd/scripts. This configuration script is mainly built to use 
+#:: functions in _rtd_functions and _rtd_recipies. 
+#::       _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
+#::       _rtd_recipies  -- contain software installation and configuration "recipies". 
+#::
+#::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
