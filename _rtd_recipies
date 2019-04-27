@@ -23,7 +23,7 @@
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
-funcion recipie_baseapps (){
+function recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
