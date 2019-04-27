@@ -43,7 +43,7 @@ echo "Attempting to detect version of POSIX based system..."
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux OS: Attempting to get instructions..."
           mkdir -p /opt/rtd/scripts
-            for i in rtd-oem-linux-config.sh _rtd_functions rtd-update-ubuntu 
+            for i in rtd-oem-linux-config.sh _rtd_functions _rtd_recipies rtd-update-ubuntu 
             do
                 # if the file to be downloaded already exists delete the exisitng one first... 
                 if [ -f "/opt/rtd/scripts/$i" ]; then
