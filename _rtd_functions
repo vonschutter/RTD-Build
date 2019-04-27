@@ -24,9 +24,7 @@
 ###########################################################################
 #
 
-
-
-
+source /opt/rtd/scripts/_rtd_recipies
 
 # Set colors for prompting on screen in human readable variables. These will be set globally
 # and can be can be used by in echo statements to modify the color of the message. 
