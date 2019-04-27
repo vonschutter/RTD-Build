@@ -1,403 +1,414 @@
+
 #!/bin/bash
+#
+#::            S O F T W A R E    R E C I P I E S 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:   	Stephan S.  Buffalo Center, IA
+#:: Version 1.01
+#::
+#::
+#::	Purpose: To define how software is added in one place. 
+#::		 Software may be downloaded an dinstalled manually, or via package manager or snaps. 
+#::		 Configuration items are also define here. 
+#::     Usage: call this file using the "source" statment in bash. Then simply invoke the relevan recipie (funclion)
+#:: 
+#::     This script is shared in the hopes that
+#::     someone will find it usefull.
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
 funcion recipie_baseapps () {
+		# Add several software items that are almost alwasys used 
+		# in one way or another... 
+			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
+			# Loop through each item in this list of software and perform an install 
+			# using the relevant packaging system. 
+			for i in samba wine-stable diodon shutter \
+				gnome-twitch polari filezilla libdvdcss2 ffmpeg
+			do
+			     InstallSoftwareFromRepo $i
+			done
 
-				echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
-				# Loop through each item in this list of software and perform an install 
-				# using the relevant packaging system. 
-				for i in samba wine-stable diodon shutter \
-					gnome-twitch polari filezilla libdvdcss2 ffmpeg
-				do
-				     InstallSoftwareFromRepo $i
-				done
-
-				echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
-				# Ensure that snap is available prior to attempting to use it. 
-				check_dependencies snap
-				snap install screencloudplayer  2>>$_ERRLOGFILE
-				snap install signal-desktop 2>>$_ERRLOGFILE
-				snap install vidcutter 2>>$_ERRLOGFILE
-				snap install telegram-desktop 2>>$_ERRLOGFILE
-				snap install dosbox-x  2>>$_ERRLOGFILE
-				snap install simplenote 2>>$_ERRLOGFILE
-				snap install tusk 2>>$_ERRLOGFILE
-				snap install zenkit 2>>$_ERRLOGFILE
-				wget --show-progress http://kdl.cc.ksosoft.com/wps-community/download/8392/wps-office_11.1.0.8392_amd64.deb -P /opt/rtd/cache/
-				dpkg -i /opt/rtd/cache/wps*
-				wget --show-progress "https://mega.nz/#!DwoUBAJQ!2g5gKBrjT_Evs80LGMKT-a2bFmo_vaVNCb3sNBo2SZ8" -P /opt/rtd/cache/
-				dpkg -i /opt/rtd/cache/mint*.deb
-				wget --show-progress "https://mega.nz/#!XtpgECJS!tWpTGTi1iOfI78mI1CzMEGOOoCGL8MbP917fyjYd8yA" -P /opt/rtd/cache/
-				mkdir -p /usr/share/fonts/truetype/msttcorefonts
-				7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
+			echo -e $YELLOW"--- Install snap apps for Productivity..." $ENDCOLOR
+			# Ensure that snap is available prior to attempting to use it. 
+			check_dependencies snap
+			snap install screencloudplayer  2>>$_ERRLOGFILE
+			snap install signal-desktop 2>>$_ERRLOGFILE
+			snap install vidcutter 2>>$_ERRLOGFILE
+			snap install telegram-desktop 2>>$_ERRLOGFILE
+			snap install dosbox-x  2>>$_ERRLOGFILE
+			snap install simplenote 2>>$_ERRLOGFILE
+			snap install tusk 2>>$_ERRLOGFILE
+			snap install zenkit 2>>$_ERRLOGFILE
+			wget --show-progress http://kdl.cc.ksosoft.com/wps-community/download/8392/wps-office_11.1.0.8392_amd64.deb -P /opt/rtd/cache/
+			dpkg -i /opt/rtd/cache/wps*
+			wget --show-progress "https://mega.nz/#!DwoUBAJQ!2g5gKBrjT_Evs80LGMKT-a2bFmo_vaVNCb3sNBo2SZ8" -P /opt/rtd/cache/
+			dpkg -i /opt/rtd/cache/mint*.deb
+			wget --show-progress "https://mega.nz/#!XtpgECJS!tWpTGTi1iOfI78mI1CzMEGOOoCGL8MbP917fyjYd8yA" -P /opt/rtd/cache/
+			mkdir -p /usr/share/fonts/truetype/msttcorefonts
+			7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
 }
 
 
 function recipie_lamp_software (){
-				echo -e $YELLOW"--- Adding Developer Software: LAMP Stack..." $ENDCOLOR
-			    	for i in apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql \
-					phpmyadmin nodejs
-				do
-				     InstallSoftwareFromRepo $i
-				done
-				echo "Cofiguring apache to run Phpmyadmin"
-				echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
-				a2enmod rewrite
-				service apache2 restart
+			echo -e $YELLOW"--- Adding Developer Software: LAMP Stack..." $ENDCOLOR
+			for i in apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql \
+				phpmyadmin nodejs
+			do
+			     InstallSoftwareFromRepo $i
+			done
+			echo "Cofiguring apache to run Phpmyadmin"
+			echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
+			a2enmod rewrite
+			service apache2 restart
 }
 
 
 function recipie_developer_software (){
-				echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
-				for i in build-essential git
-				do
-				     InstallSoftwareFromRepo $i
-				done
-				snap install atom --classic  2>>$_ERRLOGFILE
-				snap install gitkraken 2>>$_ERRLOGFILE
-				snap install sublime-text --classic 2>>$_ERRLOGFILE
+			echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
+			for i in build-essential git
+			do
+			     InstallSoftwareFromRepo $i
+			done
+			snap install atom --classic  2>>$_ERRLOGFILE
+			snap install gitkraken 2>>$_ERRLOGFILE
+			snap install sublime-text --classic 2>>$_ERRLOGFILE
 }
 
 
 function recipie_compression_tools (){
-				echo -e $YELLOW"--- OEM Comression Tools (zip, 7zip rar etc.)..." $ENDCOLOR	
-				for i in p7zip-full p7zip-rar rar zip 
+			echo -e $YELLOW"--- OEM Comression Tools (zip, 7zip rar etc.)..." $ENDCOLOR	
+			for i in p7zip-full p7zip-rar rar zip 
 
-				do
-				     InstallSoftwareFromRepo $i
-				done
+			do
+			     InstallSoftwareFromRepo $i
+			done
 }
 
 
 function recipie_games (){
-				# Install games from native repositories... 
-				echo -e $YELLOW"--- OEM Selection of Quality Games..." $ENDCOLOR
-				for i in dreamchess supertuxkart 0ad dosbox armagetronad \
-					 warzone2100 mesa-utils openarena assaultcube marsshooter
-				do
-				     InstallSoftwareFromRepo $i
-				done
-				# Install Valves Steam Client for gaming. 
-				dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
-				# Install additional quality games from Flathub
-				flatpak install flathub com.moddb.TotalChaos -y	
+			# Install games from native repositories... 
+			echo -e $YELLOW"--- OEM Selection of Quality Games..." $ENDCOLOR
+			for i in dreamchess supertuxkart 0ad dosbox armagetronad \
+				 warzone2100 mesa-utils openarena assaultcube marsshooter
+			do
+			     InstallSoftwareFromRepo $i
+			done
+			# Install Valves Steam Client for gaming. 
+			dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+			# Install additional quality games from Flathub
+			flatpak install flathub com.moddb.TotalChaos -y	
 }
 
 
 function recipie_admin_tools (){
-				echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
-				# Loop through each item in this list of software and perform an install 
-				# using the relevant packaging system. 
-				for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
-					vim vim-scripts gufw variety
-				do
-				     InstallSoftwareFromRepo $i
-				done
-				apt-add-repository ppa:fixnix/netspeed -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo indicator-netspeed-unity
+			echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
+			# Loop through each item in this list of software and perform an install 
+			# using the relevant packaging system. 
+			for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
+				vim vim-scripts gufw variety
+			do
+			     InstallSoftwareFromRepo $i
+			done
+			apt-add-repository ppa:fixnix/netspeed -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo indicator-netspeed-unity
 }
 
 
 function recipie_java (){
-				# Special case for installing Oracle Java...
-				echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
-				# Add the Oracle repository and pre-answer the licens questions.
-				add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-				echo --- Installing java-8...
-				echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-				InstallSoftwareFromRepo oracle-java8-installer 
-				InstallSoftwareFromRepo	oracle-java8-set-default
+			# Special case for installing Oracle Java...
+			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
+			# Add the Oracle repository and pre-answer the licens questions.
+			add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			echo --- Installing java-8...
+			echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+			InstallSoftwareFromRepo oracle-java8-installer 
+			InstallSoftwareFromRepo	oracle-java8-set-default
 }
 
 
 function recipie_bleachbit (){
-				#Bleachbit
-				echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
-				InstallSoftwareFromRepo bleachbit 
+			#Bleachbit
+			echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
+			InstallSoftwareFromRepo bleachbit 
 }
 
 
 function recipie_codecs (){
-				echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
-				# Auto accept microsoft corefonts eula
-				echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
-				InstallSoftwareFromRepo ubuntu-restricted-extras
+			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
+			# Auto accept microsoft corefonts eula
+			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
+			InstallSoftwareFromRepo ubuntu-restricted-extras
 }
 
 
 
 function recipie_vlc (){
-				#VLC Media Player
-				echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
-				InstallSoftwareFromRepo vlc
+			#VLC Media Player
+			echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
+			InstallSoftwareFromRepo vlc
 }
 
 function recipie_tweaktool (){
-				# Tweak tool
-				echo -e $YELLOW"--- Install Installing Gnome Tweak Tool..." $ENDCOLOR
-				InstallSoftwareFromRepo gnome-tweak-tool
+			# Tweak tool
+			echo -e $YELLOW"--- Install Installing Gnome Tweak Tool..." $ENDCOLOR
+			InstallSoftwareFromRepo gnome-tweak-tool
 }
 
 function recipie_google_chrome (){
-				# Special case for installing Google Chrome
-				echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# Special case for installing Google Chrome
+			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
+			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
 function recipie_teamviewer (){
-				#Teamviewer
-				echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
-				dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
+			#Teamviewer
+			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
+			dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
 function recipie_skype (){
-				#Skype for Linux
-				echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
-				snap install skype --classic  2>>$_ERRLOGFILE
-
-
+			#Skype for Linux
+			echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
+			snap install skype --classic  2>>$_ERRLOGFILE
 }
 
 
 function recipie_viber (){
-				snap install --edge viber-mtd 
+			snap install --edge viber-mtd 
 }
 
 
 function recipie_mega.nz (){
-				# Special case for installing MEGA nz file sync utility (better than Drop Box)...
-				echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
-				FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-				URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
-				dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
+			echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
+			FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
+			URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
+			dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
 function recipie_dropbox (){
-				# Install Dropbox
-				echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
-				InstallSoftwareFromRepo nautilus-dropbox
+			# Install Dropbox
+			echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
+			InstallSoftwareFromRepo nautilus-dropbox
 }
 
 
 function recipie_gnome_config (){
-				# Special case for installing Google Chrome
-				echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
-				InstallSoftwareFromRepo gnome-shell-extension-appindicator
-				InstallSoftwareFromRepo gnome-shell-extension-suspend-button gnome-shell-extension-log-out-button 
-				InstallSoftwareFromRepo gnome-shell-extension-tilix-dropdown
-				InstallSoftwareFromRepo gnome-shell-extension-multi-monitors 
-				InstallSoftwareFromRepo gnome-shell-extension-caffeine
-				InstallSoftwareFromRepo gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers
-				InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel gnome-shell-extension-dashtodock  
-				#Paper GTK Theme
-				add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-gtk-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo paper-icon-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
-				add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo arc-theme
-				add-apt-repository ppa:noobslab/icons -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo arc-icons
-				apt-add-repository ppa:numix/ppa -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				InstallSoftwareFromRepo numix-icon* 
-				InstallSoftwareFromRepo adwaita*
+			# Special case for installing Google Chrome
+			echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+			InstallSoftwareFromRepo gnome-shell-extension-appindicator
+			InstallSoftwareFromRepo gnome-shell-extension-suspend-button gnome-shell-extension-log-out-button 
+			InstallSoftwareFromRepo gnome-shell-extension-tilix-dropdown
+			InstallSoftwareFromRepo gnome-shell-extension-multi-monitors 
+			InstallSoftwareFromRepo gnome-shell-extension-caffeine
+			InstallSoftwareFromRepo gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers
+			InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel gnome-shell-extension-dashtodock  
+			#Paper GTK Theme
+			add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo paper-gtk-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo paper-icon-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo arc-theme
+			add-apt-repository ppa:noobslab/icons -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo arc-icons
+			apt-add-repository ppa:numix/ppa -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo numix-icon* 
+			InstallSoftwareFromRepo adwaita*
 }
 
 function recipie_openshot (){
-				# Special case for installing Openshot video editor
-				echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
-				add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
+			# Special case for installing Openshot video editor
+			echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
+			add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 function recipie_media_streamers (){
-				echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
-				snap install spotify  2>>$_ERRLOGFILE
+			echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
+			snap install spotify  2>>$_ERRLOGFILE
 
-				snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
-				snap install winds 2>>$_ERRLOGFILE
+			snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
+			snap install winds 2>>$_ERRLOGFILE
 
 }
 
 function recipie_audio_tools (){
-				snap install picard  2>>$_ERRLOGFILE
+			snap install picard  2>>$_ERRLOGFILE
 }
 
 function recipie_virtualbox (){
-				# Special case for installing VirtualBox
-				echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
-				echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
-				echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-				# Loop through each item in this list of softwar and perform an install 
-				# using the relevant packaging system. 
-				for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
-				do
-				     InstallSoftwareFromRepo $i
-				done	
-				# Ensure that the current user can use USB etc... 			
-				if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
-				    echo      $SUDO_USER already belongs to vboxusers group
-				else
-				    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				fi
+			# Special case for installing VirtualBox
+			echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
+			echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
+			echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
+			# Loop through each item in this list of softwar and perform an install 
+			# using the relevant packaging system. 
+			for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+			do
+			     InstallSoftwareFromRepo $i
+			done	
+			# Ensure that the current user can use USB etc... 			
+			if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
+			    echo      $SUDO_USER already belongs to vboxusers group
+			else
+			    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			fi
 }
 
 function recipie_OEM_config (){
-				echo "Applying OEM Configuration..."
-				#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-				#::::::::::::::                                          ::::::::::::::::::::::
-				#::::::::::::::          Desktop Settings                ::::::::::::::::::::::
-				#::::::::::::::                                          ::::::::::::::::::::::
-				#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-				# Install Wallpapers and configure Gnome to see them. ...
-				RTDCP=/opt/rtd/cache
-				mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
-				pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
+			echo "Applying OEM Configuration..."
+			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			#::::::::::::::                                          ::::::::::::::::::::::
+			#::::::::::::::          Desktop Settings                ::::::::::::::::::::::
+			#::::::::::::::                                          ::::::::::::::::::::::
+			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			# Install Wallpapers and configure Gnome to see them. ...
+			RTDCP=/opt/rtd/cache
+			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
+			pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
 
-				mkdir -p /usr/local/share/gnome-background-properties
-				DIRECTORY=/opt/rtd/Wallpaper/
-				ls $DIRECTORY > lspictures.txt
+			mkdir -p /usr/local/share/gnome-background-properties
+			DIRECTORY=/opt/rtd/Wallpaper/
+			ls $DIRECTORY > lspictures.txt
 
-				# Make a header
-				echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-				<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
-				<wallpapers>" > mybackgrounds.xml
-				# Registering all pictures in $DIRECTORY
+			# Make a header
+			echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+			<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
+			<wallpapers>" > mybackgrounds.xml
+			# Registering all pictures in $DIRECTORY
 
-				        for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
-				        echo "<wallpaper>
-				        <name>$i</name>
-				        <filename>$i</filename>
-				          <options>stretched</options>
-				            <pcolor>#8f4a1c</pcolor>
-				            <scolor>#8f4a1c</scolor>
-				            <shade_type>solid</shade_type>
-				          </wallpaper>" >> mybackgrounds.xml
-				        done
+				for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
+				echo "<wallpaper>
+				<name>$i</name>
+				<filename>$i</filename>
+				  <options>stretched</options>
+				    <pcolor>#8f4a1c</pcolor>
+				    <scolor>#8f4a1c</scolor>
+				    <shade_type>solid</shade_type>
+				  </wallpaper>" >> mybackgrounds.xml
+				done
 
-				# creating the footer
-					echo "</wallpapers>" >> mybackgrounds.xml
-					sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
-					cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
-					rm mybackgrounds.xml
-					rm lspictures.txt
-				# Set the default wallpaper... 
-					gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-					
-				# Power managment profile
-                                        InstallSoftwareFromRepo tuned
-					sudo systemctl enable --now tuned
-					sudo tuned-adm profile balanced
-					#Performance:
-					#sudo tuned-adm profile desktop
-					#Virtual Machine Host:
-					#sudo tuned-adm profile virtual-host
-					#Virtual Machine Guest:
-					#sudo tuned-adm profile virtual-guest
-					#Battery Saving:
-					#sudo tuned-adm profile powersave
-					# Virtual Machines
-					# sudo systemctl enable --now libvirtd
-					# Management of local/remote system(s) - available via http://localhost:9090
-					# sudo systemctl enable --now cockpit.socket
-					
-					
-				# Configure Gnome for OEM look and feel. This is completely as desired. 
-				# These setings will then be copied to the "/etsc/skel" directory where user templates
-				# are stored. This will allow new users to get the same themes and settings as the 
-				# current user. This should likely only be done right after a PC has been installed
-				# otherwise all user configuration settings will be trasferred to any user 
-			        # subsequently created.  
-                                function set_user_gnome_ui ()
-                                {
-					gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
-					gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
+			# creating the footer
+				echo "</wallpapers>" >> mybackgrounds.xml
+				sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
+				cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+				rm mybackgrounds.xml
+				rm lspictures.txt
+			# Set the default wallpaper... 
+				gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 
-                                       
-					# Tilix Dark Theme
-					gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
+			# Power managment profile
+				InstallSoftwareFromRepo tuned
+				sudo systemctl enable --now tuned
+				sudo tuned-adm profile balanced
+				#Performance:
+				#sudo tuned-adm profile desktop
+				#Virtual Machine Host:
+				#sudo tuned-adm profile virtual-host
+				#Virtual Machine Guest:
+				#sudo tuned-adm profile virtual-guest
+				#Battery Saving:
+				#sudo tuned-adm profile powersave
+				# Virtual Machines
+				# sudo systemctl enable --now libvirtd
+				# Management of local/remote system(s) - available via http://localhost:9090
+				# sudo systemctl enable --now cockpit.socket
 
-					# Gnome Shell Theming
-					# Add proffessional and crisp looking icons...
-					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
-					gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
-					gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
-					gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
-					#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
-					#Set SCP as Monospace (Code) Font
-					# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+			# Configure Gnome for OEM look and feel. This is completely as desired. 
+			# These setings will then be copied to the "/etsc/skel" directory where user templates
+			# are stored. This will allow new users to get the same themes and settings as the 
+			# current user. This should likely only be done right after a PC has been installed
+			# otherwise all user configuration settings will be trasferred to any user 
+			# subsequently created.  
+			function set_user_gnome_ui ()
+			{
+				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+				gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
 
-					#Set Extensions for gnome
-					gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net']"
 
-					#Better Font Smoothing
-					gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+				# Tilix Dark Theme
+				gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 
-					#Usability Improvements
-					gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
-					gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-					gsettings set org.gnome.desktop.calendar show-weekdate true
-					gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
-					gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
-					gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+				# Gnome Shell Theming
+				# Add proffessional and crisp looking icons...
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
+				gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
+				gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
+				gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+				#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
-					#Dash to Dock Theme
-					gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
-					gsettings set org.gnome.shell.extensions.dash-to-dock custom-background-color false
-					gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true
-					gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-color '#729fcf'
-					gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
-					gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-					gsettings set org.gnome.shell.extensions.dash-to-dock extend-height true
-					gsettings set org.gnome.shell.extensions.dash-to-dock force-straight-corner false
-					gsettings set org.gnome.shell.extensions.dash-to-dock icon-size-fixed true
-					gsettings set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS'
-					gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-					gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
-					gsettings set org.gnome.shell.extensions.dash-to-dock unity-backlit-items false
-					gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
-					gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
-					gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
+				#Set SCP as Monospace (Code) Font
+				# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
 
-					#This indexer is nice, but can be detrimental for laptop users battery life
-					gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
-					gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
-					gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
+				#Set Extensions for gnome
+				gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net']"
 
-					#Nautilus (File Manager) Usability
-					gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
-					gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
-					gsettings set org.gtk.Settings.FileChooser sort-directories-first true
-					gsettings set org.gnome.nautilus.list-view use-tree-view true
-                                        }
-                                        
-                                        export -f set_user_gnome_ui;
-                                        echo "Modifying setings for: ´/usr/bin/whoami´"
-                                        su -l -u $SUDO_USER -c "set_user_gnome_ui & exit"
-                                        
-					# Transfer settings for all users... 
-					cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
+				#Better Font Smoothing
+				gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
 
-}
+				#Usability Improvements
+				gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
+				gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+				gsettings set org.gnome.desktop.calendar show-weekdate true
+				gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
+				gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+				gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
 
-function recipie_XXXX (){
+				#Dash to Dock Theme
+				gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-background-color false
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-color '#729fcf'
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+				gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+				gsettings set org.gnome.shell.extensions.dash-to-dock extend-height true
+				gsettings set org.gnome.shell.extensions.dash-to-dock force-straight-corner false
+				gsettings set org.gnome.shell.extensions.dash-to-dock icon-size-fixed true
+				gsettings set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS'
+				gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+				gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
+				gsettings set org.gnome.shell.extensions.dash-to-dock unity-backlit-items false
+				gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
+				gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
+				gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
+
+				#This indexer is nice, but can be detrimental for laptop users battery life
+				gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
+				gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
+				gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
+
+				#Nautilus (File Manager) Usability
+				gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
+				gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
+				gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+				gsettings set org.gnome.nautilus.list-view use-tree-view true
+				}
+
+				export -f set_user_gnome_ui;
+				echo "Modifying setings for: ´/usr/bin/whoami´"
+				su -l -u $SUDO_USER -c "set_user_gnome_ui & exit"
+
+				# Transfer settings for all users... 
+				cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
 
 }
 
-function recipie_XXXX (){
-
-}
 
