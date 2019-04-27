@@ -23,7 +23,7 @@
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
-funcion recipie_baseapps (){
+function recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
@@ -110,7 +110,9 @@ function recipie_admin_tools (){
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
 			for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
-				vim vim-scripts gufw variety
+				vim vim-scripts gufw variety remmina remmina-plugin-exec remmina-plugin-secret remmina-plugin-vnc remmina-plugin-nx  \
+				remmina-plugin-spice remmina-plugin-xdmcp remmina-plugin-rdp remmina-plugin-telepathy  
+
 			do
 			     InstallSoftwareFromRepo $i
 			done
@@ -277,41 +279,7 @@ function recipie_OEM_config (){
 			#::::::::::::::          Desktop Settings                ::::::::::::::::::::::
 			#::::::::::::::                                          ::::::::::::::::::::::
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-			# Install Wallpapers and configure Gnome to see them. ...
-			RTDCP=/opt/rtd/cache
-			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
-			pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
-
-			mkdir -p /usr/local/share/gnome-background-properties
-			DIRECTORY=/opt/rtd/Wallpaper/
-			ls $DIRECTORY > lspictures.txt
-
-			# Make a header
-			echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-			<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
-			<wallpapers>" > mybackgrounds.xml
-			# Registering all pictures in $DIRECTORY
-
-				for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
-				echo "<wallpaper>
-				<name>$i</name>
-				<filename>$i</filename>
-				  <options>stretched</options>
-				    <pcolor>#8f4a1c</pcolor>
-				    <scolor>#8f4a1c</scolor>
-				    <shade_type>solid</shade_type>
-				  </wallpaper>" >> mybackgrounds.xml
-				done
-
-			# creating the footer
-				echo "</wallpapers>" >> mybackgrounds.xml
-				sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
-				cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
-				rm mybackgrounds.xml
-				rm lspictures.txt
-			# Set the default wallpaper... 
-				gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-
+			
 			# Power managment profile
 				InstallSoftwareFromRepo tuned
 				sudo systemctl enable --now tuned
@@ -326,18 +294,38 @@ function recipie_OEM_config (){
 				#sudo tuned-adm profile powersave
 				# Virtual Machines
 				# sudo systemctl enable --now libvirtd
-				# Management of local/remote system(s) - available via http://localhost:9090
-				# sudo systemctl enable --now cockpit.socket
+				# Management of local/remote system(s) - availa
+
+				# Apply tweaks to the UI based on desktop active
+				if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
+
+					# Add wallpapers and set GNOME wallpaper... 
+					recipie_set_gnome_wallpaper
+
+					#Change user context and apply gnome settings... 
+					export -f recipie_set_user_gnome_ui;
+					echo "Modifying setings for: ´/usr/bin/whoami´"
+					su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
+
+					# Transfer settings for all users... 
+					cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
+				fi
+
+				if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
+					
+
+				fi
+
+}
 
 
+function recipie_set_user_gnome_ui (){
 			# Configure Gnome for OEM look and feel. This is completely as desired. 
 			# These setings will then be copied to the "/etsc/skel" directory where user templates
 			# are stored. This will allow new users to get the same themes and settings as the 
 			# current user. This should likely only be done right after a PC has been installed
 			# otherwise all user configuration settings will be trasferred to any user 
 			# subsequently created.  
-			function set_user_gnome_ui ()
-			{
 				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 				gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
 
@@ -398,15 +386,46 @@ function recipie_OEM_config (){
 				gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
 				gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 				gsettings set org.gnome.nautilus.list-view use-tree-view true
-				}
 
-				export -f set_user_gnome_ui;
-				echo "Modifying setings for: ´/usr/bin/whoami´"
-				su -l -u $SUDO_USER -c "set_user_gnome_ui & exit"
 
-				# Transfer settings for all users... 
-				cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
 
 }
 
+function recipie_set_gnome_wallpaper (){
+			# Install Wallpapers and configure Gnome to see them. ...
+			RTDCP=/opt/rtd/cache
+			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
+			pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
 
+			mkdir -p /usr/local/share/gnome-background-properties
+			DIRECTORY=/opt/rtd/Wallpaper/
+			ls $DIRECTORY > lspictures.txt
+
+			# Make a header
+			echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+			<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
+			<wallpapers>" > mybackgrounds.xml
+			# Registering all pictures in $DIRECTORY
+
+				for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
+				echo "<wallpaper>
+				<name>$i</name>
+				<filename>$i</filename>
+				  <options>stretched</options>
+				    <pcolor>#8f4a1c</pcolor>
+				    <scolor>#8f4a1c</scolor>
+				    <shade_type>solid</shade_type>
+				  </wallpaper>" >> mybackgrounds.xml
+				done
+
+			# creating the footer
+				echo "</wallpapers>" >> mybackgrounds.xml
+				sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
+				cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+				rm mybackgrounds.xml
+				rm lspictures.txt
+			# Set the default wallpaper... 
+				gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
+
+
+}

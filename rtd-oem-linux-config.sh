@@ -92,11 +92,11 @@ options=(1 "Base RTD OEM Productivity Software" on
          15 "MEGA nz Encrypted Cloud Storage" on
          16 "Dropbox Cloud Storage" on
          17 "Optional Desktop Tweaks" on
-	 18 "Openshot video editor" on
-	 19 "Media Streamers (Spotify and podcast software)" on
-	 20 "Audio Tools" on
-	 21 "Oracle VirtualBox" on
-	 22 "Runtime Data OEM Configuration" on
+		 18 "Openshot video editor" on
+		 19 "Media Streamers (Spotify and podcast software)" on
+		 20 "Audio Tools" on
+		 21 "Oracle VirtualBox" on
+		 22 "Runtime Data OEM Configuration" on
 )
 
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -104,13 +104,13 @@ options=(1 "Base RTD OEM Productivity Software" on
 		for choice in $choices
 		do
 		    case $choice in
-	        	1)
+	        1)
 			recipie_baseapps
 			;;
 			2)
 			recipie_lamp_software
 			;;
-    			3)	
+    		3)	
 			recipie_developer_software 
 			;;
 			4)
