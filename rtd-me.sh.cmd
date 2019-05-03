@@ -52,7 +52,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
                 # Then get the file requested...
                 wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/"$i"
             done
-        /opt/rtd/scripts/rtd-oem-linux-config.sh
+        /opt/rtd/scripts/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
