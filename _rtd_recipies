@@ -19,7 +19,14 @@
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
+#the_ppa=...  # set appropriately
+#
+#if ! grep -q "^deb .*$the_ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+#    # commands to add the ppa ...
+#fi
+#
+#
+#
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
