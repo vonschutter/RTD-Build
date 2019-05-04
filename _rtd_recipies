@@ -319,8 +319,8 @@ function recipie_OEM_config (){
 				fi
 
 				if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
-					
-
+					echo Nothing to do yet!	
+				
 				fi
 
 }
