@@ -36,7 +36,7 @@ function recipie_baseapps (){
 			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
-			for i in samba wine-stable diodon shutter \
+			for i in wine-stable diodon shutter \
 				gnome-twitch polari filezilla libdvdcss2 ffmpeg
 			do
 			     InstallSoftwareFromRepo $i
@@ -49,13 +49,12 @@ function recipie_baseapps (){
 			snap install telegram-desktop 2>>$_ERRLOGFILE
 			snap install dosbox-x  2>>$_ERRLOGFILE
 			snap install simplenote 2>>$_ERRLOGFILE
-			snap install tusk 2>>$_ERRLOGFILE
-			snap install zenkit 2>>$_ERRLOGFILE
-			wget --show-progress http://kdl.cc.ksosoft.com/wps-community/download/8392/wps-office_11.1.0.8392_amd64.deb -P /opt/rtd/cache/
-			dpkg -i /opt/rtd/cache/wps*
-			wget --show-progress "https://mega.nz/#!DwoUBAJQ!2g5gKBrjT_Evs80LGMKT-a2bFmo_vaVNCb3sNBo2SZ8" -P /opt/rtd/cache/
-			dpkg -i /opt/rtd/cache/mint*.deb
-			wget --show-progress "https://mega.nz/#!XtpgECJS!tWpTGTi1iOfI78mI1CzMEGOOoCGL8MbP917fyjYd8yA" -P /opt/rtd/cache/
+			wget --show-progress "https://www.dropbox.com/s/6vlacawcv6dhunb/wps-office_11.1.0.8392_amd64.deb" -P /opt/rtd/cache/
+				dpkg -i /opt/rtd/cache/wps*  2>>$_ERRLOGFILE
+				apt -f install -y  2>>$_ERRLOGFILE
+			wget --show-progress "https://www.dropbox.com/s/s0yk1pgyrf4hjis/mint-y-icons_1.3.3_all.deb" -P /opt/rtd/cache/
+			dpkg -i /opt/rtd/cache/mint*.deb  2>>$_ERRLOGFILE
+			wget --show-progress "https://www.dropbox.com/s/ptieyrn6qsx9278/FontPack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/msttcorefonts
 			7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
 }
@@ -132,13 +131,12 @@ function recipie_admin_tools (){
 function recipie_java (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
-			# Add the Oracle repository and pre-answer the licens questions.
-			add-apt-repository -y ppa:webupd8team/java 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-			echo --- Installing java-8...
-			echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-			InstallSoftwareFromRepo oracle-java8-installer 
-			InstallSoftwareFromRepo	oracle-java8-set-default
+	        	# Add the Oracle Java repository and install the software. 
+    	    		add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
+     	   		apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+    	    		echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
+    	    		apt install -y oracle-java11-installer && \
+   	     		apt install -y oracle-java11-set-default  1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
@@ -215,29 +213,54 @@ function recipie_dropbox (){
 function recipie_gnome_config (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+			
+			# Add Relevant extensions...
 			InstallSoftwareFromRepo gnome-shell-extension-appindicator
-			InstallSoftwareFromRepo gnome-shell-extension-suspend-button gnome-shell-extension-log-out-button 
+			InstallSoftwareFromRepo gnome-shell-extension-suspend-button 
+			InstallSoftwareFromRepo gnome-shell-extension-log-out-button 
 			InstallSoftwareFromRepo gnome-shell-extension-tilix-dropdown
 			InstallSoftwareFromRepo gnome-shell-extension-multi-monitors 
 			InstallSoftwareFromRepo gnome-shell-extension-caffeine
-			InstallSoftwareFromRepo gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers
-			InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel gnome-shell-extension-dashtodock  
-			#Paper GTK Theme
-			add-apt-repository ppa:snwh/pulp -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			InstallSoftwareFromRepo paper-gtk-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
-			InstallSoftwareFromRepo paper-icon-theme  1>>$_LOGFILE 2>>$_ERRLOGFILE
-			add-apt-repository ppa:noobslab/themes -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo gnome-shell-extension-gsconnect 
+			InstallSoftwareFromRepo gnome-shell-extension-gsconnect-browsers
+			InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel 
+			InstallSoftwareFromRepo gnome-shell-extension-dashtodock  
+			
 			InstallSoftwareFromRepo arc-theme
-			add-apt-repository ppa:noobslab/icons -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			InstallSoftwareFromRepo arc-icons
-			apt-add-repository ppa:numix/ppa -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+
 			InstallSoftwareFromRepo numix-icon* 
 			InstallSoftwareFromRepo adwaita*
+			
+			# Set app overview  to categories... 
+			gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
+			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
 }
+
+
+
 
 function recipie_openshot (){
 			# Special case for installing Openshot video editor
@@ -246,6 +269,8 @@ function recipie_openshot (){
 			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 			apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
+
+
 
 function recipie_media_streamers (){
 			echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
@@ -256,9 +281,13 @@ function recipie_media_streamers (){
 
 }
 
+
+
 function recipie_audio_tools (){
 			snap install picard  2>>$_ERRLOGFILE
 }
+
+
 
 function recipie_virtualbox (){
 			# Special case for installing VirtualBox
@@ -278,6 +307,8 @@ function recipie_virtualbox (){
 			    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
 			fi
 }
+
+
 
 function recipie_OEM_config (){
 			echo "Applying OEM Configuration..."
