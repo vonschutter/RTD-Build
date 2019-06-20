@@ -77,10 +77,10 @@ up2date
 
 # "dialog" will be used to request interactive configuration...
 # Ensure that it is available: 
-check_dependencies dialog
+check_dependencies whiptail
 
 # List Options to be available for choice in the RTD System Configurator...
-cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 76 16 )
+cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Software Options Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 85 16 )
 options=(1 "Base RTD OEM Productivity Software" on    
          2 "Developer Software: LAMP Stack" off
          3 "Developer Software: IDE Tools and Compilers" on
@@ -89,7 +89,7 @@ options=(1 "Base RTD OEM Productivity Software" on
          6 "OEM System Administrative Tools" on
          7 "Oracle Java" on
          8 "Bleachbit System Cleaning Tool" on
-         9 "Commercially Restricted Extras (To play prorietary video and audio formats)" on
+         9 "Commercially Restricted Extras (prorietary video and audio formats)" on
          10 "VLC Media Player" on
          11 "Gnome Tweak Tool" on
          12 "Google Chrome" on
@@ -98,12 +98,12 @@ options=(1 "Base RTD OEM Productivity Software" on
          15 "MEGA nz Encrypted Cloud Storage" on
          16 "Dropbox Cloud Storage" on
          17 "Optional Desktop Tweaks" on
-		 18 "Openshot video editor" on
-		 19 "Media Streamers (Spotify and podcast software)" on
-		 20 "Audio Tools" on
-		 21 "Oracle VirtualBox" on
-		 22 "Runtime Data OEM Configuration" on
-)
+         18 "Openshot video editor" on
+         19 "Media Streamers (Spotify and podcast software)" on
+         20 "Audio Tools" on
+         21 "Oracle VirtualBox" on
+         22 "Runtime Data OEM Configuration" on
+        )
 
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
