@@ -252,7 +252,7 @@ function is_software_package_available ()
 # snap or flatpack use. 
 function InstallSoftwareFromRepo ()
 {
-        # make some decent display terminal fraphics...
+        # make some decent display terminal Graphics...
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
@@ -271,30 +271,29 @@ function InstallSoftwareFromRepo ()
 
 
 
-
 # Function to check that a piece of software is installed and if not install it.
 # Works for apt based systems currently. The function will take a parameter that is expected to
 # match the softwre command line name or rather the name of the package. This should get
 # updated to also check and install from snap and flatpack. 
-function check_dependencies ()
-{
+function check_dependencies () {
         #---------------------------------------------------------------
         echo "Checking for script dependencies and install if not there..."
         #---------------------------------------------------------------
-            if hash $1 2>/dev/null; then
-                echo "I found that $1 is present on this system... thankyou for that! "
+            if is_software_package_installed $1 ; then
+                echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
             else
-                echo "You seem to have no $1... I will try to get it... "
+                echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
                 $_INSTCMD $1
                     if [ $? != 0 ];
                     then
-                        echo "That install didn't work out so well."
-                        echo "Please manually try to add the software since I couldn't do it."
+                        echo -e $RED "That install didn't work out so well." 
+                        echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
                         exit
                     fi
                 echo "OK Done! Continuing..."
             fi
 }
+
 
 # Function to simply display that the functions have been loaded when this function library has been called.
 function notice_rtd_loaded ()
