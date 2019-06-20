@@ -30,6 +30,10 @@
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
+
+
+
+
 function recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
@@ -49,15 +53,24 @@ function recipie_baseapps (){
 			snap install telegram-desktop 2>>$_ERRLOGFILE
 			snap install dosbox-x  2>>$_ERRLOGFILE
 			snap install simplenote 2>>$_ERRLOGFILE
-			wget --show-progress "https://www.dropbox.com/s/6vlacawcv6dhunb/wps-office_11.1.0.8392_amd64.deb" -P /opt/rtd/cache/
+
+                        ### Get OEM files ###
+                        # Download and install WPS Office (more liek Microsoft Office) OSS from China... 
+			wget --show-progress "https://www.dropbox.com/s/4uaqci8awfe2yiw/wps-office_11.1.0.8392_amd64.deb" -P /opt/rtd/cache/
 				dpkg -i /opt/rtd/cache/wps*  2>>$_ERRLOGFILE
 				apt -f install -y  2>>$_ERRLOGFILE
-			wget --show-progress "https://www.dropbox.com/s/s0yk1pgyrf4hjis/mint-y-icons_1.3.3_all.deb" -P /opt/rtd/cache/
-			dpkg -i /opt/rtd/cache/mint*.deb  2>>$_ERRLOGFILE
-			wget --show-progress "https://www.dropbox.com/s/ptieyrn6qsx9278/FontPack.7z" -P /opt/rtd/cache/
-			mkdir -p /usr/share/fonts/truetype/msttcorefonts
-			7z e -y /opt/rtd/cache/FontPack.7z -o/usr/share/fonts/truetype/msttcorefonts/
+			
+			# Download and install the Minty Icons from Linux Mint. Crisp and clean icons. 
+			#wget --show-progress "https://www.dropbox.com/s/3p10v26dz9aetxw/mint-y-icons_1.3.3_all.deb" -P /opt/rtd/cache/
+			#dpkg -i /opt/rtd/cache/mint*.deb  2>>$_ERRLOGFILE
+			
+			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
+			wget --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
+			mkdir -p /usr/share/fonts/truetype/oem
+			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
 }
+
+
 
 
 function recipie_lamp_software (){
@@ -74,6 +87,7 @@ function recipie_lamp_software (){
 }
 
 
+
 function recipie_developer_software (){
 			echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
 			for i in build-essential git
@@ -82,8 +96,8 @@ function recipie_developer_software (){
 			done
 			snap install atom --classic  2>>$_ERRLOGFILE
 			snap install gitkraken 2>>$_ERRLOGFILE
-			snap install sublime-text --classic 2>>$_ERRLOGFILE
 }
+
 
 
 function recipie_compression_tools (){
@@ -94,6 +108,7 @@ function recipie_compression_tools (){
 			     InstallSoftwareFromRepo $i
 			done
 }
+
 
 
 function recipie_games (){
@@ -109,6 +124,7 @@ function recipie_games (){
 			# Install additional quality games from Flathub
 			flatpak install flathub com.moddb.TotalChaos -y	
 }
+
 
 
 function recipie_admin_tools (){
@@ -128,6 +144,7 @@ function recipie_admin_tools (){
 }
 
 
+
 function recipie_java (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
@@ -140,11 +157,13 @@ function recipie_java (){
 }
 
 
+
 function recipie_bleachbit (){
 			#Bleachbit
 			echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
 			InstallSoftwareFromRepo bleachbit 
 }
+
 
 
 function recipie_codecs (){
@@ -162,17 +181,22 @@ function recipie_vlc (){
 			InstallSoftwareFromRepo vlc
 }
 
+
+
 function recipie_tweaktool (){
 			# Tweak tool
 			echo -e $YELLOW"--- Install Installing Gnome Tweak Tool..." $ENDCOLOR
 			InstallSoftwareFromRepo gnome-tweak-tool
 }
 
+
+
 function recipie_google_chrome (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
 			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
+
 
 
 function recipie_teamviewer (){
@@ -182,6 +206,7 @@ function recipie_teamviewer (){
 }
 
 
+
 function recipie_skype (){
 			#Skype for Linux
 			echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
@@ -189,9 +214,11 @@ function recipie_skype (){
 }
 
 
+
 function recipie_viber (){
 			snap install --edge viber-mtd 
 }
+
 
 
 function recipie_mega.nz (){
@@ -203,11 +230,13 @@ function recipie_mega.nz (){
 }
 
 
+
 function recipie_dropbox (){
 			# Install Dropbox
 			echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
 			InstallSoftwareFromRepo nautilus-dropbox
 }
+
 
 
 function recipie_gnome_config (){
@@ -225,13 +254,13 @@ function recipie_gnome_config (){
 			InstallSoftwareFromRepo gnome-shell-extension-gsconnect-browsers
 			InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel 
 			InstallSoftwareFromRepo gnome-shell-extension-dashtodock  
-			
-			InstallSoftwareFromRepo arc-theme
 
+			# Add Some basic themes and icons...			
+			InstallSoftwareFromRepo arc-theme
 			InstallSoftwareFromRepo numix-icon* 
 			InstallSoftwareFromRepo adwaita*
 			
-			# Set app overview  to categories... 
+			# Set app overview to categories... 
 			gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
 			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
 			gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
@@ -319,42 +348,42 @@ function recipie_OEM_config (){
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			
 			# Power managment profile
-				InstallSoftwareFromRepo tuned
-				sudo systemctl enable --now tuned
-				sudo tuned-adm profile balanced
-				#Performance:
-				#sudo tuned-adm profile desktop
-				#Virtual Machine Host:
-				#sudo tuned-adm profile virtual-host
-				#Virtual Machine Guest:
-				#sudo tuned-adm profile virtual-guest
-				#Battery Saving:
-				#sudo tuned-adm profile powersave
-				# Virtual Machines
-				# sudo systemctl enable --now libvirtd
-				# Management of local/remote system(s) - availa
+			InstallSoftwareFromRepo tuned
+			sudo systemctl enable --now tuned
+			sudo tuned-adm profile balanced
+			#Performance:
+			#sudo tuned-adm profile desktop
+			#Virtual Machine Host:
+			#sudo tuned-adm profile virtual-host
+			#Virtual Machine Guest:
+			#sudo tuned-adm profile virtual-guest
+			#Battery Saving:
+			#sudo tuned-adm profile powersave
+			# Virtual Machines
+			# sudo systemctl enable --now libvirtd
+			# Management of local/remote system(s) - availa
 
-				# Apply tweaks to the UI based on desktop active
-				if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
+			# Apply tweaks to the UI based on desktop active
+			if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
 
-					# Add wallpapers and set GNOME wallpaper... 
-					recipie_set_gnome_wallpaper
+				# Add wallpapers and set GNOME wallpaper... 
+				recipie_set_gnome_wallpaper
 
-					#Change user context and apply gnome settings... 
-					export -f recipie_set_user_gnome_ui;
-					echo "Modifying setings for: ´/usr/bin/whoami´"
-					su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
+				#Change user context and apply gnome settings... 
+				export -f recipie_set_user_gnome_ui;
+				echo "Modifying setings for: ´/usr/bin/whoami´"
+				su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
 
-					# Transfer settings for all users... 
-					cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
-				fi
+				# Transfer settings for all users... 
+				cp -r /home/$SUDO_USER/.gnome* .config /etc/skel/
+			fi
 
-				if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
-					echo Nothing to do yet!	
-				
-				fi
-
+			if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
+				echo Nothing to do yet!	
+			
+			fi
 }
+
 
 
 function recipie_set_user_gnome_ui (){
@@ -428,6 +457,8 @@ function recipie_set_user_gnome_ui (){
 
 
 }
+
+
 
 function recipie_set_gnome_wallpaper (){
 			# Install Wallpapers and configure Gnome to see them. ...
