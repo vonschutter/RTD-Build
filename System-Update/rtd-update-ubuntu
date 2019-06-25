@@ -3,8 +3,6 @@ PUBLICATION="RuntimeData Update Manager for Ubuntu"
 VERSION="1.12"
 #
 #	RTD Ubuntu + derivatives software update script
-#   	Stephan, Sweden
-#	Nate B. Buffalo Center, IA
 #
 #
 # This system configuration and installation script was originally developed
@@ -13,7 +11,7 @@ VERSION="1.12"
 # exists as its owner has passed away. This script is shared in the hopes that
 # someone will find it usefull.
 #
-# The purpose of this script is to update installed software from reopositories.
+# The purpose of this script is to update installed software from distribution reopositories.
 #
 ###########################################################################
 ##                                                                       ##
@@ -104,11 +102,15 @@ function deb_software_task ()
 
 }
 
+
+
 function log_item ()
 {
 DATE=$(date '+%d/%m/%Y %H:%M:%S');
 echo "$DATE --- : $@" >> $0.log
 }
+
+
 
 function update_me ()
 {
@@ -125,10 +127,14 @@ function update_me ()
                 chmod +x $0
 }
 
+
+
 function config_me ()
 {
- echo "::!::"
+ echo "::There is nothing to configure at this time!::"
 }
+
+
 
 function setup_me ()
 {
