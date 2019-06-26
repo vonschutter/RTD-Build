@@ -45,20 +45,34 @@ source /opt/rtd/scripts/_rtd_functions
 export _LOGFILE=$0.log
 export _ERRLOGFILE=$0-error.log
 
-# Ensure that this script is run with administrative priveledges such that it may
-# alter system wide configuration. 
-ensure_admin
 
-# Set the install instructions. This accepts apt, yum, or zypper.. 
-set_install_command
+# Set the background tilte:
+BACKTITLE="RTD OEM Simple System Setup"
 
-# Enable firewall. This presently expects ufw only. 
-enable_firewall
+# Set the options to appear in the menu as choices:
+option_1="Base RTD OEM Productivity Software"
+option_2="Developer Software: LAMP Stack"
+option_3="Developer Software: IDE Tools and Compilers" 
+option_4="OEM Comression Tools (zip, 7zip rar etc.)" 
+option_5="OEM Selection of Quality Games" 
+option_6="OEM System Administrative Tools" 
+option_7="Oracle Java" 
+option_8="Bleachbit System Cleaning Tool" 
+option_9="Commercially Restricted Extras (prorietary video and audio formats)" 
+option_10="VLC Media Player"  
+option_11="Gnome Tweak Tool" 
+option_12="TGoogle Chrome" 
+option_13="Teamiewer"  
+option_14="Skype" 
+option_15="MEGA nz Encrypted Cloud Storage" 
+option_16="CDropbox Cloud Storage"  
+option_17="Optional Desktop Tweaks" 
+option_18="Openshot video editor" 
+option_19="Media Streamers (Spotify and podcast software)"  
+option_20="Audio Tools" 
+option_21="Oracle VirtualBox" 
+option_22="Runtime Data OEM Configuration" 
 
-# Check that the relevant software maintenance system is available and ready, 
-# and if it is not wait. When it is OK continue and ensure all is up to date. 
-SofwareManagmentAvailabilityCHK
-up2date
 
 
 
@@ -75,109 +89,294 @@ up2date
 #
 # Option defaults may be set to "on" or "off"
 
-# "dialog" will be used to request interactive configuration...
-# Ensure that it is available: 
-check_dependencies whiptail
 
-# List Options to be available for choice in the RTD System Configurator...
-cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Software Options Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 85 16 )
-options=(1 "Base RTD OEM Productivity Software" on    
-         2 "Developer Software: LAMP Stack" off
-         3 "Developer Software: IDE Tools and Compilers" on
-         4 "OEM Comression Tools (zip, 7zip rar etc.)" on
-         5 "OEM Selection of Quality Games" on
-         6 "OEM System Administrative Tools" on
-         7 "Oracle Java" on
-         8 "Bleachbit System Cleaning Tool" on
-         9 "Commercially Restricted Extras (prorietary video and audio formats)" on
-         10 "VLC Media Player" on
-         11 "Gnome Tweak Tool" on
-         12 "Google Chrome" on
-         13 "Teamiewer" on
-         14 "Skype" on
-         15 "MEGA nz Encrypted Cloud Storage" on
-         16 "Dropbox Cloud Storage" on
-         17 "Optional Desktop Tweaks" on
-         18 "Openshot video editor" on
-         19 "Media Streamers (Spotify and podcast software)" on
-         20 "Audio Tools" on
-         21 "Oracle VirtualBox" on
-         22 "Runtime Data OEM Configuration" on
-        )
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
 
-		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-		clear
-		for choice in $choices
-		do
-		    case $choice in
-	        1)
-			recipie_baseapps
-			;;
-			2)
-			recipie_lamp_software
-			;;
-    		3)	
-			recipie_developer_software 
-			;;
-			4)
-			recipie_compression_tools
-			;;
-			5)
-			recipie_games			
-			;;
-			6)
-			recipie_admin_tools
-			;;
-			7)
-			recipie_java 
-			;;
-			8)
-			recipie_bleachbit
-			;;
-			9)
-			recipie_codecs
-			;;
-			10)
-			recipie_vlc
-			;;
-			11)
-			recipie_tweaktool 
-			;;
-			12)
-			recipie_google_chrome
-			;;
-			13)
-			recipie_teamviewer
-			;;
-			14)
-			recipie_skype
-			;;
-			15)
-			recipie_mega.nz
-			;;
-			16)
-			recipie_dropbox
-			;;
-			17)
-			recipie_gnome_config
-			;;
-			18)
-			recipie_openshot
-			;;
-			19)
-			recipie_media_streamers	
-			;;
-			20)
-			recipie_audio_tools
-			;;
-			21)
-			recipie_virtualbox
-			;;
-			22)	
-			recipie_OEM_config
-			;;
+system_update () {
+    if hash pkcon 2>/dev/null; then
+        pkcon refresh
+        pkcon update -y
+    else
+        echo "You seem to have now Package Kit... I will try to get it... "
+        echo "I will need to become admin to do that..."
+        sudo apt install packagekit
+            if [ $? != 0 ];
+            then
+                echo "That install didn't work out so well."
+                echo "Defaulting to the onld Up2Date Function"
+                up2date
+            fi
+        echo "OK trying again!"
+        pkcon refresh
+        pkcon update -y
+    fi
+}
+
+
+# Function to display the  otions above. This is all done in a bit of a 
+# round about way... but the idea is to prepare this setup to be flexible
+# for the future so that you only have one place to list the option while
+# more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
+function choices_graphical () {
+        cmd=( zenity  --list  --width=800 --height=400 --text "$BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
+        zstatus=TRUE
+        options=(    $zstatus "$option_1"
+                     $zstatus "$option_2"
+                     $zstatus "$option_3"
+                     $zstatus "$option_4"
+                     $zstatus "$option_5"
+                     $zstatus "$option_6"
+                     $zstatus "$option_7"
+                     $zstatus "$option_8"
+                     $zstatus "$option_9"
+                     $zstatus "$option_10"
+                     $zstatus "$option_11"
+                     $zstatus "$option_12"
+                     $zstatus "$option_13"
+                     $zstatus "$option_14"
+                     $zstatus "$option_15"
+                     $zstatus "$option_16"
+                     $zstatus "$option_17"
+                     $zstatus "$option_18"
+                     $zstatus "$option_19"
+                     $zstatus "$option_20"
+                     $zstatus "$option_21"
+                     $zstatus "$option_22"
+                   )
+
+       choices=$("${cmd[@]}" "${options[@]}" )
+}
+		
+		
+	
+		
+# Function to do what the choices instruct. We read the output from 
+# the choices and execute commands that accomplish the task requested. 
+function do_instructions_from_choices (){
+        IFS=$','
+	for choice in $choices
+	do
+		case $choice in
+	        "$option_1")
+		 recipie_baseapps
+		;;
+		"$option_2")
+		recipie_lamp_software
+		;;
+		"$option_3")	
+		recipie_developer_software
+		;;
+		"$option_4")
+		recipie_compression_tools
+		;;
+		"$option_5")
+		recipie_games
+		;;
+		"$option_6")
+		recipie_admin_tools
+		;;
+		"$option_7")
+		recipie_java 
+		;;
+		"$option_8")
+		recipie_bleachbit
+		;;
+		"$option_9")
+		recipie_codecs
+		;;
+		"$option_10")
+		recipie_vlc
+		;;
+		"$option_11")
+		recipie_tweaktool 
+		;;
+		"$option_12")
+		recipie_google_chrome
+		;;
+		"$option_10")
+		recipie_teamviewer
+		;;
+		"$option_13")
+		recipie_teamviewer
+		;;
+		"$option_14")
+		recipie_skype
+		;;
+		"$option_15")
+		recipie_mega.nz
+		;;
+		"$option_16")
+		recipie_dropbox
+		;;
+		"$option_17")
+		recipie_gnome_config
+		;;
+		"$option_18")
+		recipie_openshot
+		;;
+		"$option_19")
+		recipie_media_streamers	
+		;;
+		"$option_20")
+		recipie_audio_tools
+		;;
+		"$option_21")
+		recipie_virtualbox
+		;;
+		"$option_22")
+		recipie_OEM_config
+		;;
 		esac
-	done
+	done  
+}
+
+function choices_term () {
+	# List Options to be available for choice in the RTD System Configurator...
+	cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Software Options Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 85 16 )
+	options=(1 "Base RTD OEM Productivity Software" on    
+		 2 "Developer Software: LAMP Stack" off
+		 3 "Developer Software: IDE Tools and Compilers" on
+		 4 "OEM Comression Tools (zip, 7zip rar etc.)" on
+		 5 "OEM Selection of Quality Games" on
+		 6 "OEM System Administrative Tools" on
+		 7 "Oracle Java" on
+		 8 "Bleachbit System Cleaning Tool" on
+		 9 "Commercially Restricted Extras (prorietary video and audio formats)" on
+		 10 "VLC Media Player" on
+		 11 "Gnome Tweak Tool" on
+		 12 "Google Chrome" on
+		 13 "Teamiewer" on
+		 14 "Skype" on
+		 15 "MEGA nz Encrypted Cloud Storage" on
+		 16 "Dropbox Cloud Storage" on
+		 17 "Optional Desktop Tweaks" on
+		 18 "Openshot video editor" on
+		 19 "Media Streamers (Spotify and podcast software)" on
+		 20 "Audio Tools" on
+		 21 "Oracle VirtualBox" on
+		 22 "Runtime Data OEM Configuration" on
+		)
+
+			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+			clear
+			for choice in $choices
+			do
+			    case $choice in
+				1)
+				recipie_baseapps
+				;;
+				2)
+				recipie_lamp_software
+				;;
+	    			3)	
+				recipie_developer_software 
+				;;
+				4)
+				recipie_compression_tools
+				;;
+				5)
+				recipie_games			
+				;;
+				6)
+				recipie_admin_tools
+				;;
+				7)
+				recipie_java 
+				;;
+				8)
+				recipie_bleachbit
+				;;
+				9)
+				recipie_codecs
+				;;
+				10)
+				recipie_vlc
+				;;
+				11)
+				recipie_tweaktool 
+				;;
+				12)
+				recipie_google_chrome
+				;;
+				13)
+				recipie_teamviewer
+				;;
+				14)
+				recipie_skype
+				;;
+				15)
+				recipie_mega.nz
+				;;
+				16)
+				recipie_dropbox
+				;;
+				17)
+				recipie_gnome_config
+				;;
+				18)
+				recipie_openshot
+				;;
+				19)
+				recipie_media_streamers	
+				;;
+				20)
+				recipie_audio_tools
+				;;
+				21)
+				recipie_virtualbox
+				;;
+				22)	
+				recipie_OEM_config
+				;;
+			esac
+		done
+}
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Execute tasks                   ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+# Ensure that this script is run with administrative priveledges such that it may
+# alter system wide configuration. 
+ensure_admin
+
+# Set the install instructions. This accepts apt, yum, or zypper.. 
+set_install_command
+
+# Enable firewall. This presently expects ufw only. 
+enable_firewall
+
+# Check that the relevant software maintenance system is available and ready, 
+# and if it is not wait. When it is OK continue and ensure all is up to date. 
+SofwareManagmentAvailabilityCHK
+
+
+system_update
+
+
+if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
+	check_dependencies zenity
+	choices_graphical 
+	do_instructions_from_choices
+else
+	check_dependencies whiptail
+	choices_term
+
+fi
+
+
+
+
 
 
 
@@ -188,14 +387,13 @@ options=(1 "Base RTD OEM Productivity Software" on
 #::::::::::::::          Finalize.....                   ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
-#
+
 
 # Clean up and Finalize
 echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
 	up2date
 
-check_dependencies zenity
+
 zenity --notification --window-icon=update.png --text "System update is complete! You may restart your system and start using it now"
 zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
 if [ $? = 0 ];
@@ -203,6 +401,27 @@ if [ $? = 0 ];
           echo "OK Rebooting."
 	  reboot
 fi
+
+
+
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
