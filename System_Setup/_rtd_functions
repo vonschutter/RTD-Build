@@ -291,9 +291,9 @@ function InstallSoftwareFromRepo ()
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
-        if ! is_software_package_installed "$@"; then
-                if is_software_package_available   "$@"; then
-                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+        if ! is_software_package_installed "$1"; then
+                if is_software_package_available   "$1"; then
+                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
                 else
                     echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR  \n"
                 fi
