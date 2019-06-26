@@ -35,6 +35,8 @@ echo     -        RTD System System Managment Bootstrap Script      -
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+_RTDSCR=/opt/rtd/scripts
+_RTDCACHE=/opt/rtd/cache
 
 clear
 echo "This is now a ${SHELL} environment..."
@@ -42,17 +44,10 @@ echo "Attempting to detect version of POSIX based system..."
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux OS: Attempting to get instructions..."
-          mkdir -p /opt/rtd/scripts
-            for i in System_Setup/rtd-oem-linux-config.sh System_Setup/_rtd_functions SystemRecipies/_rtd_recipies System-Update/rtd-update-ubuntu 
-            do
-                # if the file to be downloaded already exists delete the exisitng one first... 
-                if [ -f "/opt/rtd/scripts/$i" ]; then
-                    rm -f "/opt/rtd/scripts/$i"
-                fi
-                # Then get the file requested...
-                wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$i" -P /opt/rtd/scripts && chmod +x /opt/rtd/scripts/*
-            done
-        /opt/rtd/scripts/rtd-oem-linux-config.sh "$@"
+          mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
+                wget -q --show-progress https://github.com/vonschutter/RTD-Build/archive/master.zip -P $_RTDCACHE
+                unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
+	        $_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
