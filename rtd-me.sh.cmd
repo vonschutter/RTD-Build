@@ -43,11 +43,16 @@ echo "This is now a ${SHELL} environment..."
 echo "Attempting to detect version of POSIX based system..."
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
+	# Task to complete: Download the set of instructions required and 
+	# extract them in to the $_RTDSCR location. Then execute the intructions
+	# to complete the configuration of the system. 
         echo "Linux OS: Attempting to get instructions..."
-          mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
-                wget -q --show-progress https://github.com/vonschutter/RTD-Build/archive/master.zip -P $_RTDCACHE
-                unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
-	        $_RTDSCR/rtd-oem-linux-config.sh "$@"
+		mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
+		wget -q --show-progress https://github.com/vonschutter/RTD-Build/archive/master.zip -P $_RTDCACHE
+		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
+		chmod +x $_RTDSCR/*
+	 	for i in $_RTDSCR/*; do ln -f -s $_RTDSCR/$i -t bin/; done
+		$_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
