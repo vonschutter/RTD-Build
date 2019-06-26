@@ -99,7 +99,11 @@ option_22="Runtime Data OEM Configuration"
 
 system_update () {
     if hash pkcon 2>/dev/null; then
-        pkcon refresh
+        SofwareManagmentAvailabilityCHK
+    	pkcon refresh
+    	echo For the sake of robustness; we will chech again if the system 
+    	echo software managment is available before running the update... 
+    	SofwareManagmentAvailabilityCHK
         pkcon update -y
     else
         echo "You seem to have now Package Kit... I will try to get it... "
@@ -112,7 +116,11 @@ system_update () {
                 up2date
             fi
         echo "OK trying again!"
-        pkcon refresh
+        SofwareManagmentAvailabilityCHK
+    	pkcon refresh
+    	echo For the sake of robustness; we will chech again if the system 
+    	echo software managment is available before running the update... 
+    	SofwareManagmentAvailabilityCHK
         pkcon update -y
     fi
 }
@@ -359,7 +367,6 @@ enable_firewall
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
-
 
 system_update
 
