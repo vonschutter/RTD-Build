@@ -166,7 +166,7 @@ function choices_graphical () {
 # Function to do what the choices instruct. We read the output from 
 # the choices and execute commands that accomplish the task requested. 
 function do_instructions_from_choices (){
-        IFS=$','
+        #IFS=$','
 	for choice in $choices
 	do
 		case $choice in
