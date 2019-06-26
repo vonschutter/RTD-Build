@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+#	RTD Ubuntu Scripts
+#   	Stephan S.
+#
+#
+# Verssion 1.00
+#
+# This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it usefull.
+#
+# This script is instended to live in the ~/bin/ folder.
+# 
+# The sound system in Ubuntu may sometimes do strage things and sound odd. 
+# The purpose of this short script is to facilitat the support of client workstations 
+# by making it ease to reload the sound system on the PC. 
+
+
+#echo This script needs administrative access...
+#[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+
+pulseaudio -k && sudo alsa force-reload

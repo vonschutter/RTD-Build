@@ -37,6 +37,7 @@ echo     -        RTD System System Managment Bootstrap Script      -
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 _RTDSCR=/opt/rtd/scripts
 _RTDCACHE=/opt/rtd/cache
+_RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
 clear
 echo "This is now a ${SHELL} environment..."
@@ -48,8 +49,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# to complete the configuration of the system. 
         echo "Linux OS: Attempting to get instructions..."
 		mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
-		wget -q --show-progress https://github.com/vonschutter/RTD-Build/archive/master.zip -P $_RTDCACHE
-		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
+		wget -q --show-progress $_RTDSRC -P $_RTDCACHE
+		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm $_RTDCACHE/master.zip
 		chmod +x $_RTDSCR/*
 	 	for i in $_RTDSCR/*; do ln -f -s $_RTDSCR/$i -t bin/; done
 		$_RTDSCR/rtd-oem-linux-config.sh "$@"

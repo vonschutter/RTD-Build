@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+#::            A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:   	SLS  
+#:: Version 	1.02
+#::
+#::
+#::	Purpose: The purpose of this script is to configure a Huion tablet. 
+#::		 This is available for convenience only. Sucess may vary.
+#::		 
+#::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
+#:: 		NOTE: Please refer to: https://www.huion.com/pen_tablet/
+#::     	
+#::     	
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+#
+#
+# This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it useful.
+#
+# This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
+
+
+# Import the RTD functions to gain access to several useful functions.
+
+source _rtd_functions
+
+
+
+ensure_admin
+config_huion610

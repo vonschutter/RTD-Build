@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+#	RTD Ubuntu + derivatives bash script
+#   	Stephan S. Särö, Sweden
+#			Nate B. Buffalo Center, IA
+#
+# Version 1.00
+#
+# This system utility script was originally developed
+# for RuntimeData, a small OEM in Buffalo Center, IA. This OEM and store nolonger
+# exists as its owner has passed away. This script is shared in the hopes that
+# someone will find it usefull.
+#
+# The purpose of this script is to lookup your internet location from the CLI.
+#
+
+
+# Import the RTD functions to gain access to several useful functions.
+# Please note: the _rtd.fuctions file must be in your path as for example:
+#  "~/bin" for personal scripts and executables or "/bin" or "/sbin" etc.
+
+if [ -f ~/bin/_rtd_functions ]; then 
+	source _rtd_functions
+else 
+	if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
+		source /opt/rtd/scripts/_rtd_functions
+	else 
+		echo RTD Functions not found... 
+	fi
+fi
+
+if [[ "$RTDFUCTIONS" = "1" ]]
+      then
+        echo RTD functions loaded!
+      else
+        echo RTD functions NOT loaded!
+fi
+
+# This script relies on curl to send web content to standard out (screen)
+# so we need to ensure that this is available on the system.
+check_dependencies curl
+check_dependencies dig
+
+curl ipinfo.io/`dig +short myip.opendns.com @resolver1.opendns.com`

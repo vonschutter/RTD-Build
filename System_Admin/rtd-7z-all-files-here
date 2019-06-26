@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+#::            A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:   	SLS  
+#:: Version 	1.02
+#::
+#::
+#::	Purpose: To compress all files and folders individually found in the current folder. 
+#::		 The current folder refers to the present working directory "PWD". 
+#::		 
+#::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
+#:: 
+#::     
+#::     
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+#
+# This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it useful.
+#
+# This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
+#
+#
+# Tutorial Text:
+# find ./ -type f -iname "*.rar" -exec unrar e {} \;
+# a                   Add (dir1 to archive.7z)
+# -t7z                Use a 7z archive
+# -m0=lzma2           Use lzma2 method
+# -mx=9               Use the '9' level of compression = Ultra
+# -mfb=64             Use number of fast bytes for LZMA = 64
+# -md=32m             Use a dictionary size = 32 megabytes
+# -ms=on              Solid archive = on
+# -mhe=on             7z format only : enables or disables archive header encryption
+# -p{Password}        Add a password
+# Simple compression logic: 7za a -t7z $line.7z $line
+# To change all filename to have whitespace replaced with _: list=`ls | sed -e 's/ /\\\\ /g'`
+# Alternatively use: IFS=$(echo -en "\n\b") Here IFS is altered to not consider a whitespace as a separator.
+
+
+
+###########################################################################
+##                                                                       ##
+##                       Set Environment                                 ##
+##                                                                       ##
+###########################################################################
+#
+# Set colors for prompting on screen.
+YELLOW="\033[1;33m"
+RED="\033[0;31m"
+ENDCOLOR="\033[0m"
+
+# Ask for encryption phrase and store it temporarily.
+clear
+echo  Hello $USER ... I am going to compress each file or folder that
+echo  I find in this folder. These are:
+echo
+ls -I "*.7z" --color=always
+echo
+echo  To cancel this, just close the terminal or press "CRTL C".
+echo
+read -p "Press the [ENTER] key to continue..."
+
+
+###########################################################################
+##                                                                       ##
+##                       Script Executive                                ##
+##                                                                       ##
+###########################################################################
+#
+# List everything in the current folder and cpmpress each item.
+# And remember to handle or replace white spaces with underscore so the shell commands
+# don't fail. Here IFS is altered to not consider a whitespace as a separator.
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+  for line in $(ls -I "*.7z")
+   do
+    7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on $line.7z $line
+   done
+   IFS=$SAVEIFS
+echo Created the following archives un-encrypted:
+ls *.7z

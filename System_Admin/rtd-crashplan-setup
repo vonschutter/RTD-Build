@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+#::            A D M I N   C O M M A N D L E T   -   BackBlaze Duplicity setup script
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:   	SLS
+#:: Version 	1.00
+#::
+#::	January 1 2019  - SLS
+#::		* File originally created.
+#::
+#::
+#::	Purpose: The purpose of the script is to setup backup using duplicity to back up everything to a cloud account. 
+#:: 	In this case backups will be done to B2 Cloud storage buckets. This must be setup first. 
+#::
+#::
+#::
+#:: Installation
+#::
+#:: While duplicity is pre-installed on many Linux systems, you need version v0.7.12 or newer, which has been available since March 2017. 
+#::
+#:: Create Backblaze account with B2 enabled:
+#:: - First, create a Backblaze account and enable B2. If you already have a Backblaze account, login, visit "My Settings" 
+#::   and enable "B2 Cloud Storage" on your account under "Enabled Products" 
+#:: - Second, create an Private bucket in your B2 account.
+#:: - Third, retrieve your account id and application key. You will need to specify these in duplicity 
+#::   to perform backups and restores. 
+#::
+#:: You may for exaple deploy a Debian based VM, and connect to your shared storage, run this script,
+#:: and then configure your client devices to backup to the shared location.
+#:: This will ensure that all data backed up to the shared location "SAN" will be backed up to the cloud.
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+_LOCALINT="ens3"
+_VPNINT="tun0"
+_LOCALNET="192.168.1.0"
+_LOCALSUB="24"
+
+
+# Elevate the privileges to root equivalent (if not already) to manage system...
+[ "$UID" -eq 0 ] || echo "This script needs administrative access..." 
+[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Setup iptables for VPN          ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# duplicity ~ b2://[account id]:[application key]@[B2 bucket name]
+
+ duplicity /mnt/mediashare/Library b2://70e8c88d5a2b:K002Vs06oRrJdEZ4tKQpjCHw3q1ujQo@LibraryBackup
+
+
+#---------------------------------------------------------------
+
+

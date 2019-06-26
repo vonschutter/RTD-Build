@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+#	RTD Ubuntu Scripts
+#   	Stephan S.
+#
+#
+# Version 1.00
+#
+# This script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it usefull.
+#
+# This script is instended to live in the ~/bin/ folder.
+
+# elevate the privileges to root equivalent
+ echo This script needs administrative access...
+ [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+
+# Create the Quarantene directory if not already there.
+export HARVESTER=/home/$USER/bin/theHarvester-master
+if [ ! -d "$HARVESTER" ]; then
+  echo "I cant find the harvester quarentine folder in your "bin" folder"
+  exit
+fi
+
+if [ ! -f ~/bin/theHarvester-master/theHarvester.py ]; then
+  echo "I cant find the harvester.py in your "bin" folder"
+  echo "You must download the theHarvester-master and place it in the ~/bin folder"
+  exit
+fi
+# Run the query...
+pushd $HARVESTER
+ ~/bin/theHarvester-master/theHarvester.py -d $1 -b linkedin

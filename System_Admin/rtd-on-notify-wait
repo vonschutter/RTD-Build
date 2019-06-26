@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+#	RTD Ubuntu Scripts
+#   	Stephan S.
+#
+#
+# Version 1.00
+#
+# This script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it usefull.
+#
+# This script is instended to live in the ~/bin/ folder.
+#
+# Purpose:
+# Watch current directory (recursively) for file changes, and execute
+# a command when a file or directory is created, modified or deleted.
+#
+# Original Written by: Senko Rasic <senko.rasic@dobarkod.hr>
+#
+# Requires Linux, bash and inotifywait (from inotify-tools package).
+#
+# To avoid executing the command multiple times when a sequence of
+# events happen, the script waits one second after the change - if
+# more changes happen, the timeout is extended by a second again.
+#
+# Installation:
+#     chmod a+rx rtd-on-notify-wait
+#     sudo cp onchange.sh /usr/local/bin or ~/bin
+#
+# Example use - rsync local changes to the remote server:
+#
+#    rtd-on-notify-wait rsync -avt . host:/remote/dir
+#
+#
+
+  if hash inotifywait 2>/dev/null; then
+        echo "I found that inotifywait is present on this system... thankyou for that! "
+    else
+        echo "You seem to have no inotifywait.. I will try to get it... "
+        apt install inotify-tools -y
+            if [ $? != 0 ];
+            then
+                echo "That install didn't work out so well."
+                echo "Please manually try to add the software since I couldn't do it."
+                exit
+            fi
+        echo "OK Done! Continuing..."
+    fi
+
+
+EVENTS="CREATE,CLOSE_WRITE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 rsync -avt . host:/remote/dir ..."
+    exit -1;
+fi
+
+inotifywait -e "$EVENTS" -m -r --format '%:e %f' . | (
+    WAITING="";
+    while true; do
+        LINE="";
+        read -t 1 LINE;
+        if test -z "$LINE"; then
+            if test ! -z "$WAITING"; then
+                    echo "CHANGE";
+                    WAITING="";
+            fi;
+        else
+            WAITING=1;
+        fi;
+    done) | (
+    while true; do
+        read TMP;
+        echo $@
+        $@
+    done
+)
