@@ -99,11 +99,7 @@ option_22="Runtime Data OEM Configuration"
 
 system_update () {
     if hash pkcon 2>/dev/null; then
-        SofwareManagmentAvailabilityCHK
     	pkcon refresh
-    	echo For the sake of robustness we will chech again if the system 
-    	echo software managment is available before running the update... 
-    	SofwareManagmentAvailabilityCHK
         pkcon update -y
     else
         echo "You seem to have now Package Kit... I will try to get it... "
@@ -116,11 +112,7 @@ system_update () {
                 up2date
             fi
         echo "OK trying again!"
-        SofwareManagmentAvailabilityCHK
     	pkcon refresh
-    	echo For the sake of robustness; we will chech again if the system 
-    	echo software managment is available before running the update... 
-    	SofwareManagmentAvailabilityCHK
         pkcon update -y
     fi
 }
@@ -173,7 +165,7 @@ function do_instructions_from_choices (){
 	        "$option_1")
 	        IFS=$' '
 		 recipie_baseapps
-		IFS=$','
+		#IFS=$','
 		;;
 		"$option_2")
 		recipie_lamp_software
