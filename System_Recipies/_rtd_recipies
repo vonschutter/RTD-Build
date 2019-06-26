@@ -463,6 +463,7 @@ function recipie_set_gnome_wallpaper (){
 			# Install Wallpapers and configure Gnome to see them. ...
 			RTDCP=/opt/rtd/cache
 			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q $RTDCP/master.zip -d $RTDCP
+			rm $RTDCP/master.zip
 			pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
 
 			mkdir -p /usr/local/share/gnome-background-properties
