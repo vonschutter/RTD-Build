@@ -101,7 +101,7 @@ system_update () {
     if hash pkcon 2>/dev/null; then
         SofwareManagmentAvailabilityCHK
     	pkcon refresh
-    	echo For the sake of robustness; we will chech again if the system 
+    	echo For the sake of robustness we will chech again if the system 
     	echo software managment is available before running the update... 
     	SofwareManagmentAvailabilityCHK
         pkcon update -y
