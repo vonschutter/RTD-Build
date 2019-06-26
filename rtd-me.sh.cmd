@@ -50,7 +50,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux OS: Attempting to get instructions..."
 		mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
 		wget -q --show-progress $_RTDSRC -P $_RTDCACHE
-		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm $_RTDCACHE/master.zip
+		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
 		chmod +x $_RTDSCR/*
 	 	for i in $_RTDSCR/*; do ln -f -s $_RTDSCR/$i -t /bin ; done
 		$_RTDSCR/rtd-oem-linux-config.sh "$@"
