@@ -376,10 +376,11 @@ if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
 	choices_graphical 
 	do_instructions_from_choices
 else
+
 	check_dependencies whiptail
 	choices_term
 
-fi
+#fi
 
 
 

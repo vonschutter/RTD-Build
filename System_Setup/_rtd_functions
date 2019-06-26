@@ -102,12 +102,8 @@ function set_install_command () {
 		        export _INSTCMD="yum install -y "
 	        elif hash apt 2>/dev/null; then
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
-		        # tell debian based installers (Ubuntu, Mint etc.) to be quiet.
 	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 	                export DEBIAN_FRONTEND=noninteractive
-	                # Enable all repositories while disabling source repository list downloads in sources.list
-	                sed -i -e "s/# deb http/deb http/g" /etc/apt/sources.list
-	                sed -i -e "s/deb-src/# deb-src/g" /etc/apt/sources.list
 	        elif hash zypper 2>/dev/null; then
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
 		        export _INSTCMD="zypper install -y "
@@ -345,9 +341,9 @@ function notice_rtd_loaded ()
 # Function to list all functions loaded... for debugging purposes.
 function debug_list_loaded_functions ()
 {
-echo -e $BLUE "RTD Functions Loaded:"
+	echo -e $BLUE "RTD Functions Loaded:"
 
-declare -F | awk '{print $NF}' | sort | egrep -v "^_" 
+	declare -F | awk '{print $NF}' | sort | egrep -v "^_" 
 }
 
 # make prompt colors avaiable to any script that includes this function lbrary.
