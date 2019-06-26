@@ -380,7 +380,7 @@ else
 	check_dependencies whiptail
 	choices_term
 
-#fi
+fi
 
 
 
