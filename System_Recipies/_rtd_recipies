@@ -45,7 +45,7 @@ function recipie_baseapps (){
 			     InstallSoftwareFromRepo $i
 			done
 
-			check_dependencies snap
+			check_dependencies snapd
 			snap install screencloudplayer  2>>$_ERRLOGFILE
 			snap install signal-desktop 2>>$_ERRLOGFILE
 			snap install vidcutter 2>>$_ERRLOGFILE
@@ -93,6 +93,7 @@ function recipie_developer_software (){
 			do
 			     InstallSoftwareFromRepo $i
 			done
+			check_dependencies snapd
 			snap install atom --classic  2>>$_ERRLOGFILE
 			snap install gitkraken 2>>$_ERRLOGFILE
 }
@@ -209,12 +210,14 @@ function recipie_teamviewer (){
 function recipie_skype (){
 			#Skype for Linux
 			echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
+			check_dependencies snapd
 			snap install skype --classic  2>>$_ERRLOGFILE
 }
 
 
 
 function recipie_viber (){
+			check_dependencies snapd
 			snap install --edge viber-mtd 
 }
 
@@ -302,8 +305,8 @@ function recipie_openshot (){
 
 function recipie_media_streamers (){
 			echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
+			check_dependencies snapd
 			snap install spotify  2>>$_ERRLOGFILE
-
 			snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
 			snap install winds 2>>$_ERRLOGFILE
 
@@ -312,6 +315,7 @@ function recipie_media_streamers (){
 
 
 function recipie_audio_tools (){
+			check_dependencies snapd
 			snap install picard  2>>$_ERRLOGFILE
 }
 

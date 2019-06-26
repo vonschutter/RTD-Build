@@ -330,6 +330,7 @@ function check_dependencies () {
 }
 
 
+
 # Function to simply display that the functions have been loaded when this function library has been called.
 function notice_rtd_loaded ()
 {
@@ -338,13 +339,15 @@ function notice_rtd_loaded ()
 }
 
 
+
 # Function to list all functions loaded... for debugging purposes.
 function debug_list_loaded_functions ()
 {
 	echo -e $BLUE "RTD Functions Loaded:"
-
 	declare -F | awk '{print $NF}' | sort | egrep -v "^_" 
 }
+
+
 
 # make prompt colors avaiable to any script that includes this function lbrary.
 set_colors
