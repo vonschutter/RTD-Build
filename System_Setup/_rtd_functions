@@ -171,6 +171,7 @@ function dl ()
 # TODO: Add support for fedora, Centos, SuSE.
 function SofwareManagmentAvailabilityCHK ()
 {
+	echo ""
         echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
         i=0
         tput sc
@@ -183,7 +184,7 @@ function SofwareManagmentAvailabilityCHK ()
             esac
             tput rc
             echo -en "\r[$j] Waiting for other software managers to finish..."\
-            
+            ...
             echo " " 
             sleep 0.5
             ((i=i+1))
