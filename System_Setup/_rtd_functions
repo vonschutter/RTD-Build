@@ -99,7 +99,8 @@ function set_install_command () {
         if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	        if hash yum 2>/dev/null; then
 		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
-		        export _INSTCMD="yum install -y "
+		        #export _INSTCMD="yum install -y "
+		        export _INSTCMD="pkcon -y  install"
 	        elif hash apt 2>/dev/null; then
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
 	                #export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
@@ -107,7 +108,8 @@ function set_install_command () {
 	                export DEBIAN_FRONTEND=noninteractive
 	        elif hash zypper 2>/dev/null; then
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
-		        export _INSTCMD="zypper install -y "
+		        #export _INSTCMD="zypper install -y "
+		        export _INSTCMD="pkcon -y  install"
 		else
 		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
 	        fi
