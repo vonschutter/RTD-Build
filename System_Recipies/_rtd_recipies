@@ -56,7 +56,7 @@ function recipie_baseapps (){
                         ### Get OEM files ###
                         # Download and install WPS Office (more liek Microsoft Office) OSS from China... 
 			wget --show-progress "https://www.dropbox.com/s/4uaqci8awfe2yiw/wps-office_11.1.0.8392_amd64.deb" -P /opt/rtd/cache/
-				dpkg -i /opt/rtd/cache/wps*  2>>$_ERRLOGFILE
+				dpkg -i /opt/rtd/cache/wps*.deb  2>>$_ERRLOGFILE
 				apt -f install -y  2>>$_ERRLOGFILE
 			
 			# Download and install the Minty Icons from Linux Mint. Crisp and clean icons. 

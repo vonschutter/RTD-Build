@@ -102,7 +102,8 @@ function set_install_command () {
 		        export _INSTCMD="yum install -y "
 	        elif hash apt 2>/dev/null; then
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
-	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+	                #export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+	                export _INSTCMD="pkcon -y  install"
 	                export DEBIAN_FRONTEND=noninteractive
 	        elif hash zypper 2>/dev/null; then
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
