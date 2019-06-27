@@ -183,8 +183,8 @@ function SofwareManagmentAvailabilityCHK ()
             esac
             tput rc
             echo -en "\r[$j] Waiting for other software managers to finish..."\
-            ...
-            echo " " 
+
+
             sleep 0.5
             ((i=i+1))
         done
