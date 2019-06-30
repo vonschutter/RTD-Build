@@ -97,25 +97,13 @@ option_22="Runtime Data OEM Configuration"
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
 
-system_update () {
-    if hash pkcon 2>/dev/null; then
-    	pkcon refresh
-        pkcon update -y
-    else
-        echo "You seem to have now Package Kit... I will try to get it... "
-        echo "I will need to become admin to do that..."
-        sudo apt install packagekit
-            if [ $? != 0 ];
-            then
-                echo "That install didn't work out so well."
-                echo "Defaulting to the onld Up2Date Function"
-                up2date
-            fi
-        echo "OK trying again!"
-    	pkcon refresh
-        pkcon update -y
-    fi
-}
+
+
+
+
+
+
+
 
 
 # Function to display the  otions above. This is all done in a bit of a 
@@ -361,7 +349,7 @@ enable_firewall
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
-
+check_dependencies packagekit
 system_update
 
 

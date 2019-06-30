@@ -90,12 +90,12 @@ function ensure_admin () {
 
 
 
-
+# add global install command for portability and convenience
+# If you need to use this script in an rpm based system you could modify the install
+# command here to suit dnf, yum, zypper... By default packages of patternd that do not
+# match should be skipped. Use "export option" so child processes also see the variiables.
 function set_install_command () {
-	# add global install command for portability and convenience
-	# If you need to use this script in an rpm based system you could modify the install
-	# command here to suit dnf, yum, zypper... By default packages of patternd that do not
-	# match should be skipped. Use "export option" so child processes also see the variiables.
+
         if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	        if hash yum 2>/dev/null; then
 		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
@@ -330,6 +330,34 @@ function check_dependencies () {
                     fi
                 echo "OK Done! Continuing..."
             fi
+}
+
+
+
+
+# Function to update the Linux based system. This function is universal for all 
+# distributions that have package kit available. It works in the same manner on
+# RedHat/Fedora, Debian/Ubuntu and all their derivatives. When invoked as a 
+# part in a script, it is wist to ensure that the package kit is available 
+# by using the "check_dependencies" function to ensure that the software is available. 
+system_update () {
+    if hash pkcon 2>/dev/null; then
+    	pkcon refresh
+        pkcon update -y
+    else
+        echo "You seem to have now Package Kit... I will try to get it... "
+        echo "I will need to become admin to do that..."
+        sudo apt install packagekit
+            if [ $? != 0 ];
+            then
+                echo "That install didn't work out so well."
+                echo "Defaulting to the onld Up2Date Function"
+                up2date
+            fi
+        echo "OK trying again!"
+    	pkcon refresh
+        pkcon update -y
+    fi
 }
 
 
