@@ -227,29 +227,25 @@ function do_instructions_from_choices (){
 
 function choices_term () {
 	# List Options to be available for choice in the RTD System Configurator...
-	cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Software Options Menu" --separate-output --checklist "Please Select Software and Configuration below:" 22 85 16 )
-	options=(1 "Base RTD OEM Productivity Software" on    
-		 2 "Developer Software: LAMP Stack" off
-		 3 "Developer Software: IDE Tools and Compilers" on
-		 4 "OEM Comression Tools (zip, 7zip rar etc.)" on
-		 5 "OEM Selection of Quality Games" on
-		 6 "OEM System Administrative Tools" on
-		 7 "Oracle Java" on
-		 8 "Bleachbit System Cleaning Tool" on
-		 9 "Commercially Restricted Extras (prorietary video and audio formats)" on
-		 10 "VLC Media Player" on
-		 11 "Gnome Tweak Tool" on
-		 12 "Google Chrome" on
-		 13 "Teamiewer" on
-		 14 "Skype" on
-		 15 "MEGA nz Encrypted Cloud Storage" on
-		 16 "Dropbox Cloud Storage" on
-		 17 "Optional Desktop Tweaks" on
-		 18 "Openshot video editor" on
-		 19 "Media Streamers (Spotify and podcast software)" on
-		 20 "Audio Tools" on
-		 21 "Oracle VirtualBox" on
-		 22 "Runtime Data OEM Configuration" on
+	cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Terminal Software Options Menu" --separate-output --checklist "We did not find a graphical interface. No matter, you can be productive in the cli environment. Please Select Software and Configuration below:" 22 85 16 )
+	options=(1 "Base RTD OEM Software" on    
+		 2 "Alpine email client" on
+		 3 "Vim text editor" on
+		 4 "Finch multi protocol chat" on
+		 5 "Word Grinder word precessor" on
+		 6 "Spreadsheet Calculator" on
+		 7 "TPP Presentation Program" on
+		 8 "Midnight Commander file manager (Norton Commander)" on
+		 9 "Cmus Music Player" on
+		 10 "Byobu Terminal Window Manger" on
+		 11 "W3M web Browser" on
+		 12 "LYNX Web Browser" on
+		 13 "Mega.nz command line tools (Mega-CMD)" on
+		 14 "Rtorrent torrent download software" off
+		 15 "Install the OpenVpn client Software" on
+		 16 "Games: Freesweep mine sweep game" on
+		 17 "Games: Bastet Tetris Game" on
+		 18 "OEM Customizatons" on
 		)
 
 			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -258,69 +254,60 @@ function choices_term () {
 			do
 			    case $choice in
 				1)
-				recipie_baseapps
+				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail
+			do
+			     InstallSoftwareFromRepo $i
+			done
 				;;
 				2)
-				recipie_lamp_software
+				InstallSoftwareFromRepo alpine
 				;;
-	    			3)	
-				recipie_developer_software 
+	    			3)
+	    			InstallSoftwareFromRepo vim	
 				;;
 				4)
-				recipie_compression_tools
+				InstallSoftwareFromRepo finch
 				;;
 				5)
-				recipie_games			
+				InstallSoftwareFromRepo	wordgrinde*		
 				;;
 				6)
-				recipie_admin_tools
+				InstallSoftwareFromRepo sc
 				;;
 				7)
-				recipie_java 
+				InstallSoftwareFromRepo tpp
 				;;
 				8)
-				recipie_bleachbit
+				InstallSoftwareFromRepo mc
 				;;
 				9)
-				recipie_codecs
+				InstallSoftwareFromRepo cmus
 				;;
 				10)
-				recipie_vlc
+				InstallSoftwareFromRepo byobu
 				;;
 				11)
-				recipie_tweaktool 
+				InstallSoftwareFromRepo w3m*
 				;;
 				12)
-				recipie_google_chrome
+				InstallSoftwareFromRepo lynx
 				;;
 				13)
-				recipie_teamviewer
+				dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/ megacmd-*.deb
 				;;
 				14)
-				recipie_skype
+				InstallSoftwareFromRepo rtorrent
 				;;
 				15)
-				recipie_mega.nz
+				InstallSoftwareFromRepo openvpn
 				;;
 				16)
-				recipie_dropbox
+				InstallSoftwareFromRepo freesweep
 				;;
 				17)
-				recipie_gnome_config
+				InstallSoftwareFromRepo bastet
 				;;
 				18)
-				recipie_openshot
-				;;
-				19)
-				recipie_media_streamers	
-				;;
-				20)
-				recipie_audio_tools
-				;;
-				21)
-				recipie_virtualbox
-				;;
-				22)	
 				recipie_OEM_config
 				;;
 			esac

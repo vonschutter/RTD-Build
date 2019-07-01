@@ -179,6 +179,7 @@ function dl ()
 {
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
 	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
+	check_dependencies wget
 	echo  "   - geting package $2 ..."
 	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	echo "    - Installing package $2 ..."
