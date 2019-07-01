@@ -398,6 +398,100 @@ function notice_rtd_loaded ()
 }
 
 
+# Function to display legacy installation options. This will install software that is usefull
+# on a really old system, or a remote system only accessible via SSH. This may be a good 
+# usecase if oyu happen to be in an opressed geographic locaiton where your only option is 
+# to ssh to a remote server and access email and web that way. Perfomance in these cases
+# may be very poor over the internet (as for example with the great firewall of China). In
+# Such a case it would be usefull to have the good old CLI software! :) 
+function rtd_setup_choices_term_fallback () {
+	# List Options to be available for choice in the RTD System Configurator...
+	cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Terminal Software Options Menu" --separate-output --checklist "We did not find a graphical interface. No matter, you can be productive in the cli environment. Please Select Software and Configuration below:" 22 85 16 )
+	options=(1 "Base RTD OEM Software" on    
+		 2 "Alpine email client" on
+		 3 "Vim text editor" on
+		 4 "Finch multi protocol chat" on
+		 5 "Word Grinder word precessor" on
+		 6 "Spreadsheet Calculator" on
+		 7 "TPP Presentation Program" on
+		 8 "Midnight Commander file manager (Norton Commander)" on
+		 9 "Cmus Music Player" on
+		 10 "Byobu Terminal Window Manger" on
+		 11 "W3M web Browser" on
+		 12 "LYNX Web Browser" on
+		 13 "Mega.nz command line tools (Mega-CMD)" on
+		 14 "Rtorrent torrent download software" off
+		 15 "Install the OpenVpn client Software" on
+		 16 "Games: Freesweep mine sweep game" on
+		 17 "Games: Bastet Tetris Game" on
+		 18 "OEM Customizatons" on
+		)
+
+			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+			clear
+			for choice in $choices
+			do
+			    case $choice in
+				1)
+				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done
+				;;
+				2)
+				InstallSoftwareFromRepo alpine
+				;;
+	    			3)
+	    			InstallSoftwareFromRepo vim	
+				;;
+				4)
+				InstallSoftwareFromRepo finch
+				;;
+				5)
+				InstallSoftwareFromRepo	wordgrinder		
+				;;
+				6)
+				InstallSoftwareFromRepo sc
+				;;
+				7)
+				InstallSoftwareFromRepo tpp
+				;;
+				8)
+				InstallSoftwareFromRepo mc
+				;;
+				9)
+				InstallSoftwareFromRepo cmus
+				;;
+				10)
+				InstallSoftwareFromRepo byobu
+				;;
+				11)
+				InstallSoftwareFromRepo w3m
+				;;
+				12)
+				InstallSoftwareFromRepo lynx
+				;;
+				13)
+				dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/ megacmd-*.deb
+				;;
+				14)
+				InstallSoftwareFromRepo rtorrent
+				;;
+				15)
+				InstallSoftwareFromRepo openvpn
+				;;
+				16)
+				InstallSoftwareFromRepo freesweep
+				;;
+				17)
+				InstallSoftwareFromRepo bastet
+				;;
+				18)
+				recipie_OEM_config
+				;;
+			esac
+		done
+}
+
+
+
 
 # Function to list all functions loaded... for debugging purposes.
 function debug_list_loaded_functions ()
