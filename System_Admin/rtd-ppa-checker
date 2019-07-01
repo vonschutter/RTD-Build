@@ -1,4 +1,26 @@
-#!/usr/bin/env bash
+#!/bin/bash
+#
+#::                                            A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Ubuntu //:::::::
+#::
+#:: Author:   	SLS: Adapted from "unknown"
+#:: Version 	1.02
+#::
+#::
+#::	Purpose: The purpose of this script is to clear out unused PPA repositories. 
+#::		 
+#::		
+#::     Usage:	Simply execute this commandlet to list the PPA repositories and how many packages
+#:: 		are installed from each repository. To remove the unused repositories use the --delete option:
+#::     	
+#::     	rtd-ppa-checker --delete
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+#
 for f in /etc/apt/sources.list.d/*.list; do
     grep -Po "(?<=^deb\s).*?(?=#|$)" "$f" | while read -r ENTRY ; do
     echo "ENTRY: $ENTRY"

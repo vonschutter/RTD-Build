@@ -1,10 +1,24 @@
 #!/bin/bash
 #
-#	RTD Ubuntu Scripts
-#   	Stephan S.
-#
-#
-# Version 1.00
+#::                                     A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
+#::
+#:: Author:   	SLS
+#:: Version 	1.00
+#::
+#::
+#::	Purpose: The purpose of this script is to restart the indexing system on linux systems 
+#::		 
+#::		
+#::     Usage:	Simply execute this commandlet to accomplith this task.
+#:: 		
+#::     	
+#::     	
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
 # This script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
 # This OEM and store nolonger exists as its owner has passed away.

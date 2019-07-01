@@ -1,10 +1,25 @@
 #!/bin/bash
 #
-#	RTD Ubuntu Scripts
-#   	Stephan S.
+#::                                      A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
+#::
+#:: Author:   	SLS  
+#:: Version 	1.02
+#::
+#::
+#::	Purpose: The purpose of this script is to clear out zombie processes. 
+#::		 This may be useful in troubleshooting. It may work, but depending on the cause
+#::		 of the zombification it may or may not work. 
+#::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
+#:: 		
+#::     	
+#::     	
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-#
-# Version 1.00
 #
 # This script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
 # This OEM and store nolonger exists as its owner has passed away.
@@ -26,7 +41,7 @@
 #
 # Installation:
 #     chmod a+rx rtd-on-notify-wait
-#     sudo cp onchange.sh /usr/local/bin or ~/bin
+#     sudo cp rtd-on-notify-wait "to somewhere in your path" or ~/bin
 #
 # Example use - rsync local changes to the remote server:
 #

@@ -1,39 +1,65 @@
 #!/bin/bash
 #
-#	RTD Ubuntu + derivatives bash script
-#   	Stephan S. Särö, Sweden
-#			Nate B. Buffalo Center, IA
-#
-# Version 1.00
-#
-# This system utility script was originally developed
-# for RuntimeData, a small OEM in Buffalo Center, IA. This OEM and store nolonger
-# exists as its owner has passed away. This script is shared in the hopes that
-# someone will find it usefull.
-#
-# The purpose of this script is to lookup your internet location from the CLI.
-#
+#::             			A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::
+#:: Author:   	SLS
+#:: Version 	1.00
+#::
+#::	January 1 2019  - SLS
+#::		* File originally created.
+#::
+#::
+#::	Purpose: The purpose of the script is to find and display you internet location (geolocation) 
+#:: 	 	 Executing this command will identify you external IP and where physically it is located. 
+#::		 This is a useful function to quickly check if you VPN is working correctly. 
+#::
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-# Import the RTD functions to gain access to several useful functions.
-# Please note: the _rtd.fuctions file must be in your path as for example:
-#  "~/bin" for personal scripts and executables or "/bin" or "/sbin" etc.
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+_LOCALINT="ens3"
+_VPNINT="tun0"
+_LOCALNET="192.168.1.0"
+_LOCALSUB="24"
+
+# Set colors for prompting on screen.
+	YELLOW="\033[1;33m"
+	RED="\033[0;31m"
+	ENDCOLOR="\033[0m"
+	GREEN="\033[0;32m"
+	BLUE="\033[0;34m"
+	
 if [ -f ~/bin/_rtd_functions ]; then 
-	source _rtd_functions
+	source ~/bin/_rtd_functions
 else 
 	if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
 		source /opt/rtd/scripts/_rtd_functions
 	else 
-		echo RTD Functions not found... 
+		echo "RTD Functions not found... "
+		echo "Trying to retrieve them..."
+		wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions 
+		source ./_rtd_functions
 	fi
 fi
 
 if [[ "$RTDFUCTIONS" = "1" ]]
       then
-        echo RTD functions loaded!
+        echo -e $GREEN "RTD functions loaded!" $ENDCOLOR
       else
-        echo RTD functions NOT loaded!
+        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
+        echo -e $YELLOW "Will try to proceed without the ability to" $ENDCOLOR
+        echo -e $YELLOW "ensure that the correct software is available" $ENDCOLOR
+        echo -e $YELLOW "Assuming that all is setup correctly for this CMDLET" $ENDCOLOR
 fi
 
 # This script relies on curl to send web content to standard out (screen)

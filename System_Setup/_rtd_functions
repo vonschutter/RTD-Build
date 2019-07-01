@@ -3,7 +3,7 @@
 #::             Linux deb and rpm based distro functions that may be usefull for admin 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Author:   	Stephan S. & Nate B. Buffalo Center, IA
+#:: Author:   	Ken, Stephan & Nate B. Buffalo Center, IA
 #:: Version 1.01
 #::
 #::
@@ -16,6 +16,33 @@
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#	
+#	Functions defined in this library:
+#
+#	Function Name: 				Description:
+#	----------------------------------------------------------------------------------------------------------------
+#	check_dependencies			: Checks that software requirements are met so scripts do not fail 
+#	debug_list_loaded_functions		: Lists all loaded RTD functions in the environment
+#	dl					: Downloads and installs a package from the internet (a bit insecure)
+#	enable_firewall				: Will turn on UFW and add the Allow SSH rule
+#	ensure_admin				: Elevates priveledges to admin "root" for the whole script (asks for password)  
+#	InstallSoftwareFromRepo			: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.)
+#	is_software_package_available		: Checks to see if a software package is availabel in a repository (RPM and DEB)
+#	is_software_package_installed		: Checks to see if a software package allready is installed
+#	notice_rtd_loaded			: Notifies a script that RTD functions are loaded
+#	set_colors				: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
+#	set_install_command			: Determines what install command should be used to install packages from repositories
+#	SofwareManagmentAvailabilityCHK		: Checks to see that the software managment system is not busy
+#	system_update				: Newer more universal software update function
+#	up2date					: Older universal software update function
+#	
+#	
+#	
+#	
+
+
+
+
 
 ###########################################################################
 ##                                                                       ##
@@ -347,7 +374,7 @@ system_update () {
     else
         echo "You seem to have now Package Kit... I will try to get it... "
         echo "I will need to become admin to do that..."
-        sudo apt install packagekit
+        sudo check_dependencies packagekit
             if [ $? != 0 ];
             then
                 echo "That install didn't work out so well."
@@ -383,6 +410,11 @@ function debug_list_loaded_functions ()
 # make prompt colors avaiable to any script that includes this function lbrary.
 set_colors
 notice_rtd_loaded 
+
+
+if [[ "$1" = "--list" ]]; then
+	debug_list_loaded_functions
+fi
 
 
 

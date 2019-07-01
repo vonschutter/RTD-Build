@@ -353,7 +353,12 @@ check_dependencies packagekit
 system_update
 
 
-if ! echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
+if echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
+	check_dependencies zenity
+	choices_graphical 
+	do_instructions_from_choices
+	
+elif echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
 	check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices

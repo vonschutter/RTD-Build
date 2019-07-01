@@ -1,22 +1,31 @@
 #!/bin/bash
-#                -------------// Farorbit Linux Default SMB/Windows mounting Script   //------------
-#::
+#
+#::             			A D M I N   C O M M A N D L E T   
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Developed by Stephan Schutter - Farorbit - Systems - IT Security Solutions  - 
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#::	Thursday 29 September 2005  - Stephan Schutter
+#:: Author:   	SLS
+#:: Version 	1.00
+#::
+#::                -------------------------
+#::
+#::	Thursday 29 September 2005  - SLS
 #::		* File originally created.
 #::
 #::
 #::	Purpose: to mount all the SMB/Windows shares indicated in this script on the server specified. 
 #::		 There is no limit to the number of shares that you can mount. 
-#::	 		
+#::	 		 
 #::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+# This script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
+# This OEM and store nolonger exists as its owner has passed away.
+# This script is shared in the hopes that someone will find it usefull.
+
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

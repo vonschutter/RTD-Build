@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-#::            A D M I N   C O M M A N D L E T   -   BackBlaze Duplicity setup script
+#::             			A D M I N   C O M M A N D L E T   
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
+#::
 #:: Author:   	SLS
 #:: Version 	1.00
 #::
@@ -45,6 +46,11 @@ _VPNINT="tun0"
 _LOCALNET="192.168.1.0"
 _LOCALSUB="24"
 
+# Backblaze application key ID to backup to:
+B3ID=70e8c88d5a2b:K002Vs06oRrJdEZ4tKQpjCHw3q1ujQo
+BACKUPDIR=$1
+
+
 
 # Elevate the privileges to root equivalent (if not already) to manage system...
 [ "$UID" -eq 0 ] || echo "This script needs administrative access..." 
@@ -52,13 +58,23 @@ _LOCALSUB="24"
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Setup iptables for VPN          ::::::::::::::::::::::
+#::::::::::::::          Setup backup to known B3        ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# duplicity ~ b2://[account id]:[application key]@[B2 bucket name]
 
- duplicity /mnt/mediashare/Library b2://70e8c88d5a2b:K002Vs06oRrJdEZ4tKQpjCHw3q1ujQo@LibraryBackup
-
+if [ -n "$BACKUPDIR" ]; then
+	# duplicity ~ b2://[account id]:[application key]@[B2 bucket name]
+	duplicity $BACKUPDIR b2://"$B3ID"@LibraryBackup
+else
+    echo "USAGE:"
+    echo "To use this script to backup a directory you need to tell me "
+    echo "what directory to bcackup!"
+    echo  ""
+    echo "example:"
+    echo "$0 /home/$USER"
+    echo " "
+    echo "Please try again."
+fi
 
 #---------------------------------------------------------------
 

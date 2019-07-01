@@ -1,5 +1,24 @@
 #!/bin/bash
-
+#
+#::                                     A D M I N   C O M M A N D L E T   
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
+#::
+#:: Author:   	SLS
+#:: Version 	1.00
+#::
+#::
+#::	Purpose: The purpose of this script is to monitor a linux system interactively.  
+#::		 This may be useful for trouble shooting.
+#::		
+#::     Usage:	Simply execute this commandlet to accomplith this task.
+#:: 		
+#::     	
+#::     	
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Lunches 4 Xterm windows and starts system monitoring tool in them.
 #
 # Xterm obeys the following on screen positions:
