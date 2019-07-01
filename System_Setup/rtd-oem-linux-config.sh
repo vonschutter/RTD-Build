@@ -353,21 +353,17 @@ check_dependencies packagekit
 system_update
 
 
-if echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
-	check_dependencies zenity
-	choices_graphical 
-	do_instructions_from_choices
-	
-elif echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
-	check_dependencies zenity
-	choices_graphical 
-	do_instructions_from_choices
-else
 
-	check_dependencies whiptail
+if ! xset q &>/dev/null; then
+	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
+    	check_dependencies whiptail
 	choices_term
-
+else     
+    	check_dependencies zenity
+	choices_graphical 
+	do_instructions_from_choices
 fi
+
 
 
 
