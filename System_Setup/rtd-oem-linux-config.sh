@@ -254,10 +254,7 @@ function choices_term () {
 			do
 			    case $choice in
 				1)
-				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail
-			do
-			     InstallSoftwareFromRepo $i
-			done
+				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done
 				;;
 				2)
 				InstallSoftwareFromRepo alpine
