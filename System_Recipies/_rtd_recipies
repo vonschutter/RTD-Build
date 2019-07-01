@@ -349,7 +349,7 @@ function recipie_OEM_config (){
 			#::::::::::::::          Desktop Settings                ::::::::::::::::::::::
 			#::::::::::::::                                          ::::::::::::::::::::::
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-			
+			enable_firewall
 			# Power managment profile
 			InstallSoftwareFromRepo tuned
 			sudo systemctl enable --now tuned

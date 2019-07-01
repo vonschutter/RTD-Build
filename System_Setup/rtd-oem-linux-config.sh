@@ -241,9 +241,6 @@ ensure_admin
 # Set the install instructions. This accepts apt, yum, or zypper.. 
 set_install_command
 
-# Enable firewall. This presently expects ufw only. 
-enable_firewall
-
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK

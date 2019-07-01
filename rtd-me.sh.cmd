@@ -59,7 +59,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
 	chmod +x $_RTDSCR/*
 	pushd /bin
- 	ln -f -s $_RTDSCR/$i . 
+ 	ln -f -s $_RTDSCR/rtd* . 
  	popd
 	$_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
