@@ -52,7 +52,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		wget -q --show-progress $_RTDSRC -P $_RTDCACHE
 		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
 		chmod +x $_RTDSCR/*
-	 	for i in $_RTDSCR/*; do ln -f -s $_RTDSCR/$i -t /bin ; done
+		pushd /bin
+	 	ln -f -s $_RTDSCR/$i . 
+	 	popd
 		$_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
