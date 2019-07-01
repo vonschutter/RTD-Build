@@ -149,11 +149,10 @@ function do_instructions_from_choices (){
         IFS=$','
 	for choice in $choices
 	do
+		IFS=$' '
 		case $choice in
 	        "$option_1")
-	        IFS=$' '
-		 recipie_baseapps
-		#IFS=$','
+	        recipie_baseapps
 		;;
 		"$option_2")
 		recipie_lamp_software
@@ -225,91 +224,6 @@ function do_instructions_from_choices (){
 	done  
 }
 
-function choices_term () {
-	# List Options to be available for choice in the RTD System Configurator...
-	cmd=(whiptail --backtitle "RTD OEM System Builder Configuraton Menu" --title "Terminal Software Options Menu" --separate-output --checklist "We did not find a graphical interface. No matter, you can be productive in the cli environment. Please Select Software and Configuration below:" 22 85 16 )
-	options=(1 "Base RTD OEM Software" on    
-		 2 "Alpine email client" on
-		 3 "Vim text editor" on
-		 4 "Finch multi protocol chat" on
-		 5 "Word Grinder word precessor" on
-		 6 "Spreadsheet Calculator" on
-		 7 "TPP Presentation Program" on
-		 8 "Midnight Commander file manager (Norton Commander)" on
-		 9 "Cmus Music Player" on
-		 10 "Byobu Terminal Window Manger" on
-		 11 "W3M web Browser" on
-		 12 "LYNX Web Browser" on
-		 13 "Mega.nz command line tools (Mega-CMD)" on
-		 14 "Rtorrent torrent download software" off
-		 15 "Install the OpenVpn client Software" on
-		 16 "Games: Freesweep mine sweep game" on
-		 17 "Games: Bastet Tetris Game" on
-		 18 "OEM Customizatons" on
-		)
-
-			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-			clear
-			for choice in $choices
-			do
-			    case $choice in
-				1)
-				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done
-				;;
-				2)
-				InstallSoftwareFromRepo alpine
-				;;
-	    			3)
-	    			InstallSoftwareFromRepo vim	
-				;;
-				4)
-				InstallSoftwareFromRepo finch
-				;;
-				5)
-				InstallSoftwareFromRepo	wordgrinde*		
-				;;
-				6)
-				InstallSoftwareFromRepo sc
-				;;
-				7)
-				InstallSoftwareFromRepo tpp
-				;;
-				8)
-				InstallSoftwareFromRepo mc
-				;;
-				9)
-				InstallSoftwareFromRepo cmus
-				;;
-				10)
-				InstallSoftwareFromRepo byobu
-				;;
-				11)
-				InstallSoftwareFromRepo w3m*
-				;;
-				12)
-				InstallSoftwareFromRepo lynx
-				;;
-				13)
-				dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/ megacmd-*.deb
-				;;
-				14)
-				InstallSoftwareFromRepo rtorrent
-				;;
-				15)
-				InstallSoftwareFromRepo openvpn
-				;;
-				16)
-				InstallSoftwareFromRepo freesweep
-				;;
-				17)
-				InstallSoftwareFromRepo bastet
-				;;
-				18)
-				recipie_OEM_config
-				;;
-			esac
-		done
-}
 
 
 
@@ -341,18 +255,19 @@ system_update
 if ! xset q &>/dev/null; then
 	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
     	check_dependencies whiptail
-	choices_term
+	rtd_setup_choices_term_fallback
 else     
     	check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices
+	zenity --notification --window-icon=update.png --text "System update is complete! You may restart your system and start using it now"
+	zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
+		if [ $? = 0 ];
+	      	then
+		  echo "OK Rebooting."
+		  reboot
+		fi
 fi
-
-
-
-
-
-
 
 
 
@@ -362,22 +277,6 @@ fi
 #::::::::::::::          Finalize.....                   ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-# Clean up and Finalize
-echo -e $YELLOW"--- Remove any unused applications and esure all the latest updates are installed lastly..." $ENDCOLOR
-	up2date
-
-
-zenity --notification --window-icon=update.png --text "System update is complete! You may restart your system and start using it now"
-zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
-if [ $? = 0 ];
-      then
-          echo "OK Rebooting."
-	  reboot
-fi
-
-
 
 exit
 
