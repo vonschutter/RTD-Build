@@ -39,6 +39,10 @@ _RTDSCR=/opt/rtd/scripts
 _RTDCACHE=/opt/rtd/cache
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
+
+
+
+	
 clear
 echo "This is now a ${SHELL} environment..."
 echo "Attempting to detect version of POSIX based system..."
@@ -48,14 +52,16 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# extract them in to the $_RTDSCR location. Then execute the intructions
 	# to complete the configuration of the system. 
         echo "Linux OS: Attempting to get instructions..."
-		mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
-		wget -q --show-progress $_RTDSRC -P $_RTDCACHE
-		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
-		chmod +x $_RTDSCR/*
-		pushd /bin
-	 	ln -f -s $_RTDSCR/$i . 
-	 	popd
-		$_RTDSCR/rtd-oem-linux-config.sh "$@"
+	mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
+	for i in apt yum dnf zypper ; do sudo $i -y install wget > /dev/null 2>&1 ; done
+	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
+	for i in apt yum dnf zypper ; do sudo $i -y install unzip > /dev/null 2>&1 ; done
+	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
+	chmod +x $_RTDSCR/*
+	pushd /bin
+ 	ln -f -s $_RTDSCR/$i . 
+ 	popd
+	$_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
