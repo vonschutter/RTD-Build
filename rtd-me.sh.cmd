@@ -67,7 +67,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	pushd /bin
  	  ln -f -s $_RTDSCR/rtd* .
  	popd
-	$_RTDSCR/rtd-oem-linux-config.sh "$@"
+	bash $_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Mac OSX is currently not supported..."
