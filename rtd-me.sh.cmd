@@ -7,8 +7,8 @@ GOTO :CMDSCRIPT
 echo     -        RTD System System Managment Bootstrap Script      -
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Author:   	Stephan S. & Nate B. Buffalo Center, IA
-#:: Version 1.00
+#:: Author:   	SLS. & Nate B. Buffalo Center, IA
+#:: Version 1.05
 #::
 #::
 #:: Purpose: 	The purpose of the script is to decide what scripts to download based 
@@ -35,11 +35,18 @@ echo     -        RTD System System Managment Bootstrap Script      -
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-_RTDSCR=/opt/rtd/scripts
-_RTDCACHE=/opt/rtd/cache
+
+# Base folder structure for optional administrative commandlets and scripts:
+_RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
+_RTDCACHE=$(if [ -f /opt/rtd/cache ]; then echo /opt/rtd/cache ; else ( mkdir -p /opt/rtd/cache & echo  /opt/rtd/cache ) ; fi )
+_RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /opt/rtd/log & echo  /opt/rtd/log ) ; fi )
+
+# Location of base administrative scripts and commandlets to get. 
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
-
+# Determine log file directory
+if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
 
 	
@@ -51,15 +58,14 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# Task to complete: Download the set of instructions required and 
 	# extract them in to the $_RTDSCR location. Then execute the intructions
 	# to complete the configuration of the system. 
-        echo "Linux OS: Attempting to get instructions..."
-	mkdir -p $_RTDSCR && mkdir -p $_RTDCACHE
-	for i in apt yum dnf zypper ; do sudo $i -y install wget > /dev/null 2>&1 ; done
+        echo "Linux OS Found: Attempting to get instructions for Linux..."
+	for i in apt yum dnf zypper ; do $i -y install wget > /dev/null 2>&1 ; done
 	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
-	for i in apt yum dnf zypper ; do sudo $i -y install unzip > /dev/null 2>&1 ; done
+	for i in apt yum dnf zypper ; do $i -y install unzip > /dev/null 2>&1 ; done
 	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
 	chmod +x $_RTDSCR/*
 	pushd /bin
- 	ln -f -s $_RTDSCR/rtd* . 
+ 	  ln -f -s $_RTDSCR/rtd* . 
  	popd
 	$_RTDSCR/rtd-oem-linux-config.sh "$@"
         exit $?

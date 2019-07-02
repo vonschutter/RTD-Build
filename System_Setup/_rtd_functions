@@ -155,9 +155,10 @@ function set_install_command () {
 
 
 
-# Function to enable system firewall and add a given rule. 
+# Function to enable system firewall and add a given rule. This simple function
+# enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to 
+# pass. 
 function enable_firewall () {
-	# Enable firewall in Ubuntu systems
 	if hash ufw 2>/dev/null; then
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
 			ufw enable && ufw allow ssh
