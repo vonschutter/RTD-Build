@@ -62,7 +62,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	for i in apt yum dnf zypper ; do $i -y install wget > /dev/null 2>&1 ; done
 	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
 	for i in apt yum dnf zypper ; do $i -y install unzip > /dev/null 2>&1 ; done
-	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip > /dev/null
+	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd > /dev/null 2>&1 && rm -v $_RTDCACHE/master.zip
 		if [ $? -eq 0 ]
 		then
 			echo "Instructions sucessfully retrieved..."
