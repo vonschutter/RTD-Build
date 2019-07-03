@@ -60,15 +60,20 @@ function recipie_baseapps (){
 			#wget --show-progress "https://www.dropbox.com/s/3p10v26dz9aetxw/mint-y-icons_1.3.3_all.deb" -P /opt/rtd/cache/
 			#dpkg -i /opt/rtd/cache/mint*.deb  2>>$_ERRLOGFILE
 			
+
+			recipie_OEM_config
+}
+
+
+
+function recepie_oem_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
 			check_dependencies p7zip-full
 			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
 
-			recipie_OEM_config
 }
-
 
 
 
