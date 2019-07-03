@@ -32,9 +32,14 @@ echo     -        RTD System System Managment Bootstrap Script      -
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Save the UI currently in use...
+echo "export XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" " >~/.ui
+
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+
+source ~/.ui
 
 # Base folder structure for optional administrative commandlets and scripts:
 _RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
