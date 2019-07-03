@@ -50,19 +50,19 @@ export _ERRLOGFILE=$0-error.log
 BACKTITLE="RTD OEM Simple System Setup"
 
 # Set the options to appear in the menu as choices:
-option_1="Base RTD OEM Productivity Software"
+option_1="Bundle: Base configuration and common software"
 option_2="Developer Software: LAMP Stack"
-option_3="Developer Software: IDE Tools and Compilers" 
-option_4="OEM Comression Tools (zip, 7zip rar etc.)" 
-option_5="OEM Selection of Quality Games" 
-option_6="OEM System Administrative Tools" 
+option_3="Bundle: Software to Write Code and Scripts" 
+option_4="Bundle: Comression Tools (zip, 7zip rar etc.)" 
+option_5="Bundle: Selection of Quality Games" 
+option_6="Bundle: System Administration Tools" 
 option_7="Oracle Java" 
 option_8="Bleachbit System Cleaning Tool" 
 option_9="Commercially Restricted Extras (prorietary video and audio formats)" 
 option_10="VLC Media Player"  
 option_11="Gnome Tweak Tool" 
 option_12="Google Chrome" 
-option_13="Teamiewer"  
+option_13="Teamiewer"
 option_14="Skype" 
 option_15="MEGA nz Encrypted Cloud Storage" 
 option_16="Dropbox Cloud Storage"  
@@ -71,7 +71,7 @@ option_18="Openshot video editor"
 option_19="Media Streamers (Spotify and podcast software)"  
 option_20="Audio Tools" 
 option_21="Oracle VirtualBox" 
-option_22="Runtime Data OEM Configuration" 
+option_22="Steam Gaming Platform" 
 
 
 
@@ -218,7 +218,7 @@ function do_instructions_from_choices (){
 		recipie_virtualbox
 		;;
 		"$option_22")
-		recipie_OEM_config
+		recipie_steam 
 		;;
 		esac
 	done  
