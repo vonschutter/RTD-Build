@@ -33,7 +33,7 @@ echo     -        RTD System System Managment Bootstrap Script      -
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Save the UI currently in use...
-echo "export XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" " >.ui
+echo export XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP">.ui
 
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
