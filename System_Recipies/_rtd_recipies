@@ -410,7 +410,6 @@ function recipie_set_user_gnome_ui (){
 				gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
 
 				# Configure Dash to Dock
-				check_dependencies 
 				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 				gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
 				gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
@@ -481,7 +480,7 @@ function recipie_set_user_gnome_ui (){
 
 				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
 				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-		gnome-shell --replace
+				gnome-shell --replace
 }
 
 
