@@ -253,32 +253,6 @@ function recipie_dropbox (){
 
 
 
-function recipie_gnome_config (){
-			# Special case for installing Google Chrome
-			echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
-			
-			# Add Relevant extensions...
-			InstallSoftwareFromRepo gnome-shell-extension-appindicator
-			InstallSoftwareFromRepo gnome-shell-extension-suspend-button 
-			InstallSoftwareFromRepo gnome-shell-extension-log-out-button 
-			InstallSoftwareFromRepo gnome-shell-extension-tilix-dropdown
-			InstallSoftwareFromRepo gnome-shell-extension-multi-monitors 
-			InstallSoftwareFromRepo gnome-shell-extension-caffeine
-			InstallSoftwareFromRepo gnome-shell-extension-gsconnect 
-			InstallSoftwareFromRepo gnome-shell-extension-gsconnect-browsers
-			InstallSoftwareFromRepo gnome-shell-extension-dash-to-panel 
-			InstallSoftwareFromRepo gnome-shell-extension-dashtodock  
-
-			# Add Some basic themes and icons...			
-			InstallSoftwareFromRepo arc-theme
-			InstallSoftwareFromRepo numix-icon* 
-			InstallSoftwareFromRepo adwaita*
-			
-}
-
-
-
-
 function recipie_openshot (){
 			# Special case for installing Openshot video editor
 			echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
@@ -383,9 +357,29 @@ function recipie_set_user_gnome_ui (){
 			# current user. This should likely only be done right after a PC has been installed
 			# otherwise all user configuration settings will be trasferred to any user 
 			# subsequently created.  
-				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
-				gsettings set org.gnome.desktop.interface gtk-theme “Mytheme”
+			# Special case for installing Google Chrome
+			echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+			
+			# Add Relevant extensions...
 
+
+			# Add Some clean and basic themes and icons...			
+			for i in 	numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
+						gnome-shell-extension-appindicator \
+						gnome-shell-extension-suspend-button \ 
+						gnome-shell-extension-log-out-button  \
+						gnome-shell-extension-tilix-dropdown \
+						gnome-shell-extension-multi-monitors \
+						gnome-shell-extension-caffeine \
+						gnome-shell-extension-gsconnect  \
+						gnome-shell-extension-gsconnect-browsers \
+						gnome-shell-extension-dash-to-panel \
+						gnome-shell-extension-dashtodock \
+						arc-theme \
+						adwaita-icon-theme-full adwaita-qt  
+				do 
+				InstallSoftwareFromRepo $i
+				done
 
 				# Tilix Dark Theme
 				gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
@@ -394,7 +388,7 @@ function recipie_set_user_gnome_ui (){
 				# Add proffessional and crisp looking icons...
 				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
-				gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
+				# gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
 				gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
 				#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
@@ -415,7 +409,10 @@ function recipie_set_user_gnome_ui (){
 				gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
 				gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
 
-				#Dash to Dock Theme
+				# Configure Dash to Dock
+				check_dependencies 
+				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+				gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
 				gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
 				gsettings set org.gnome.shell.extensions.dash-to-dock custom-background-color false
 				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true
@@ -432,6 +429,8 @@ function recipie_set_user_gnome_ui (){
 				gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
 				gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
 				gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
+				gnome-shell-extension-tool -e dash-to-dock
+
 
 				#This indexer is nice, but can be detrimental for laptop users battery life
 				gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
@@ -482,7 +481,7 @@ function recipie_set_user_gnome_ui (){
 
 				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
 				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-
+		gnome-shell --replace
 }
 
 
