@@ -353,8 +353,8 @@ function recipie_OEM_config (){
 			# Management of local/remote system(s) - availa
 
 			# Apply tweaks to the UI based on desktop active
-			if  echo "$XDG_CURRENT_DESKTOP" | grep -q "GNOME"; then
-				echo "Detected the GNOME UI! Adding some customizations..."
+			if  ps a|grep -q "gnome"; then
+				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
 
@@ -368,7 +368,7 @@ function recipie_OEM_config (){
 				cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
 			fi
 
-			if  echo "$XDG_CURRENT_DESKTOP" | grep -q "KDE"; then
+			if  ps a|grep -q "kde"; then
 				echo "Detected KDE UI!" 	
 			
 			fi
