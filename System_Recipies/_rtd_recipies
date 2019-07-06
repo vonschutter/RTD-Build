@@ -334,7 +334,7 @@ function recipie_OEM_config (){
 
 				#Change user context and apply gnome settings... 
 				export -f recipie_set_user_gnome_ui;
-				recipie_set_user_gnome_ui
+				#recipie_set_user_gnome_ui
 				echo "Modifying setings for: ´/usr/bin/whoami´"
 				su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
 
@@ -390,13 +390,13 @@ function recipie_set_user_gnome_ui (){
 				gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
 				# gsettings set org.gnome.desktop.interface cursor-theme 'Breeze_Snow'
 				gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
-				#gsettings set org.gnome.shell.extensions.user-theme name 'Arc-Dark-solid'
 
-				#Set SCP as Monospace (Code) Font
+				# Set font
 				# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
 
 				#Set Extensions for gnome
-				gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net']"
+				gsettings set org.gnome.shell disable-user-extensions false
+				gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
 
 				#Better Font Smoothing
 				gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
