@@ -366,7 +366,7 @@ function recipie_set_user_gnome_ui (){
 			# Add Some clean and basic themes and icons...			
 			for i in 	numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
 						gnome-shell-extension-appindicator \
-						gnome-shell-extension-suspend-button \ 
+						gnome-shell-extension-suspend-button \
 						gnome-shell-extension-log-out-button  \
 						gnome-shell-extension-tilix-dropdown \
 						gnome-shell-extension-multi-monitors \
