@@ -40,7 +40,14 @@
 #	
 #	
 
+###########################################################################
+##                                                                       ##
+##                         Settings                                      ##
+##                                                                       ##
+###########################################################################
 
+source /opt/rtd/scripts/_rtd_recipies
+source /opt/rtd/scripts/_branding
 
 
 
@@ -51,7 +58,7 @@
 ###########################################################################
 #
 
-source /opt/rtd/scripts/_rtd_recipies
+
 
 # Set colors for prompting on screen in human readable variables. These will be set globally
 # and can be can be used by in echo statements to modify the color of the message. 
@@ -185,8 +192,7 @@ function dl ()
 	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	echo "    - Installing package $2 ..."
 	pkcon install-local -y /var/apt/cache/archives/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	#echo "    - Installing dependencies for $2..."
-	#apt-get -f install -y -qq --allow-change-held-packages 1>>$_LOGFILE 2>>$_ERRLOGFILE
+
 }
 
 
@@ -440,8 +446,8 @@ function rtd_setup_choices_term_fallback () {
 				2)
 				InstallSoftwareFromRepo alpine
 				;;
-	    			3)
-	    			InstallSoftwareFromRepo vim	
+				3)
+				InstallSoftwareFromRepo vim	
 				;;
 				4)
 				InstallSoftwareFromRepo finch

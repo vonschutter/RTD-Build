@@ -40,18 +40,21 @@
 # $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
 source /opt/rtd/scripts/_rtd_functions
 
+
 # Decide where to put log files.
 # Default: log in to "name of this script".log and -error.login the home dir.
-export _LOGFILE=$0.log
-export _ERRLOGFILE=$0-error.log
+if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+
+
 
 
 # Set the background tilte:
 BACKTITLE="RTD OEM Simple System Setup"
 
 # Set the options to appear in the menu as choices:
-option_1="Base Configuration Bundle"
-option_2="Developer Software: LAMP Stack"
+option_1="Base Configuration for Productivity (Theming and UI tweaks)"
+option_2="WPS Office (Excellent office suite with a modern look and feel)"
 option_3="Software to Write Code and Scripts Bundle" 
 option_4="Comression Tools Bundle" 
 option_5="Quality OSS Games Bundle" 
@@ -60,34 +63,20 @@ option_7="Oracle Java"
 option_8="Bleachbit System Cleaning Tool" 
 option_9="Commercially Restricted Extras (prorietary video and audio formats)" 
 option_10="VLC Media Player"  
-option_11="Gnome Tweak Tool" 
+option_11="AnyDesk Remote Desktop Screen Sharing (Proprietary)" 
 option_12="Google Chrome" 
-option_13="Teamiewer"  
-option_14="Skype" 
+option_13="Teamiewer Desktop Screen Sharing (Proprietary)"  
+option_14="Skype (Proprietary)" 
 option_15="MEGA nz Encrypted Cloud Storage" 
-option_16="Dropbox Cloud Storage"  
-option_17="Optional Desktop Tweaks" 
-option_18="Openshot video editor" 
-option_19="Media Streamers (Spotify and podcast software)"  
+option_16="Dropbox Cloud Storage (Proprietary)"  
+option_17="Signal and Telegram apps (Secure Communication)" 
+option_18="Video Editing Bundle (Openshot, vidcutter etc.)" 
+option_19="Media Streamers Bundle (Spotify and Podcast Apps)"  
 option_20="Audio Tools" 
 option_21="Oracle VirtualBox" 
 option_22="Steam Gaming Platform" 
 
 
-
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Base OEM Configuration          ::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
-#
-# Software and configuration selections dialog. This will present a number of OEM defaults
-# and other preferences that can be added to a system at will. To remove software it is 
-# recommended to use the native software tool (Gnome Software, Yast, or Discover).
-#
-# Option defaults may be set to "on" or "off"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -151,11 +140,11 @@ function do_instructions_from_choices (){
 	do
 		IFS=$' '
 		case $choice in
-	        "$option_1")
-	        recipie_baseapps
+		"$option_1")
+		recipie_baseapps
 		;;
 		"$option_2")
-		recipie_lamp_software
+		recipie_wps_office
 		;;
 		"$option_3")	
 		recipie_developer_software
@@ -182,7 +171,7 @@ function do_instructions_from_choices (){
 		recipie_vlc
 		;;
 		"$option_11")
-		recipie_tweaktool 
+		recipie_anydesk
 		;;
 		"$option_12")
 		recipie_google_chrome
@@ -203,10 +192,10 @@ function do_instructions_from_choices (){
 		recipie_dropbox
 		;;
 		"$option_17")
-		recipie_gnome_config
+		recipie_secure_communication
 		;;
 		"$option_18")
-		recipie_openshot
+		recipie_video_editing 
 		;;
 		"$option_19")
 		recipie_media_streamers	
@@ -254,7 +243,7 @@ if ! xset q &>/dev/null; then
     	check_dependencies whiptail
 	rtd_setup_choices_term_fallback
 else     
-    	check_dependencies zenity
+    check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices
 	zenity --notification --window-icon=update.png --text "System update is complete! You may restart your system and start using it now"

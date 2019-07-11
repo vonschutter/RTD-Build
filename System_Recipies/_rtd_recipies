@@ -35,33 +35,31 @@
 function recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
-			echo -e $YELLOW"--- Install base apps for Productivity..." $ENDCOLOR
-			# Loop through each item in this list of software and perform an install 
-			# using the relevant packaging system. 
-			for i in wine-stable diodon shutter \
-				gnome-twitch polari filezilla libdvdcss2 ffmpeg
+			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
+			for i in wine diodon gnome-twitch polari filezilla libdvdcss2 ffmpeg
 			do
 			     InstallSoftwareFromRepo $i
 			done
 
+			# some small simple apps you will like... 
 			check_dependencies snapd
-			snap install screencloudplayer  2>>$_ERRLOGFILE
-			snap install signal-desktop 2>>$_ERRLOGFILE
-			snap install vidcutter 2>>$_ERRLOGFILE
-			snap install telegram-desktop 2>>$_ERRLOGFILE
+			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
+			snap install screencloud  2>>$_ERRLOGFILE
+			snap install flameshot-app 2>>$_ERRLOGFILE
+			# A small app that allows you to use your old DOS software. 
 			snap install dosbox-x  2>>$_ERRLOGFILE
+			# A simple to use not taking app that auto syncs with the same app on any device.
 			snap install simplenote 2>>$_ERRLOGFILE
+			# Configure the system look an feel to be crisp and clean
+			recipie_OEM_config
+}
 
-			### Get OEM files ###
+
+
+function recipie_wps_office () {
 			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
 			dl https://www.dropbox.com/s/4uaqci8awfe2yiw/ wps-office_11.1.0.8392_amd64.deb 
-			
-			# Download and install the Minty Icons from Linux Mint. Crisp and clean icons. 
-			#wget --show-progress "https://www.dropbox.com/s/3p10v26dz9aetxw/mint-y-icons_1.3.3_all.deb" -P /opt/rtd/cache/
-			#dpkg -i /opt/rtd/cache/mint*.deb  2>>$_ERRLOGFILE
-			
 
-			recipie_OEM_config
 }
 
 
@@ -72,6 +70,25 @@ function recepie_oem_restricted_fonts () {
 			mkdir -p /usr/share/fonts/truetype/oem
 			check_dependencies p7zip-full
 			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
+
+}
+
+
+
+function recipie_secure_communication () {
+			check_dependencies snapd
+			snap install signal-desktop 2>>$_ERRLOGFILE
+			snap install telegram-desktop 2>>$_ERRLOGFILE
+
+
+}
+
+
+
+function recipie_video_editing () {
+			check_dependencies snapd
+			snap install vidcutter 2>>$_ERRLOGFILE 
+			recipie_openshot
 
 }
 
@@ -150,9 +167,7 @@ function recipie_admin_tools (){
 			do
 			     InstallSoftwareFromRepo $i
 			done
-			apt-add-repository ppa:fixnix/netspeed -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			InstallSoftwareFromRepo indicator-netspeed-unity
+
 }
 
 
@@ -195,14 +210,6 @@ function recipie_vlc (){
 
 
 
-function recipie_tweaktool (){
-			# Tweak tool
-			echo -e $YELLOW"--- Install Installing Gnome Tweak Tool..." $ENDCOLOR
-			InstallSoftwareFromRepo gnome-tweak-tool
-}
-
-
-
 function recipie_google_chrome (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
@@ -214,7 +221,15 @@ function recipie_google_chrome (){
 function recipie_teamviewer (){
 			#Teamviewer
 			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
-			dl http://download.teamviewer.com/download/teamviewer_i386.deb teamviewer_i386.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb teamviewer_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
+}
+
+
+
+function recipie_anydesk () {
+			check_dependencies flatpak
+			flatpak install flathub com.anydesk.Anydesk 
+
 }
 
 
@@ -259,6 +274,7 @@ function recipie_openshot (){
 			add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
 			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
 			apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
+
 }
 
 
@@ -331,7 +347,8 @@ function recipie_OEM_config (){
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
-
+				# Add the gnome UI tweak tool... 
+				InstallSoftwareFromRepo gnome-tweak-tool
 				#Change user context and apply gnome settings... 
 				export -f recipie_set_user_gnome_ui;
 				#recipie_set_user_gnome_ui
