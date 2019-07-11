@@ -233,7 +233,6 @@ set_install_command
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
-check_dependencies packagekit
 system_update
 
 
