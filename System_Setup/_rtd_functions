@@ -131,19 +131,23 @@ function ensure_admin () {
 function set_install_command () {
 
         if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	        if hash yum 2>/dev/null; then
+	        if hash pkcon 2>/dev/null; then
+				# If package kit is available the prefer this
+				echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
+				export _INSTCMD="pkcon -y  install"
+			elif hash yum 2>/dev/null; then
+				# If package kit is not available try yum (RedHat, Cento OS, Fedora)
 		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
-		        yum install -y packagekit > /dev/null 2>&1
-		        export _INSTCMD="pkcon -y  install"
+		        export _INSTCMD="yum -y  install"
 	        elif hash apt 2>/dev/null; then
+				# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
-	                apt-get -y -qq --allow-change-held-packages --ignore-missing install packagekit > /dev/null 2>&1
-	                export _INSTCMD="pkcon -y  install"
+	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 	                export DEBIAN_FRONTEND=noninteractive
 	        elif hash zypper 2>/dev/null; then
+				# If package kit is not available try zypper (Open SUSE)
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
-		        zypper install -y packagekit > /dev/null 2>&1
-		        export _INSTCMD="pkcon -y  install"
+		        export _INSTCMD="zypper install -y "
 		else
 		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
 	        fi

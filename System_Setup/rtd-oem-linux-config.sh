@@ -246,7 +246,6 @@ else
     check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices
-	zenity --notification --window-icon=update.png --text "System update is complete! You may restart your system and start using it now"
 	zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
 		if [ $? = 0 ];
 	      	then
