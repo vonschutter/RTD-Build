@@ -50,7 +50,7 @@ if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile
 
 
 # Set the background tilte:
-BACKTITLE="RTD OEM Simple System Setup"
+BACKTITLE=$($_BACK_TITLE:-"RTD OEM Simple System Setup")
 
 # Set the options to appear in the menu as choices:
 option_1="Base Configuration for Productivity (Theming and UI tweaks)"
