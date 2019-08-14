@@ -226,6 +226,8 @@ function do_instructions_from_choices (){
 # Ensure that this script is run with administrative priveledges such that it may
 # alter system wide configuration. 
 ensure_admin
+PS_SAV=PS1
+PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
 
 # Set the install instructions. This accepts apt, yum, or zypper.. 
 set_install_command
@@ -261,7 +263,7 @@ fi
 #::::::::::::::          Finalize.....                   ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
+PS1=PS_SAV
 exit
 
 

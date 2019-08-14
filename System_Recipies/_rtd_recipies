@@ -123,7 +123,7 @@ function recipie_developer_software (){
 
 
 function recipie_compression_tools (){
-			echo -e $YELLOW"--- OEM Comression Tools (zip, 7zip rar etc.)..." $ENDCOLOR	
+			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR	
 			for i in p7zip-full p7zip-rar rar zip 
 
 			do
@@ -135,8 +135,8 @@ function recipie_compression_tools (){
 
 function recipie_games (){
 			# Install games from native repositories... 
-			echo -e $YELLOW"--- OEM Selection of Quality Games..." $ENDCOLOR
-			for i in dreamchess supertuxkart 0ad dosbox armagetronad \
+			echo -e $YELLOW"--- Adding Selection of Quality Games..." $ENDCOLOR
+			for i in dreamchess supertuxkart 0ad armagetronad \
 				 warzone2100 mesa-utils openarena assaultcube marsshooter
 			do
 			     InstallSoftwareFromRepo $i
@@ -144,7 +144,14 @@ function recipie_games (){
 
 			# Install additional quality games from Flathub
 			check_dependencies flatpak
-			flatpak install flathub com.moddb.TotalChaos -y	
+			flatpak install flathub com.moddb.TotalChaos -y	--noninteractive
+			flatpak install flathub com.viewizard.AstroMenace -y --noninteractive
+			flatpak install flathub io.github.EndlessSky.endless-sky -y --noninteractive
+			flatpak install flathub com.albiononline.AlbionOnline -y --noninteractive
+			flatpak install flathub com.endlessnetwork.aqueducts -y --noninteractive
+			flatpak install flathub de.billardgl.Billardgl -y --noninteractive
+			flatpak install flathub org.naev.Naev -y --noninteractive
+
 }
 
 
