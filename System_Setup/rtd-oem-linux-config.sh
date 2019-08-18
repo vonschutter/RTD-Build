@@ -50,7 +50,7 @@ if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile
 
 
 # Set the background tilte:
-BACKTITLE=$($_BACK_TITLE:-"RTD OEM Simple System Setup")
+: $(_BACK_TITLE:="RTD OEM Simple System Setup")
 
 # Set the options to appear in the menu as choices:
 option_1="Base Configuration for Productivity (Theming and UI tweaks)"
@@ -100,7 +100,7 @@ option_22="Steam Gaming Platform"
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
-        cmd=( zenity  --list  --width=800 --height=400 --text "$BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
+        cmd=( zenity  --list  --width=800 --height=400 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
         zstatus=TRUE
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"

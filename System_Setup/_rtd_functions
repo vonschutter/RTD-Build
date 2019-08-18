@@ -132,24 +132,25 @@ function set_install_command () {
 
         if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	        if hash pkcon 2>/dev/null; then
-				# If package kit is available the prefer this
-				echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
-				export _INSTCMD="pkcon -y  install"
-			elif hash yum 2>/dev/null; then
-				# If package kit is not available try yum (RedHat, Cento OS, Fedora)
+			# If package kit is available then prefer this
+			echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
+			export _INSTCMD="pkcon -y  install"
+		elif hash yum 2>/dev/null; then
+			# If package kit is not available try yum (RedHat, Cento OS, Fedora)
 		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
 		        export _INSTCMD="yum -y  install"
 	        elif hash apt 2>/dev/null; then
-				# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
+			# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
 	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 	                export DEBIAN_FRONTEND=noninteractive
 	        elif hash zypper 2>/dev/null; then
-				# If package kit is not available try zypper (Open SUSE)
+			# If package kit is not available try zypper (Open SUSE)
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
 		        export _INSTCMD="zypper install -y "
 		else
 		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+		        exit 1
 	        fi
 
         elif [[ "$OSTYPE" == "freebsd"* ]]; then
@@ -158,6 +159,7 @@ function set_install_command () {
         else
                echo "I have no Idea what this system is"
                 export _INSTCMD="echo Whatever!"
+                exit 1
         fi
 }
 
@@ -174,7 +176,7 @@ function enable_firewall () {
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
 			ufw enable && ufw allow ssh
 	else
-			echo UFW not present on this system...
+			echo "UFW not present on this system: please turn on the firewall and configure it manually!"
 	fi
 }
 
@@ -238,27 +240,18 @@ function SofwareManagmentAvailabilityCHK ()
 # uses apt but should be modified to update RPM if that is used on the system. 
 function up2date ()
 {
+	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+
         if hash yum 2>/dev/null; then
-	        # Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 	        yum update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
         elif hash apt 2>/dev/null; then
-	        # Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 	        echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
-	        echo "--- Refreshing Software repositories; this may take a minute..."
 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        echo "--- Installing System Updates; this may take a minute..."
 	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        echo "--- Cleaning up unused software; this may take a minute..."
 	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
         elif hash zypper 2>/dev/null; then
-        	# Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
-                return zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+                zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE 
 	else
 	        return 3
         fi
@@ -289,7 +282,6 @@ function is_software_package_installed ()
 	else
 	        return 3
         fi
-
 }
 
 
@@ -335,15 +327,14 @@ function InstallSoftwareFromRepo ()
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$1"; then
-                if is_software_package_available   "$1"; then
-                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
-                else
-                    echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
+        	if is_software_package_available "$1"; then
+			echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+		else
+			echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
                 fi
         else
-            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready INSTALLED...$ENDCOLOR \n"
+		echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready INSTALLED...$ENDCOLOR \n"
         fi
-
 }
 
 

@@ -51,8 +51,8 @@ _RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /op
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
 # Determine log file directory
-if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+_ERRLOGFILE=$_RTDLOGSD/$0-error.log
+_LOGFILE=$_RTDLOGSD/$0.log 
 
 
 
@@ -64,7 +64,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# Task to complete: Download the set of instructions required and
 	# extract them in to the $_RTDSCR location. Then execute the intructions
 	# to complete the configuration of the system.
-    echo "Linux OS Found: Attempting to get instructions for Linux..."
+	echo "Linux OS Found: Attempting to get instructions for Linux..."
 	for i in apt yum dnf zypper ; do $i -y install wget > /dev/null 2>&1 ; done
 	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
 	for i in apt yum dnf zypper ; do $i -y install unzip > /dev/null 2>&1 ; done
