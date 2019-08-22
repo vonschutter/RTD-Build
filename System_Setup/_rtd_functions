@@ -136,7 +136,7 @@ set_install_command () {
 			echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
 			export _INSTCMD="pkcon -y  install"
 		elif hash yum 2>/dev/null; then
-			# If package kit is not available try yum (RedHat, Cento OS, Fedora)
+			# If package kit is not available try yum (RedHat, Cent OS, Fedora)
 	        	echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
 	        	export _INSTCMD="yum -y  install"
 	        elif hash apt 2>/dev/null; then
@@ -346,16 +346,16 @@ InstallSoftwareFromRepo ()
 	# make some decent display terminal Graphics...
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	PRE=" - Installing"
+	PRE=" - Installing $LINE :"
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$1"; then
         	if is_software_package_available "$1"; then
-			echo -ne "$PRE "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			echo -ne "$PRE "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
 		else
-			echo -ne "$PRE "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
+			echo -ne "$PRE "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
                 fi
         else
-		echo -ne "$PRE "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready INSTALLED...$ENDCOLOR \n"
+		echo -ne "$PRE "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
         fi
 }
 
