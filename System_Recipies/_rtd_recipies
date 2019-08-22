@@ -399,8 +399,10 @@ function recipie_tweak_user_gnome_ui (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Optimizig look and feel of the desktop for productivity and aestetics..." $ENDCOLOR
 			run-in-user-session () {
+				echo -------------------------------------
+				wcho "$@"
 				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@
-
+				echo -------------------------------------
 			}
 			
 			# Terminal and Tilix Dark Theme
@@ -412,6 +414,7 @@ function recipie_tweak_user_gnome_ui (){
 			run-in-user-session gsettings set org.gnome.Terminal.Legacy.Profile background-color \'#FFFFFF\'
 			run-in-user-session gsettings set org.gnome.Terminal.Legacy.Profile highlight-background-color \'#000000\'
 			run-in-user-session gsettings set org.gnome.Terminal.Legacy.Profile default-size-columns 100
+			run-in-user-session gsettings set org.gnome.Terminal.Legacy.Profile use-theme-transparency false
 			run-in-user-session gsettings set oorg.gnome.Terminal.Legacy.Profile scrollback-lines 10000
 
 
