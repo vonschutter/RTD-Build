@@ -329,16 +329,16 @@ is_software_package_available ()
 # snap or flatpack use. 
 InstallSoftwareFromRepo ()
 {
-	for _i in set_install_command is_software_package_installed is_software_package_available 
-	do
-		if hash $_i 2>/dev/null; then
-			return 0
-		else
-			echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
-			return 1
-			exit
-		fi
-	done
+	# for _i in set_install_command is_software_package_installed is_software_package_available 
+	# do
+	# 	if hash $_i 2>/dev/null; then
+	# 		return 0
+	# 	else
+	# 		echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
+	# 		return 1
+	# 		exit
+	# 	fi
+	# done
 	set_install_command 
 
 	# make some decent display terminal Graphics...
@@ -363,7 +363,7 @@ InstallSoftwareFromRepo ()
 # Works for apt based systems currently. The function will take a parameter that is expected to
 # match the softwre command line name or rather the name of the package. This should get
 # updated to also check and install from snap and flatpack. 
-function check_dependencies () {
+check_dependencies () {
         #---------------------------------------------------------------
         echo "Checking for script dependencies and install if not there..."
         #---------------------------------------------------------------
