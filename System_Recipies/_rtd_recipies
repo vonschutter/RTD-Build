@@ -400,7 +400,7 @@ function recipie_tweak_user_gnome_ui (){
 			echo -e $YELLOW"--- Optimizig look and feel of the desktop for productivity and aestetics..." $ENDCOLOR
 			run-in-user-session () {
 				echo -------------------------------------
-				wcho "$@"
+				echo "$@"
 				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@
 				echo -------------------------------------
 			}
