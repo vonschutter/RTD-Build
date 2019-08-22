@@ -401,7 +401,7 @@ function recipie_tweak_user_gnome_ui (){
 			run-in-user-session () {
 				echo -------------------------------------
 				echo "$@"
-				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@
+				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@ > /dev/null 2>&1
 				echo -------------------------------------
 			}
 
@@ -506,7 +506,7 @@ function recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
 EOF
 
-run-in-user-session /bin/bash gtweak.sh
+run-in-user-session /bin/bash gtweak.sh 
 
 
 }
