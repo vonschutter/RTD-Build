@@ -329,6 +329,7 @@ is_software_package_available ()
 # snap or flatpack use. 
 InstallSoftwareFromRepo ()
 {
+	# Check that function dependencies are available. 
 	# for _i in set_install_command is_software_package_installed is_software_package_available 
 	# do
 	# 	if hash $_i 2>/dev/null; then
@@ -339,7 +340,8 @@ InstallSoftwareFromRepo ()
 	# 		exit
 	# 	fi
 	# done
-	set_install_command 
+	# Ensure that the CLI command is determined for this system. 
+	set_install_command >>/dev/null 2>&1
 
 	# make some decent display terminal Graphics...
         PAD="--------------------------------------------------"
