@@ -349,14 +349,14 @@ function recipie_OEM_config (){
 			# Management of local/remote system(s) - availa
 
 			# Apply tweaks to the UI based on desktop active
-			if  ps a|grep -q "gnome"; then
+			if  echo $_UI |grep -i -q "gnome"; then
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
 				# Add the gnome UI tweak tool... 
 				InstallSoftwareFromRepo gnome-tweak-tool
 				# Add Some clean and basic themes and icons...			
-				for i in 	numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
+				for i in numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
 							gnome-shell-extension-appindicator \
 							gnome-shell-extension-suspend-button \
 							gnome-shell-extension-log-out-button  \
@@ -376,13 +376,13 @@ function recipie_OEM_config (){
 				export -f recipie_set_user_gnome_ui;
 				#recipie_set_user_gnome_ui
 				echo "Modifying setings for: $SUDO_USER"
-				su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
+				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus recipie_set_user_gnome_ui
 
 				# Transfer settings for all users... 
 				# cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
 			fi
 
-			if  ps a|grep -q "kde"; then
+			if echo $_UI | grep -i -q "kde"; then
 				echo "Detected KDE UI!" 	
 			
 			fi
