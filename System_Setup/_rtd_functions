@@ -63,7 +63,7 @@ source /opt/rtd/scripts/_branding
 # Set colors for prompting on screen in human readable variables. These will be set globally
 # and can be can be used by in echo statements to modify the color of the message. 
 # Examples:  $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
-function set_colors () {
+set_colors () {
 	YELLOW="\033[1;33m"
 	RED="\033[0;31m"
 	ENDCOLOR="\033[0m"
@@ -115,7 +115,7 @@ function set_colors () {
 # Function to ensure administrative privileges such that system wide settings 
 # or configuration may be done. This function will make the script call itself 
 # with sudo if the user ID is not 0 e.g. root.
-function ensure_admin () {
+ensure_admin () {
 	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 }
@@ -128,24 +128,24 @@ function ensure_admin () {
 # If you need to use this script in an rpm based system you could modify the install
 # command here to suit dnf, yum, zypper... By default packages of patternd that do not
 # match should be skipped. Use "export option" so child processes also see the variiables.
-function set_install_command () {
+set_install_command () {
 
         if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	        if hash pkcon 2>/dev/null; then
-				# If package kit is available the prefer this
-				echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
-				export _INSTCMD="pkcon -y  install"
-			elif hash yum 2>/dev/null; then
-				# If package kit is not available try yum (RedHat, Cento OS, Fedora)
-		        echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
-		        export _INSTCMD="yum -y  install"
+			# If package kit is available then prefer this
+			echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR	 
+			export _INSTCMD="pkcon -y  install"
+		elif hash yum 2>/dev/null; then
+			# If package kit is not available try yum (RedHat, Cento OS, Fedora)
+	        	echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
+	        	export _INSTCMD="yum -y  install"
 	        elif hash apt 2>/dev/null; then
-				# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
+			# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
 		        echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR	        
 	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 	                export DEBIAN_FRONTEND=noninteractive
 	        elif hash zypper 2>/dev/null; then
-				# If package kit is not available try zypper (Open SUSE)
+			# If package kit is not available try zypper (Open SUSE)
 	                echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
 		        export _INSTCMD="zypper install -y "
 		else
@@ -169,7 +169,7 @@ function set_install_command () {
 # Function to enable system firewall and add a given rule. This simple function
 # enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to 
 # pass. 
-function enable_firewall () {
+enable_firewall () {
 	if hash ufw 2>/dev/null; then
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
 			ufw enable && ufw allow ssh
@@ -187,7 +187,7 @@ function enable_firewall () {
 # RPM packages as well. 
 # First parameter is the URL, second is the name of the deb, to bypass version
 # naming issues, use wildcards like skype*.deb
-function dl ()
+dl ()
 {
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
 	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
@@ -207,9 +207,8 @@ function dl ()
 # the sofware managment system may be in use. Should this be the case, this function will
 # wait undill the system is free for use. 
 # TODO: Add support for fedora, Centos, SuSE.
-function SofwareManagmentAvailabilityCHK ()
+SofwareManagmentAvailabilityCHK ()
 {
-	# FIXME: make sure the system is available for longer before releasing it... 
 	echo ""
         echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
         i=0
@@ -225,7 +224,7 @@ function SofwareManagmentAvailabilityCHK ()
             echo -en "\r[$j] Waiting for other software managers to finish..."\
 
 
-            sleep 0.5
+            sleep 5
             ((i=i+1))
         done
 }
@@ -234,30 +233,28 @@ function SofwareManagmentAvailabilityCHK ()
 
 
 
-# Function to simplify updating system completely. At present this function simply 
-# uses apt but should be modified to update RPM if that is used on the system. 
-function up2date ()
+# Function to simplify updating system completely. At present this function sets the 
+# highest preference to use "pkcon", the command line interface of "Package Kit" since
+# this is the most consistent across different distrbutions. It may even work on BSD.
+# Only if "pkcon" is not available, will the function use the identified distro native 
+# software manager: apt, yum, zypper etc. This is to maintain stability since a distro may 
+# alias another distributions command (like SuSE does with apt) to be helpfull. 
+# This is one of the first update functions written and is kept for compatibility.  
+up2date ()
 {
-        if hash yum 2>/dev/null; then
-	        # Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
+	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+
+        if hash pkcon 2>/dev/null; then
+		pkcon update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+	elif hash yum 2>/dev/null; then
 	        yum update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
         elif hash apt 2>/dev/null; then
-	        # Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
-	        echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
-	        echo "--- Refreshing Software repositories; this may take a minute..."
 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        echo "--- Installing System Updates; this may take a minute..."
 	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        echo "--- Cleaning up unused software; this may take a minute..."
 	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE 
         elif hash zypper 2>/dev/null; then
-        	# Ensure that the expected variables are defined.
-	        if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-	        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
                 return zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE 
 	else
 	        return 3
@@ -278,7 +275,7 @@ function up2date ()
 # is_software_package_installed "$1" if calling this function from a script
 # or another function receiving a parameter.
 #
-function is_software_package_installed () 
+is_software_package_installed () 
 {
         if hash yum 2>/dev/null; then
 	        rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
@@ -305,7 +302,7 @@ function is_software_package_installed ()
 # or another function receiving a parameter.
 #
 # Supported base distributions: Fedora . SuSE . Debian
-function is_software_package_available () 
+is_software_package_available () 
 {
         if hash yum 2>/dev/null; then
 	        yum list available "$1" &> /dev/null && return 0 || return 1
@@ -325,12 +322,23 @@ function is_software_package_available ()
 # Function to simplify the installation of software by including all display and 
 # installation logic for a given software provider. This should be expanded to include flatpack
 # snap for example. It should be the same consistent way no matter flavor of Linux. 
-# This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley and could 
+# This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley 
+# in the "set_install_command" function (a dependency to this function) and could 
 # be an RPM or deb string, or even snap or flatpack. A preference order between package system and
 # snap or flatpack use. 
-function InstallSoftwareFromRepo ()
+InstallSoftwareFromRepo ()
 {
-        # make some decent display terminal Graphics...
+	for _i in set_install_command is_software_package_installed is_software_package_available 
+	do
+		if hash $_i 2>/dev/null; then
+			return 0
+		else
+			echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
+			return 1
+		fi
+	set_install_command 
+
+	# make some decent display terminal Graphics...
         PAD="--------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...

@@ -8,8 +8,8 @@
 #::
 #::
 #::	Purpose: To define how software is added in one place. 
-#::		 Software may be downloaded an dinstalled manually, or via package manager or snaps. 
-#::		 Configuration items are also define here. 
+#::		 Software may be downloaded and installed manually, or via package manager or snaps. 
+#::		 Configuration items are also defined here. 
 #::     Usage: call this file using the "source" statment in bash. Then simply invoke the relevan recipie (funclion)
 #:: 
 #::     This script is shared in the hopes that
@@ -58,8 +58,7 @@ function recipie_baseapps (){
 
 function recipie_wps_office () {
 			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
-			dl https://www.dropbox.com/s/4uaqci8awfe2yiw/ wps-office_11.1.0.8392_amd64.deb 
-
+			dl http://kdl.cc.ksosoft.com/wps-community/download/8722/wps-office_11.1.0.8722_amd64.deb wps-office_11.1.0.8722_amd64.deb
 }
 
 
@@ -356,14 +355,31 @@ function recipie_OEM_config (){
 				recipie_set_gnome_wallpaper
 				# Add the gnome UI tweak tool... 
 				InstallSoftwareFromRepo gnome-tweak-tool
+				# Add Some clean and basic themes and icons...			
+				for i in 	numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
+							gnome-shell-extension-appindicator \
+							gnome-shell-extension-suspend-button \
+							gnome-shell-extension-log-out-button  \
+							gnome-shell-extension-tilix-dropdown \
+							gnome-shell-extension-multi-monitors \
+							gnome-shell-extension-caffeine \
+							gnome-shell-extension-gsconnect  \
+							gnome-shell-extension-gsconnect-browsers \
+							gnome-shell-extension-dash-to-panel \
+							gnome-shell-extension-dashtodock \
+							arc-theme \
+							adwaita-icon-theme-full adwaita-qt  
+				do 
+				InstallSoftwareFromRepo $i
+				done
 				#Change user context and apply gnome settings... 
 				export -f recipie_set_user_gnome_ui;
 				#recipie_set_user_gnome_ui
-				echo "Modifying setings for: ´/usr/bin/whoami´"
+				echo "Modifying setings for: $SUDO_USER"
 				su -l -u $SUDO_USER -c "recipie_set_user_gnome_ui & exit"
 
 				# Transfer settings for all users... 
-				cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
+				# cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
 			fi
 
 			if  ps a|grep -q "kde"; then
@@ -382,29 +398,8 @@ function recipie_set_user_gnome_ui (){
 			# otherwise all user configuration settings will be trasferred to any user 
 			# subsequently created.  
 			# Special case for installing Google Chrome
-			echo -e $YELLOW"--- Adding Optional Gnome Themes Plus!..." $ENDCOLOR
+			echo -e $YELLOW"--- Optimizig look and feel ..." $ENDCOLOR
 			
-			# Add Relevant extensions...
-
-
-			# Add Some clean and basic themes and icons...			
-			for i in 	numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
-						gnome-shell-extension-appindicator \
-						gnome-shell-extension-suspend-button \
-						gnome-shell-extension-log-out-button  \
-						gnome-shell-extension-tilix-dropdown \
-						gnome-shell-extension-multi-monitors \
-						gnome-shell-extension-caffeine \
-						gnome-shell-extension-gsconnect  \
-						gnome-shell-extension-gsconnect-browsers \
-						gnome-shell-extension-dash-to-panel \
-						gnome-shell-extension-dashtodock \
-						arc-theme \
-						adwaita-icon-theme-full adwaita-qt  
-				do 
-				InstallSoftwareFromRepo $i
-				done
-
 				# Tilix Dark Theme
 				gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 
