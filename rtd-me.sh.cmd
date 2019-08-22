@@ -40,7 +40,7 @@ echo "$XDG_CURRENT_DESKTOP">.ui
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # Pull in current desktop... 
-_UI=$( echo .ui)
+_UI=$( cat .ui )
 
 # Base folder structure for optional administrative commandlets and scripts:
 _RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
