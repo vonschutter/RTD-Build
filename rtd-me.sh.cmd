@@ -40,7 +40,7 @@ echo export XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP">.ui
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # Pull in current desktop... 
-source .ui && rm .ui
+_UI=$( source .ui && rm .ui )
 
 # Base folder structure for optional administrative commandlets and scripts:
 _RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
@@ -59,6 +59,7 @@ _LOGFILE=$_RTDLOGSD/$0.log
 clear
 echo "This is now a ${SHELL} environment..."
 echo "Attempting to detect version of POSIX based system..."
+echo "Session found: $_UI"
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# Task to complete: Download the set of instructions required and
