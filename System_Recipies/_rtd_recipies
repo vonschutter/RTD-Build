@@ -516,10 +516,12 @@ run-in-user-session /bin/bash gtweak.sh
 function recipie_set_gnome_wallpaper (){
 			# Install Wallpapers and configure Gnome to see them. ...
 			RTDCP=/opt/rtd/cache
+			echo Downloading Wallpapers:
+			echo ---------------------------------------------
 			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
 			rm $RTDCP/master.zip
-			pushd $RTDCP && mv RTD-Media-master/Wallpaper .. && mv RTD-Media-master/Sound .. 
-
+			pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
+			echo ---------------------------------------------
 			mkdir -p /usr/local/share/gnome-background-properties
 			DIRECTORY=/opt/rtd/Wallpaper/
 			ls $DIRECTORY > lspictures.txt
@@ -544,11 +546,11 @@ function recipie_set_gnome_wallpaper (){
 			# creating the footer
 				echo "</wallpapers>" >> mybackgrounds.xml
 				sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
-				cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+				# cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
 				rm mybackgrounds.xml
 				rm lspictures.txt
 			# Set the default wallpaper... 
-				gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
+				run-in-user-session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 
 
 }
