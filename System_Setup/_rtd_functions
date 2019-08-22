@@ -150,6 +150,7 @@ set_install_command () {
 		        export _INSTCMD="zypper install -y "
 		else
 		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+		        exit 1
 	        fi
 
         elif [[ "$OSTYPE" == "freebsd"* ]]; then
@@ -158,6 +159,7 @@ set_install_command () {
         else
                echo "I have no Idea what this system is"
                 export _INSTCMD="echo Whatever!"
+                exit 1
         fi
 }
 
@@ -174,7 +176,7 @@ enable_firewall () {
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
 			ufw enable && ufw allow ssh
 	else
-			echo UFW not present on this system...
+			echo "UFW not present on this system: please turn on the firewall and configure it manually!"
 	fi
 }
 
@@ -286,7 +288,6 @@ is_software_package_installed ()
 	else
 	        return 3
         fi
-
 }
 
 
@@ -343,15 +344,14 @@ InstallSoftwareFromRepo ()
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$1"; then
-                if is_software_package_available   "$1"; then
-                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
-                else
-                    echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
+        	if is_software_package_available "$1"; then
+			echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+		else
+			echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
                 fi
         else
-            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready INSTALLED...$ENDCOLOR \n"
+		echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready INSTALLED...$ENDCOLOR \n"
         fi
-
 }
 
 
