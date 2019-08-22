@@ -349,7 +349,7 @@ function recipie_OEM_config (){
 			# Management of local/remote system(s) - availa
 
 			# Apply tweaks to the UI based on desktop active
-			if  echo $_UI |grep -i -q "gnome"; then
+			#if  echo $_UI |grep -i -q "gnome"; then
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
@@ -380,7 +380,7 @@ function recipie_OEM_config (){
 				# dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Transfer settings for all users... 
 				# cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
-			fi
+			#fi
 
 			if echo $_UI | grep -i -q "kde"; then
 				echo "Detected KDE UI!" 	
