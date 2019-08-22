@@ -405,7 +405,8 @@ function recipie_tweak_user_gnome_ui (){
 				echo -------------------------------------
 			}
 
-			._rtd_task << 	GNOMRUITWEAK
+			cat <<EOF > gtweak.sh
+			#!/bin/bash
 			# Terminal and Tilix Dark Theme
 			 gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 			 gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
@@ -503,9 +504,9 @@ function recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-GNOMRUITWEAK
+EOF
 
-run-in-user-session /bin/bash /home/$SUDO_USER/._rtd_task
+run-in-user-session /bin/bash gtweak.sh
 
 
 }
