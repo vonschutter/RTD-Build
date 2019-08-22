@@ -336,6 +336,7 @@ InstallSoftwareFromRepo ()
 		else
 			echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
 			return 1
+			exit
 		fi
 	set_install_command 
 
