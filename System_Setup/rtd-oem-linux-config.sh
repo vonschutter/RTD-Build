@@ -50,7 +50,7 @@ if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile
 
 
 # Set the background tilte:
-: $(_BACK_TITLE:="RTD OEM Simple System Setup")
+: ${_BACK_TITLE:-"RTD OEM Simple System Setup"}
 
 # Set the options to appear in the menu as choices:
 option_1="Base Configuration for Productivity (Theming and UI tweaks)"
@@ -229,9 +229,6 @@ ensure_admin
 PS_SAV=PS1
 PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
 
-# Set the install instructions. This accepts apt, yum, or zypper.. 
-set_install_command
-
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
@@ -244,7 +241,7 @@ if ! xset q &>/dev/null; then
     	check_dependencies whiptail
 	rtd_setup_choices_term_fallback
 else     
-    check_dependencies zenity
+	check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices
 	zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
@@ -265,11 +262,4 @@ fi
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 PS1=PS_SAV
 exit
-
-
-
-
-
-
-
 
