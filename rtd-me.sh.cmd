@@ -33,14 +33,14 @@ echo     -        RTD System System Managment Bootstrap Script      -
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Save the UI currently in use...
-echo export XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP">.ui
+echo "$XDG_CURRENT_DESKTOP">.ui
 
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
 # Pull in current desktop... 
-_UI=$( source .ui && rm .ui )
+_UI=$( echo .ui)
 
 # Base folder structure for optional administrative commandlets and scripts:
 _RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
@@ -59,7 +59,7 @@ _LOGFILE=$_RTDLOGSD/$0.log
 clear
 echo "This is now a ${SHELL} environment..."
 echo "Attempting to detect version of POSIX based system..."
-echo "Session found: $_UI"
+echo "Session found: UI:$_UI XDG: $XDG_CURRENT_DESKTOP"
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	# Task to complete: Download the set of instructions required and
