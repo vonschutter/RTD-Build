@@ -47,11 +47,11 @@ if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "
 if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
 # Default to value passed by parameter. If none is passed, a default will be used. 
-zstatus=$1
+export zstatus="$1"
 
 
 # Set the background tilte:
-: ${_BACK_TITLE:-"RTD OEM Simple System Setup"}
+_BACK_TITLE="${_BACK_TITLE:-"RTD OEM Simple System Setup"}"
 
 # Set the options to appear in the menu as choices:
 option_1="Base Configuration for Productivity (Theming and UI tweaks)"
@@ -102,7 +102,7 @@ option_22="Steam Gaming Platform"
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
         cmd=( zenity  --list  --width=800 --height=400 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
-        ${zstatus:-TRUE}
+        zstatus="${zstatus:=true}"
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"
                      $zstatus "$option_3"
