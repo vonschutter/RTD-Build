@@ -1,14 +1,15 @@
 #!/bin/bash
 #
-#::             Linux deb and rpm based distro functions that may be usefull for admin 
+#::				R T D   F u n c t i o n   L i b r a r y  
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Author:   	Ken, Stephan & Nate B. Buffalo Center, IA
-#:: Version 1.01
+#:: 	Author:   	Ken, Stephan & Nate B. Buffalo Center, IA
+#:: 	Version:	1.02
 #::
 #::
-#::	Purpose: to collect and enable the use of code snipplets in other scripts. 
-#::     Usage: call this file using the "source" statment in bash.
+#::	Purpose:	To collect and enable the use of code snipplets in other scripts. 
+#::			To document these thuroughly so that they may be usefull for learning BASH. 
+#::     Usage: 		call this file using the "source" statment in bash.
 #:: 
 #::     This script is shared in the hopes that
 #::     someone will find it usefull.
@@ -35,7 +36,7 @@
 #	SofwareManagmentAvailabilityCHK		: Checks to see that the software managment system is not busy
 #	system_update				: Newer more universal software update function
 #	up2date					: Older universal software update function
-#	
+#	rtd_setup_choices_term_fallback		: For server setup, displays a menu where you may chose CLI productivity software (vim, alpine, byobu etc.).
 #	
 #	
 #	
@@ -344,18 +345,22 @@ InstallSoftwareFromRepo ()
 	set_install_command >>/dev/null 2>&1
 
 	# make some decent display terminal Graphics...
-        PAD="--------------------------------------------------"
+        PAD="------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	PRE=" - Installing $LINE :"
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$1"; then
         	if is_software_package_available "$1"; then
-			echo -ne "$PRE "\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			echo -ne "$PRE"\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			if [ $? != 0 ]; 
+			then 
+				return 1 & exit 1
+			fi 
 		else
-			echo -ne "$PRE "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
+			echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
                 fi
         else
-		echo -ne "$PRE "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
+		echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
         fi
 }
 
@@ -374,7 +379,7 @@ check_dependencies () {
                 echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
             else
                 echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
-                $_INSTCMD $1
+                InstallSoftwareFromRepo $1
                     if [ $? != 0 ];
                     then
                         echo -e $RED "That install didn't work out so well." 

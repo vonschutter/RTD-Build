@@ -4,11 +4,16 @@ cls
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
-echo     -        RTD System System Managment Bootstrap Script      -
+
+echo     		-        RTD System System Managment Bootstrap Script      -
+#::
+#::
+#:: Windows CMD Shell Script Section
+#::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author:   	SLS. & Nate B. Buffalo Center, IA
-#:: Version 1.05
+#:: Version:	1.06
 #::
 #::
 #:: Purpose: 	The purpose of the script is to decide what scripts to download based
@@ -58,16 +63,19 @@ _LOGFILE=$_RTDLOGSD/$0.log
 
 clear
 echo "This is now a ${SHELL} environment..."
+echo "Session found: You seem to be using ${_UI:-"something I can't see"} as your graphical environment."
+echo "User name: $SUDO_USER started this script." 
 echo "Attempting to detect version of POSIX based system..."
-echo "Session found: UI:$_UI "
+
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	# Task to complete: Download the set of instructions required and
-	# extract them in to the $_RTDSCR location. Then execute the intructions
-	# to complete the configuration of the system.
 	echo "Linux OS Found: Attempting to get instructions for Linux..."
+	echo "Please NOTE that most Lnux versions work, but not all."
+	echo "Task to complete: Download the set of instructions required and"
+	echo "extract them in to the $_RTDSCR location. Then execute the intructions"
+	echo "to complete the configuration of the system."
 	for i in apt yum dnf zypper ; do $i -y install wget > /dev/null 2>&1 ; done
-	wget -q  $_RTDSRC -P $_RTDCACHE
+	wget -q  $_RTDSRC -P $_RTDCACHE 
 	for i in apt yum dnf zypper ; do $i -y install unzip > /dev/null 2>&1 ; done
 	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd > /dev/null 2>&1 && rm -v $_RTDCACHE/master.zip
 		if [ $? -eq 0 ]
@@ -107,7 +115,7 @@ exit $?
 exit $?
 :CMDSCRIPT
 @echo off
-echo     -        RTD System System Managment Bootstrap Script      -
+echo     		-        RTD System System Managment Bootstrap Script      -
 ::
 ::
 :: Windows CMD Shell Script Section
