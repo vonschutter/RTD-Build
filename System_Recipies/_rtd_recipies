@@ -387,7 +387,17 @@ function recipie_OEM_config (){
 			fi
 }
 
-
+run_command_in_gnome_user_session () {
+			# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
+			# This functon expects any number of parameters that would make up the command or commands
+			# to be run in the users session. For example:
+			# 	run_command_in_gnome_user_session script_name.sh --parameter --one --two --etc
+			#
+			echo -------------------------- Begin as user: $SUDO_USER ---------------------
+			echo "$@"
+			sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@ > /dev/null 2>&1
+			echo -------------------------- End as user: $SUDO_USER   ---------------------
+}
 
 function recipie_tweak_user_gnome_ui (){
 			# Configure Gnome for OEM look and feel. This is completely as desired. 
@@ -398,12 +408,7 @@ function recipie_tweak_user_gnome_ui (){
 			# subsequently created.  
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Optimizig look and feel of the desktop for productivity and aestetics..." $ENDCOLOR
-			run-in-user-session () {
-				echo -------------------------------------
-				echo "$@"
-				sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@ > /dev/null 2>&1
-				echo -------------------------------------
-			}
+
 
 			cat <<EOF > gtweak.sh
 			#!/bin/bash
@@ -506,7 +511,7 @@ function recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
 EOF
 
-run-in-user-session /bin/bash gtweak.sh 
+run_command_in_gnome_user_session /bin/bash gtweak.sh 
 
 
 }
@@ -550,7 +555,7 @@ function recipie_set_gnome_wallpaper (){
 				rm mybackgrounds.xml
 				rm lspictures.txt
 			# Set the default wallpaper... 
-				run-in-user-session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
+				run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 
 
 }

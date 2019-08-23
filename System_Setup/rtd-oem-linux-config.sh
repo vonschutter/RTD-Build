@@ -46,7 +46,8 @@ source /opt/rtd/scripts/_rtd_functions
 if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
 if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
-
+# Default to value passed by parameter. If none is passed, a default will be used. 
+zstatus=$1
 
 
 # Set the background tilte:
@@ -101,7 +102,7 @@ option_22="Steam Gaming Platform"
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
         cmd=( zenity  --list  --width=800 --height=400 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
-        zstatus=TRUE
+        ${zstatus:-TRUE}
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"
                      $zstatus "$option_3"
