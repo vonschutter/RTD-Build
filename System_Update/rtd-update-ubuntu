@@ -1,6 +1,6 @@
 #!/bin/bash
 PUBLICATION="RuntimeData Update Manager for Ubuntu"
-VERSION="1.12"
+VERSION="1.13"
 #
 #	RTD Ubuntu + derivatives software update script
 #
@@ -123,7 +123,7 @@ function update_me ()
 	# "# my name ------------------>  ${0##*/} "
         	rm $0.bak
 		mv $0 $0.bak
-                wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/${0##*/} -P ${0%/*} 
+                wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/System_Update/${0##*/} -P ${0%/*} 
                 chmod +x $0
 }
 
