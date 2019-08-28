@@ -1,0 +1,253 @@
+#!/bin/bash
+
+# while-menu-dialog: a menu driven system information program
+BRANDING="RTD: Simple System Support Tool"
+
+DIALOG_CANCEL=1
+DIALOG_ESC=255
+HEIGHT=0
+WIDTH=0
+
+cat "$(dirname "$0")"/dialogrc >~/.dialogrc
+CLEANUP="rm -f ~/.dialogrc"
+
+function check_dependencies () {
+    # Function to check that a piece of software is installed and if not install it.
+    # Works for apt, yum, and rpm based systems currently as long as the package name is the same. 
+    # The function will take a parameter that is expected to match the software command line name 
+    # or rather the name of the package. This function now relies on the return value of
+    # the function "is_software_package_installed" as it is a more reliable way to see if a package of
+    # software is installed according to the package manamgent system rather than the "hash" function
+    # that checks if a command is available, since command name and package name are not allways the same...
+    function ensure_admin () {
+        # Function to ensure administrative privileges such that system wide settings 
+        # or configuration may be done. This function will make the script call itself 
+        # with sudo if the user ID is not 0 e.g. root.
+        [ "$UID" -eq 0 ] || echo -e $YELLOW "This $RED action $YELLOW needs administrative access..." $ENDCOLOR
+        [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+    }
+
+    function set_install_command () {
+        # Set global install command "$_INSTCMD" for portability and convenience
+        # If you need to use this script in an rpm based system you could modify the install
+        # command here to suit dnf, yum, zypper... By default packages of patterns that do not
+        # match should be skipped. Use "export option" so child processes also see the variiables.
+
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+	        if hash yum 2>/dev/null; then
+		        echo -e "Setting install options for $YELLOW YUM" $ENDCOLOR
+		        export _INSTCMD="yum install -y "
+	        elif hash apt 2>/dev/null; then
+		        echo -e "Setting install options for $YELLOW DEB" $ENDCOLOR	        
+	                export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+	                export DEBIAN_FRONTEND=noninteractive
+	        elif hash zypper 2>/dev/null; then
+	                echo -e "Setting install options for $YELLOW ZYPPER" $ENDCOLOR
+		        export _INSTCMD="zypper install -y "
+		    else
+		        echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+	        fi
+
+        elif [[ "$OSTYPE" == "freebsd"* ]]; then
+                echo "Free BSD is currently unsupported... "
+                export _INSTCMD="echo I dont know how to install suff on FreeBSD!"
+        else
+               echo "I have no Idea what this system is"
+                export _INSTCMD="echo Whatever!"
+        fi
+    }
+
+    function is_software_package_installed () {
+        # Function to check if a piece of software is installed. This function will first check
+        # if the package manager is deb, zypper or rpm, and then take one parameter passed
+        # and evauate if a software package by that name is installed. This function
+        # will return a "0" or "1" return based on the package managers return code.
+        # Call this function by: 
+        # is_software_package_installed "package name" 
+        #                 or 
+        # is_software_package_installed "$1" if calling this function from a script
+        # or another function receiving a parameter.
+        #
+        if hash yum 2>/dev/null; then
+	        rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
+        elif hash apt 2>/dev/null; then
+	        dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
+        elif hash zypper 2>/dev/null; then
+            zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
+	    else
+	        return 3
+        fi
+
+    }
+
+    function is_software_package_available () {
+        # Function to chek if a package is available in whetever repository, and 
+        # if there return a "0" and if not return a "1" or a "3" if there is no recognizable 
+        # package manager found. The function expects the name of the package 
+        # to be a parameter passed to this fuction. Call this function by: 
+        # is_software_package_available "package name" 
+        #                 or 
+        # is_software_package_available "$1" if calling this function from a script
+        # or another function receiving a parameter.
+        #
+        # Supported base distributions: Fedora . SuSE . Debian
+            if hash yum 2>/dev/null; then
+                yum list available "$1" &> /dev/null && return 0 || return 1
+            elif hash apt 2>/dev/null; then
+                    apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
+            elif hash zypper 2>/dev/null; then
+                    return zypper info "$1" &> /dev/null && return 0 || return 1
+            else
+                return 3
+            fi
+
+        }
+
+  
+    function InstallSoftwareFromRepo () {
+        # Function to simplify the installation of software by including all display and 
+        # installation logic for a given software provider. This should be expanded to include flatpack
+        # snap for example. It should be the same consistent way no matter flavor of Linux. 
+        # This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley and could 
+        # be an RPM or deb string, or even snap or flatpack. A preference order between package system and
+        # snap or flatpack use.     
+
+        # make some decent display terminal Graphics...
+        # This function uses set_install_command and ensure_admin to be able to and know how toinstall a package...
+        #
+        set_install_command
+        ensure_admin
+        PAD="--------------------------------------------------"
+        LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+	    # Test if package name is installed, if not then...
+        if ! is_software_package_installed "$@"; then
+                if is_software_package_available   "$@"; then
+                    echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+                else
+                    echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR  \n"
+                fi
+        else
+            echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ]  $YELLOW Allready INSTALLED...$ENDCOLOR    \n"
+        fi
+
+    }
+        #---------------------------------------------------------------
+        echo "Checking for script dependencies and install if not there..."
+        #---------------------------------------------------------------
+            # Call software status check function... 
+            if is_software_package_installed $1 ; then
+                echo -e $GREEN"I found that $YELLOW $1 $GREEN is present on this system... thankyou for that! " $ENDCOLOR
+            else
+                echo -e "You seem to have no $YELLOW $1... $ENDCOLOR I will try to get it... " 
+                InstallSoftwareFromRepo $1
+                    if [ $? != 0 ];
+                    then
+                        echo -e $RED "That install didn't work out so well." 
+                        echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
+                        exit
+                    fi
+                echo "OK Done! Continuing..."
+            fi
+}
+
+display_result() {
+  dialog --backtitle "$BRANDING" --title "$1" \
+    --no-collapse \
+    --msgbox "$result" 20 60
+}
+
+while true; do
+  exec 3>&1
+  # Dialog Display Menu Items... 
+  selection=$(dialog \
+    --backtitle "$BRANDING" \
+    --title "Menu" \
+    --clear \
+    --cancel-label "Exit" \
+    --menu "Please select a task:" $HEIGHT $WIDTH 4 \
+    "1" "Display System Information" \
+    "2" "Display Disk Space" \
+    "3" "Display Home Space Utilization" \
+    "4" "Update this system now" \
+    "5" "Hardware TEMPERATURE Information" \
+    "6" "System CPU Information"\
+      2>&1 1>&3)
+  exit_status=$?
+  exec 3>&-
+  
+case $exit_status in
+            $DIALOG_CANCEL)
+            $CLEANUP
+            clear
+            echo "Program terminated."
+            exit
+            ;;
+            $DIALOG_ESC)
+            $CLEANUP
+            clear
+            echo "Program aborted." >&2
+            exit 1
+            ;;
+esac
+  
+  # What to do depending on selection... 
+  case $selection in
+    0 )
+      clear
+      echo "Program terminated."
+      ;;
+    1 )
+      result=$(echo "Hostname: $HOSTNAME"; uptime; ip -br addr)
+      display_result "System Information"
+      ;;
+    2 )
+      result=$(df -h -x squashfs -x tmpfs)
+      display_result "Disk Space"
+      ;;
+    3 )
+      if [[ $(id -u) -eq 0 ]]; then
+        result=$(du -sh /home/* 2> /dev/null)
+        display_result "Home Space Utilization (All Users)"
+      else
+        result=$(du -sh $HOME 2> /dev/null)
+        display_result "Home Space Utilization ($USER)"
+      fi
+      ;;
+     4 )
+	clear
+	sudo dpkg --configure -a 
+	sudo apt -f install -y
+	sleep 1
+	sudo apt update 
+	sleep 1
+	sudo apt upgrade -y
+	sleep 1
+	sudo apt autoremove -y
+	sleep 1
+	sudo apt clean 
+	sleep 1
+	sudo apt autoclean
+	sleep 1
+      ;;
+      5 )
+	check_dependencies lm-sensors
+	sudo /etc/init.d/kmod start
+	check_dependencies hddtemp
+	sudo sensors-detect --auto
+	clear
+	result=$(sudo hddtemp /dev/sda; sensors )
+	display_result "System Temperature Information"
+      ;;
+      6 )
+	result=$(lscpu)
+	display_result "System CPU Information"
+      ;;
+  esac
+done
+
+
+clear
+
+
+
+

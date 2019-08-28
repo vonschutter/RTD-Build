@@ -76,7 +76,7 @@ else
    	echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
    	source $FILE
    else
-   	echo -e $RED"RTD Functions could NOT be loaded; You must use the native options to instal software... "$ENDCOLOR
+   	echo -e $RED"RTD Functions could NOT be loaded; You must use the native options to install software... "$ENDCOLOR
    	exit 
    fi
 fi
@@ -162,14 +162,20 @@ fi
 
 echo -e $YELLOW"Updating installed software..." $ENDCOLOR
 # Updating software managed by distribution speciffic software manager...
-	deb_software_task apt-get update
-	UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
-	if [ "$UPGRADABLE" -eq 0 ]; then
-		echo "--- $UPGRADABLE packages that need updates; Skipping update task... " 
+# Unless the RTD Functions are loaded, then use that. 
+	if [ "$RTDFUNCTOINS" -eq 1 ]; then
+		deb_software_task system_update
 	else
-		echo $UPGRADABLE packages that need updates 
-		deb_software_task apt-get upgrade -y
-		deb_software_task apt-get autoremove -y
+		
+		deb_software_task apt-get update
+		UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
+		if [ "$UPGRADABLE" -eq 0 ]; then
+			echo "--- $UPGRADABLE packages that need updates; Skipping update task... " 
+		else
+			echo $UPGRADABLE packages that need updates 
+			deb_software_task apt-get upgrade -y
+			deb_software_task apt-get autoremove -y
+		fi
 	fi
 # updating snaps if snap is present on the system... 
 if hash snap 2>/dev/null; then

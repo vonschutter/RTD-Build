@@ -424,6 +424,7 @@ system_update () {
 function notice_rtd_loaded ()
 {
         echo -e $GREEN "RuntimeData function support is loaded in this script." $ENDCOLOR
+        export RTDFUNCTIONS=1
 
 }
 
