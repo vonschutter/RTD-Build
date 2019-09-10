@@ -54,7 +54,7 @@ export zstatus="$1"
 _BACK_TITLE="${_BACK_TITLE:-"RTD OEM Simple System Setup"}"
 
 # Set the options to appear in the menu as choices:
-option_1="Base Configuration for Productivity (Theming and UI tweaks)"
+option_1="Apply Themes and Desktop Tweaks"
 option_2="WPS Office (Excellent office suite with a modern look and feel)"
 option_3="Software to Write Code and Scripts Bundle" 
 option_4="Comression Tools Bundle" 
@@ -76,7 +76,8 @@ option_19="Media Streamers Bundle (Spotify and Podcast Apps)"
 option_20="Audio Tools" 
 option_21="Oracle VirtualBox" 
 option_22="Steam Gaming Platform" 
-
+option_23="Install the Microsoft Windows subsystem"
+option_24="Basic internet apps (wallpaper downloader, filezilla etc)"
 
 
 
@@ -101,7 +102,7 @@ option_22="Steam Gaming Platform"
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
-        cmd=( zenity  --list  --width=800 --height=400 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Configuration Choices:" --separator "," )
+        cmd=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
         zstatus="${zstatus:=true}"
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"
@@ -125,6 +126,8 @@ function choices_graphical () {
                      $zstatus "$option_20"
                      $zstatus "$option_21"
                      $zstatus "$option_22"
+                     $zstatus "$option_23"
+                     $zstatus "$option_24"		     
                    )
 
        choices=$("${cmd[@]}" "${options[@]}" )
@@ -142,7 +145,7 @@ function do_instructions_from_choices (){
 		IFS=$' '
 		case $choice in
 		"$option_1")
-		recipie_baseapps
+		recipie_OEM_config
 		;;
 		"$option_2")
 		recipie_wps_office
@@ -209,6 +212,12 @@ function do_instructions_from_choices (){
 		;;
 		"$option_22")
 		recipie_steam 
+		;;
+		"$option_23")
+		recipie_wine 
+		;;
+		"$option_24")
+		recipie_baseapps 
 		;;
 		esac
 	done  

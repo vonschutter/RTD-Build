@@ -32,26 +32,50 @@
 
 
 
-function recipie_baseapps (){
+recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
-			for i in wine diodon gnome-twitch polari filezilla libdvdcss2 ffmpeg
+			for i in diodon gnome-twitch polari filezilla 
 			do
 			     InstallSoftwareFromRepo $i
 			done
+}
 
+
+
+recipie_wine (){
+			     InstallSoftwareFromRepo wine
+}
+
+
+recipie_simplenote (){
+			# some small simple apps you will like... 
+			check_dependencies snapd
+			# A simple to use not taking app that auto syncs with the same app on any device.
+			snap install simplenote 2>>$_ERRLOGFILE
+
+}
+
+
+
+recipie_dos (){
+			# some small simple apps you will like... 
+			check_dependencies snapd
+			# A small app that allows you to use your old DOS software. 
+			snap install dosbox-x  2>>$_ERRLOGFILE
+
+}
+
+
+
+recipie_screenshot (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
 			snap install screencloud  2>>$_ERRLOGFILE
 			snap install flameshot-app 2>>$_ERRLOGFILE
-			# A small app that allows you to use your old DOS software. 
-			snap install dosbox-x  2>>$_ERRLOGFILE
-			# A simple to use not taking app that auto syncs with the same app on any device.
-			snap install simplenote 2>>$_ERRLOGFILE
-			# Configure the system look an feel to be crisp and clean
-			recipie_OEM_config
+
 }
 
 
@@ -203,7 +227,10 @@ function recipie_codecs (){
 			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 			# Auto accept microsoft corefonts eula
 			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
-			InstallSoftwareFromRepo ubuntu-restricted-extras
+			for i in libdvdcss2 ffmpeg ubuntu-restricted-extras
+			do
+			     InstallSoftwareFromRepo $i
+			done		
 }
 
 

@@ -37,7 +37,12 @@ echo     		-        RTD System System Managment Bootstrap Script      -
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Save the UI currently in use...
+
+
+
+
+# Save the UI currently stated in the $XDG_CURRENT_DESKTOP. NOTE that htis is not a reliable
+# way to detect running desktop environment. It would likely be better to search for a process. 
 echo "$XDG_CURRENT_DESKTOP">$HOME/.ui
 
 # Ensure administrative privileges.
@@ -56,10 +61,16 @@ _RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /op
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
 # Determine log file directory
-_ERRLOGFILE=$_RTDLOGSD/$0-error.log
-_LOGFILE=$_RTDLOGSD/$0.log 
+export _ERRLOGFILE=$_RTDLOGSD/$0-error.log
+export _LOGFILE=$_RTDLOGSD/$0.log 
 
 
+#:: Given that Bash or other Shell environment has been detected and the POSIX chell portion of this script is executed,
+#:: the second stage script must be downloaded from an online location. Depending on the distribution of OS
+#:: there are different methods available to get and run remote files. 
+#::
+#:: Table of evaluating family of OS and executing the appropriate action fiven the OS found.
+#:: In this case it is easier to manage a straight table than a for loop or array:
 
 clear
 echo "This is now a ${SHELL} environment..."
@@ -70,10 +81,7 @@ echo "Attempting to detect version of POSIX based system..."
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	echo "Linux OS Found: Attempting to get instructions for Linux..."
-	echo "Please NOTE that most Lnux versions work, but not all."
-	echo "Task to complete: Download the set of instructions required and"
-	echo "extract them in to the $_RTDSCR location. Then execute the intructions"
-	echo "to complete the configuration of the system."
+	# Using a dirty way to forcibly ensure that wget and unzip are available on the system. 
 	for i in apt yum dnf zypper ; do $i -y install wget > /dev/null 2>&1 ; done
 	wget -q  $_RTDSRC -P $_RTDCACHE 
 	for i in apt yum dnf zypper ; do $i -y install unzip > /dev/null 2>&1 ; done
