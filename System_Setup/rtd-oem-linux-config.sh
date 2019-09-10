@@ -46,12 +46,13 @@ source /opt/rtd/scripts/_rtd_functions
 if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$0-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
 if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
-# Default to value passed by parameter. If none is passed, a default will be used. 
+# Normally all choices are checked. Pass the variable "false" to this script to default   
+# to unchecked. If none is passed, a default will be used. 
 export zstatus="$1"
 
 
 # Set the background tilte:
-_BACK_TITLE="${_BACK_TITLE:-"RTD OEM Simple System Setup"}"
+_BACK_TITLE="${_BACK_TITLE:="RTD OEM Simple System Setup"}"
 
 # Set the options to appear in the menu as choices:
 option_1="Apply Themes and Desktop Tweaks"
