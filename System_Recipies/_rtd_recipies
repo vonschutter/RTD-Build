@@ -3,7 +3,7 @@
 #::            S O F T W A R E    R E C I P I E S 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Author:   	Stephan S.  Buffalo Center, IA
+#:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
 #:: Version 1.01
 #::
 #::
@@ -18,12 +18,62 @@
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#the_ppa=...  # set appropriately
+#	
+#	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
+#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
+#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
+#		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
+#		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
+#		for any organization after some years and people turnover. 
 #
-#if ! grep -q "^deb .*$the_ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-#    # commands to add the ppa ...
-#fi
+#		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
+#		and facilitates several users working on the same scripts over time.
+#		
+# 
+#	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
+#	functions in _rtd_functions and _rtd_recipies. 
+#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
+#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
+#	Scripts may also be stand-alone if there is a reason for this. 
 #
+#	Taxonomy of this script: we prioritize the use of functions over monolithis script writing, and proper indentation
+#	to make the script more readable. Each function shall also be doocumented to the point of the obvious.
+#	Suggested function structure per google guidelines:
+#
+#	function_name () {
+#		# Documentation and comments... 
+#		...code...
+#	}
+#
+#	We also like to log all activity, and to echo status output to the screen in a frienly way. To accomplish this,
+#	the table below may be used as appropriate: 
+#
+#				OUTPUT REDIRECTION TABLE	
+#
+#		  || visible in terminal ||   visible in file   || existing
+#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file   
+#	==========++==========+==========++==========+==========++===========
+#	    >     ||    no    |   yes    ||   yes    |    no    || overwrite
+#	    >>    ||    no    |   yes    ||   yes    |    no    ||  append
+#	          ||          |          ||          |          ||
+#	   2>     ||   yes    |    no    ||    no    |   yes    || overwrite
+#	   2>>    ||   yes    |    no    ||    no    |   yes    ||  append
+#	          ||          |          ||          |          ||
+#	   &>     ||    no    |    no    ||   yes    |   yes    || overwrite
+#	   &>>    ||    no    |    no    ||   yes    |   yes    ||  append
+#	          ||          |          ||          |          ||
+#	 | tee    ||   yes    |   yes    ||   yes    |    no    || overwrite
+#	 | tee -a ||   yes    |   yes    ||   yes    |    no    ||  append
+#	          ||          |          ||          |          ||
+#	 n.e. (*) ||   yes    |   yes    ||    no    |   yes    || overwrite
+#	 n.e. (*) ||   yes    |   yes    ||    no    |   yes    ||  append
+#	          ||          |          ||          |          ||
+#	|& tee    ||   yes    |   yes    ||   yes    |   yes    || overwrite
+#	|& tee -a ||   yes    |   yes    ||   yes    |   yes    ||  append
+#
+#	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
+#	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
+#	contains all the actual logic and control of the script. 
 #
 #
 # Add several software items that are almost alwasys used 
