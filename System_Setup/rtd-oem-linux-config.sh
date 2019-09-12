@@ -7,8 +7,21 @@
 #:: Version 1.00
 #::
 #::
-#::	Purpose: The purpose of the script is to setup extra software that is useful for a
-#::		 complete and productive comuter environment.
+#::	Purpose: - The purpose of the script is to setup extra apps/config that is useful for a complete and productive environment.
+#::		 - Feature: this script "detects" how to install and update software and and tweak the system.
+#::		 - Flexible: This script works on several distributions of Linux since it uses "RTD Functions". Of course, you could 
+#::		   simply list all the "apt", "yum", or "zypper" commands along with the "snap" and "flatpak" to install
+#::		   the software needed. However, you would likely need separate scripts for each distribution AND you
+#::		   could not select or de-select software bundles or speciffic titles. This uses a GUI with a timeout for that.
+#::		 - Smart: The "recipies" also downloads setup files from vendors with no repositories, and that do not have "snaps".
+#::		 - Resiliant: This RTD installation system is therefore resiliant, stable, and flexible. 
+#::		 - NOTE: This script is installed to /opt/rtd/ by a wraper script "rtd-me.sh.cmd" that will work on many systems.
+#::		 - NOTE: This script may also be used without the wrapper, once the wrapper has been run once and installed the 
+#::		   "RTD OEM Tools" to the system in question. 
+#::
+#::	Dependencies:
+#::	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
+#::	  _rtd_recipies  -- contain software installation and configuration "recipies".
 #::
 #:: 	This system configuration and installation script was originally developed
 #:: 	for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
@@ -35,9 +48,6 @@
 # 
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
 #	functions in _rtd_functions and _rtd_recipies. 
-#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
-#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
-#	Scripts may also be stand-alone if there is a reason for this. 
 #
 #	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
 #	to make the script more readable. Each function shall also be documented to the point of the obvious.
@@ -52,7 +62,7 @@
 #	the table below may be used as appropriate: 
 #
 #				OUTPUT REDIRECTION TABLE	
-#
+#	--------------------------------------------------------------------
 #		  || visible in terminal ||   visible in file   || existing
 #	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file   
 #	==========++==========+==========++==========+==========++===========
@@ -73,6 +83,7 @@
 #	          ||          |          ||          |          ||
 #	|& tee    ||   yes    |   yes    ||   yes    |   yes    || overwrite
 #	|& tee -a ||   yes    |   yes    ||   yes    |   yes    ||  append
+#	-------------------------------------------------------------------
 #
 #	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
 #	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
@@ -141,11 +152,6 @@ option_24="Basic internet apps (wallpaper downloader, filezilla etc)"
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-
-
-
-
-
 
 
 

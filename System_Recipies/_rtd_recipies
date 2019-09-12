@@ -131,14 +131,14 @@ recipie_screenshot (){
 
 
 
-function recipie_wps_office () {
+recipie_wps_office () {
 			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
 			dl http://kdl.cc.ksosoft.com/wps-community/download/8722/wps-office_11.1.0.8722_amd64.deb wps-office_11.1.0.8722_amd64.deb
 }
 
 
 
-function recepie_oem_restricted_fonts () {
+recepie_oem_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
@@ -149,7 +149,7 @@ function recepie_oem_restricted_fonts () {
 
 
 
-function recipie_secure_communication () {
+recipie_secure_communication () {
 			check_dependencies snapd
 			snap install signal-desktop 2>>$_ERRLOGFILE
 			snap install telegram-desktop 2>>$_ERRLOGFILE
@@ -159,7 +159,7 @@ function recipie_secure_communication () {
 
 
 
-function recipie_video_editing () {
+recipie_video_editing () {
 			check_dependencies snapd
 			snap install vidcutter 2>>$_ERRLOGFILE 
 			recipie_openshot
@@ -168,7 +168,7 @@ function recipie_video_editing () {
 
 
 
-function recipie_lamp_software (){
+recipie_lamp_software (){
 			echo -e $YELLOW"--- Adding Developer Software: LAMP Stack..." $ENDCOLOR
 			for i in apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql \
 				phpmyadmin nodejs
@@ -183,7 +183,7 @@ function recipie_lamp_software (){
 
 
 
-function recipie_developer_software (){
+recipie_developer_software (){
 			echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
 			for i in build-essential git
 			do
@@ -196,7 +196,7 @@ function recipie_developer_software (){
 
 
 
-function recipie_compression_tools (){
+recipie_compression_tools (){
 			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR	
 			for i in p7zip-full p7zip-rar rar zip 
 
@@ -207,7 +207,7 @@ function recipie_compression_tools (){
 
 
 
-function recipie_games (){
+recipie_games (){
 			# Install games from native repositories... 
 			echo -e $YELLOW"--- Adding Selection of Quality Games..." $ENDCOLOR
 			for i in dreamchess supertuxkart 0ad armagetronad \
@@ -230,14 +230,14 @@ function recipie_games (){
 
 
 
-function recipie_steam () {
+recipie_steam () {
 			# Install Valves Steam Client for gaming. 
 			dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
 
 }
 
 
-function recipie_admin_tools (){
+recipie_admin_tools (){
 			echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
@@ -253,7 +253,7 @@ function recipie_admin_tools (){
 
 
 
-function recipie_java (){
+recipie_java (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
 	        	# Add the Oracle Java repository and install the software. 
@@ -266,7 +266,7 @@ function recipie_java (){
 
 
 
-function recipie_bleachbit (){
+recipie_bleachbit (){
 			#Bleachbit
 			echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
 			InstallSoftwareFromRepo bleachbit 
@@ -274,7 +274,7 @@ function recipie_bleachbit (){
 
 
 
-function recipie_codecs (){
+recipie_codecs (){
 			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 			# Auto accept microsoft corefonts eula
 			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
@@ -286,7 +286,7 @@ function recipie_codecs (){
 
 
 
-function recipie_vlc (){
+recipie_vlc (){
 			#VLC Media Player
 			echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
 			InstallSoftwareFromRepo vlc
@@ -294,7 +294,7 @@ function recipie_vlc (){
 
 
 
-function recipie_google_chrome (){
+recipie_google_chrome (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
 			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -302,7 +302,7 @@ function recipie_google_chrome (){
 
 
 
-function recipie_teamviewer (){
+recipie_teamviewer (){
 			#Teamviewer
 			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
 			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb teamviewer_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -310,7 +310,7 @@ function recipie_teamviewer (){
 
 
 
-function recipie_anydesk () {
+recipie_anydesk () {
 			check_dependencies flatpak
 			flatpak install flathub com.anydesk.Anydesk 
 
@@ -318,7 +318,7 @@ function recipie_anydesk () {
 
 
 
-function recipie_skype (){
+recipie_skype (){
 			#Skype for Linux
 			echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
 			check_dependencies snapd
@@ -327,14 +327,14 @@ function recipie_skype (){
 
 
 
-function recipie_viber (){
+recipie_viber (){
 			check_dependencies snapd
 			snap install --edge viber-mtd 
 }
 
 
 
-function recipie_mega.nz (){
+recipie_mega.nz (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 			echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
 			FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
@@ -344,7 +344,7 @@ function recipie_mega.nz (){
 
 
 
-function recipie_dropbox (){
+recipie_dropbox (){
 			# Install Dropbox
 			echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
 			InstallSoftwareFromRepo nautilus-dropbox
@@ -352,7 +352,7 @@ function recipie_dropbox (){
 
 
 
-function recipie_openshot (){
+recipie_openshot (){
 			# Special case for installing Openshot video editor
 			echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
 			add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -363,7 +363,7 @@ function recipie_openshot (){
 
 
 
-function recipie_media_streamers (){
+recipie_media_streamers (){
 			echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
 			check_dependencies snapd
 			snap install spotify  2>>$_ERRLOGFILE
@@ -374,14 +374,14 @@ function recipie_media_streamers (){
 
 
 
-function recipie_audio_tools (){
+recipie_audio_tools (){
 			check_dependencies snapd
 			snap install picard  2>>$_ERRLOGFILE
 }
 
 
 
-function recipie_virtualbox (){
+recipie_virtualbox (){
 			# Special case for installing VirtualBox
 			echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 			echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
@@ -402,7 +402,7 @@ function recipie_virtualbox (){
 
 
 
-function recipie_OEM_config (){
+recipie_OEM_config (){
 			echo "Applying OEM Configuration..."
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			#::::::::::::::                                          ::::::::::::::::::::::
@@ -477,7 +477,7 @@ run_command_in_gnome_user_session () {
 			echo -------------------------- End as user: $SUDO_USER   ---------------------
 }
 
-function recipie_tweak_user_gnome_ui (){
+recipie_tweak_user_gnome_ui (){
 			# Configure Gnome for OEM look and feel. This is completely as desired. 
 			# These setings will then be copied to the "/etsc/skel" directory where user templates
 			# are stored. This will allow new users to get the same themes and settings as the 
@@ -596,7 +596,7 @@ run_command_in_gnome_user_session /bin/bash gtweak.sh
 
 
 
-function recipie_set_gnome_wallpaper (){
+recipie_set_gnome_wallpaper (){
 			# Install Wallpapers and configure Gnome to see them. ...
 			RTDCP=/opt/rtd/cache
 			echo Downloading Wallpapers:

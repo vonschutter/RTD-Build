@@ -5,10 +5,10 @@ cls
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-echo     		-        RTD System System Managment Bootstrap Script      -
+echo				-	RTD System System Managment Bootstrap Script      -
 #::
 #::
-#:: Windows CMD Shell Script Section
+#:: 						Shell Script Section
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -192,10 +192,10 @@ exit $?
 exit $?
 :CMDSCRIPT
 @echo off
-echo     		-        RTD System System Managment Bootstrap Script      -
+echo			-	RTD System System Managment Bootstrap Script      -
 ::
 ::
-:: Windows CMD Shell Script Section
+::					Windows CMD Shell Script Section
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
