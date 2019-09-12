@@ -96,7 +96,13 @@ echo     		-        RTD System System Managment Bootstrap Script      -
 #
 #
 
-
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Variables that govern the behavior or the script and location of files are 
+# set here. There should be no reason to change any of this.
 
 # Save the UI currently stated in the $XDG_CURRENT_DESKTOP. NOTE that htis is not a reliable
 # way to detect running desktop environment. It would likely be better to search for a process. 
@@ -121,6 +127,11 @@ _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 export _ERRLOGFILE=$_RTDLOGSD/$0-error.log
 export _LOGFILE=$_RTDLOGSD/$0.log 
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Execute tasks                   ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #:: Given that Bash or other Shell environment has been detected and the POSIX chell portion of this script is executed,
 #:: the second stage script must be downloaded from an online location. Depending on the distribution of OS

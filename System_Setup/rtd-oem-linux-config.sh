@@ -85,8 +85,8 @@
 #::::::::::::::          Script Settings                 ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
-# You may comment out or edit items as you deem necessary.
+# Variables that govern the behavior or the script and location of files are 
+# set here. There should be no reason to change any of this.
 
 # Use the RTD function library. This contains most of the intelligence used to perform this systems
 # maintenance. This will allso enable color some easily referenced color prompts:
