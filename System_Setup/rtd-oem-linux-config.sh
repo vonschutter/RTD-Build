@@ -296,7 +296,7 @@ PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
-system_update
+up2date
 
 
 
