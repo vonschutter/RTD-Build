@@ -55,8 +55,8 @@ echo     		-        RTD System System Managment Bootstrap Script      -
 #	  _rtd_recipies  -- contain software installation and configuration "recipies". 
 #	Scripts may also be stand-alone if there is a reason for this. 
 #
-#	Taxonomy of this script: we prioritize the use of functions over monolithis script writing, and proper indentation
-#	to make the script more readable. Each function shall also be doocumented to the point of the obvious.
+#	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
+#	to make the script more readable. Each function shall also be documented to the point of the obvious.
 #	Suggested function structure per google guidelines:
 #
 #	function_name () {
