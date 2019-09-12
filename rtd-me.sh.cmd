@@ -161,7 +161,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 			pushd /bin
 			ln -f -s $_RTDSCR/rtd* .
 			popd
-			bash $_RTDSCR/rtd-oem-linux-config.sh "$@"
+			bash $_RTDSCR/rtd-oem-linux-config.sh "$@" 2>&1 | tee $_LOGFILE 
 		else
 			echo "Failed to retrieve instructions correctly! " 
 			echo "Suggestion: check write permission in "/opt" or internet connectivity."
