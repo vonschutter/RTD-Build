@@ -151,10 +151,10 @@ echo "Attempting to detect version of POSIX based system..."
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	echo "Linux OS Found: Attempting to get instructions for Linux..."
 	# Using a dirty way to forcibly ensure that wget and unzip are available on the system. 
-	for i in apt yum dnf zypper ; do $i -y install wget &> $_LOGFILE ; done
-	wget -q  $_RTDSRC -P $_RTDCACHE 
-	for i in apt yum dnf zypper ; do $i -y install unzip &> $_LOGFILE ; done
-	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd &> $_LOGFILE && rm -v $_RTDCACHE/master.zip &> $_LOGFILE
+	for i in apt yum dnf zypper ; do $i -y install wget &>> $_LOGFILE ; done
+	wget -q  $_RTDSRC -P $_RTDCACHE &>> $_LOGFILE
+	for i in apt yum dnf zypper ; do $i -y install unzip &>> $_LOGFILE ; done
+	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd &>> $_LOGFILE && rm -v $_RTDCACHE/master.zip &>> $_LOGFILE
 		if [ $? -eq 0 ]
 		then
 			echo "Instructions sucessfully retrieved..."
