@@ -432,6 +432,10 @@ recipie_OEM_config (){
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
 				# Add the gnome UI tweak tool... 
+				if hash yum 2>/dev/null; then
+					# Enable the extra repositories in fedora to get access to the espected software.
+					InstallSoftwareFromRepo fedora-workstation-repositories 
+				fi
 				InstallSoftwareFromRepo gnome-tweak-tool
 				# Add Some clean and basic themes and icons...			
 				for i in numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
