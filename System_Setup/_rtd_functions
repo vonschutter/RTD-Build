@@ -199,7 +199,7 @@ dl ()
 	echo  "   - geting package $2 ..."
 	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	echo "    - Installing package $2 ..."
-	check_dependencies packagekit
+	check_dependencies packagekit-tools
 	pkcon install-local -y /var/apt/cache/archives/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
 
 }
