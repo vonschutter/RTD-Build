@@ -195,15 +195,26 @@ dl ()
 {
 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
 	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
-	check_dependencies wget
-	echo  "   - geting package $2 ..."
-	wget -P /var/apt/cache/archives/ $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	fetch_file () {
+		echo  "   - geting package $1 ..."
+		wget -P /opt/rtd/cache $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	}
+
+	if hash wget >/dev/null ; then
+		fetch_file
+	else 
+		check_dependencies wget
+		fetch_file
+	fi
+
 	echo "    - Installing package $2 ..."
-	check_dependencies packagekit-tools
-	pkcon install-local -y /var/apt/cache/archives/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
-
+	if hash pkcon >/dev/null ; then
+		pkcon install-local -y /opt/rtd/cache/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	else 
+		check_dependencies packagekit-tools
+		pkcon install-local -y /opt/rtd/cache/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	fi
 }
-
 
 
 
