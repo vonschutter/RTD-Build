@@ -299,6 +299,9 @@ ensure_admin
 PS_SAV=PS1
 PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
 
+mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
+
+
 # Check that the relevant software maintenance system is available and ready, 
 # and if it is not wait. When it is OK continue and ensure all is up to date. 
 SofwareManagmentAvailabilityCHK
