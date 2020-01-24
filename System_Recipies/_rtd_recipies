@@ -376,7 +376,7 @@ recipie_mega.nz (){
 			fi
 			
 			# If a known distributio was found and URL set, use "dl" function to install app...
-			[[ ! -z "$URL" ]] dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			[[ ! -z "$URL" ]] && dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
