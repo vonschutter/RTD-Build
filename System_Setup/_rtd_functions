@@ -193,25 +193,26 @@ enable_firewall () {
 # naming issues, use wildcards like skype*.deb
 dl ()
 {
-
+	download_url="$1"
+	download_file="$2"
 	fetch_file () {
-		echo  "   - geting package $1 ..."
-		wget -P /opt/rtd/cache $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	}
 
+	echo  "    - getting package $download_url ..."
 	if hash wget >/dev/null ; then
-		fetch_file
+		fetch_file 
 	else 
 		check_dependencies wget
-		fetch_file
+		fetch_file 
 	fi
 
-	echo "    - Installing package $2 ..."
+	echo "    - Installing package $download_file ..."
 	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/$download_file 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	else 
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/$2 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/$download_file 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	fi
 }
 
