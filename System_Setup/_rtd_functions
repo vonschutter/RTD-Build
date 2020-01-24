@@ -193,8 +193,7 @@ enable_firewall () {
 # naming issues, use wildcards like skype*.deb
 dl ()
 {
-	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "Logfile is set to: '$_ERRLOGFILE'"; fi
-	if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "Logfile is set to: '$_LOGFILE'"; fi
+
 	fetch_file () {
 		echo  "   - geting package $1 ..."
 		wget -P /opt/rtd/cache $1 1>>$_LOGFILE 2>>$_ERRLOGFILE
