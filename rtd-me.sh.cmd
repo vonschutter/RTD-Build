@@ -124,9 +124,9 @@ _RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /op
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
 # Determine log file directory
-export _ERRLOGFILE=$_RTDLOGSD/${0##*}-error.log
-export _LOGFILE=$_RTDLOGSD/${0##*}.log
-export _STATUSLOG=$_RTDLOGSD/${0##*}-status.log
+export _ERRLOGFILE=$_RTDLOGSD/${date +%Y-%m-%d--%H-%M-%S-%s}-oem-setup-error.log
+export _LOGFILE=$_RTDLOGSD/${date +%Y-%m-%d--%H-%M-%S-%s}-oem-setup.log
+export _STATUSLOG=$_RTDLOGSD/${date +%Y-%m-%d--%H-%M-%S-%s}-oem-setup-status.log
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
