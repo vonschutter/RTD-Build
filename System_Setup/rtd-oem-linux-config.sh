@@ -107,8 +107,8 @@ source /opt/rtd/scripts/_rtd_functions
 
 # Decide where to put log files.
 # Default: log in to "name of this script".log and -error.login the home dir.
-if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/${0##*}-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/${0##*}.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/${date +%Y-%m-%d--%H-%M-%S-%s}-oem-setup-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/${date +%Y-%m-%d--%H-%M-%S-%s}-oem-setup.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
 # Normally all choices are checked. Pass the variable "false" to this script to default   
 # to unchecked. If none is passed, a default will be used. 
