@@ -356,13 +356,13 @@ recipie_mega.nz (){
 			FILE2GET=
 			URL=
 			
-			if [[ lsb_release -si | grep Debian ]]; then
+			if lsb_release -si | grep "Debian" ; then
 				FILE2GET="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
 				URL="megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
-			elif [[ lsb_release -si | grep Ubuntu ]]; then
+			elif lsb_release -si | grep "Ubuntu" ; then
 				FILE2GET="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
 				URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"				
-			elif [[ lsb_release -si | grep openSUSE ]]; then
+			elif lsb_release -si | grep "openSUSE" ; then
 				FILE2GET="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
 				URL="megasync-openSUSE_Leap_15.0.x86_64.rpm"
 			else
