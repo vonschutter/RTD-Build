@@ -288,16 +288,21 @@ recipie_games (){
 
 recipie_steam () {
 			# Install Valves Steam Client for gaming. 
-			if hash rpm &>/dev/null; then
-				dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm steam.rpm
-			elif hash apt &>/dev/null; then
-				dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
-			else
-				echo -e $RED
-				echo "I am not sure how to find the Steam download for $(lsb_release -sd) "
-				echo "Please try to download it manually and instrtall it from the website:"
-				echo "https://store.steampowered.com/about/"
-				echo -e $ENDCOLOR
+			InstallSoftwareFromRepo steam
+			if [ $? != 0 ]; then 
+			
+				if hash rpm &>/dev/null; then
+					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm steam.rpm
+				elif hash apt &>/dev/null; then
+				
+					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+				else
+					echo -e $RED
+					echo "I am not sure how to find the Steam download for $(lsb_release -sd) "
+					echo "Please try to download it manually and instrtall it from the website:"
+					echo "https://store.steampowered.com/about/"
+					echo -e $ENDCOLOR
+				fi
 			fi
 }
 
