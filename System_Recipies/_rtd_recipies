@@ -218,6 +218,11 @@ recipie_games (){
 
 			# Install additional quality games from Flathub
 			check_dependencies flatpak
+			
+			# Add the flatpack repository if it down not already exist:
+			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+			
+			# Add requested games:
 			flatpak install flathub com.moddb.TotalChaos -y	--noninteractive
 			flatpak install flathub com.viewizard.AstroMenace -y --noninteractive
 			flatpak install flathub io.github.EndlessSky.endless-sky -y --noninteractive
@@ -232,7 +237,18 @@ recipie_games (){
 
 recipie_steam () {
 			# Install Valves Steam Client for gaming. 
-			dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+
+			if [ hash rpm &>/dev/null ]; then
+				dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm steam.rpm
+			elif [ hash apt &>/dev/null ]; then
+				dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+			else
+				echo -e $RED
+				echo "I am not sure how to find the Steam download for $(lsb_release -sd) "
+				echo "Please try to download it manually and instrtall it from the website:"
+				echo "https://store.steampowered.com/about/"
+				echo -e $ENDCOLOR
+			fi
 
 }
 
