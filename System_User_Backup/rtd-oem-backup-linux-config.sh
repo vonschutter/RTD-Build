@@ -1,5 +1,5 @@
 #!/bin/bash
-PUBLICATION="RTD Simple User Configuration Backup Script"
+PUBLICATION="RTD Simple User Configuration Backup Tool"
 VERSION="1.00"
 #
 #::             RTD Ubuntu + derivatives backup script
@@ -60,7 +60,7 @@ else
 fi
 
 # Set the background tilte:
-BACKTITLE="RTD OEM Simple System Backup"
+BACKTITLE="$PUBLICATION"
 
 # Set the options to appear in the menu as choices:
 option_1="Gnome Desktop Setings"
@@ -73,7 +73,7 @@ option_7="Users Private Documents"
 option_8="Users Private Pictures" 
 option_9="Firefox Settings" 
 option_10="Chrome Settings"  
-option_11="All VirtualBox VM's" 
+option_11="All VirtualBox VMs" 
 option_12="Teamviewer Configuration" 
 option_13="Backup entire HOME folder"
                    
@@ -92,7 +92,7 @@ option_13="Backup entire HOME folder"
 
 # Function to request an encryption phrase. 
 # This prase will be used to encrypt the compressed archives. 
-function zenity_ask_for_encryption_pass_phrase () {
+zenity_ask_for_encryption_pass_phrase () {
 	check_dependencies whiptail
     	passtoken=$(zenity --title "Please enter encryption phrase" --password ) 
     	if [[ -z "$passtoken" ]]; then
@@ -106,9 +106,9 @@ function zenity_ask_for_encryption_pass_phrase () {
 # round about way... but the idea is to prepare this setup to be flexible
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
-function zenity_show_list_of_user_backup_choices () {
-        cmd=( zenity  --list  --width=800 --height=400 --text "$BACKTITLE" --checklist  --column "ON/OFF" --column "What to backup" --separator "," )
-        zstatus=TRUE
+zenity_show_list_of_user_backup_choices () {
+        cmd=( zenity  --list  --width=800 --height=400 --text "Please Select What to Backup" --title "$BACKTITLE" --checklist  --column "ON/OFF" --column "What to backup" --separator "," )
+        zstatus=FALSE
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"
                      $zstatus "$option_3"
@@ -126,19 +126,78 @@ function zenity_show_list_of_user_backup_choices () {
 
        choices=$("${cmd[@]}" "${options[@]}" )
 }
-		
-		
-	
-	
-function rtd_user_bak () {
-        7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on -p$passtoken ~/`whoami`-$1-`date -u --iso-8601`.7z "${@:2}"
 
-}	
+
+
+
+# Simple function to display a infromational notice when the tool is envoked. 
+rtd_oem_user_backup_info_notice() {
+
+	zenity --info --width=800 --height=400 --text="
+
+The RTD User Backup tool is a simple tool to allow anyone to backup important files and/or the entire home folder to an external USB drive as a backup ahead of re-installing a PC from scratch. 
+
+It is highly recommended to encrypt all content so that is cannot easily be stolen. Do remember the password or you will never be able to access the backed-up content ever again. 
+
+You will need the following: 
+1 - An external drive
+2 - A good password
+
+The RTD Backup tool will encrypt, compress and save all the information in the location provided. 
+	"
+}
+
+
+
+# Dialog to request the destination of where to store the compressed and encrypted archive. 
+rtd_oem_request_user_backup_destination() {
+	if [[ -z "$rtd_oem_user_backup_destination" ]]; then
+		rtd_oem_user_backup_destination=$( zenity --width=800 --height=400 --text "$BACKTITLE" --file-selection --directory  )
+	elif [[ -n "$string" ]]; then
+  		echo "Saving Backup to: $rtd_oem_user_backup_destination"
+	fi
+
+}
 	
+
+
+# Notify end user thes backup tasks are complete.
+rtd_oem_user_backup_info_notice_complete() {
+
+	zenity --info --width=800 --height=400 --text="
+Backup is complete. Please revice the list below. 
+
+Backup archive(s) saved to:
+$rtd_oem_user_backup_destination
+
+Archives:
+$(ls -lh $rtd_oem_user_backup_destination/*.7z )
+"
+}
+
+
+
+# Cleanup any potential junk left in the environment.
+rtd_oem_cleanup() {
+
+	unset rtd_oem_user_backup_destination
+	unset passtoken
+}
+
+
+	
+# Function to execute the given backup and encryption task. Levels of compression and 
+# other option may be set in the seting section of this script (tool)
+rtd_user_bak () {
+	rtd_oem_request_user_backup_destination
+        7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on -p$passtoken $rtd_oem_user_backup_destination/`whoami`-"$1"-`date -u --iso-8601`.7z "${@:2}"
+}	
+
+
 		
 # Function to do what the choices instruct. We read the output from 
 # the choices and execute commands that accomplish the task requested. 
-function do_instructions_from_choices (){
+do_instructions_from_choices (){
         IFS=$','
 	for choice in $choices
 	do
@@ -217,10 +276,11 @@ function do_instructions_from_choices (){
 # "dialog" will be used to request interactive configuration...
 # Ensure that it is available: 
 trap "passtoken=nonsense" 0 1 2 5 15
+rtd_oem_user_backup_info_notice
 zenity_ask_for_encryption_pass_phrase
 zenity_show_list_of_user_backup_choices
 do_instructions_from_choices 
-
+rtd_oem_user_backup_info_notice_complete
 
 
 
@@ -230,6 +290,7 @@ do_instructions_from_choices
 #::::::::::::::          Finalize.....                   ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rtd_oem_cleanup
 exit
 
 
