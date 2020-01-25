@@ -163,7 +163,7 @@ fi
 echo -e $YELLOW"Updating installed software..." $ENDCOLOR
 # Updating software managed by distribution speciffic software manager...
 # Unless the RTD Functions are loaded, then use that. 
-	if [ "$RTDFUNCTOINS" -eq 1 ]; then
+	if [[ "$RTDFUNCTOINS" -eq 1 ]]; then
 		deb_software_task system_update
 	else
 		
