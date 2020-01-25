@@ -309,7 +309,7 @@ up2date
 
 
 
-if [[ -n $DISPLAY ]]; then 
+if [[ -z $DISPLAY ]]; then 
 	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
     	check_dependencies whiptail
 	rtd_setup_choices_term_fallback
