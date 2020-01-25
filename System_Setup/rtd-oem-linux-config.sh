@@ -309,7 +309,7 @@ up2date
 
 
 
-if ! xset q &>/dev/null; then
+if [[ $DISPLAY ]]; then 
 	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
     	check_dependencies whiptail
 	rtd_setup_choices_term_fallback
