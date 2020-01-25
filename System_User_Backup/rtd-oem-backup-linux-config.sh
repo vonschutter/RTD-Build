@@ -75,6 +75,7 @@ option_9="Firefox Settings"
 option_10="Chrome Settings"  
 option_11="All VirtualBox VM's" 
 option_12="Teamviewer Configuration" 
+option_13="Backup entire HOME folder"
                    
 
 
@@ -120,6 +121,7 @@ function zenity_show_list_of_user_backup_choices () {
                      $zstatus "$option_10"
                      $zstatus "$option_11"
                      $zstatus "$option_12"
+		     $zstatus "$option_13"
                    )
 
        choices=$("${cmd[@]}" "${options[@]}" )
@@ -189,6 +191,10 @@ function do_instructions_from_choices (){
 		rtd_user_bak "$option_12" ~/.config/teamviewer
 		sleep 1
 		;;
+		"$option_13")
+		rtd_user_bak "$option_13" $HOME
+		sleep 1
+		;;
 		esac
 	done  
 }
@@ -251,6 +257,7 @@ function fallback_show_list_of_user_backup_choices () {
                      10 "Chrome Settings"  ON 
                      11 "VirtualBox VM's (may be really large files and take time)" ON 
                      12 "Teamviewer Configuration" ON 
+		     12 "Entire HOME Folder" ON 
                      )
 }
 
