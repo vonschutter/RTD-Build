@@ -187,7 +187,7 @@ if hash snap 2>/dev/null; then
 # updating flatpacks if flatpack is present on system... 	
 if hash flatpak 2>/dev/null; then
 	  flatpak update --user --noninteractive --assumeyes
-	  flatpac update --system --noninteractive --assumeyes
+	  flatpak update --system --noninteractive --assumeyes
 	else 
 	  echo "--- flatpak software is not present on this system... skipping..."
 	fi
