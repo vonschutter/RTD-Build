@@ -175,6 +175,7 @@ echo -e $YELLOW"Updating installed software..." $ENDCOLOR
 			echo $UPGRADABLE packages that need updates 
 			deb_software_task apt-get upgrade -y
 			deb_software_task apt-get autoremove -y
+			deb_software_task apt-get clean
 		fi
 	fi
 # updating snaps if snap is present on the system... 
@@ -186,7 +187,8 @@ if hash snap 2>/dev/null; then
 
 # updating flatpacks if flatpack is present on system... 	
 if hash flatpak 2>/dev/null; then
-	  deb_software_task flatpak update
+	  deb_software_task flatpak update --user --noninteractive -y
+	  deb_software_task flatpak update --system --noninteractive -y
 	else 
 	  echo "--- flatpak software is not present on this system... skipping..."
 	fi
