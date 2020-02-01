@@ -382,7 +382,7 @@ recipie_teamviewer (){
 
 recipie_anydesk () {
 			check_dependencies flatpak
-			flatpak install flathub com.anydesk.Anydesk 
+			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
 
 }
 
