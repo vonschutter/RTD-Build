@@ -126,6 +126,16 @@
 # in one way or another... 
 
 
+rtd_oem_recipie_loader() {
+oem_default_on_off=on
+oem_recipie_name=""
+
+}
+
+
+
+
+
 
 
 recipie_baseapps (){

@@ -101,8 +101,23 @@
 
 # Use the RTD function library. This contains most of the intelligence used to perform this systems
 # maintenance. This will allso enable color some easily referenced color prompts:
-# $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
-source /opt/rtd/scripts/_rtd_functions
+# $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE etc. 
+# As this library is required for basically everything, we should exit if it is not available. 
+# Logically, this script will not run, ever, unless downloaded along with the functions and the
+# rtd software recipie book by rtd-me.sh, or on a RTD OEM system where these components would have been 
+# downloaded by the preseed or kickstart process as part of the install.
+
+if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
+	source /opt/rtd/scripts/_rtd_functions
+else 
+        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
+        echo -e $YELLOW " " $ENDCOLOR
+        echo -e $YELLOW "Cannot ensure that the correct functionality is available" $ENDCOLOR
+        echo -e $YELLOW "Quiting rather than cause potential damage..." $ENDCOLOR
+        exit 1
+fi
+
+
 
 
 # Decide where to put log files.
@@ -299,7 +314,8 @@ ensure_admin
 PS_SAV=PS1
 PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
 
-mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
+rtd_wait_for_internet_availability
+rtd_oem_reset_default_environment_config
 
 
 # Check that the relevant software maintenance system is available and ready, 

@@ -247,6 +247,37 @@ SofwareManagmentAvailabilityCHK ()
 
 
 
+# Function to reset temporary configurations to their original setings from the 
+# distributor. To configure and/or automatically install Linux systems RTD OEM 
+# load process must make some changes to the system in question that are not 
+# good security practice or that may be disruptive during normal operations. 
+# These setings are not limited to bu include "auto login", "auto sudo" and 
+# "auto running scripts"... 
+rtd_oem_reset_default_environment_config () {
+
+	# Disable the automatically trying to install OEM software
+	mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
+
+
+}
+
+
+
+# Function that, when called, will wait for an active internet connection 
+# to be available before before continuing. Most softwrare install activities 
+# need an active internet connection to be able to install and update software. 
+# Naturally, some in house loads use local mirrors, but if you can see the 
+# internet, you would have access to your own ropositories as well... 
+rtd_wait_for_internet_availability () {
+	echo "Waiting for internet access..."
+	echo "NOTE: Free access to the internet is required to continue."
+	while ! ping -c 1 -W 1 8.8.8.8; do
+		Waiting...
+		sleep 5
+	done
+}
+
+
 
 
 # Function to simplify updating system completely. At present this function sets the 
