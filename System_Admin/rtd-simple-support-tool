@@ -125,7 +125,7 @@ BLUE="\033[1;34m"
 # Set the background color of the tool. The appearance of the manu system may
 # look different on different systems depending on their default settings.
 # Here we define the bacground color for consistency.
-export NEWT_COLORS='root=,blue '
+export NEWT_COLORS='root=,gray '
 
 # Details for the ISO image creator. To change from one Ubuntu release to another you
 # may change the "RELEASE" option. If you wold like to use the ISO maker to build a custom
@@ -162,7 +162,10 @@ LOGFILE="/var/log/${0##*/}.log"
 #
 #
 
+rtd_oem_pause() {
+	read -p "Press [ENTER] To continue ... "
 
+}
 
 ensure_admin () {
         # Function to ensure administrative privileges such that system wide settings
@@ -211,12 +214,50 @@ change_disk_pass () {
 
 
 
+rtd_oem_setup_brand_splash_screen() {
+	# Function to brand the installer splash screen for the customized installer
+	# downloaded from a ginve vendor. This function expects a few simple peices of information: 
+	# parameter 1: full path to image file to be branded. 
+	# parameter 2: quoted text to be incerted. 
+	image_file_to_brand=$1
+	text_to_brand_with=$2
+
+	# Ensure that imagemagik is installed so images can be manipulated.  
+	check_dependencies imagemagick
+	
+	# Default locations and splash screens based on debian and ubuntu, meaning this function will assume you are 
+	# making an ubuntu or debian boot iso as this is generally what this function was written to do. However these values
+	# can be overridden by passing the 2 parameters to this script. 
+	: "${image_file_to_brand:="$(
+		if [ -f $TMP_DISC_DIR/splash.png ]; then
+			echo "$TMP_DISC_DIR/splash.png"
+		elif [ -f $TMP_DISC_DIR/isolinux/splash.png ]; then 
+			echo "$TMP_DISC_DIR/isolinux/splash.png"
+		fi )" }"
+	
+	: "${text_to_brand_with:="$( echo " RunTime Data OEM Install: $PREFERENCE" )" }"
+
+	echo -e $GREEN "found: $image_file_to_brand"  $ENDCOLOR
+	echo -e $GREEN "branding with: $text_to_brand_with " $ENDCOLOR
+
+	if [ -f $image_file_to_brand ]; then
+		convert $image_file_to_brand -gravity north -stroke '#000C' -strokewidth 3 -annotate 0 "$text_to_brand_with" -stroke none -strokewidth 3 -fill white -annotate 0 " $text_to_brand_with "  edit-out.png
+		rm $image_file_to_brand
+		mv edit-out.png $image_file_to_brand
+		#echo -e $RED "Image [ $image_file_to_brand ] NOT branded!  " $ENDCOLOR
+		
+	fi
+}
+
+
+
+
+
 prepare_environment_for_iso_creation () {
 	# Function to check that all dependencies are available for manipulating the
 	# net install ISO from Ubuntu. Subsequently, the temporary file locations
 	# are setup and templates are downloaded.
-	# Facilitate showing collorfull statements in terminal...
-	set_colors
+
 	#Include the path to where the isofile will be put...
 	: "${TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"}"
 	# Ensure that all needed software, outside of the most rudimantary,
@@ -227,7 +268,7 @@ prepare_environment_for_iso_creation () {
 	do
 		check_dependencies $i
 	done
-
+	
 	# Find full paths for the binaries needed since if they are recently
 	# added, they may not be found in the current $PATH. These statements will be evaluated
 	# when the variables are referenced not here because of the ":". FYI...
@@ -235,12 +276,9 @@ prepare_environment_for_iso_creation () {
 	: "${BIN_XORRISO:=$(type -P xorriso)}"
 	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
 	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
-	: "${PRESEED_TEMPLATE:="https://github.com/vonschutter/Blind_Install/raw/master/custom/preseed.template"}"
-	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
-	: "${TARGET_ISO_FILE_NAME:="$RELEASE-netinstall-auto.iso"}"
-	: "${SOURCE_ISO_URL:="http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/installer-amd64/current/images/netboot/mini.iso"}"
 	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER"}"
-	: "${VOLUME_TITLE:="RTD Ubuntu Auto Installer"}"
+	: "${VOLUME_TITLE:="RTD Auto Installer"}"
+	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
 	# Find the location of the public key on this machine...
 	# This should be updated to create a key if not there...
 	if [ ! -f "$SSH_PUBLIC_KEY_FILE" ];
@@ -257,11 +295,6 @@ prepare_environment_for_iso_creation () {
 	TMP_DOWNLOAD_DIR="`mktemp -d`"
 	TMP_DISC_DIR="`mktemp -d`"
 	TMP_INITRD_DIR="`mktemp -d`"
-
-	# Load the installation answers template.
-	echo -e $YELLOW Geting intall instructions template... $ENDCOLOR
-	mkdir -p $SCRIPT_DIR/custom
-	wget $PRESEED_TEMPLATE -P $SCRIPT_DIR/custom
 }
 
 
@@ -273,39 +306,55 @@ download_and_manipulate_iso () {
 	# and manipulate the iso file to complete the edited instruction in the preseed.cfg...
 	RELEASE=$1
 	PREFERENCE=$2
+	: "${PRESEED_TEMPLATE:="https://github.com/vonschutter/Blind_Install/raw/master/custom/preseed.ubuntu.template"}"
+	: "${TARGET_ISO_FILE_NAME:="$RELEASE-netinstall-auto.iso"}"
+	: "${SOURCE_ISO_URL:="http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/installer-amd64/current/images/netboot/mini.iso"}"
+	#: "${SOURCE_UBUNTU_FIRMWARE:="http://archive.ubuntu.com/ubuntu/pool/main/l/linux-firmware/linux-firmware_1.183_all.deb"}"
+	: "${SOURCE_FIRMWARE:="http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/buster/current/firmware.zip"}"
+
+	# Load the installation answers template.
+	echo -e $YELLOW Geting intall instructions template... $ENDCOLOR
+	mkdir -p $SCRIPT_DIR/custom
+	wget $PRESEED_TEMPLATE --output-document=$SCRIPT_DIR/custom/preseed.template
 	TARGET_ISO=$PUT_ISO_FILE_HERE_WHEN_DONE/$PREFERENCE-$TARGET_ISO_FILE_NAME
 	cd "$TMP_DOWNLOAD_DIR"
 	wget -4 "$SOURCE_ISO_URL" -O "./netboot.iso"
 	"$BIN_7Z" x "./netboot.iso" "-o$TMP_DISC_DIR"
 	cd "$TMP_DISC_DIR"
+	mkdir "$TMP_DISC_DIR/firmware"
+	# wget -4 "$SOURCE_UBUNTU_FIRMWARE" -P "$TMP_DISC_DIR/firmware"
+	wget -4  -q --show-progress "$SOURCE_FIRMWARE" -O "$TMP_DOWNLOAD_DIR/firmware.zip"
+	mkdir $TMP_DISC_DIR/firmware
+	"$BIN_7Z" x "$TMP_DOWNLOAD_DIR/firmware.zip" "-o$TMP_DISC_DIR/firmware"
+	
 
 
-# ------------------- Patch 1 grub .cfg ------------------------ #
-$YELLOW
-patch ./boot/grub/grub.cfg <<PATCH
+echo "# ------------------- Patch 1 grub.cfg ------------------------ #"
+
+patch ./boot/grub/grub.cfg <<PATCH_GRUB
 11a12
 > set timeout=10
 13c14
 < menuentry "Install" {
 ---
 > menuentry "Automatic Install" {
-PATCH
-$ENDCOLOR
-# -------------------------------------------------------------- #
+PATCH_GRUB
+
+echo "# -------------------------------------------------------------- #"
 
 
-# ---------------------Patch 2 isolinux.cfg -------------------- #
-$YELLOW
+echo "# ---------------------Patch 2 isolinux.cfg -------------------- #"
+
 dos2unix "./isolinux.cfg"
-patch ./isolinux.cfg <<PATCH_II
+patch ./isolinux.cfg <<PATCH_ISOLINUX
 7c7
 < timeout 0
 ---
 > timeout 100
-PATCH_II
-$ENDCOLOR
-# -------------------------------------------------------------- #
+PATCH_ISOLINUX
 
+echo "# -------------------------------------------------------------- #"
+echo 25%
 
 	cat "$SCRIPT_DIR/custom/preseed.template" > "$SCRIPT_DIR/custom/preseed.cfg"
 	sed -i s/oem-replace-me-desktop-selection/$PREFERENCE/g "$SCRIPT_DIR/custom/preseed.cfg"
@@ -314,7 +363,8 @@ $ENDCOLOR
 	cp "$SCRIPT_DIR/custom/preseed.cfg" "./preseed.cfg"
 	cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
 
-# ---------------------Create ssh key service ------------------ #
+echo "# ---------------------Create ssh key service ------------------ #"
+
 cat << SSH_KEY_KEYGEN > ./custom/ssh-host-keygen.service
 [Unit]
 Description=OpenSSH Server Key Generation
@@ -328,13 +378,124 @@ RemainAfterExit=yes
 [Install]
 WantedBy=multi-user.target
 SSH_KEY_KEYGEN
-# -------------------------------------------------------------- #
 
+echo "# -------------------------------------------------------------- #"
+	
+	# Inject crated content into the new ISO...
 	cat "$TMP_DISC_DIR/initrd.gz" | gzip -d > "./initrd"
 	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
 	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
 	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/initrd.gz"
+	
+	rtd_oem_setup_brand_splash_screen
+}
 
+
+
+
+download_and_manipulate_iso_debian () {
+	# This is a simple command sequence to read the preference of distribution to install
+	# and what release to get... then download the network install file from ubuntu
+	# and manipulate the iso file to complete the edited instruction in the preseed.cfg...
+	: "${PRESEED_TEMPLATE:="https://github.com/vonschutter/Blind_Install/raw/master/custom/preseed.debian.template"}"
+	: "${TARGET_ISO_FILE_NAME:="$1-$2-mini-netinstall-auto.iso"}"
+	: "${SOURCE_ISO_URL:="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.2.0-amd64-netinst.iso"}"
+	: "${SOURCE_FIRMWARE:="http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/buster/current/firmware.zip"}"
+	TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"
+	PREFERENCE=$2
+	
+	echo -e $YELLOW Geting install image... 
+	echo -e $GREEN Download: $SOURCE_ISO_URL $ENDCOLOR
+	# Download the current version of Debian stable and extract its contents
+	# to a known location.
+	cd "$TMP_DOWNLOAD_DIR"
+	wget -4  -q --show-progress "$SOURCE_ISO_URL" -O "./netboot.iso"
+	"$BIN_7Z" x "./netboot.iso" "-o$TMP_DISC_DIR"
+	echo -e $BLUE; ls $TMP_DISC_DIR ; echo -e $ENDCOLOR
+
+	echo -e $YELLOW Geting non-free firmware... 
+	echo -e $GREEN Download: $SOURCE_FIRMWARE $ENDCOLOR
+	# By default Debian does not include non-free firmware to be able to use
+	# some wireless cards; so these will need to be downloaded.
+	wget -4  -q --show-progress "$SOURCE_FIRMWARE" -O "$TMP_DOWNLOAD_DIR/firmware.zip"
+	mkdir $TMP_DISC_DIR/firmware
+	"$BIN_7Z" x "$TMP_DOWNLOAD_DIR/firmware.zip" "-o$TMP_DISC_DIR/firmware"
+	echo -e $BLUE ; ls $TMP_DISC_DIR/firmware ; echo -e $ENDCOLOR
+
+	cd "$TMP_DISC_DIR"
+	
+	# Load the installation answers template.
+	echo -e $YELLOW Getting intall instructions template... $ENDCOLOR
+	mkdir -p $SCRIPT_DIR/custom
+	wget -q --show-progress $PRESEED_TEMPLATE --output-document=$SCRIPT_DIR/custom/preseed.template
+
+# ------------------- Patch 1 grub .cfg ------------------------ #
+
+patch ./boot/grub/grub.cfg <<PATCH
+11a12
+> set timeout=10
+13c14
+< menuentry "Install" {
+---
+> menuentry "Automatic Install" {
+PATCH
+
+# -------------------------------------------------------------- #
+
+
+# ---------------------Patch 2 isolinux.cfg -------------------- #
+
+dos2unix "./isolinux/isolinux.cfg"
+patch ./isolinux/isolinux.cfg <<PATCH_II
+7c7
+< timeout 0
+---
+> timeout 100
+PATCH_II
+
+# -------------------------------------------------------------- #
+
+	# Edit the installation instructions file...
+	cat "$SCRIPT_DIR/custom/preseed.template" > "$SCRIPT_DIR/custom/preseed.cfg"
+	sed -i s/oem-replace-me-desktop-selection/$PREFERENCE/g "$SCRIPT_DIR/custom/preseed.cfg"
+	cd "$TMP_INITRD_DIR"
+	mkdir ./custom
+	cp "$SCRIPT_DIR/custom/preseed.cfg" "./preseed.cfg"
+	cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
+
+# ---------------------Create ssh key service ------------------ #
+
+cat << SSH_KEY_KEYGEN > ./custom/ssh-host-keygen.service
+[Unit]
+Description=OpenSSH Server Key Generation
+Before=ssh.service
+
+[Service]
+ExecStart=/usr/bin/ssh-keygen -A
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+SSH_KEY_KEYGEN
+
+# -------------------------------------------------------------- #
+
+	# Inject crated content into the new ISO...
+	echo -e $GREEN "# Modify the CLI Installer" $ENDCOLOR 
+	cat "$TMP_DISC_DIR/install.amd/initrd.gz" | gzip -d > "./initrd"
+	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
+	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
+	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/install.amd/initrd.gz"
+	rm ./initrd
+	
+	echo -e $GREEN "# Modify the GTK Installer" $ENDCOLOR 
+	cat "$TMP_DISC_DIR/install.amd/gtk/initrd.gz" | gzip -d > "./initrd"
+	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
+	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
+	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/install.amd/gtk/initrd.gz"
+
+	rtd_oem_setup_brand_splash_screen
 }
 
 
@@ -342,16 +503,36 @@ SSH_KEY_KEYGEN
 create_iso_image (){
 	# Function to generate the new ISO file from the extracted and
 	# altered original ISO.
-    # Delete old iso file if there...
-    if [ -f "$TARGET_ISO" ]; then
-            rm -f "$TARGET_ISO"
-    fi
+	# Delete old iso file if there...
+	echo "------ CREATING ISO: $TARGET_ISO    --------"
+	if [ -f "$TARGET_ISO" ]; then
+		rm -f "$TARGET_ISO"
+	fi
 
-    cd "$TMP_DISC_DIR"
-    rm -r '[BOOT]'
-    "$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b isolinux.bin -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
-    chmod 777 "$TARGET_ISO"
+	cd "$TMP_DISC_DIR"
+	rm -r '[BOOT]'
+	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b isolinux.bin -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
+	chmod 777 "$TARGET_ISO" || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
 }
+
+
+
+create_iso_image_debian (){
+	# Function to generate the new ISO file from the extracted and
+	# altered original ISO.
+	# Delete old iso file if there...
+	echo "------ CREATING ISO: $TARGET_ISO    --------"
+	if [ -f "$TARGET_ISO" ]; then
+		rm -f "$TARGET_ISO"
+	fi
+
+	cd "$TMP_DISC_DIR"
+	rm -r '[BOOT]'
+	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b "isolinux/isolinux.bin" -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
+	chmod 777 "$TARGET_ISO" || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+	}
+
+
 
 
 
@@ -768,7 +949,7 @@ dl () {
 	if hash pkcon 2>/dev/null; then
 		pkcon install-local -y /var/apt/cache/archives/$2
     	else
-        	echo "You seem to have now Package Kit... I will try to get it... "
+        	echo "You seem to have no Package Kit... I will try to get it... "
         	echo "I will need to become admin to do that..."
         	sudo check_dependencies packagekit
 			if [ $? != 0 ];
@@ -849,16 +1030,29 @@ The RTD tools run in a separate terminal that you can re connect to if you shoul
 cleanup_and_finish () {
 	# Function to remove all temporary file locations left over from building
 	# the new netinstall ISO.
-            # go back to initial directory
-            cd "$CURRENT_DIR"
-            # Cleanup folder structure...
-            rm -r "$TMP_DOWNLOAD_DIR"
-            rm -r "$TMP_DISC_DIR"
-            rm -r "$TMP_INITRD_DIR"
-	    rm -r "$SCRIPT_DIR/custom"
-            # Print completion message and instructions...
-	    COMPLETION_MESSAGE="	Your ISO image is ready!
-	It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE
+	# go back to initial directory
+	cd "$CURRENT_DIR"
+	# Cleanup folder structure...
+	rm -r "$TMP_DOWNLOAD_DIR"
+	rm -r "$TMP_DISC_DIR"
+	rm -r "$TMP_INITRD_DIR"
+	rm -r "$SCRIPT_DIR/custom"
+
+        # Print COMPLETION_MESSAGE
+	BIN_7Z=
+	BIN_XORRISO=
+	BIN_CPIO=
+	ISOHDPFX_BIN=
+	VOLUME_TITLE=
+	TARGET_ISO_FILE_NAME=
+	SOURCE_ISO_URL=
+	SSH_PUBLIC_KEY_FILE=
+	PUT_ISO_FILE_HERE_WHEN_DONE=
+	VOLUME_TITLE=
+	PRESEED_TEMPLATE=
+
+	COMPLETION_MESSAGE="	Your ISO image is ready!
+	It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
 	Next steps:
 	- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
 	- If you are using Virtual Machines select the ISO as install media
@@ -971,10 +1165,16 @@ show_make_media_gui () {
 		selection=$(whiptail \
 		--backtitle "$BRANDING" --title "ISO Menu"  --menu "Creating the ISO file is complete, what do you want to do now?: \
                 You may choose to create and automatic Installer ISO (Burn to CD, USB, or use with VM)." 0 0 4 \
-		"1" "Genterate an Automatic Standard iso " \
-		"2" "Genterate an Automatic KDE iso     " \
-		"3" "Genterate an Automatic Gnome iso   " \
-                "4" "Genterate an Automatic Minimal Standard desktop iso (Graphical Server)" \
+		"1" "Generate an Automatic Install ISO for Ubuntu Standard Desktop (more MAC like)" \
+		"2" "Generate an Automatic Install ISO for Ubuntu with Plasma Desktop (more Windows like)" \
+		"3" "Generate an Automatic Install ISO for Ubuntu Gnome (without Ubuntu customization)" \
+                "4" "Generate an Automatic Install ISO for Ubuntu Minimal Standard desktop" \
+		"5" "Generate an Automatic Install ISO for Graphical Server (Xubuntu-core)" \
+		"6" "Generate an Automatic Install ISO for Debian Default Desktop" \
+		"7" "Generate an Automatic Install ISO for Debian Light Weight Desktop" \
+		"8" "Generate an Automatic Install ISO for Debian Plasma Desktop" \
+		"9" "Generate an Automatic Install ISO for Debian Graphical Server" \
+		"10" "Generate an Automatic Install ISO for Debian Minimal Server (Core)" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
@@ -1027,12 +1227,57 @@ show_make_media_gui () {
                         cleanup_and_finish
                         clear
                 ;;
+                5 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso $RELEASE xubuntu-core
+                        create_iso_image
+                        cleanup_and_finish
+                        clear
+                ;;
+		6 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso_debian debian desktop
+                        create_iso_image_debian
+                        cleanup_and_finish
+                        clear
+                ;;
+		7 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso_debian debian cinnamon-desktop
+                        create_iso_image_debian
+                        cleanup_and_finish
+                        clear
+                ;;
+		8 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso_debian debian kde-desktop
+                        create_iso_image_debian
+                        cleanup_and_finish
+                        clear
+                ;;
+		9 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso_debian debian lxde-desktop
+                        create_iso_image_debian
+                        cleanup_and_finish
+                        clear
+                ;;
+                10 )
+                        clear
+                        prepare_environment_for_iso_creation
+                        download_and_manipulate_iso_debian debian ssh-server
+                        create_iso_image_debian
+                        cleanup_and_finish
+                        clear
+                ;;
 		esac
 	done
 }
-
-
-
 
 show_manage_vm_gui () {
 	# List Options to be available for choice in the RTD System Configurator...
