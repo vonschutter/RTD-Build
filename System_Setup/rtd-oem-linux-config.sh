@@ -107,7 +107,7 @@
 # rtd software recipie book by rtd-me.sh, or on a RTD OEM system where these components would have been 
 # downloaded by the preseed or kickstart process as part of the install.
 
-if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
+if  [[ -f /opt/rtd/scripts/_rtd_functions ]]; then 
 	source /opt/rtd/scripts/_rtd_functions
 else 
         echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
@@ -328,6 +328,7 @@ up2date
 if [[ -z $DISPLAY ]]; then 
 	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
     	check_dependencies whiptail
+	check_dependencies newt
 	rtd_setup_choices_term_fallback
 else     
 	check_dependencies zenity
