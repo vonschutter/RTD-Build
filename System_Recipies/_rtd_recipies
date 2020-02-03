@@ -492,7 +492,6 @@ recipie_virtualbox (){
 }
 
 
-
 recipie_OEM_config (){
 			echo "Applying OEM Configuration..."
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -503,25 +502,30 @@ recipie_OEM_config (){
 			enable_firewall
 			# Power managment profile
 			InstallSoftwareFromRepo tuned
-			sudo systemctl enable --now tuned
-			sudo tuned-adm profile balanced
-			#Performance:
-			#sudo tuned-adm profile desktop
-			#Virtual Machine Host:
-			#sudo tuned-adm profile virtual-host
-			#Virtual Machine Guest:
-			#sudo tuned-adm profile virtual-guest
-			#Battery Saving:
-			#sudo tuned-adm profile powersave
-			# Virtual Machines
-			# sudo systemctl enable --now libvirtd
-			# Management of local/remote system(s) - availa
+			systemctl enable --now tuned
+			# Default tune
+			tuned-adm profile balanced
+
+			#Tune to virtual machine guest or tune according to hardware type::
+			check_dependencies virt-what
+			check_dependencies laptop-detect
+			if virt-what ; then 
+				echo "This is likely not running in a virtual machine."
+				if laptop-detect ; then 
+					tuned-adm profile powersave
+				else
+					tuned-adm profile desktop
+				fi
+			else 
+				tuned-adm profile virtual-guest 
+			fi
 
 			# Apply tweaks to the UI based on desktop active
-			#if  echo $_UI |grep -i -q "gnome"; then
+			if  ps -e |grep "gnome-shell"; then
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
+
 				# Add the gnome UI tweak tool... 
 				if hash yum 2>/dev/null; then
 					# Enable the extra repositories in fedora to get access to the espected software.
@@ -552,13 +556,14 @@ recipie_OEM_config (){
 				# dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Transfer settings for all users... 
 				# cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
-			#fi
+			fi
 
-			if echo $_UI | grep -i -q "kde"; then
-				echo "Detected KDE UI!" 	
+			if  ps -e |grep "plasmashell" ; then
+				echo "Detected KDE UI!" 
 			
 			fi
 }
+
 
 run_command_in_gnome_user_session () {
 			# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
