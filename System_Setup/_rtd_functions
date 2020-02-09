@@ -186,18 +186,14 @@ enable_firewall () {
 
 
 
+
 # Function to ease and make consistent the downloading of the non repository packages and
-# install them. This function presently only works with apt. This should be expanded to include
-# RPM packages as well.
-# First parameter is the URL, second is the name of the deb, to bypass version
-# naming issues, use wildcards like skype*.deb
+# install them. It can install any package that Package Kit can manage (available on most Linux dists)
+# It expects one parameter: the complete URL to download from. 
 dl ()
 {
 	download_url="$1"
-	download_file="$2"
-	fetch_file () {
-		wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	}
+	fetch_file () { wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
 
 	echo  "    - getting package $download_url ..."
 	if hash wget >/dev/null ; then
@@ -207,12 +203,12 @@ dl ()
 		fetch_file
 	fi
 
-	echo "    - Installing package $download_file ..."
+	echo "    - Installing package: $(basename $download_url)..."
 	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/$download_file 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else
+		pkcon install-local -y /opt/rtd/cache/$(basename $download_url) 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	else 
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/$download_file 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/$(basename $download_url) 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	fi
 }
 

@@ -151,7 +151,7 @@ recipie_baseapps (){
 
 
 recipie_wine (){
-			     InstallSoftwareFromRepo wine
+			InstallSoftwareFromRepo wine
 }
 
 
@@ -528,7 +528,7 @@ recipie_OEM_config (){
 			# Management of local/remote system(s) - availa
 
 			# Apply tweaks to the UI based on desktop active
-			#if  echo $_UI |grep -i -q "gnome"; then
+			if  ps -e |grep "gnome-shell"; then
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
 				# Add wallpapers and set GNOME wallpaper... 
 				recipie_set_gnome_wallpaper
@@ -562,9 +562,9 @@ recipie_OEM_config (){
 				# dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
 				# Transfer settings for all users... 
 				# cp -r /home/$SUDO_USER/.gnome* .config .local /etc/skel/
-			#fi
+			fi
 
-			if echo $_UI | grep -i -q "kde"; then
+			if  ps -e |grep "plasmashell" ; then
 				echo "Detected KDE UI!" 	
 			
 			fi
@@ -598,7 +598,6 @@ recipie_tweak_user_gnome_ui (){
 			# Terminal and Tilix Dark Theme
 			 gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 			 gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
-
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ background-color '#FFFFFF'

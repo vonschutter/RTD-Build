@@ -516,7 +516,6 @@ recipie_OEM_config (){
 			# Power managment profile
 			check_dependencies tuned
 			systemctl enable --now tuned
-			# Default tune
 			tuned-adm profile balanced
 
 			#Tune to virtual machine guest or tune according to hardware type::
@@ -539,41 +538,42 @@ recipie_OEM_config (){
 				# Add wallpapers and set GNOME wallpaper...
 				recipie_set_gnome_wallpaper
 
-				# Add the gnome UI tweak tool...
-				if hash yum 2>/dev/null; then
+				# Pecial case for Fedoara: Add the gnome UI tweak tool... 
+				if cat /etc/os-release |grep "Fedora" &>> $_LOGFILE; then
 					# Enable the extra repositories in fedora to get access to the espected software.
 					InstallSoftwareFromRepo fedora-workstation-repositories
 				fi
 				InstallSoftwareFromRepo gnome-tweak-tool
-				# Add Some clean and basic themes and icons...
-				for i in numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
-							gnome-shell-extension-appindicator \
-							gnome-shell-extension-suspend-button \
-							gnome-shell-extension-log-out-button  \
-							gnome-shell-extension-tilix-dropdown \
-							gnome-shell-extension-multi-monitors \
-							gnome-shell-extension-caffeine \
-							gnome-shell-extension-gsconnect  \
-							gnome-shell-extension-gsconnect-browsers \
-							gnome-shell-extension-dash-to-panel \
-							gnome-shell-extension-dashtodock \
-							arc-theme \
-							adwaita-icon-theme-full adwaita-qt
-				do
+				# Add Some clean and basic themes and icons...			
+				for i in numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
+					gnome-shell-extension-appindicator \
+					gnome-shell-extension-suspend-button \
+					gnome-shell-extension-log-out-button  \
+					gnome-shell-extension-tilix-dropdown \
+					gnome-shell-extension-multi-monitors \
+					gnome-shell-extension-caffeine \
+					gnome-shell-extension-gsconnect  \
+					gnome-shell-extension-gsconnect-browsers \
+					gnome-shell-extension-dash-to-panel \
+					gnome-shell-extension-dashtodock \
+					arc-theme \
+					adwaita-icon-theme-full adwaita-qt  
+				do 
 					InstallSoftwareFromRepo $i
 				done
 				#Change user context and apply gnome settings...
 
 				echo "Modifying setings for: $SUDO_USER"
 				recipie_tweak_user_gnome_ui
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
-				# Transfer settings for all users...
-				cp -r -u -v /home/$SUDO_USER/.gnome* /home/$SUDO_USER/.config /home/$SUDO_USER/.local /etc/skel/
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb mint-y-icons_1.3.7_all.deb
+				# Transfer settings for all users... 
+				cp -r -u -v /home/$SUDO_USER/.config /etc/skel/
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
-				echo "Detected KDE UI!"
+				echo "Detected KDE UI!" 
 
+			
 			fi
 }
 
@@ -587,6 +587,7 @@ run_command_in_gnome_user_session () {
 			echo -------------------------- Begin as user: $SUDO_USER ---------------------
 			echo "$@"
 			sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@ > /dev/null 2>&1
+			echo " "
 			echo -------------------------- End as user: $SUDO_USER   ---------------------
 }
 
