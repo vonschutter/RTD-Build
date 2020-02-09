@@ -1,57 +1,57 @@
 #!/bin/bash
 #
-#::            S O F T W A R E    R E C I P I E S 
+#::            S O F T W A R E    R E C I P I E S
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
 #:: Version 1.01
 #::
 #::
-#::	Purpose: To define how software is added in one place. 
-#::		 Software may be downloaded and installed manually, or via package manager or snaps. 
-#::		 Configuration items are also defined here. 
+#::	Purpose: To define how software is added in one place.
+#::		 Software may be downloaded and installed manually, or via package manager or snaps.
+#::		 Configuration items are also defined here.
 #::     Usage: call this file using the "source" statment in bash. Then simply invoke the relevan recipie (funclion)
-#:: 
+#::
 #::     This script is shared in the hopes that
 #::     someone will find it usefull.
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#	
+#
 #	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
-#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
-#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
+#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how
+#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to
 #		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
 #		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
-#		for any organization after some years and people turnover. 
+#		for any organization after some years and people turnover.
 #
 #		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
 #		and facilitates several users working on the same scripts over time.
-#		
-# 
+#
+#
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
-#	functions in _rtd_functions and _rtd_recipies. 
-#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
-#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
-#	Scripts may also be stand-alone if there is a reason for this. 
+#	functions in _rtd_functions and _rtd_recipies.
+#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems.
+#	  _rtd_recipies  -- contain software installation and configuration "recipies".
+#	Scripts may also be stand-alone if there is a reason for this.
 #
 #	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
 #	to make the script more readable. Each function shall also be documented to the point of the obvious.
 #	Suggested function structure per google guidelines:
 #
 #	function_name () {
-#		# Documentation and comments... 
+#		# Documentation and comments...
 #		...code...
 #	}
 #
 #	We also like to log all activity, and to echo status output to the screen in a frienly way. To accomplish this,
-#	the table below may be used as appropriate: 
+#	the table below may be used as appropriate:
 #
-#				OUTPUT REDIRECTION TABLE	
+#				OUTPUT REDIRECTION TABLE
 #
 #		  || visible in terminal ||   visible in file   || existing
-#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file   
+#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file
 #	==========++==========+==========++==========+==========++===========
 #	    >     ||    no    |   yes    ||   yes    |    no    || overwrite
 #	    >>    ||    no    |   yes    ||   yes    |    no    ||  append
@@ -71,71 +71,84 @@
 #	|& tee    ||   yes    |   yes    ||   yes    |   yes    || overwrite
 #	|& tee -a ||   yes    |   yes    ||   yes    |   yes    ||  append
 #
-#	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
-#	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
-#	contains all the actual logic and control of the script. 
+#	Our scripts are also structured in to three major sections: "settings", "functions", and "execute".
+#	Settings, contain configurable options for the script. Functions, contain all functions. Execute,
+#	contains all the actual logic and control of the script.
 #
 #
 #
 # 	*		--- Installing software from the snap repository is prefferred --- 		*
 #
-# Snap is a software deployment and package management system developed by Canonical for the Linux operating system. 
-# The packages, called snaps, and the tool for using them, snapd, work across a range of Linux distributions 
-# allowing distribution-agnostic upstream software packaging. Snap application packages of software are self-contained 
-# and work across a range of Linux distributions. This is unlike traditional Linux package  management approaches, 
-# like APT or YUM, which require specifically adapted packages for each Linux distribution therefore adding delay between 
-# application development and its deployment for end-users. 
+# Snap is a software deployment and package management system developed by Canonical for the Linux operating system.
+# The packages, called snaps, and the tool for using them, snapd, work across a range of Linux distributions
+# allowing distribution-agnostic upstream software packaging. Snap application packages of software are self-contained
+# and work across a range of Linux distributions. This is unlike traditional Linux package  management approaches,
+# like APT or YUM, which require specifically adapted packages for each Linux distribution therefore adding delay between
+# application development and its deployment for end-users.
 #
-# Supported distributions: 
-# Arch Linux, CentOS, Debian, Fedora, Solus, Manjaro Linux, Linux Mint, OpenEmbedded, Raspbian, OpenWrt and openSUSE. 
+# Supported distributions:
+# Arch Linux, CentOS, Debian, Fedora, Solus, Manjaro Linux, Linux Mint, OpenEmbedded, Raspbian, OpenWrt and openSUSE.
 #
 # Security:
 # Snaps are also contained from a security point of view and only have the access relly needed on a system. The user may
-# add additional access descressionally. 
-# 
+# add additional access descressionally.
+#
 # 	*	--- Installing software from the flathub repository is a secondary preferrence ---      *
 #
-# Flatpak (formerly xdg-app) is a software utility for software deployment and package management for Linux. It is advertised 
+# Flatpak (formerly xdg-app) is a software utility for software deployment and package management for Linux. It is advertised
 # as offering a sandbox environment in which users can run application software in isolation from the rest of the system.
-# Applications using Flatpak need permissions to have access to Bluetooth, sound (with PulseAudio), network, files, etc., 
-# permissions that are defined by the maintainer of the Flatpak and can be controlled (added or removed) by users on their 
-# system.Flatpak was developed as part of the freedesktop.org project (formerly known as X Desktop Group or XDG) and was 
+# Applications using Flatpak need permissions to have access to Bluetooth, sound (with PulseAudio), network, files, etc.,
+# permissions that are defined by the maintainer of the Flatpak and can be controlled (added or removed) by users on their
+# system.Flatpak was developed as part of the freedesktop.org project (formerly known as X Desktop Group or XDG) and was
 # originally called xdg-app.
 #
-# Flathub, a repository (or remote source in the Flatpak terminology) that is located at flathub.org, has become the de facto 
-# standard for getting applications packaged with Flatpak.[9] Packages are added to it by both the Flathub administrators and 
+# Flathub, a repository (or remote source in the Flatpak terminology) that is located at flathub.org, has become the de facto
+# standard for getting applications packaged with Flatpak.[9] Packages are added to it by both the Flathub administrators and
 # the developers of the programs themselves (though the admins have stated their preference for developer-submitted apps).
 # Although Flathub is the de facto source for applications packaged with Flatpak, Flatpak can work independently of Flathub;
 # it is possible to host a remote and access to remotes that are totally independent of Flathub.
 #
 #	*	---       Installing software from native distribution repositories  ----		*
 #
-# A Linux repository is a storage location from which your system retrieves and installs OS updates and applications. 
-# Each repository is a collection of software hosted on a remote server and intended to be used for installing and updating 
-# software packages on Linux systems. When you run commands such as “sudo apt update” or “sudo apt upgrade”, you may be pulling 
-# package information and package updates from a number of repositories. 
-# 
+# A Linux repository is a storage location from which your system retrieves and installs OS updates and applications.
+# Each repository is a collection of software hosted on a remote server and intended to be used for installing and updating
+# software packages on Linux systems. When you run commands such as “sudo apt update” or “sudo apt upgrade”, you may be pulling
+# package information and package updates from a number of repositories.
+#
 # For more information on package managers see: https://en.wikipedia.org/wiki/Package_manager
 #
-# THE Preferred way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software 
+# THE Preferred way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software
 # applications designed to provide a consistent and high-level front end for a number of different package management systems.
-# PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors. 
+# PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors.
 
 
-# Add several software items that are almost alwasys used 
-# in one way or another... 
+# Add several software items that are almost alwasys used
+# in one way or another...
 
 
 
 
 recipie_baseapps (){
-		# Add several software items that are almost alwasys used 
-		# in one way or another... 
+		# Add several software items that are almost alwasys used
+		# in one way or another...
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
-			for i in diodon gnome-twitch polari filezilla 
+			for i in diodon gnome-twitch polari filezilla
 			do
 			     InstallSoftwareFromRepo $i
 			done
+}
+
+
+
+recipie_vivaldi (){
+
+	if cat "/etc/os-release" | grep "debian" ; then
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.deb
+	elif cat "/etc/os-release" | grep "fedora" ; then
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+	elif  cat "/etc/os-release" | grep "suse" ; then
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+	fi
 }
 
 
@@ -146,7 +159,7 @@ recipie_wine (){
 
 
 recipie_simplenote (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
 			# A simple to use not taking app that auto syncs with the same app on any device.
 			snap install simplenote 2>>$_ERRLOGFILE
@@ -156,9 +169,9 @@ recipie_simplenote (){
 
 
 recipie_dos (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
-			# A small app that allows you to use your old DOS software. 
+			# A small app that allows you to use your old DOS software.
 			snap install dosbox-x  2>>$_ERRLOGFILE
 
 }
@@ -166,7 +179,7 @@ recipie_dos (){
 
 
 recipie_screenshot (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
 			snap install screencloud  2>>$_ERRLOGFILE
@@ -177,14 +190,14 @@ recipie_screenshot (){
 
 
 recipie_wps_office () {
-			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
+			# Download and install WPS Office (more like Microsoft Office) OSS from China...
 			dl http://kdl.cc.ksosoft.com/wps-community/download/8722/wps-office_11.1.0.8722_amd64.deb wps-office_11.1.0.8722_amd64.deb
 }
 
 
 
 recepie_oem_restricted_fonts () {
-			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
+			# Download and install Trutype font pack... these are propietary and require passphrase to unlock.
 			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
 			check_dependencies p7zip-full
@@ -206,7 +219,7 @@ recipie_secure_communication () {
 
 recipie_video_editing () {
 			check_dependencies snapd
-			snap install vidcutter 2>>$_ERRLOGFILE 
+			snap install vidcutter 2>>$_ERRLOGFILE
 			recipie_openshot
 
 }
@@ -242,8 +255,8 @@ recipie_developer_software (){
 
 
 recipie_compression_tools (){
-			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR	
-			for i in p7zip-full p7zip-rar rar zip 
+			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR
+			for i in p7zip-full p7zip-rar rar zip
 
 			do
 			     InstallSoftwareFromRepo $i
@@ -253,21 +266,21 @@ recipie_compression_tools (){
 
 
 recipie_games (){
-			# Install games from native repositories... 
+			# Install games from native repositories...
 			echo -e $YELLOW"--- Adding Selection of Quality Games..." $ENDCOLOR
-						
-			# --- Install games available in SNAP repository --- 
+
+			# --- Install games available in SNAP repository ---
 			for i in supertuxkart 0ad warzone2100 supertuxkart marsshooter
 			do
 			     snap install $i
 			done
-			
-			# --- Install games available in Flathub repository and not at Snapcrafters --- 
+
+			# --- Install games available in Flathub repository and not at Snapcrafters ---
 			check_dependencies flatpak
-			
+
 			# Add the flatpack repository if it down not already exist:
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-			
+
 			# Add requested games:
 			flatpak install flathub com.moddb.TotalChaos -y	--noninteractive
 			flatpak install flathub com.viewizard.AstroMenace -y --noninteractive
@@ -276,8 +289,8 @@ recipie_games (){
 			flatpak install flathub com.endlessnetwork.aqueducts -y --noninteractive
 			flatpak install flathub de.billardgl.Billardgl -y --noninteractive
 			flatpak install flathub org.naev.Naev -y --noninteractive
-			
-			# --- Install games available in repository only --- 
+
+			# --- Install games available in repository only ---
 			for i in dreamchess armagetronad mesa-utils assaultcube openarena
 			do
 			     InstallSoftwareFromRepo $i
@@ -287,14 +300,14 @@ recipie_games (){
 
 
 recipie_steam () {
-			# Install Valves Steam Client for gaming. 
+			# Install Valves Steam Client for gaming.
 			InstallSoftwareFromRepo steam
-			if [ $? != 0 ]; then 
-			
+			if [ $? != 0 ]; then
+
 				if hash rpm &>/dev/null; then
 					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm steam.rpm
 				elif hash apt &>/dev/null; then
-				
+
 					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
 				else
 					echo -e $RED
@@ -309,11 +322,11 @@ recipie_steam () {
 
 recipie_admin_tools (){
 			echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
-			# Loop through each item in this list of software and perform an install 
-			# using the relevant packaging system. 
+			# Loop through each item in this list of software and perform an install
+			# using the relevant packaging system.
 			for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
 				vim vim-scripts gufw variety remmina remmina-plugin-exec remmina-plugin-secret remmina-plugin-vnc remmina-plugin-nx  \
-				remmina-plugin-spice remmina-plugin-xdmcp remmina-plugin-rdp remmina-plugin-telepathy  
+				remmina-plugin-spice remmina-plugin-xdmcp remmina-plugin-rdp remmina-plugin-telepathy
 
 			do
 			     InstallSoftwareFromRepo $i
@@ -326,7 +339,7 @@ recipie_admin_tools (){
 recipie_java (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
-	        	# Add the Oracle Java repository and install the software. 
+	        	# Add the Oracle Java repository and install the software.
     	    		add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
      	   		apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
     	    		echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
@@ -339,7 +352,7 @@ recipie_java (){
 recipie_bleachbit (){
 			#Bleachbit
 			echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
-			InstallSoftwareFromRepo bleachbit 
+			InstallSoftwareFromRepo bleachbit
 }
 
 
@@ -351,7 +364,7 @@ recipie_codecs (){
 			for i in libdvdcss2 ffmpeg ubuntu-restricted-extras
 			do
 			     InstallSoftwareFromRepo $i
-			done		
+			done
 }
 
 
@@ -382,7 +395,7 @@ recipie_teamviewer (){
 
 recipie_anydesk () {
 			check_dependencies flatpak
-			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
+			flatpak install flathub com.anydesk.Anydesk --noninteractive -y
 
 }
 
@@ -399,7 +412,7 @@ recipie_skype (){
 
 recipie_viber (){
 			check_dependencies snapd
-			snap install --edge viber-mtd 
+			snap install --edge viber-mtd
 }
 
 
@@ -407,17 +420,17 @@ recipie_viber (){
 recipie_mega.nz (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 			echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
-			
-			# Reset & clear variables in case of incomplete cleanup... 
+
+			# Reset & clear variables in case of incomplete cleanup...
 			FILE2GET=
 			URL=
-			
+
 			if lsb_release -si | grep "Debian" ; then
 				URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
 				FILE2GET="megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
 			elif lsb_release -si | grep "Ubuntu" ; then
 				URL="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-				FILE2GET="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"				
+				FILE2GET="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"
 			elif lsb_release -si | grep "openSUSE" ; then
 				URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
 				FILE2GET="megasync-openSUSE_Leap_15.0.x86_64.rpm"
@@ -428,7 +441,7 @@ recipie_mega.nz (){
 				echo "https://mega.nz/sync"
 				echo -e $ENDCOLOR
 			fi
-			
+
 			# If a known distributio was found and URL set, use "dl" function to install app...
 			[[ ! -z "$URL" ]] && dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
@@ -477,13 +490,13 @@ recipie_virtualbox (){
 			echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
 			echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
 			echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-			# Loop through each item in this list of softwar and perform an install 
-			# using the relevant packaging system. 
-			for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+			# Loop through each item in this list of softwar and perform an install
+			# using the relevant packaging system.
+			for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 			do
 			     InstallSoftwareFromRepo $i
-			done	
-			# Ensure that the current user can use USB etc... 			
+			done
+			# Ensure that the current user can use USB etc...
 			if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 			    echo      $SUDO_USER already belongs to vboxusers group
 			else
@@ -509,30 +522,30 @@ recipie_OEM_config (){
 			#Tune to virtual machine guest or tune according to hardware type::
 			check_dependencies virt-what
 			check_dependencies laptop-detect
-			if virt-what ; then 
+			if virt-what ; then
 				echo "This is likely not running in a virtual machine."
-				if laptop-detect ; then 
+				if laptop-detect ; then
 					tuned-adm profile powersave
 				else
 					tuned-adm profile desktop
 				fi
-			else 
-				tuned-adm profile virtual-guest 
+			else
+				tuned-adm profile virtual-guest
 			fi
 
 			# Apply tweaks to the UI based on desktop active
 			if  ps -e |grep "gnome-shell"; then
 				echo "Fonud the gnome UI on this system! Adding some customizations..."
-				# Add wallpapers and set GNOME wallpaper... 
+				# Add wallpapers and set GNOME wallpaper...
 				recipie_set_gnome_wallpaper
 
-				# Add the gnome UI tweak tool... 
+				# Add the gnome UI tweak tool...
 				if hash yum 2>/dev/null; then
 					# Enable the extra repositories in fedora to get access to the espected software.
-					InstallSoftwareFromRepo fedora-workstation-repositories 
+					InstallSoftwareFromRepo fedora-workstation-repositories
 				fi
 				InstallSoftwareFromRepo gnome-tweak-tool
-				# Add Some clean and basic themes and icons...			
+				# Add Some clean and basic themes and icons...
 				for i in numix-blue-gtk-theme numix-gtk-theme numix-icon-theme numix-icon-theme-circle numix-icon-theme-square	\
 							gnome-shell-extension-appindicator \
 							gnome-shell-extension-suspend-button \
@@ -545,22 +558,22 @@ recipie_OEM_config (){
 							gnome-shell-extension-dash-to-panel \
 							gnome-shell-extension-dashtodock \
 							arc-theme \
-							adwaita-icon-theme-full adwaita-qt  
-				do 
+							adwaita-icon-theme-full adwaita-qt
+				do
 					InstallSoftwareFromRepo $i
 				done
-				#Change user context and apply gnome settings... 
-				
+				#Change user context and apply gnome settings...
+
 				echo "Modifying setings for: $SUDO_USER"
 				recipie_tweak_user_gnome_ui
 				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.3_all.deb mint-y-icons_1.3.3_all.deb
-				# Transfer settings for all users... 
+				# Transfer settings for all users...
 				cp -r -u -v /home/$SUDO_USER/.gnome* /home/$SUDO_USER/.config /home/$SUDO_USER/.local /etc/skel/
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
-				echo "Detected KDE UI!" 
-			
+				echo "Detected KDE UI!"
+
 			fi
 }
 
@@ -578,12 +591,12 @@ run_command_in_gnome_user_session () {
 }
 
 recipie_tweak_user_gnome_ui (){
-			# Configure Gnome for OEM look and feel. This is completely as desired. 
+			# Configure Gnome for OEM look and feel. This is completely as desired.
 			# These setings will then be copied to the "/etsc/skel" directory where user templates
-			# are stored. This will allow new users to get the same themes and settings as the 
+			# are stored. This will allow new users to get the same themes and settings as the
 			# current user. This should likely only be done right after a PC has been installed
-			# otherwise all user configuration settings will be trasferred to any user 
-			# subsequently created.  
+			# otherwise all user configuration settings will be trasferred to any user
+			# subsequently created.
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Optimizig look and feel of the desktop for productivity and aestetics..." $ENDCOLOR
 
@@ -689,7 +702,7 @@ recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
 EOF
 
-run_command_in_gnome_user_session /bin/bash gtweak.sh 
+run_command_in_gnome_user_session /bin/bash gtweak.sh
 
 
 }
@@ -703,7 +716,7 @@ recipie_set_gnome_wallpaper (){
 			echo ---------------------------------------------
 			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
 			rm $RTDCP/master.zip
-			pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
+			pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound ..
 			echo ---------------------------------------------
 			mkdir -p /usr/local/share/gnome-background-properties
 			DIRECTORY=/opt/rtd/Wallpaper/
@@ -732,7 +745,7 @@ recipie_set_gnome_wallpaper (){
 				# cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
 				rm mybackgrounds.xml
 				rm lspictures.txt
-			# Set the default wallpaper... 
+			# Set the default wallpaper...
 				run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 
 
