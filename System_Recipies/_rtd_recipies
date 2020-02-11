@@ -549,14 +549,15 @@ recipie_OEM_config (){
 				# Download and Set Wallpaper... 
 				RTDCP="${_RTDCACHE:="/opt/rtd/cache"}"
 				echo Downloading Wallpapers:
-				mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
-				rm $RTDCP/master.zip
-				pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
-				rtd_oem_kde_set_wallpaper /opt/rtd/Wallpaper/Wayland.jpg
-				
-				# Download HQ Icons
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb mint-y-icons_1.3.7_all.deb
+					mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
+					rm $RTDCP/master.zip
+					pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
+				rtd_oem_kde_set_wallpaper "/opt/rtd/Wallpaper/Wayland.jpg" 
 
+				# Download HQ Icons
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb 
+
+				lookandfeeltool -a 'org.kde.breezedark.desktop'
 			
 			fi
 }
@@ -606,12 +607,10 @@ recipie_tweak_user_gnome_ui (){
 				do 
 					InstallSoftwareFromRepo $i
 				done
-				#Change user context and apply gnome settings... 
-				echo "Modifying setings for: $SUDO_USER"
 
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb mint-y-icons_1.3.7_all.deb
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb 
 
-			cat <<EOF > gtweak.sh
+			cat >> gtweak.sh <<-'EOF'
 			#!/bin/bash
 			# Terminal and Tilix Dark Theme
 			 gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
@@ -710,11 +709,9 @@ recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
 			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-EOF
+			EOF
 
-run_command_in_gnome_user_session /bin/bash gtweak.sh 
-
-
+	run_command_in_gnome_user_session /bin/bash gtweak.sh 
 }
 
 
