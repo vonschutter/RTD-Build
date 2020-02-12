@@ -108,6 +108,8 @@ echo				-	RTD System System Managment Bootstrap Script      -
 # way to detect running desktop environment. It would likely be better to search for a process. 
 echo "$XDG_CURRENT_DESKTOP">$HOME/.ui
 
+
+
 # Ensure administrative privileges.
 [ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"

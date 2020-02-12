@@ -233,7 +233,9 @@ enable_firewall () {
 dl ()
 {
 	download_url="$1"
-	fetch_file () { wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
+	fetch_file () { 
+		wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE 
+	}
 
 	echo  "    - getting package $download_url ..."
 	if hash wget >/dev/null ; then
