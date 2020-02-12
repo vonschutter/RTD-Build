@@ -149,11 +149,11 @@ recipie_vivaldi (){
 	fi
 	if cat "/etc/os-release" | grep "fedora" ; then
 		#dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.rpm
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
 	fi
 	if  cat "/etc/os-release" | grep "suse" ; then
 		# dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.rpm
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
 	fi
 }
 
