@@ -615,7 +615,6 @@ recipie_tweak_user_gnome_ui (){
 			# Terminal and Tilix Dark Theme
 			 gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
 			 gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
-
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
 			 gsettings set org.gnome.Terminal.Legacy.Profile:/ background-color '#FFFFFF'

@@ -121,7 +121,8 @@ fi
 
 
 # Decide where to put log files.
-# Default: log in to "name of this script".log and -error.login the home dir.
+# Default: log in to the $_RTDLOGSD location dated accordingly. If this is already set 
+# we use the requested location.
 if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
 if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
