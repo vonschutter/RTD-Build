@@ -293,7 +293,7 @@ function do_instructions_from_choices (){
 		recipie_wine 
 		;;
 		"$option_24")
-		recipie_vivaldi 
+		recipie_vivaldi
 		;;
 		esac
 	done  

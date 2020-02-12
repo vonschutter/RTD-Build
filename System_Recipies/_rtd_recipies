@@ -140,16 +140,20 @@ recipie_baseapps (){
 }
 
 
+
 recipie_vivaldi (){
 	echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
 	if cat "/etc/os-release" | grep "debian" ; then
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.deb
+		#dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.deb
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.deb
 	fi
 	if cat "/etc/os-release" | grep "fedora" ; then
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+		#dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.rpm
 	fi
 	if  cat "/etc/os-release" | grep "suse" ; then
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+		# dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
+		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.rpm
 	fi
 }
 
