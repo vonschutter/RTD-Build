@@ -233,6 +233,7 @@ enable_firewall () {
 dl ()
 {
 	download_url="$1"
+	echo "$1"
 	fetch_file () { 
 		wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE 
 	}

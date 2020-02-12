@@ -158,7 +158,7 @@ option_20="Audio Tools"
 option_21="Oracle VirtualBox" 
 option_22="Steam Gaming Platform" 
 option_23="Install the Microsoft Windows subsystem"
-option_24="Basic internet apps (wallpaper downloader, filezilla etc)"
+option_24="Basic internet apps (vivaldi)"
 
 
 
