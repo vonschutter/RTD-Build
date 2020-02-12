@@ -136,6 +136,7 @@ recipie_baseapps (){
 			do
 			     InstallSoftwareFromRepo $i
 			done
+			recipie_vivaldi
 }
 
 
@@ -302,10 +303,10 @@ recipie_steam () {
 			if [ $? != 0 ]; then 
 			
 				if hash rpm &>/dev/null; then
-					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm steam.rpm
+					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm
 				elif hash apt &>/dev/null; then
 				
-					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb steam.deb
+					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb 
 				else
 					echo -e $RED
 					echo "I am not sure how to find the Steam download for $(lsb_release -sd) "
