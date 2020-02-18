@@ -184,7 +184,7 @@ function choices_graphical () {
                      $zstatus "$option_2"
                      $zstatus "$option_3"
                      $zstatus "$option_4"
-                     $zstatus "$option_5"
+                     false    "$option_5"
                      $zstatus "$option_6"
                      $zstatus "$option_7"
                      $zstatus "$option_8"
@@ -255,9 +255,6 @@ function do_instructions_from_choices (){
 		;;
 		"$option_12")
 		recipie_google_chrome
-		;;
-		"$option_10")
-		recipie_teamviewer
 		;;
 		"$option_13")
 		recipie_teamviewer
@@ -331,7 +328,7 @@ if [[ -z $DISPLAY ]]; then
     	check_dependencies whiptail
 	check_dependencies newt
 	rtd_setup_choices_term_fallback
-else     
+else
 	check_dependencies zenity
 	choices_graphical 
 	do_instructions_from_choices
