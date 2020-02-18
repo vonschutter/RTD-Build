@@ -693,7 +693,8 @@ recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
 			 gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
 			 gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
-			 gnome-shell-extension-tool -e dash-to-dock
+			 #gnome-shell-extension-tool -e dash-to-dock
+			 gnome-shell-extension-tool -e dash-to-panel
 
 
 			#This indexer is nice, but can be detrimental for laptop users battery life
