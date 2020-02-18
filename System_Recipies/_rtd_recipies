@@ -807,5 +807,5 @@ rtd_oem_reseal () {
 rtd_oem_finish () {
 
 	mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
-	sed -i s/tangarora ALL=(ALL) NOPASSWD:ALL/'echo Hello $USER'/g "$SUDO_USER/.bashrc"
+	mv /home/$SUDO_USER/.bashrc /home/$SUDO_USER/.bashrc.rtd.back
 }
