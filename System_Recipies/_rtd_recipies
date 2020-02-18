@@ -662,6 +662,11 @@ recipie_tweak_user_gnome_ui (){
 			gsettings set org.gnome.shell disable-user-extensions false
 			gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
 
+			# Configure dash-to-panel
+			gnome-shell-extension-tool -e dash-to-panel
+			gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
+
+
 			#Better Font Smoothing
 			gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
 
@@ -694,8 +699,6 @@ recipie_tweak_user_gnome_ui (){
 			 gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
 			 gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
 			 #gnome-shell-extension-tool -e dash-to-dock
-			 gnome-shell-extension-tool -e dash-to-panel
-
 
 			#This indexer is nice, but can be detrimental for laptop users battery life
 			 gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
@@ -780,8 +783,7 @@ recipie_set_gnome_wallpaper (){
 				rm lspictures.txt
 			# Set the default wallpaper... 
 				#run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-				run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Redmond.jpg
-
+				run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Redmond.png
 }
 
 
