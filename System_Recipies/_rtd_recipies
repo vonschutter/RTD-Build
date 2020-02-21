@@ -818,5 +818,6 @@ rtd_oem_reseal () {
 rtd_oem_finish () {
 
 	mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
-	mv /home/$SUDO_USER/.bashrc /home/$SUDO_USER/.bashrc.rtd.back
+	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts
+	sed '/xhost local:root/d' /home/$SUDO_USER/.bashrc
 }

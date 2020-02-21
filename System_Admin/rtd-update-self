@@ -1,0 +1,133 @@
+#!/bin/bash
+echo				***	-	U P D A T E Task Sequence      -        ***
+#::
+#::
+#:: 						Update RTD admin tools Task Sequence
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
+#:: Version:	1.00
+#::
+#::
+#:: Purpose: 	The purpose of the task sequence is to configure update the installed admin tools. 
+#::		
+#::
+#::		This task sequence should be executed on a PC with the the RTD OEM installation or configuration
+#::		 
+#::		
+#::
+#:: Background: This system configuration and installation script was created to facilitate geting the latest simple
+#::             managment tools on to a computer already using the rtd tools. 
+#::
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#	
+#		
+# 
+#	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
+#	functions in _rtd_functions and _rtd_recipies. 
+#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
+#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
+#	Scripts may also be stand-alone if there is a reason for this. 
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Variables that govern the behavior or the script and location of files are 
+
+# Base folder structure for optional administrative commandlets and scripts:
+_RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
+_RTDCACHE=$(if [ -f /opt/rtd/cache ]; then echo /opt/rtd/cache ; else ( mkdir -p /opt/rtd/cache & echo  /opt/rtd/cache ) ; fi )
+_RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /opt/rtd/log & echo  /opt/rtd/log ) ; fi )
+
+# Location of base administrative scripts and commandlets to get.
+_RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
+
+# Determine log file directory
+_ERRLOGFILE=$_RTDLOGSD/$( basename $0)-error.log
+_LOGFILE=$_RTDLOGSD/$( basename $0).log
+_STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Define tasks to complete        ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+ensure_admin () {
+	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
+	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+}
+
+
+task_setup_rtd_basics() {
+	echo "Linux OS Found: Attempting to get instructions for Linux..." 
+	wget -q  $_RTDSRC -P $_RTDCACHE 
+        if -f $_RTDCACHE/master.zip ; then rm -f $_RTDCACHE/master.zip; else echo "No cashed content found..."; fi
+	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
+	echo "Instructions sucessfully retrieved..." 
+	chmod +x $_RTDSCR/* 
+	pushd /bin
+	ln -f -s $_RTDSCR/rtd* . 		
+	popd
+}
+
+
+tell_info() {
+	echo "starting post install tasks..." 
+	echo "SYSTEM information:"	
+        cat /etc/os-release	
+        # Ask for encryption phrase and store it temporarily.
+        clear
+        echo  Hello $USER ... I am going to update teh rtd tools on this
+        echo  comuter. These are:
+        echo
+        ls -I "$_RTDSCR/*rtd*" --color=always
+        echo
+        echo  To cancel this, just close the terminal or press "CRTL C".
+        echo
+        echo -e $YELLOW
+        read -p 'Press [ ENTER ] to continue' passtoken
+        echo -e $ENDCOLOR
+} 
+
+
+set_color () {
+        YELLOW="\033[1;33m"
+        RED="\033[0;31m"
+        ENDCOLOR="\033[0m"
+}
+
+
+
+rtd_wait_for_internet_availability () {
+	echo "Waiting for internet access..."
+	echo "NOTE: Free access to the internet is required to continue."
+	while ! ping -c 1 -W 1 8.8.8.8 &>/dev/null ; do
+		echo Waiting...
+		sleep 5
+	done
+}
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Execute tasks                   ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+ensure_admin
+tell_info
+rtd_wait_for_internet_availability
+task_setup_rtd_basics
+
