@@ -1,5 +1,6 @@
 #!/bin/bash
 echo				***	-	U P D A T E Task Sequence      -        ***
+RTD_RUS_VERSION=1.0
 #::
 #::
 #:: 						Update RTD admin tools Task Sequence
@@ -85,16 +86,16 @@ task_setup_rtd_basics() {
 
 tell_info() {
         clear
+        echo -e $YELLOW "RTD Tools Updater Version $RTD_RUS_VERSION"
 	echo "SYSTEM information:"	
-        cat /etc/os-release	
-        echo  Hello $USER ... I am going to update the rtd tools on this
-        echo  computer. These are:
+        head -4 /etc/os-release 
+        echo  "Hello $SUDO_USER ... I am going to update the rtd tools on this"
+        echo  "computer. These are:"
         echo
         ls "$_RTDSCR/" --color=always
-        echo
-        echo  To cancel this, just close the terminal or press "CRTL C".
-        echo
-        echo -e $YELLOW
+        echo " "
+        echo  "To cancel this, just close the terminal or press "CRTL C"."
+        echo " "
         read -p 'Press [ ENTER ] to continue' passtoken
         echo -e $ENDCOLOR
 } 
