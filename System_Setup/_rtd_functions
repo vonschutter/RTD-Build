@@ -50,7 +50,15 @@
 source /opt/rtd/scripts/_rtd_recipies
 source /opt/rtd/scripts/_branding
 
+# Base folder structure for optional administrative commandlets and scripts:
+_RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
+_RTDCACHE=$(if [ -f /opt/rtd/cache ]; then echo /opt/rtd/cache ; else ( mkdir -p /opt/rtd/cache & echo  /opt/rtd/cache ) ; fi )
+_RTDLOGSD=$(if [ -f /var/log/rtd ]; then echo /var/log/rtd ; else ( mkdir -p /var/log/rtd & echo  /var/log/rtd ) ; fi )
 
+# Determine log file directory
+_ERRLOGFILE=$_RTDLOGSD/$( basename $0)-error.log
+_LOGFILE=$_RTDLOGSD/$( basename $0).log
+_STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 
 ###########################################################################
 ##                                                                       ##
@@ -414,17 +422,17 @@ is_software_package_available ()
 InstallSoftwareFromRepo ()
 {
 	# Check that function dependencies are available.
-	# for _i in set_install_command is_software_package_installed is_software_package_available
-	# do
-	# 	if hash $_i 2>/dev/null; then
-	# 		return 0
-	# 	else
-	# 		echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
-	# 		return 1
-	# 		exit
-	# 	fi
-	# done
-	# Ensure that the CLI command is determined for this system.
+	for _i in set_install_command is_software_package_installed is_software_package_available
+	 do
+	 	if hash $_i 2>/dev/null; then
+	 		return 0
+	 	else
+	 		echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
+	 		return 1
+	 		exit
+	 	fi
+	 done
+	# Ask function how to install software... 
 	set_install_command >>/dev/null 2>&1
 
 	# make some decent display terminal Graphics...
@@ -434,7 +442,7 @@ InstallSoftwareFromRepo ()
 	# Test if package name is installed, if not then...
         if ! is_software_package_installed "$1"; then
         	if is_software_package_available "$1"; then
-			echo -ne "$PRE"\ & $_INSTCMD "$1" >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			echo -ne "$PRE"\ & $_INSTCMD "$1" 1>>$_LOGFILE 2>>$_ERRLOGFILE && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
 			if [ $? != 0 ];
 			then
 				return 1 & exit 1
@@ -614,11 +622,12 @@ function debug_list_loaded_functions ()
 	declare -F | awk '{print $NF}' | sort | egrep -v "^_"
 }
 
-echo ${FUNCNAME[*]}
+
 
 # make prompt colors avaiable to any script that includes this function lbrary.
 set_colors
 notice_rtd_loaded
+
 
 
 if [[ "$1" = "--list" ]]; then

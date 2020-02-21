@@ -524,6 +524,17 @@ recipie_OEM_config (){
 			systemctl enable --now tuned
 			tuned-adm profile balanced
 
+			rtd_oem_check_splash () {
+				if -f $1 ; then 
+					if cat $1 |grep "-desktop" ; then
+						echo 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'>> /etc/default/grub
+						InstallSoftwareFromRepo splash
+						update-grub
+					fi
+				fi
+			}
+			rtd_oem_check_splash /opt/rtd/log/preseed.cfg
+
 			#Tune to virtual machine guest or tune according to hardware type::
 			check_dependencies virt-what
 			check_dependencies laptop-detect
