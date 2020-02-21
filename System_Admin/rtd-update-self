@@ -70,13 +70,14 @@ ensure_admin () {
 
 
 task_setup_rtd_basics() {
-	echo "Linux OS Found: Attempting to get instructions for Linux..." 
+	echo "Task: Attempting to get instructions for Linux..." 
 	wget -q  $_RTDSRC -P $_RTDCACHE 
         if -f $_RTDCACHE/master.zip ; then rm -f $_RTDCACHE/master.zip; else echo "No cashed content found..."; fi
-	unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
-	echo "Instructions sucessfully retrieved..." 
+	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip 
+	echo "Task: Instructions sucessfully retrieved..." 
 	chmod +x $_RTDSCR/* 
 	pushd /bin
+        echo "Updating executable links (to simplify rinning the tools)..."
 	ln -f -s $_RTDSCR/rtd* . 		
 	popd
 }
@@ -84,7 +85,6 @@ task_setup_rtd_basics() {
 
 tell_info() {
         clear
-	echo "starting post install tasks..." 
 	echo "SYSTEM information:"	
         cat /etc/os-release	
         echo  Hello $USER ... I am going to update the rtd tools on this
