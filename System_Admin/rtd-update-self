@@ -86,7 +86,7 @@ task_setup_rtd_basics() {
 
 tell_info() {
         clear
-        echo -e $YELLOW "RTD Tools Updater Version $RTD_RUS_VERSION"
+        echo -e "$YELLOW RTD Tools Updater Version $RTD_RUS_VERSION"
 	echo "SYSTEM information:"	
         head -4 /etc/os-release 
         echo  "Hello $SUDO_USER ... I am going to update the rtd tools on this"
@@ -96,7 +96,7 @@ tell_info() {
         echo " "
         echo  "To cancel this, just close the terminal or press "CRTL C"."
         echo " "
-        read -p 'Press [ ENTER ] to continue' passtoken
+        read -p 'Press [ ENTER ] to continue' 
         echo -e $ENDCOLOR
 } 
 
