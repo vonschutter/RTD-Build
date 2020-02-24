@@ -304,7 +304,9 @@ rtd_oem_reset_default_environment_config () {
 
 	# Disable the automatically trying to install OEM software
 	mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
-
+	mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
+	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts
+	sed '/xhost local:root/d' /home/$SUDO_USER/.bashrc
 
 }
 
