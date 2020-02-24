@@ -383,7 +383,7 @@ recipie_vlc (){
 recipie_google_chrome (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome-stable_current_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
@@ -391,7 +391,7 @@ recipie_google_chrome (){
 recipie_teamviewer (){
 			#Teamviewer
 			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
-			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb teamviewer_amd64.deb 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
