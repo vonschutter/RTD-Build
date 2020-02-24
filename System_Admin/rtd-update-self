@@ -129,8 +129,9 @@ rtd_wait_for_internet_availability () {
 
 
 
-set_color
-ensure_admin                            
+
+ensure_admin   
+set_color                         
 tell_info                               
 rtd_wait_for_internet_availability      
 task_setup_rtd_basics                   

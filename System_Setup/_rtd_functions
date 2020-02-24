@@ -242,7 +242,7 @@ add_software_task ()
 # return code. 
 	PAD="------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	echo -ne "Installing "$1"":""\ & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+	echo -ne "Installing "$LINE"":""\ & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
 }
 
 
