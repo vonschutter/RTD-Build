@@ -96,13 +96,13 @@ tell_info() {
         echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
         echo "computer. These are:"
         echo
-        ls "$_RTDSCR/" --color=always
+        ls -C -A "$_RTDSCR/" --color=always 
         echo " "
         echo  "To cancel this, just close the terminal or press "CRTL C"."
         echo " "
         read -p 'Press [ ENTER ] to continue' 
         echo -e $ENDCOLOR
-} 
+}
 
 
 set_color () {
