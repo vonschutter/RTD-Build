@@ -1,6 +1,6 @@
 #!/bin/bash
-echo				***	-	R . T . D .   U P D A T E       -        ***
-RTD_RUS_VERSION=1.0
+echo "***	-	R . T . D .   U P D A T E       -        ***"
+RTD_UPDATE_SELF_VERSION=1.0
 #::
 #::
 #:: 						Update RTD admin tools Task Sequence
@@ -73,7 +73,7 @@ ensure_admin () {
 
 task_setup_rtd_basics() {
 	echo "Task: Attempting to get the latest RTD tools..." 
-	wget -q --show-pregress $_RTDSRC -P $_RTDCACHE
+	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
         [[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
 	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd 
         if [ $? != 0 ]; then
@@ -93,7 +93,7 @@ task_setup_rtd_basics() {
 tell_info() {
         clear
         echo -e $YELLOW 
-        echo "RTD Tools Updater Version $RTD_RUS_VERSION"
+        echo "RTD Tools Updater Version $RTD_UPDATE_SELF_VERSION"
         echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
         echo " "
         echo  "To cancel this, just close the terminal or press "CRTL C"."
@@ -131,9 +131,8 @@ rtd_wait_for_internet_availability () {
 
 
 set_color
-ensure_admin                            
-tell_info                               
-rtd_wait_for_internet_availability      
-task_setup_rtd_basics                   
-#| tee $_STATUSLOG
+ensure_admin                            | tee $_STATUSLOG
+tell_info                               | tee $_STATUSLOG
+rtd_wait_for_internet_availability      | tee $_STATUSLOG
+task_setup_rtd_basics                   | tee $_STATUSLOG
 
