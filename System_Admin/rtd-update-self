@@ -73,9 +73,9 @@ ensure_admin () {
 
 task_setup_rtd_basics() {
 	echo "Task: Attempting to get the latest RTD tools..." 
-	wget -q  $_RTDSRC -P $_RTDCACHE
+	wget -q --show-pregress $_RTDSRC -P $_RTDCACHE
         [[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
-	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip 
+	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd  
         if [ $? != 0 ]; then
                 echo -e $RED Sorry but I think I FAILED to get the latest updates! $ENDCOLOR
                 exit 1
@@ -84,7 +84,7 @@ task_setup_rtd_basics() {
                 chmod +x $_RTDSCR/* 
                 pushd /bin
                 echo "Updating executable links (to simplify rinning the tools)..."
-                ln -f -s $_RTDSCR/rtd* . 		
+                ln -f -s $_RTDSCR/rtd* .
                 popd
                 exit 0
         fi
@@ -99,7 +99,7 @@ tell_info() {
         echo " "
         echo  "To cancel this, just close the terminal or press "CRTL C"."
         echo " "
-        read -p 'Press [ ENTER ] to continue with update' 
+        read -p "Press [ ENTER ] to continue with update" 
         echo -e $ENDCOLOR
 }
 
