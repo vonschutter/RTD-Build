@@ -221,76 +221,76 @@ function do_instructions_from_choices (){
 		IFS=$' '
 		case $choice in
 		"$option_1")
-		recipie_OEM_config
+		add_software_task recipie_OEM_config 
 		;;
 		"$option_2")
-		recipie_wps_office
+		add_software_task recipie_wps_office
 		;;
 		"$option_3")	
-		recipie_developer_software
+		add_software_task recipie_developer_software
 		;;
 		"$option_4")
-		recipie_compression_tools
+		add_software_task recipie_compression_tools
 		;;
 		"$option_5")
-		recipie_games
+		add_software_task recipie_games
 		;;
 		"$option_6")
-		recipie_admin_tools
+		add_software_task recipie_admin_tools
 		;;
 		"$option_7")
-		recipie_java 
+		add_software_task recipie_java 
 		;;
 		"$option_8")
-		recipie_bleachbit
+		add_software_task recipie_bleachbit
 		;;
 		"$option_9")
-		recipie_codecs
+		add_software_task recipie_codecs
 		;;
 		"$option_10")
-		recipie_vlc
+		add_software_task recipie_vlc
 		;;
 		"$option_11")
-		recipie_anydesk
+		add_software_task recipie_anydesk
 		;;
 		"$option_12")
-		recipie_google_chrome
+		add_software_task recipie_google_chrome
 		;;
 		"$option_13")
-		recipie_teamviewer
+		add_software_task recipie_teamviewer
 		;;
 		"$option_14")
-		recipie_skype
+		add_software_task recipie_skype
 		;;
 		"$option_15")
-		recipie_mega.nz
+		add_software_task recipie_mega.nz
 		;;
 		"$option_16")
-		recipie_dropbox
+		add_software_task recipie_dropbox
 		;;
 		"$option_17")
-		recipie_secure_communication
+		add_software_task recipie_secure_communication
 		;;
 		"$option_18")
-		recipie_video_editing 
+		add_software_task recipie_video_editing 
 		;;
 		"$option_19")
-		recipie_media_streamers	
+		add_software_task recipie_media_streamers	
 		;;
 		"$option_20")
-		recipie_audio_tools
+		add_software_task recipie_audio_tools
 		;;
 		"$option_21")
-		recipie_virtualbox
+		add_software_task recipie_virtualbox
 		;;
 		"$option_22")
-		recipie_steam 
+		add_software_task recipie_steam 
 		;;
 		"$option_23")
-		recipie_wine 
+		add_software_task recipie_wine 
 		;;
 		"$option_24")
-		recipie_vivaldi
+		add_software_task recipie_vivaldi
 		;;
 		esac
 	done  

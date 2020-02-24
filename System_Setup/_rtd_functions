@@ -233,6 +233,18 @@ enable_firewall () {
 
 
 
+add_software_task ()
+{
+# Display executed task and echo ON/NOK based on sucess
+# This function is created to reduce the terminal output and create a more poliches output of
+# the tasks executed. This function has no idea shat it is doing, it will simply call the function 
+# it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the 
+# return code. 
+	PAD="------------------------------------------"
+	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+	echo -ne "Installing "$1"":""\ & $@ >>$LOGFILE 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+}
+
 
 
 # Function to ease and make consistent the downloading of the non repository packages and

@@ -423,7 +423,8 @@ recipie_viber (){
 recipie_mega.nz (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 			echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
-			
+			check_dependencies lsb-release
+
 			# Reset & clear variables in case of incomplete cleanup... 
 			FILE2GET=
 			URL=
