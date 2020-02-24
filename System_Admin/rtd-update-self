@@ -86,7 +86,6 @@ task_setup_rtd_basics() {
                 echo "Updating executable links (to simplify rinning the tools)..."
                 ln -f -s $_RTDSCR/rtd* .
                 popd
-                exit 0
         fi
 }
 
