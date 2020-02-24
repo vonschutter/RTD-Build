@@ -422,17 +422,7 @@ is_software_package_available ()
 # snap or flatpack use.
 InstallSoftwareFromRepo ()
 {
-	# Check that function dependencies are available.
-	for _i in set_install_command is_software_package_installed is_software_package_available
-	 do
-	 	if hash $_i 2>/dev/null; then
-	 		return 0
-	 	else
-	 		echo -e $RED "InstallSoftwareFromRepo: I Depend on funcons that are not available!"  $ENDCOLOR
-	 		return 1
-	 		exit
-	 	fi
-	 done
+
 	# Ask function how to install software... 
 	set_install_command >>/dev/null 2>&1
 
