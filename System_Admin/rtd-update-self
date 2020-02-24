@@ -67,12 +67,13 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 ensure_admin () {
 	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+        exit $?
 }
 
 
 task_setup_rtd_basics() {
 	echo "Task: Attempting to get the latest RTD tools..." 
-	wget -q  $_RTDSRC -P $_RTDCACHE 
+	wget -q  $_RTDSRC -P $_RTDCACHE
         [[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
 	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip 
         if [ $? != 0 ]; then
@@ -85,6 +86,7 @@ task_setup_rtd_basics() {
                 echo "Updating executable links (to simplify rinning the tools)..."
                 ln -f -s $_RTDSCR/rtd* . 		
                 popd
+                exit 0
         fi
 }
 
