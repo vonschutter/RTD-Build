@@ -130,6 +130,9 @@ rtd_wait_for_internet_availability () {
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+
+set_color
 ensure_admin                            | tee $_STATUSLOG
 tell_info                               | tee $_STATUSLOG
 rtd_wait_for_internet_availability      | tee $_STATUSLOG
