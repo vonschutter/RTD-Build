@@ -123,8 +123,8 @@ fi
 # Decide where to put log files.
 # Default: log in to the $_RTDLOGSD location dated accordingly. If this is already set 
 # we use the requested location.
-if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup-error.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+if [ -z "$_ERRLOGFILE" ]; then _ERRLOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup-error.log ; else echo "	Errors will be logged to: '$_ERRLOGFILE'"; fi
+if [ -z "$_LOGFILE" ]; then _LOGFILE=$_RTDLOGSD/$(date +%Y-%m-%d-%H-%M-%S-%s)-oem-setup.log ; else echo "	Logfile is set to: '$_LOGFILE'"; fi
 
 # Normally all choices are checked. Pass the variable "false" to this script to default   
 # to unchecked. If none is passed, a default will be used. 
