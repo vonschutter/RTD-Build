@@ -130,7 +130,7 @@ rtd_wait_for_internet_availability () {
 
 
 
-ensure_admin   
+ensure_admin  
 set_color                         
 tell_info                               
 rtd_wait_for_internet_availability      

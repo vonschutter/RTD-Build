@@ -332,7 +332,7 @@ rtd_wait_for_internet_availability () {
 	echo "Waiting for internet access..."
 	echo "NOTE: Free access to the internet is required to continue."
 	while ! ping -c 1 -W 1 8.8.8.8 &>/dev/null ; do
-		Waiting...
+		echo Waiting...
 		sleep 5
 	done
 }
