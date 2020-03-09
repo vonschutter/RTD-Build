@@ -429,25 +429,23 @@ recipie_mega.nz (){
 			FILE2GET=
 			URL=
 			
-			if lsb_release -si | grep "Debian" ; then
-				URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
-				FILE2GET="megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
-			elif lsb_release -si | grep "Ubuntu" ; then
-				URL="megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-				FILE2GET="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/$FILE2GET"				
-			elif lsb_release -si | grep "openSUSE" ; then
-				URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
-				FILE2GET="megasync-openSUSE_Leap_15.0.x86_64.rpm"
-			else
-				echo -e $RED
-				echo "I am not sure how to find the Mega sync download for $(lsb_release -sd) "
-				echo "Please try to download it manually and instrtall it from the website:"
-				echo "https://mega.nz/sync"
-				echo -e $ENDCOLOR
-			fi
+                        if lsb_release -si | grep "Debian" ; then
+                                URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
+                        elif lsb_release -si | grep "Ubuntu" ; then
+                                URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
+                        elif lsb_release -si | grep "openSUSE" ; then
+                                URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
+                        else
+                                echo -e $RED
+                                echo "I am not sure how to find the Mega sync download for $(lsb_release -sd) "
+                                echo "Please try to download it manually and instrtall it from the website:"
+                                echo "https://mega.nz/sync"
+                                echo -e $ENDCOLOR
+                        fi
+
 			
 			# If a known distributio was found and URL set, use "dl" function to install app...
-			[[ ! -z "$URL" ]] && dl $URL $FILE2GET 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			[[ ! -z "$URL" ]] && dl $URL 1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
