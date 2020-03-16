@@ -92,7 +92,7 @@ fi
 ###########################################################################
 #
 
-function deb_software_task ()
+deb_software_task ()
 {
 	log_item "running deb_software_task with parameters $@"
         # make some decent display terminal graphics...
@@ -104,7 +104,7 @@ function deb_software_task ()
 
 
 
-function log_item ()
+log_item ()
 {
 DATE=$(date '+%d/%m/%Y %H:%M:%S');
 echo "$DATE --- : $@" >> $0.log
@@ -112,7 +112,7 @@ echo "$DATE --- : $@" >> $0.log
 
 
 
-function update_me ()
+update_me ()
 {
 	# Documentation: Paths and the such... 
 	# "# arguments called with ---->  ${@}     "
@@ -129,14 +129,14 @@ function update_me ()
 
 
 
-function config_me ()
+config_me ()
 {
  echo "::There is nothing to configure at this time!::"
 }
 
 
 
-function setup_me ()
+setup_me ()
 {
 	check_dependencies flatpak
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -163,7 +163,7 @@ fi
 echo -e $YELLOW"Updating installed software..." $ENDCOLOR
 # Updating software managed by distribution speciffic software manager...
 # Unless the RTD Functions are loaded, then use that. 
-	if [[ "$RTDFUNCTOINS" -eq 1 ]]; then
+	if [[ $RTDFUNCTOINS -eq 1 ]]; then
 		deb_software_task system_update
 	else
 		
