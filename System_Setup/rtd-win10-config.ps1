@@ -36,23 +36,12 @@
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::  ***             SetInit                ***      ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-function Test-Admin {
-    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
-    $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+{  
+  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+  Start-Process powershell -Verb runAs -ArgumentList $arguments
+  Break
 }
-
-if ((Test-Admin) -eq $false)  {
-    if ($elevated) {
-        # failure...
-    } else {
-        Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -ExecutionPolicy UnRestricted -File' -f ($myinvocation.MyCommand.Definition))
-    }
-    exit
-}
-
-Set-ExecutionPolicy -ExecutionPolicy UnRestricted -Scope LocalMachine
-Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
 
 
 
