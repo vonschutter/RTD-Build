@@ -239,8 +239,8 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	::	Script startup components; tasks that always
 	::	need to be done when the initializes.
 	::
-        ECHO Welcome to %COMSPEC%
-        ECHO This is a windows script!
+	ECHO Welcome to %COMSPEC%
+	ECHO This is a windows script!
 	:: setlocal &  pushd %~dp0
 	:: %debug%
 
@@ -250,86 +250,86 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	::
 	set temp=c:\rtd\temp
-        ::if not exit %temp% md %temp%
-        ::set _LOGDIR=c:\rtd\log
-        ::if not exist %_LOGDIR% md %_OGDIR%
-        set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master
-        set _STAGE2FILE=rtd-win10-config.ps1
+	::if not exit %temp% md %temp%
+	::set _LOGDIR=c:\rtd\log
+	::if not exist %_LOGDIR% md %_OGDIR%
+	set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/
+	set _STAGE2FILE=rtd-win10-config.ps1
 	echo Staget 2 file is located at:
-        echo %_STAGE2LOC%\%_STAGE2FILE%
+	echo %_STAGE2LOC%\%_STAGE2FILE%
 
 
 :GetInterestingThigsToDoOnThisSystem
-        :: Given that Microsoft Windows has been detected and the CMD chell portion of this script is executed,
-        :: the second stage script must be downloaded from an online location. Depending on the version of windows
-        :: there are different methods available to get and run remote files. All versions of windows do not neccesarily
-        :: support powershell scripting. Therefore the base of this activity is coded in simple command CMD.EXE shell scripting
-        ::
-        :: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found.
-        :: In this case it is easier to manage a straight table than a for loop or array:
+	:: Given that Microsoft Windows has been detected and the CMD chell portion of this script is executed,
+	:: the second stage script must be downloaded from an online location. Depending on the version of windows
+	:: there are different methods available to get and run remote files. All versions of windows do not neccesarily
+	:: support powershell scripting. Therefore the base of this activity is coded in simple command CMD.EXE shell scripting
+	::
+	:: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found.
+	:: In this case it is easier to manage a straight table than a for loop or array:
 
 	:: DOS Based versions of Windows:
-        :: ver | find "4.0" > nul && goto CMD1 	rem Windows 95
-        :: ver | find "4.10" > nul && goto CMD1 rem Windows 98
-        :: ver | find "4.90" > nul && goto CMD1	rem Windows ME
+	:: ver | find "4.0" > nul && goto CMD1 	rem Windows 95
+	:: ver | find "4.10" > nul && goto CMD1 rem Windows 98
+	:: ver | find "4.90" > nul && goto CMD1	rem Windows ME
 
 	:: Windows 32 and 64 Bit versions:
 	ver | find "NT 4.0" > nul && call :CMD1 Windows NT 4.0
 	ver | find "5.0" > nul && call :CMD1 Windows 2000
-        ver | find "5.1" > nul && call :CMD1 Windows XP
+	ver | find "5.1" > nul && call :CMD1 Windows XP
 	ver | find "5.2" > nul && call :CMD1 Windows XP 64 Bit
-        ver | find "6.0" > nul && call :DispErr Vista is not supported!!!
-        ver | find "6.1" > nul && call :PS1 Windows 7
-        ver | find "6.2" > nul && call :PS2 Windows 8
-        ver | find "6.3" > nul && call :PS2 Windows 8
-        ver | find "6.3" > nul && call :PS2 Windows 8
-        ver | find "10.0" > nul && call :PS2 Windows 10
+	ver | find "6.0" > nul && call :DispErr Vista is not supported!!!
+	ver | find "6.1" > nul && call :PS1 Windows 7
+	ver | find "6.2" > nul && call :PS2 Windows 8
+	ver | find "6.3" > nul && call :PS2 Windows 8
+	ver | find "6.3" > nul && call :PS2 Windows 8
+	ver | find "10.0" > nul && call :PS2 Windows 10
 
 	:: Windows Server OS Versions:
 	ver | find "NT 6.2" > nul && call :PS2 Windows Server 2012
 	ver | find "NT 6.3" > nul && call :PS2 Windows Server 2012 R2
 	ver | find "NT 10.0" > nul && call :PS2 Windows Server 2016 and up...
 
-        goto end
+	goto end
 
 
 :PS1
-        :: Procedure to get the second stage in Windows 7. Windows 7, by default has a different version of
+	:: Procedure to get the second stage in Windows 7. Windows 7, by default has a different version of
 	:: PowerShell installed. Therefore a slightly different syntax must be used.
 	:: get stage 2 and run it...
 	echo Found %*
 	echo Fetching %_STAGE2FILE%...
 	echo Please wait...
-        powershell -Command "(New-Object Net.WebClient).DownloadFile('%_STAGE2LOC%\%_STAGE2FILE%', '%_STAGE2FILE%')"
+	powershell -Command "(New-Object Net.WebClient).DownloadFile('%_STAGE2LOC%\%_STAGE2FILE%', '%_STAGE2FILE%')"
 		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Failed to get stage 2!...)
-		start %_STAGE2LOC%\%_STAGE2FILE%
-        goto end
+		powershell .\%_STAGE2FILE%
+	goto end
 
 
 :PS2
 	:: Precedure to get the second stage configuration script in all version of windows after 7.
 	:: These version of windows hae a more modern version of PowerShell.
-        :: get stage 2 and run it...
+	:: get stage 2 and run it...
 	echo Found %*
 	echo Fetching %_STAGE2FILE%...
 	echo Please wait...
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
+	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
 		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Failed to get stage 2!...)
-		start %_STAGE2LOC%\%_STAGE2FILE%
-        goto end
+		powershell .\%_STAGE2FILE%
+	goto end
 
 
 
 
 :CMD1
-        :: Pre windows 7 instruction go here (except vista)...
+	:: Pre windows 7 instruction go here (except vista)...
 	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to
 	:: fetch a script over the internet and execute it.
 
 	echo Detected %* ...
 	echo executing PRE Windows 7 instructions...
 
-        goto end
+	goto end
 
 
 
