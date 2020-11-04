@@ -36,7 +36,7 @@
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::  ***             SetInit                ***      ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
+Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
 param([switch]$Elevated)
 
 function Test-Admin {
@@ -55,7 +55,8 @@ if ((Test-Admin) -eq $false)  {
 
 #Place your script here.
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine
-Unblock-File -Path $myInvocation.MyCommand.Name
+Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
+Unblock-File -Path $myInvocation.MyCommand.file
 
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
