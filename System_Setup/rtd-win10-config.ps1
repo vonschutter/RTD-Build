@@ -36,27 +36,24 @@
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::  ***             SetInit                ***      ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
-param([switch]$Elevated)
 
-function Test-Admin {
-    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
-    $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-}
+# function Test-Admin {
+#     $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+#     $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+# }
 
-if ((Test-Admin) -eq $false)  {
-    if ($elevated) {
-        # failure...
-    } else {
-        Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
-    }
-    exit
-}
+# if ((Test-Admin) -eq $false)  {
+#     if ($elevated) {
+#         # failure...
+#     } else {
+#         Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+#     }
+#     exit
+# }
 
-#Place your script here.
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine
-Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
-Unblock-File -Path $myInvocation.MyCommand.file
+# Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine
+# Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted
+# Unblock-File -Path $myInvocation.MyCommand.file
 
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::
