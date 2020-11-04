@@ -2542,9 +2542,6 @@ Function Restart {
 	Restart-Computer
 }
 
-###########
-# Titus Additions
-###########
 
 Function EnableDarkMode {
   Write-Output "Enabling Dark Mode"
@@ -2556,9 +2553,6 @@ Function DisableDarkMode {
 	Remove-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme
 }
 
-##########
-# Debloat Script Additions
-##########
 
 Function Stop-EdgePDF {
     
