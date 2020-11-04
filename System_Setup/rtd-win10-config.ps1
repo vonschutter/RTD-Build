@@ -46,7 +46,7 @@ if ((Test-Admin) -eq $false)  {
     if ($elevated) {
         # failure...
     } else {
-        Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+        Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}"' -f ($myinvocation.MyCommand.Definition))
     }
     exit
 }
