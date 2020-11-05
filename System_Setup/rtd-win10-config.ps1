@@ -234,7 +234,7 @@ function Show-Choco-Menu {
 	Write-Host "Y: Press 'Y' to do this."
 	Write-Host "2: Press 'N' to skip this."
 	Write-Host "Q: Press 'Q' to stop the entire script."
-	$selection = Read-Host "Please make a selection"
+	#$selection = Read-Host "Please make a selection"
 	switch (y)
 	{
 	'y' { choco install $ChocoInstall -y }
