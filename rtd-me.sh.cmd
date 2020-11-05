@@ -254,7 +254,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	::set _LOGDIR=c:\rtd\log
 	::if not exist %_LOGDIR% md %_OGDIR%
 	set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/
-	set _STAGE2FILE=rtd-win10-config.ps1
+	set _STAGE2FILE=rtd-oem-win10-config.ps1
 	echo Staget 2 file is located at:
 	echo %_STAGE2LOC%\%_STAGE2FILE%
 
@@ -306,7 +306,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 
 
 :PS2
-	:: Precedure to get the second stage configuration script in all version of windows after 7.
+	:: Procedure to get the second stage configuration script in all version of windows after 7.
 	:: These version of windows hae a more modern version of PowerShell.
 	:: get stage 2 and run it...
 	echo Found %*
