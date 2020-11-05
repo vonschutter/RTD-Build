@@ -1,5 +1,5 @@
 # :: --    --
-# :: 					Windows CMD Shell Script 
+# :: 					Windows PowerShell Script 
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -23,11 +23,42 @@
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#	
+#	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
+#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
+#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
+#		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
+#		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
+#		for any organization after some years and people turnover. 
+#
+#		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
+#		and facilitates several users working on the same scripts over time.
+#		
+# 
+#
+#	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
+#	to make the script more readable. Each function shall also be documented to the point of the obvious.
+#	Suggested function structure per google guidelines:
+#
+#	function function_name {
+#		# Documentation and comments... 
+#		...code...
+#	}
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script initialization           ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+# Some prerequisites need to be met before the script is likely to run at all. 
+# These items are cared for in this section. 
 
 
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# ::  ***             SetInit                ***      ::
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# By default windows users starting a scripr would not have administrateive access. 
+# Therefore we must check if we have administrative access already, and if not
+# call this script itself with elevated priviledges. 
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
 {  
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
@@ -36,13 +67,15 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 
 
 
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# ::  ***             Settings               ***      ::
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Optional components for this script are listed below. 
-# Please toggle them on or off by adding or removeing a 
-# ound sign "#" infront of each option you want to add or
-# remove from the script behavior. A ound sign in front of
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Settings                 ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+# Optional components for this script are listed below. Please toggle them on 
+# or off by adding or removing a pound sign "#" infront of each option you 
+# want to add or remove from the script behavior. A pound sign in front of
 # a statement means that it is ignored. 
 
 $tweaks = @(
