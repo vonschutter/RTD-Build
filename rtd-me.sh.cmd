@@ -25,7 +25,7 @@ echo				-	RTD System System Managment Bootstrap Script      -
 #::		configure software appropriate for the system in question. It accomplishes this
 #::		by using the idiosyncrasies of the default scripting languages found in
 #::		the most popular operating systems around *NIX (MAC, Linux, BSD etc.) and
-#::		CMD (Windows NT, 2000, 2003, XP, Vista, 8, and 10.
+#::		CMD (Windows NT, 2000, 2003, XP, Vista, 8, and 10).
 #::
 #::
 #:: Background: This system configuration and installation script was originally developed
@@ -221,7 +221,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 :: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more poserfull
 :: scripting languages are available. These should be used where appropriate in the stage 2 of this process.
 :: This bootstrap sctipt is intended for compatibility and this section therefore focuses on Windows CMD as this
-:: works in all earlite 32 and 64 bit versions of Windows.
+:: works in all earlier 32 and 64 bit versions of Windows.
 ::
 :: Example 1
 ::
@@ -255,7 +255,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	::if not exist %_LOGDIR% md %_OGDIR%
 	set _STAGE2LOC=https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/
 	set _STAGE2FILE=rtd-oem-win10-config.ps1
-	echo Staget 2 file is located at:
+	echo Stage 2 file is located at:
 	echo %_STAGE2LOC%\%_STAGE2FILE%
 
 
@@ -307,7 +307,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 
 :PS2
 	:: Procedure to get the second stage configuration script in all version of windows after 7.
-	:: These version of windows hae a more modern version of PowerShell.
+	:: These version of windows have a more modern version of PowerShell.
 	:: get stage 2 and run it...
 	echo Found %*
 	echo Fetching %_STAGE2FILE%...

@@ -7,27 +7,19 @@
 # :: 	Primary Author Source: https://github.com/Disassembler0/Win10-Initial-Setup-Script
 # :: 	Tweaked Source: https://gist.github.com/alirobe/7f3b34ad89a159e6daa1/
 # ::
-# :: 	Please list command files to be run here in the following format:
+# :: Purpose: 	The purpose of the script is to:
+# ::		- Remove unnessesary software from Windows 10
+# ::		- Turn off unnessesary services (may be turned on again)
+# ::		- Add some useful software
+# ::		
+# ::		NOTE: Individual items may be turned on or off in the settings section of this script.
 # ::
-# :: 	:TITLE
-# :: 	Description of the pupose of called command file.
-# :: 	call <path>\command.cmd or command...
+# :: Background: This system configuration and installation script was originally developed
+# :: 		for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
+# :: 		was to install and/or configure Ubuntu, Zorin, or Microsoft OS PC's. This OEM and store nolonger
+# :: 		exists as its owner has passed away. This script is shared in the hopes that
+# :: 		someone will find it usefull.
 # ::
-# ::
-# :: The preferred method of coding well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7
-# :: This is to ensure a secure and controlled way to execute components in the script. This may be an old way
-# :: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more poserfull
-# :: scripting languages are available. These should be used where appropriate in the stage 2 of this process.
-# :: This bootstrap sctipt is intended for compatibility and this section therefore focuses on Windows CMD as this
-# :: works in all earlite 32 and 64 bit versions of Windows.
-# ::
-# :: Example 1
-# ::
-# :: for %%d in (%_dependencies%) do (call :VfyPath %%d)
-# ::	if not {%RET%}=={0} (set _ERRMSG="An unrecoverable error has occured..." & call :DispErr !
-# ::			) else (
-# ::			goto MAIN)
-# :: endlocal & goto eof
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
