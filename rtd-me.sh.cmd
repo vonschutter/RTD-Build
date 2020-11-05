@@ -301,8 +301,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	echo Fetching %_STAGE2FILE%...
 	echo Please wait...
 	powershell -Command "(New-Object Net.WebClient).DownloadFile('%_STAGE2LOC%\%_STAGE2FILE%', '%_STAGE2FILE%')"
-		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Failed to get stage 2!...)
-		powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
+	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
 	goto end
 
 
@@ -314,8 +313,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	echo Fetching %_STAGE2FILE%...
 	echo Please wait...
 	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
-		if "ERRORLEVEL"=="0" (echo Sucessfully fetched stage 2...) else (echo Failed to get stage 2!...)
-		powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
+	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
 	goto end
 
 
