@@ -67,6 +67,7 @@ $tweaks = @(
 	"InstallVLC",
 	"InstallAdobe",
 	"InstallBrave",
+	"InstallFirefox", 
 
 	### Windows Apps
 	"DebloatAll",
@@ -265,6 +266,10 @@ Function InstallAdobe {
 	Show-Choco-Menu -Title "Do you want to install Adobe Acrobat Reader?" -ChocoInstall "adobereader"
 }
 
+Function InstallFirefox {
+	Show-Choco-Menu -Title "Installing Mozilla Firefox?" -ChocoInstall "firefox"
+}
+
 Function InstallBrave {
 		Invoke-WebRequest -Uri "https://laptop-updates.brave.com/download/CHR253" -OutFile $env:USERPROFILE\Downloads\brave.exe
 		~/Downloads/brave.exe
@@ -291,6 +296,9 @@ Function ChangeDefaultApps {
 	Start-BitsTransfer -Source "https://raw.githubusercontent.com/ChrisTitusTech/win10script/master/MyDefaultAppAssociations.xml" -Destination $HOME\Desktop\MyDefaultAppAssociations.xml
 	dism /online /Import-DefaultAppAssociations:"%UserProfile%\Desktop\MyDefaultAppAssociations.xml"
 }
+
+
+
 
 ##########
 # Privacy Tweaks
