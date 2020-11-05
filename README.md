@@ -7,6 +7,9 @@ If a graphical environment is not detected, the RTD OEM System Builder will inte
 
 ![RTD Builder Screenshot 2](Media_files/Scr-13-43-45.png?raw=true "Executing the Script")
 
+As promised, the rtd-me.sh.cmd script will run under windows as well. Simply download it and double click on it. Please note that at this time the windows functionality i less extensive. However, the script will optimize Windows by removeing bloatware and turning off services that most do not use to enhance both performance ad security. 
+
+![RTD Builder Screenshot 2](Media_files/Scr10.png?raw=true "Executing the Script in Windows")
 
 # RTD-Build
 
