@@ -229,18 +229,18 @@ function Show-Choco-Menu {
    
  do
  {
-    Clear-Host
-    Write-Host "================ $Title ================"
-    Write-Host "Y: Press 'Y' to do this."
-    Write-Host "2: Press 'N' to skip this."
+	#Clear-Host
+	Write-Host "================ $Title ================"
+	Write-Host "Y: Press 'Y' to do this."
+	Write-Host "2: Press 'N' to skip this."
 	Write-Host "Q: Press 'Q' to stop the entire script."
-    $selection = Read-Host "Please make a selection"
-    switch ($selection)
-    {
-    'y' { choco install $ChocoInstall -y }
-    'n' { Break }
-    'q' { Exit  }
-    }
+	$selection = Read-Host "Please make a selection"
+	switch (y)
+	{
+	'y' { choco install $ChocoInstall -y }
+	'n' { Break }
+	'q' { Exit  }
+	}
  }
  until ($selection -match "y" -or $selection -match "n" -or $selection -match "q")
 }
