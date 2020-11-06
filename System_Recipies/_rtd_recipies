@@ -141,20 +141,47 @@ recipie_baseapps (){
 
 
 
+recipie_brave () {
+		# This function will add the vendor maintained repository and install the software
+		# using the distribution speciffic installers.
+		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
+		if cat "/etc/os-release" | grep "debian" ; then
+			apt install apt-transport-https curl gnupg
+			curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
+			echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+			apt update
+			apt install brave-browser
+
+		fi
+		if cat "/etc/os-release" | grep "fedora" ; then
+			dnf install dnf-plugins-core
+			dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
+			rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+			dnf install brave-browser
+		fi
+		if  cat "/etc/os-release" | grep "suse" ; then
+			zypper install curl
+			rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+			zypper addrepo https://brave-browser-rpm-release.s3.brave.com/x86_64/ brave-browser
+			zypper install brave-browser
+		fi
+}
+
+
+
 recipie_vivaldi (){
-	echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
-	if cat "/etc/os-release" | grep "debian" ; then
-		#dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.deb
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.deb
-	fi
-	if cat "/etc/os-release" | grep "fedora" ; then
-		#dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
-	fi
-	if  cat "/etc/os-release" | grep "suse" ; then
-		# dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.10.1745.27-1_amd64.rpm
-		dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
-	fi
+		# This function uses the RTD function "dl" to download a distribution speciffic package directly
+		# from the vendors website. It will work until the vendor removes the exact file... 
+		echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
+		if cat "/etc/os-release" | grep "debian" ; then
+			dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.deb
+		fi
+		if cat "/etc/os-release" | grep "fedora" ; then
+			dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
+		fi
+		if  cat "/etc/os-release" | grep "suse" ; then
+			dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
+		fi
 }
 
 recipie_wine (){
@@ -272,6 +299,7 @@ recipie_games (){
 			echo -e $YELLOW"--- Adding Selection of Quality Games..." $ENDCOLOR
 						
 			# --- Install games available in SNAP repository --- 
+			check_dependencies snapd
 			for i in supertuxkart 0ad warzone2100 supertuxkart marsshooter mc-installer
 			do
 			     snap install $i
@@ -305,7 +333,6 @@ recipie_steam () {
 			# Install Valves Steam Client for gaming. 
 			InstallSoftwareFromRepo steam
 			if [ $? != 0 ]; then 
-			
 				if hash rpm &>/dev/null; then
 					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm
 				elif hash apt &>/dev/null; then

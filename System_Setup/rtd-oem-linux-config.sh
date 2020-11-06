@@ -158,8 +158,8 @@ option_20="Audio Tools"
 option_21="Oracle VirtualBox" 
 option_22="Steam Gaming Platform" 
 option_23="Install the Microsoft Windows subsystem"
-option_24="Basic internet apps (vivaldi)"
-
+option_24="Vivaldi Web Browser"
+option_25="Brave Security Enhanced Browser"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -178,35 +178,35 @@ option_24="Basic internet apps (vivaldi)"
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
-        cmd=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
-        zstatus="${zstatus:=true}"
-        options=(    $zstatus "$option_1"
-                     $zstatus "$option_2"
-                     $zstatus "$option_3"
-                     $zstatus "$option_4"
-                     false    "$option_5"
-                     $zstatus "$option_6"
-                     $zstatus "$option_7"
-                     $zstatus "$option_8"
-                     $zstatus "$option_9"
-                     $zstatus "$option_10"
-                     $zstatus "$option_11"
-                     $zstatus "$option_12"
-                     $zstatus "$option_13"
-                     $zstatus "$option_14"
-                     $zstatus "$option_15"
-                     $zstatus "$option_16"
-                     $zstatus "$option_17"
-                     $zstatus "$option_18"
-                     $zstatus "$option_19"
-                     $zstatus "$option_20"
-                     $zstatus "$option_21"
-                     $zstatus "$option_22"
-                     $zstatus "$option_23"
-                     $zstatus "$option_24"		     
-                   )
-
-       choices=$("${cmd[@]}" "${options[@]}" )
+	cmd=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
+	zstatus="${zstatus:=true}"
+	options=(	$zstatus "$option_1"
+			$zstatus "$option_2"
+			$zstatus "$option_3"
+			$zstatus "$option_4"
+			false    "$option_5"
+			$zstatus "$option_6"
+			$zstatus "$option_7"
+			$zstatus "$option_8"
+			$zstatus "$option_9"
+			$zstatus "$option_10"
+			$zstatus "$option_11"
+			$zstatus "$option_12"
+			$zstatus "$option_13"
+			$zstatus "$option_14"
+			$zstatus "$option_15"
+			$zstatus "$option_16"
+			$zstatus "$option_17"
+			$zstatus "$option_18"
+			$zstatus "$option_19"
+			$zstatus "$option_20"
+			$zstatus "$option_21"
+			$zstatus "$option_22"
+			$zstatus "$option_23"
+			$zstatus "$option_24"
+			$zstatus "$option_25"
+			)
+	choices=$("${cmd[@]}" "${options[@]}" )
 }
 		
 		
@@ -291,6 +291,9 @@ function do_instructions_from_choices (){
 		;;
 		"$option_24")
 		add_software_task recipie_vivaldi
+		;;
+		"$option_25")
+		add_software_task recipie_brave
 		;;
 		esac
 	done  
