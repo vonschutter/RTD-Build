@@ -1,0 +1,202 @@
+#!/bin/bash
+#::             RTD System System Managment Script
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:: Author:     SLS. 
+#:: Version:	1.03
+#::
+#::
+#:: Purpose: The purpose of the script is to perform managment tasks on Linux systems
+#::  
+#:: This is a script that will start Minecraft Server on an Ubuntu or Debian (Ubuntu) based server. It will start 
+#:: multiple panes using "byobu", and start the server etc there... 
+#::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Variables that govern the behavior or the script and location of files are 
+# set here. There should be no reason to change any of this to setup and 
+# get a working Minecraft server on Ubuntu. However, if you have updated scripts
+# and need to download yours from someplace else you only need to change these 
+# setings. 
+
+# Your Minecraft version
+MINECRAFT_VERSION=Latest
+
+# Your local Minecraft directory.
+MINECRAFT_HOME=~/bin/minecraft.server/Minecraft.$MINECRAFT_VERSION
+
+MINECRAFT_JAR=server.jar
+
+# Location of the Minecraft server .jar file online
+MINECRAFT_URL=https://launcher.mojang.com/v1/objects/f1a0073671057f01aa843443fef34330281333ce/$MINECRAFT_JAR
+
+# Location of the start script and the anounce script for Minecraft
+MCSTART_URL=https://github.com/vonschutter/Ubuntu-Minecraft-Server-Manager/raw/master/bin/minecraft.server/Minecraft.Latest
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+
+function check_dependencies ()
+{
+#---------------------------------------------------------------
+echo "Checking for script dependencies and install if not there..."
+#---------------------------------------------------------------
+    if hash $1 2>/dev/null; then
+        echo "I found that $1 is present on this system... thankyou for that! "
+    else
+        echo "You seem to have no $1... I will try to get it... "
+        sudo apt install $1 -y
+            if [ $? != 0 ];
+            then
+                echo "That install didn't work out so well."
+                echo "Please manually try to add the software since I couldn't do it."
+                exit
+            fi
+        echo "OK Done! Continuing..."
+    fi
+}
+
+function setup_minecraft_root (){
+        # Setup and initiate the location of the mincraft server. 
+        # For us i likes to live in /home/$USER/bin/minecraft.server/Minecraft.$VERSION
+        # This tests if the script files are available and downloades them if not. 
+        mkdir -p $MINECRAFT_HOME 
+
+        for i in start.sh announce.py server.properties eula.txt
+        do
+            if [ ! -f "$MINECRAFT_HOME/$i" ]; then
+                wget -q --show-progress $MCSTART_URL/"$i" -P $MINECRAFT_HOME
+            fi
+        done
+
+        if [ ! -f "$MINECRAFT_HOME/$MINECRAFT_JAR" ]; then
+            minecraft_update
+        fi
+}
+
+
+function run_minecraft_server_manager (){
+
+        # Start byobu multi screen app... 
+        byobu new-session -d -s $USER
+
+        # status screen
+        byobu rename-window -t $USER:0 'Minecraft Server Manager'
+        byobu send-keys "bash $MINECRAFT_HOME/start.sh" C-m
+
+        # Create new pane vertically and display htop
+        byobu split-window -v
+        byobu send-keys "htop " C-m
+
+        # Split the "htop" window in 2, and start spedometer there.
+        byobu split-window -h
+        byobu send-keys "speedometer -r $NETINT  -t $NETINT" C-m
+
+        # Create new window...
+        byobu new-window -t $USER:1 -n 'CMD'
+        byobu send-keys "python $MINECRAFT_HOME/announce.py" C-m
+
+        # Set default window as the dev split plane
+        byobu select-window -t $USER:0
+        byobu-tmux select-pane -t 0
+
+        # Attach to the session you just created
+        byobu attach-session -t $USER
+}
+
+
+function enssure_oracle_java (){
+    java --version >/dev/null 
+    if [ $? -eq 0 ]; then
+        echo "java of some version is present. I respect your choice... and will try to run! --- OK!"
+    else
+        # Add the Oracle Java repository and install the software. 
+        echo Please provide administrative password to make shanges to the system: 
+        sudo add-apt-repository ppa:linuxuprising/java -y
+        sudo apt-get update
+        echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
+        sudo apt install -y oracle-java11-installer && \
+        sudo apt install -y oracle-java11-set-default
+    fi
+}
+
+
+function find_active_newtork_interface (){
+    NETINT=`ip addr | awk '/state UP/ {print $2}' |grep -v "br*" |grep -v "wlp*" | head --bytes -2 `
+    echo "Active network interface is: $NETINT"
+    export $NETINT
+}
+
+
+ function minecraft_update() {
+    # Get minecraft version publication file and get the latest server URL
+    cd $MINECRAFT_HOME  
+    wget -q -O $MINECRAFT_HOME/versions --no-check-certificate https://launchermeta.mojang.com/mc/game/version_manifest.json
+    JSONVERSION=`cat versions | python -c "exec(\"import json,sys\nobj=json.load(sys.stdin)\nversion=obj['latest']['release']\nfor v in obj['versions']:\n   if v['id']==version:\n    print(v['url'])\")"`
+    wget -q -O $MINECRAFT_HOME/versions --no-check-certificate $JSONVERSION
+    MC_SERVER_URL=`cat versions | python -c 'import json,sys;obj=json.load(sys.stdin);print(obj["downloads"]["server"]["url"])'`
+    rm $MINECRAFT_HOME/versions
+
+    # Download the latest minecraft vesrion and check if it is the same as the one installed
+     wget -q -O $MINECRAFT_HOME/minecraft_server.jar.update --no-check-certificate $MC_SERVER_URL
+     if [ -f $MINECRAFT_HOME/minecraft_server.jar.update ] ; then
+       if `diff $MINECRAFT_HOME/$MINECRAFT_JAR $MINECRAFT_HOME/minecraft_server.jar.update >/dev/null` ; then
+         echo "You are already running the latest version of $MINECRAFT_JAR."
+       else
+        mv $MINECRAFT_JAR $MINECRAFT_JAR.previous
+        mv $MINECRAFT_HOME/minecraft_server.jar.update $MINECRAFT_HOME/$MINECRAFT_JAR
+        echo "Minecraft successfully updated."
+       fi
+     else
+       echo "Minecraft update could not be downloaded."
+     fi
+ }
+
+ 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+# Check that the software components of this script are available.
+# iff they are not, attempt to install them. 
+check_dependencies byobu
+check_dependencies speedometer
+check_dependencies htop
+check_dependencies python
+
+
+if [ $1 = --update ]; then minecraft_update ; fi
+if [ $1 = --command ]; then $2 ; exit ; fi
+
+# Basic check to see that the Minecraft folder is present and 
+# if not crate it and download the scripts and the server jar file
+# to enable the server. 
+setup_minecraft_root
+enssure_oracle_java 
+
+# Start the server and monitor the server performance
+find_active_newtork_interface
+run_minecraft_server_manager
+
+
+

@@ -28,7 +28,7 @@ Simply cut and paste this command in to a terminal on your computer. If you are 
 
 ```
 
-wwget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd && chmod +x rtd-me.sh.cmd && bash rtd-me.sh.cmd 
+wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd && chmod +x rtd-me.sh.cmd && bash rtd-me.sh.cmd 
 
 ```
 
