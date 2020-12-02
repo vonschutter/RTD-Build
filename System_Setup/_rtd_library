@@ -316,23 +316,23 @@ dl ()
 SofwareManagmentAvailabilityCHK ()
 {
 	echo ""
-        echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
-        i=0
-        tput sc
-        while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
-            case $(($i % 4)) in
-                0 ) j="-" ;;
-                1 ) j="\\" ;;
-                2 ) j="|" ;;
-                3 ) j="/" ;;
-            esac
-            tput rc
-            echo -en "\r[$j] Waiting for other software managers to finish..."\
+	echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
+	i=0
+	tput sc
+	while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
+		case $(($i % 4)) in
+			0 ) j="-" ;;
+			1 ) j="\\" ;;
+			2 ) j="|" ;;
+			3 ) j="/" ;;
+		esac    
+		tput rc
+		echo -en "\r[$j] Waiting for other software managers to finish..."\
 
 
-            sleep 5
-            ((i=i+1))
-        done
+		sleep 5
+		((i=i+1))
+	done
 }
 
 
@@ -378,26 +378,26 @@ rtd_wait_for_internet_availability () {
 # software manager: apt, yum, zypper etc. This is to maintain stability since a distro may
 # alias another distributions command (like SuSE does with apt) to be helpfull.
 # This is one of the first update functions written and is kept for compatibility.
-up2date ()
-{
-	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
-	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
-        if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
+# up2date ()
+# {
+# 	echo -e $YELLOW"--- Running up2date function:" $ENDCOLOR
+# 	if [ -z "$_ERRLOGFILE" ]; then $_ERRLOGFILE=$0.log ; else echo "     Logfile is set to: '$_ERRLOGFILE'"; fi
+#         if [ -z "$_LOGFILE" ]; then $_LOGFILE=$0.log ; else echo "     Logfile is set to: '$_LOGFILE'"; fi
 
-        if hash pkcon 2>/dev/null; then
-		pkcon update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	elif hash yum 2>/dev/null; then
-	        yum update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-        elif hash apt 2>/dev/null; then
-	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
-        elif hash zypper 2>/dev/null; then
-                return zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else
-	        return 3
-        fi
-}
+#         if hash pkcon 2>/dev/null; then
+# 		pkcon update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+# 	elif hash yum 2>/dev/null; then
+# 	        yum update -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#         elif hash apt 2>/dev/null; then
+# 	        apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+# 	        apt-get dist-upgrade -y -qq --allow-change-held-packages --ignore-missing 1>>$_LOGFILE 2>>$_ERRLOGFILE
+# 	        apt-get autoremove -y 1>>$_LOGFILE 2>>$_ERRLOGFILE
+#         elif hash zypper 2>/dev/null; then
+#                 return zypper up 1>>$_LOGFILE 2>>$_ERRLOGFILE
+# 	else
+# 	        return 3
+#         fi
+# }
 
 
 
@@ -415,15 +415,15 @@ up2date ()
 #
 is_software_package_installed ()
 {
-        if hash yum 2>/dev/null; then
-	        rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
-        elif hash apt 2>/dev/null; then
-	        dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
-        elif hash zypper 2>/dev/null; then
-                zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
+	if hash yum 2>/dev/null; then
+		rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
+	elif hash apt 2>/dev/null; then
+		dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
+	elif hash zypper 2>/dev/null; then
+		zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
 	else
-	        return 3
-        fi
+		return 3
+	fi
 }
 
 
@@ -441,15 +441,15 @@ is_software_package_installed ()
 # Supported base distributions: Fedora . SuSE . Debian
 is_software_package_available ()
 {
-        if hash yum 2>/dev/null; then
-	        yum list available "$1" &> /dev/null && return 0 || return 1
-        elif hash apt 2>/dev/null; then
-                apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
-        elif hash zypper 2>/dev/null; then
-                return zypper info "$1" &> /dev/null && return 0 || return 1
+	if hash yum 2>/dev/null; then
+		yum list available "$1" &> /dev/null && return 0 || return 1
+	elif hash apt 2>/dev/null; then
+		apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
+	elif hash zypper 2>/dev/null; then
+		return zypper info "$1" &> /dev/null && return 0 || return 1
 	else
-	        return 3
-        fi
+		return 3
+	fi
 
 }
 
@@ -470,12 +470,12 @@ InstallSoftwareFromRepo ()
 	set_install_command >>/dev/null 2>&1
 
 	# make some decent display terminal Graphics...
-        PAD="------------------------------------------------"
+	PAD="------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	PRE=" - Installing $LINE :"
 	# Test if package name is installed, if not then...
-        if ! is_software_package_installed "$1"; then
-        	if is_software_package_available "$1"; then
+	if ! is_software_package_installed "$1"; then
+		if is_software_package_available "$1"; then
 			echo -ne "$PRE"\ & $_INSTCMD "$1" 1>>$_LOGFILE 2>>$_ERRLOGFILE && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
 			if [ $? != 0 ];
 			then
@@ -483,10 +483,10 @@ InstallSoftwareFromRepo ()
 			fi
 		else
 			echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
-                fi
-        else
+		fi
+	else
 		echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
-        fi
+	fi
 }
 
 
@@ -497,22 +497,22 @@ InstallSoftwareFromRepo ()
 # match the softwre command line name or rather the name of the package. This should get
 # updated to also check and install from snap and flatpack.
 check_dependencies () {
-        #---------------------------------------------------------------
-        echo "Checking for script dependencies and install if not there..."
-        #---------------------------------------------------------------
-            if is_software_package_installed $1 ; then
-                echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
-            else
-                echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
-                InstallSoftwareFromRepo $1
-                    if [ $? != 0 ];
-                    then
-                        echo -e $RED "That install didn't work out so well."
-                        echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
-                        exit
-                    fi
-                echo "OK Done! Continuing..."
-            fi
+	#---------------------------------------------------------------
+	echo "Checking for script dependencies and install if not there..."
+	#---------------------------------------------------------------
+	    if is_software_package_installed $1 ; then
+		echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
+	    else
+		echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
+		InstallSoftwareFromRepo $1
+		    if [ $? != 0 ];
+		    then
+			echo -e $RED "That install didn't work out so well."
+			echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
+			exit
+		    fi
+		echo "OK Done! Continuing..."
+	    fi
 }
 
 
@@ -526,20 +526,20 @@ check_dependencies () {
 system_update () {
     if hash pkcon 2>/dev/null; then
     	pkcon refresh
-        pkcon update -y
+	pkcon update -y
     else
-        echo "You seem to have now Package Kit... I will try to get it... "
-        echo "I will need to become admin to do that..."
-        sudo check_dependencies packagekit
-            if [ $? != 0 ];
-            then
-                echo "That install didn't work out so well."
-                echo "Defaulting to the onld Up2Date Function"
-                up2date
-            fi
-        echo "OK trying again!"
+	echo "You seem to have now Package Kit... I will try to get it... "
+	echo "I will need to become admin to do that..."
+	sudo check_dependencies packagekit
+	    if [ $? != 0 ];
+	    then
+		echo "That install didn't work out so well."
+		echo "Defaulting to the onld Up2Date Function"
+		up2date
+	    fi
+	echo "OK trying again!"
     	pkcon refresh
-        pkcon update -y
+	pkcon update -y
     fi
 }
 
@@ -548,8 +548,8 @@ system_update () {
 # Function to simply display that the functions have been loaded when this function library has been called.
 function notice_rtd_loaded ()
 {
-        #echo -e $GREEN "RuntimeData function support is loaded in this script." $ENDCOLOR
-        export RTDFUNCTIONS=1
+	#echo -e $GREEN "RuntimeData function support is loaded in this script." $ENDCOLOR
+	export RTDFUNCTIONS=1
 
 }
 
@@ -656,8 +656,6 @@ function debug_list_loaded_internal_functions ()
 	i=1 
 	for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep -v "recipie_" |grep -v "debug_list")
 	do
-		#echo " \"$i\" \"$index\" "
-		#((i=i+1))
 		echo "$i $index "
 		((i=i+1))
 
@@ -672,8 +670,6 @@ function debug_list_loaded_software_functions ()
 	i=1 
 	for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep "recipie_")
 	do
-		#echo " \"$i\" \"$index\" "
-		#((i=i+1))
 		echo "$i $index "
 		((i=i+1))
 
@@ -683,10 +679,10 @@ function debug_list_loaded_software_functions ()
 
 
 
-
 # make prompt colors avaiable to any script that includes this function lbrary.
 set_colors
-
+notice_rtd_loaded
+ export RTDFUNCTIONS=1
 if [[ "$1" = "--list" ]]; then
 	case $2 in 
 		software ) debug_list_loaded_software_functions ;;
