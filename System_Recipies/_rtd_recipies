@@ -1,4 +1,4 @@
-#!/bin/bash
+F#!/bin/bash
 #
 #::            S O F T W A R E    R E C I P I E S 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -227,7 +227,7 @@ recipie_wps_office () {
 
 
 
-recepie_oem_restricted_fonts () {
+recipie_oem_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
