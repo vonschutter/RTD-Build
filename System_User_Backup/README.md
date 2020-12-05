@@ -29,16 +29,16 @@ To use a nework location that location mst first me "mounted" on the local syste
  
 ##Screenshots:
 
-![link](Media_files/Scr2.png?raw: true "Tool Backup initial launch")
+![link](/System_User_Backup/Media_files/Scr2.png "Tool Backup initial launch")
 
 
-![link](Media_files/Scr3.png?raw: true "Tool Backup Passphrase Prompt")
+![link](/System_User_Backup/Media_files/Scr3.png "Tool Backup Passphrase Prompt")
 
 
-![link](Media_files/Scr4.png?raw: true "Tool Backup Destination Selection")
+![link](/System_User_Backup/Media_files/Scr4.png "Tool Backup Destination Selection")
 
 
-![link](Media_files/Scr5.png?raw: true "Tool Backup Completion Notification")
+![link](/System_User_Backup/Media_files/Scr5.png "Tool Backup Completion Notification")
 
    
 
