@@ -1,45 +1,60 @@
 #!/bin/bash
-#
-#::				R T D   F u n c t i o n   L i b r a r y
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::	Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
-#:: 	Version:	2.0
-#::
-#::
-#::	Purpose:	To collect and enable the use of code snipplets in other scripts.
-#::			To document these thuroughly so that they may be usefull for learning BASH.
-#::     Usage: 		call this file using the "source" statment in bash.
-#::
-#::     This script is shared in the hopes that
-#::     someone will find it usefull.
-#::
-#::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
-#	Functions defined in this library:
-#
-#	Function Name: 				Description:
-#	----------------------------------------------------------------------------------------------------------------
-#	check_dependencies			: Checks that software requirements are met so scripts do not fail
-#	debug_list_loaded_functions		: Lists all loaded RTD functions in the environment
-#	dl					: Downloads and installs a package from the internet (a bit insecure)
-#	enable_firewall				: Will turn on UFW and add the Allow SSH rule
-#	ensure_admin				: Elevates priveledges to admin "root" for the whole script (asks for password)
-#	InstallSoftwareFromRepo			: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.)
-#	is_software_package_available		: Checks to see if a software package is availabel in a repository (RPM and DEB)
-#	is_software_package_installed		: Checks to see if a software package allready is installed
-#	notice_rtd_loaded			: Notifies a script that RTD functions are loaded
-#	set_colors				: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
-#	set_install_command			: Determines what install command should be used to install packages from repositories
-#	SofwareManagmentAvailabilityCHK		: Checks to see that the software managment system is not busy
-#	system_update				: Newer more universal software update function
-#	up2date					: Older universal software update function
-#	rtd_setup_choices_term_fallback		: For server setup, displays a menu where you may chose CLI productivity software (vim, alpine, byobu etc.).
-#
-#
-#
+RTD_VERSION=2.0
+<<Library_Documentation
+::				R T D   F u n c t i o n   L i b r a r y
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::	Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
+:: 	Version:	2.0
+::
+::
+::	Purpose:	To collect and enable the use of code snipplets in other scripts.
+::			To document these thuroughly so that they may be usefull for learning BASH.
+::     Usage: 		call this file using the "source" statment in bash.
+::
+::     This script is shared in the hopes that
+::     someone will find it usefull.
+::
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	Functions defined in this library:
+
+	Function Name: 				Description:
+	----------------------------------------------------------------------------------------------------------------
+	check_dependencies			: Checks that software requirements are met so scripts do not fail
+	debug_list_loaded_functions		: Lists all loaded RTD functions in the environment
+	dl					: Downloads and installs a package from the internet (a bit insecure)
+	enable_firewall				: Will turn on UFW and add the Allow SSH rule
+	ensure_admin				: Elevates priveledges to admin "root" for the whole script (asks for password)
+	InstallSoftwareFromRepo			: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.)
+	is_software_package_available		: Checks to see if a software package is availabel in a repository (RPM and DEB)
+	is_software_package_installed		: Checks to see if a software package allready is installed
+	notice_rtd_loaded			: Notifies a script that RTD functions are loaded
+	set_colors				: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
+	set_install_command			: Determines what install command should be used to install packages from repositories
+	SofwareManagmentAvailabilityCHK		: Checks to see that the software managment system is not busy
+	system_update				: Newer more universal software update function
+	up2date					: Older universal software update function
+	rtd_setup_choices_term_fallback		: For server setup, displays a menu where you may chose CLI productivity software (vim, alpine, byobu etc.).
+
+
+
+Use Google Coding standards:
+In general any function that is not both obvious and short must be commented. Any function in a library must be commented regardless of 
+length or complexity. It should be possible for someone else to learn how to use your program or to use a function in your library 
+by reading the comments (and self-help, if provided) without reading the code.
+
+All function comments should describe the intended API behaviour using:
+
+1	Description of the function.
+2	Globals: List of global variables used and modified.
+3	Arguments: Arguments taken.
+4	Outputs: Output to STDOUT or STDERR.
+5	Returns: Returned values other than the default exit status of the last command run.
+
+Library_Documentation
 
 ###########################################################################
 ##                                                                       ##

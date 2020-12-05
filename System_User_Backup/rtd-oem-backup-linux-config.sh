@@ -93,10 +93,11 @@ option_13="Backup entire HOME folder"
 # Function to request an encryption phrase. 
 # This prase will be used to encrypt the compressed archives. 
 zenity_ask_for_encryption_pass_phrase () {
-	check_dependencies whiptail
-    	passtoken=$(zenity --title "Please enter encryption phrase" --password ) 
+	check_dependencies zenity
+    	passtoken=$(zenity --title "Please enter a password to use for encryption" --password ) 
     	if [[ -z "$passtoken" ]]; then
-                zenity --warning --width=300 --text="Your settings likely contain sensitive information and should be encrypted! Please set a pass phrase"
+                zenity --warning --text="Your settings likely contain sensitive information and should be encrypted! Please set a pass phrase"
+		zenity_ask_for_encryption_pass_phrase
         fi
 }
 
