@@ -1,6 +1,6 @@
 # RTD User Backup Tool:
 
-![link](/Media_files/Scr1.png "Tool Backup Selection")
+![link](/System_User_Backup/Media_files/Scr1.png "Tool Backup Selection")
 
 The RTD User Backup is a tool to simplify backup of a user's data in a local home folder. 
 It will aks if you want ot back up some usual options:
