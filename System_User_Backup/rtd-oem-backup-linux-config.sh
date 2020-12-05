@@ -43,6 +43,8 @@ VERSION="1.00"
 #
 _FILE=_rtd_functions
 _RTD_S_HOME=/opt/rtd/scripts
+unset rtd_oem_user_backup_destination
+
 if [ -f $_RTD_S_HOME/$_FILE ]; then
    echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
    source $_RTD_S_HOME/$_FILE
@@ -76,6 +78,7 @@ option_10="Chrome Settings"
 option_11="All VirtualBox VMs" 
 option_12="Teamviewer Configuration" 
 option_13="Backup entire HOME folder"
+option_14="Backup All Virtual Machines (KVM)"
                    
 
 
@@ -108,7 +111,7 @@ zenity_ask_for_encryption_pass_phrase () {
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 zenity_show_list_of_user_backup_choices () {
-        cmd=( zenity  --list  --width=800 --height=400 --text "Please Select What to Backup" --title "$BACKTITLE" --checklist  --column "ON/OFF" --column "What to backup" --separator "," )
+        cmd=( zenity  --list  --width=800 --height=400 --text "Please Select Whant to Backup" --title "$BACKTITLE" --checklist  --column "ON/OFF" --column "What to backup" --separator "," )
         zstatus=FALSE
         options=(    $zstatus "$option_1"
                      $zstatus "$option_2"
@@ -123,6 +126,7 @@ zenity_show_list_of_user_backup_choices () {
                      $zstatus "$option_11"
                      $zstatus "$option_12"
 		     $zstatus "$option_13"
+		     $zstatus "$option_14"
                    )
 
        choices=$("${cmd[@]}" "${options[@]}" )
@@ -153,26 +157,24 @@ The RTD Backup tool will encrypt, compress and save all the information in the l
 # Dialog to request the destination of where to store the compressed and encrypted archive. 
 rtd_oem_request_user_backup_destination() {
 	if [[ -z "$rtd_oem_user_backup_destination" ]]; then
-		rtd_oem_user_backup_destination=$( zenity --width=800 --height=400 --text "$BACKTITLE" --file-selection --directory  )
+		export rtd_oem_user_backup_destination=$( zenity --width=800 --height=400 --text "$BACKTITLE" --file-selection --directory  )
 	elif [[ -n "$string" ]]; then
-  		echo "Saving Backup to: $rtd_oem_user_backup_destination"
-	fi
-
+		echo "Saving Backup to: $rtd_oem_user_backup_destination"
+	fi	
 }
 	
 
 
 # Notify end user thes backup tasks are complete.
-rtd_oem_user_backup_info_notice_complete() {
-
+rtd_oem_user_backup_info_notice_complete() { 
 	zenity --info --width=800 --height=400 --text="
-Backup is complete. Please revice the list below. 
+Backup is complete. Please revise the list below. 
 
 Backup archive(s) saved to:
 $rtd_oem_user_backup_destination
 
 Archives:
-$(ls -lh $rtd_oem_user_backup_destination/*.7z )
+$(ls $rtd_oem_user_backup_destination/*.7z )
 "
 }
 
@@ -190,8 +192,19 @@ rtd_oem_cleanup() {
 # Function to execute the given backup and encryption task. Levels of compression and 
 # other option may be set in the seting section of this script (tool)
 rtd_user_bak () {
-	rtd_oem_request_user_backup_destination
-        7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on -p$passtoken $rtd_oem_user_backup_destination/`whoami`-"$1"-`date -u --iso-8601`.7z "${@:2}"
+	rtd_oem_request_user_backup_destination 
+	echo ... > $rtd_oem_user_backup_destination/flg 
+	if [[ -e $rtd_oem_user_backup_destination/flg ]]; then
+		rm $rtd_oem_user_backup_destination/flg
+		if [[ -d $2 ]]; then 
+			7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on -p$passtoken $rtd_oem_user_backup_destination/`whoami`-"$1"-`date -u --iso-8601`.7z "${@:2}"
+		else 
+			echo "Backup source $2 does not exist..."
+		fi 
+	else 
+		zenity --info --width=800 --height=400 --text="$rtd_oem_user_backup_destination is not writable! Plese select another destination."
+		rtd_oem_request_user_backup_destination
+	fi
 }	
 
 
@@ -203,57 +216,24 @@ do_instructions_from_choices (){
 	for choice in $choices
 	do
 		case $choice in
-	        "$option_1")
-		rtd_user_bak "$option_1" ~/Templates 
-		sleep 1
-		;;
-		"$option_2")
-		rtd_user_bak "$option_2" ~/Templates
-		sleep 1
-		;;
-		"$option_3")	
-		rtd_user_bak "$option_3" ~/.local/share/remmina ~/.config/remmina
-		sleep 1
-		;;
-		"$option_4")
-		rtd_user_bak "$option_4" ~/.themes
-		sleep 1
-		;;
-		"$option_5")
-		rtd_user_bak "$option_5" ~/.icons
-		sleep 1
-		;;
-		"$option_6")
-		rtd_user_bak "$option_6" ~/.fonts
-		sleep 1
-		;;
-		"$option_7")
-		rtd_user_bak "$option_7" ~/Documents
-		sleep 1
-		;;
-		"$option_8")
-		rtd_user_bak "$option_8" ~/Pictures
-		sleep 1
-		;;
-		"$option_9")
-		rtd_user_bak "$option_9" ~/Templates
-		sleep 1
-		;;
-		"$option_10")
-		rtd_user_bak "$option_10" ~/.config/google-chrome/Default/Preferences
-		sleep 1
-		;;
-		"$option_11")
-		rtd_user_bak "$option_11" "~/VirtualBox VM's"
-		sleep 1
-		;;
-		"$option_12")
-		rtd_user_bak "$option_12" ~/.config/teamviewer
-		sleep 1
-		;;
-		"$option_13")
-		rtd_user_bak "$option_13" $HOME
-		sleep 1
+	        "$option_1") rtd_user_bak "$option_1" ~/Templates ;;
+		"$option_2") rtd_user_bak "$option_2" ~/Templates ;;
+		"$option_3") rtd_user_bak "$option_3" ~/.local/share/remmina ~/.config/remmina	;;
+		"$option_4") rtd_user_bak "$option_4" ~/.themes ;;
+		"$option_5") rtd_user_bak "$option_5" ~/.icons ;;
+		"$option_6") rtd_user_bak "$option_6" ~/.fonts	;;
+		"$option_7") rtd_user_bak "$option_7" ~/Documents ;;
+		"$option_8") rtd_user_bak "$option_8" ~/Pictures ;;
+		"$option_9") rtd_user_bak "$option_9" ~/Templates ;;
+		"$option_10") rtd_user_bak "$option_10" ~/.config/google-chrome/Default/Preferences ;;
+		"$option_11") rtd_user_bak "$option_11" "~/VirtualBox VM's" ;;
+		"$option_12") rtd_user_bak "$option_12" ~/.config/teamviewer ;;
+		"$option_13") rtd_user_bak "$option_13" $HOME ;;
+		"$option_14")
+			echo $passtoken |sudo -S chmod 777 -R /var/lib/libvirt
+			rtd_user_bak "$option_14" /var/lib/libvirt
+			echo $passtoken |sudo -S  chmod 750 -R /var/lib/libvirt
+			echo $passtoken |sudo -S  chown -R libvirt-qemu /var/lib/libvirt 
 		;;
 		esac
 	done  
