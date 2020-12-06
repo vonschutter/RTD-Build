@@ -97,7 +97,7 @@ option_14="Backup All Virtual Machines (KVM)"
 # This prase will be used to encrypt the compressed archives. 
 zenity_ask_for_encryption_pass_phrase () {
 	check_dependencies zenity
-    	passtoken=$(zenity --title "Please enter a password to use for encryption" --password ) 
+    	passtoken=$(zenity --title "Encryption Password" --password ) 
     	if [[ -z "$passtoken" ]]; then
                 zenity --warning --text="Your settings likely contain sensitive information and should be encrypted! Please set a pass phrase"
 		zenity_ask_for_encryption_pass_phrase
