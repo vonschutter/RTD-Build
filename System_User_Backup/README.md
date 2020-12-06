@@ -27,7 +27,7 @@ It will aks if you want ot back up some usual options:
 Any option or options may be selected. The files will be encrypted and highly compressed to a destination of choice. 
 To use a nework location that location mst first me "mounted" on the local system first. 
 
-##Screenshots:
+## Screenshots:
 
 **Backup initial launch:**
 
