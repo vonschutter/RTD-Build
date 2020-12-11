@@ -39,7 +39,7 @@ echo				-	RTD System System Managment Bootstrap Script      -
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #	
 #	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
-#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
+#		these scripts are seldom changed and when they are, it is usefull to be able to understand why and how 
 #		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
 #		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
 #		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
@@ -67,28 +67,6 @@ echo				-	RTD System System Managment Bootstrap Script      -
 #	We also like to log all activity, and to echo status output to the screen in a frienly way. To accomplish this,
 #	the table below may be used as appropriate: 
 #
-#				OUTPUT REDIRECTION TABLE	
-#
-#		  || visible in terminal ||   visible in file   || existing
-#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file   
-#	==========++==========+==========++==========+==========++===========
-#	    >     ||    no    |   yes    ||   yes    |    no    || overwrite
-#	    >>    ||    no    |   yes    ||   yes    |    no    ||  append
-#	          ||          |          ||          |          ||
-#	   2>     ||   yes    |    no    ||    no    |   yes    || overwrite
-#	   2>>    ||   yes    |    no    ||    no    |   yes    ||  append
-#	          ||          |          ||          |          ||
-#	   &>     ||    no    |    no    ||   yes    |   yes    || overwrite
-#	   &>>    ||    no    |    no    ||   yes    |   yes    ||  append
-#	          ||          |          ||          |          ||
-#	 | tee    ||   yes    |   yes    ||   yes    |    no    || overwrite
-#	 | tee -a ||   yes    |   yes    ||   yes    |    no    ||  append
-#	          ||          |          ||          |          ||
-#	 n.e. (*) ||   yes    |   yes    ||    no    |   yes    || overwrite
-#	 n.e. (*) ||   yes    |   yes    ||    no    |   yes    ||  append
-#	          ||          |          ||          |          ||
-#	|& tee    ||   yes    |   yes    ||   yes    |   yes    || overwrite
-#	|& tee -a ||   yes    |   yes    ||   yes    |   yes    ||  append
 #
 #	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
 #	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
@@ -314,6 +292,8 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	echo Please wait...
 	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
 	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
+	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\RTD-Software-Installer.exe -OutFile RTD-Software-Installer.exe
+	RTD-Software-Installer.exe
 	goto end
 
 
