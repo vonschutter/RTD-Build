@@ -59,11 +59,11 @@
 # By default windows users starting a scripr would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
-  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
-  Start-Process powershell -Verb runAs -ArgumentList $arguments
-}
+# if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+# {  
+#   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+#   Start-Process powershell -Verb runAs -ArgumentList $arguments
+# }
 
 
 
@@ -95,7 +95,7 @@ $tweaks = @(
 	"InstallFirefox", 
 	"InstallLibreOffice",
 	"InstallRTDImageBundle",
-	### Windows Apps
+	### Remove Windows Apps Not used....
 	"DebloatAll",
 
 	### Privacy Tweaks ###
@@ -120,7 +120,7 @@ $tweaks = @(
 	### Security Tweaks ###
 	"SetUACLow",                    # "SetUACHigh",
 	# "EnableSharingMappedDrives",  # "DisableSharingMappedDrives",
-	# "DisableAdminShares",         # "EnableAdminShares",
+	"DisableAdminShares",         # "EnableAdminShares",
 	"DisableSMB1",                  # "EnableSMB1",
 	"DisableSMBServer",             # "EnableSMBServer",
 	"DisableLLMNR",                 # "EnableLLMNR",
@@ -271,17 +271,18 @@ Function RTDRegistryTweaks {
 	Write-Output "Improving Windows Update to delay Feature updates and only install Security Updates"
 	### Fix Windows Update to delay feature updates and only update at certain times
 	$UpdatesPath = "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings"
-	If (!(Get-ItemProperty $UpdatesPath  BranchReadinessLevel)) { New-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20 }
-	Set-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20
-	If (!(Get-ItemProperty $UpdatesPath  DeferFeatureUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365	}
-	Set-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365
-	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4 }
-	Set-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4
-	If (!(Get-ItemProperty $UpdatesPath  ActiveHoursEnd)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2	}
-	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2
-	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8 }
-	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8
+	If (!(Get-ItemProperty $UpdatesPath  BranchReadinessLevel)) { New-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20 }  -ErrorAction SilentlyContinue
+	Set-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20  -ErrorAction SilentlyContinue
+	If (!(Get-ItemProperty $UpdatesPath  DeferFeatureUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365	}  -ErrorAction SilentlyContinue
+	Set-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365  -ErrorAction SilentlyContinue
+	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4 } -ErrorAction SilentlyContinue
+	Set-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4  -ErrorAction SilentlyContinue
+	If (!(Get-ItemProperty $UpdatesPath  ActiveHoursEnd)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2	} -ErrorAction SilentlyContinue
+	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2  -ErrorAction SilentlyContinue
+	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8 } -ErrorAction SilentlyContinue
+	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8  -ErrorAction SilentlyContinue
 }
+
 Function InstallRTDProgs {
 	Write-Output "Installing Chocolatey"
 	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -2355,7 +2356,7 @@ Function SetPhotoViewerAssociation {
 	If (!(Test-Path "HKCR:")) {
 		New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 	}
-	ForEach-Object ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
+	ForEach-Object $type in @("Paint.Picture", "giffile", "jpegfile", "pngfile") {
 		New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
 		New-Item -Path $("HKCR:\$type\shell\open\command") | Out-Null
 		Set-ItemProperty -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043"
@@ -2697,7 +2698,7 @@ Function DebloatAll {
 		#"*Microsoft.WindowsStore*"
 	)
 
-	ForEach-Object ($Bloat in $Bloatware) {
+	ForEach-Object $Bloat in $Bloatware {
 		Get-AppxPackage -Name $Bloat| Remove-AppxPackage
 		Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $Bloat | Remove-AppxProvisionedPackage -Online
 		Write-Output "Trying to remove $Bloat."
