@@ -24,7 +24,7 @@
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #	
-#	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
+#	NOTE:	These terminal program(s) are written and documented to a very high degree. The reason for doing this is that
 #		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
 #		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
 #		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
