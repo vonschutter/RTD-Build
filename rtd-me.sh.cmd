@@ -292,8 +292,6 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	echo Please wait...
 	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
 	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
-	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\RTD-Software-Installer.exe -OutFile RTD-Software-Installer.exe
-	RTD-Software-Installer.exe
 	goto end
 
 
