@@ -291,7 +291,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	echo Fetching %_STAGE2FILE%...
 	echo Please wait...
 	powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
-	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
+	powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE% -log rtd-status.log
 	goto end
 
 
