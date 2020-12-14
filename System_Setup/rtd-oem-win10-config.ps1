@@ -54,16 +54,11 @@
 # Some prerequisites need to be met before the script is likely to run at all. 
 # These items are cared for in this section. 
 
-
-
 # By default windows users starting a scripr would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
-# if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-# {  
-#   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
-#   Start-Process powershell -Verb runAs -ArgumentList $arguments
-# }
+### Require administrator privileges ###
+	RequireAdmin
 
 
 
@@ -79,8 +74,7 @@
 # a statement means that it is ignored. 
 
 $tweaks = @(
-	### Require administrator privileges ###
-	"RequireAdmin",
+
 
 	### Create a recovery option if something serious would occur...
 	"CreateRestorePoint",
@@ -241,10 +235,10 @@ $tweaks = @(
 	# "EnableAudio",                # "DisableAudio",
 
 	### Unpinning ###
-	#"UnpinStartMenuTiles",
-	#"UnpinTaskbarIcons",
+	"UnpinStartMenuTiles",
+	"UnpinTaskbarIcons",
 
-	### Auxiliary Functions ###
+	Restart
 )
 
 
@@ -2614,15 +2608,13 @@ Function RequireAdmin {
 	}
 }
 
-# Wait for key press
 Function WaitForKey {
 	Write-Progress "Press any key to continue..."
 	[Console]::ReadKey($true) | Out-Null
 }
 
-# Restart computer
 Function Restart {
-	Write-Progress "Restarting..."
+	Write-Progress "Restarting Computer..."
 	Restart-Computer
 }
 
