@@ -61,7 +61,9 @@
 # By default windows users starting a scripr would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
-
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
+}
 
 
 
@@ -75,16 +77,26 @@
 # or off by adding or removing a pound sign "#" infront of each option you 
 # want to add or remove from the script behavior. A pound sign in front of
 # a statement means that it is ignored. 
+$BRANDING = "RTD"
 
 $tweaks = @(
-	### Require administrator privileges ###
+	###	Require administrator privileges
 	"RequireAdmin",
-	### Create a recovery option if something serious would occur...
+	### 	Create a recovery option in case of disaster
 	"CreateRestorePoint",
 	
-	### RTD Useful Software Additions to improve convenience and productivity
+	### 	Remove Extra Windows Apps and Sponsored Content
+	"DebloatAll",
+
+	###	Unpinning software titles
+	"UnpinStartMenuTiles",
+	"UnpinTaskbarIcons",
+
+	###	Install Software Managment
+	"InstallRTDProgs", 
+
+	###	OEM Software Tasks 
 	"RTDRegistryTweaks",
-	"InstallRTDProgs", #REQUIRED FOR OTHER PROGRAM INSTALLS!
 	"InsstallKVMSpiceTools"
 	"Install7Zip",
 	"InstallGameBundle",
@@ -96,11 +108,8 @@ $tweaks = @(
 	"InstallLibreOffice",
 	"InstallRTDImageBundle",
 
-	### Remove Extra Windows Apps and Sponsored Content
-	"DebloatAll",
-
-	### Privacy Tweaks: Improve the Privacy of Using Windows    ###
-	### Please unsderstand that this is no guarantee of privacy ###
+	###	Privacy Tweaks: Improve the Privacy of Using Windows 
+	###	Please unsderstand that this is no guarantee of privacy 
 	"DisableTelemetry",             # "EnableTelemetry",
 	"DisableWiFiSense",             # "EnableWiFiSense",
 	"DisableSmartScreen",           # "EnableSmartScreen",
@@ -119,7 +128,7 @@ $tweaks = @(
 	"DisableDiagTrack",             # "EnableDiagTrack",
 	"DisableWAPPush",               # "EnableWAPPush",
 
-	### Security Tweaks: these setings will improve the security profile of windows. ###
+	###	Security Hardening: to improve the security profile of Windows 
 	"SetUACLow",                    # "SetUACHigh",
 	# "EnableSharingMappedDrives",  # "DisableSharingMappedDrives",
 	"DisableAdminShares",           # "EnableAdminShares",
@@ -140,7 +149,7 @@ $tweaks = @(
 	#"EnableDotNetStrongCrypto",    # "DisableDotNetStrongCrypto",
 	"DisableMeltdownCompatFlag",    # "EnableMeltdownCompatFlag"    
 
-	### Service Tweaks ###
+	###	Service Optimizations 
 	"DisableUpdateMSRT",            # "EnableUpdateMSRT",
 	"DisableUpdateDriver",          # "EnableUpdateDriver",
 	"DisableUpdateRestart",         # "EnableUpdateRestart",
@@ -160,7 +169,7 @@ $tweaks = @(
 	"DisableSleepTimeout",          # "EnableSleepTimeout",
 	# "DisableFastStartup",         # "EnableFastStartup",
 
-	### UI Tweaks ###
+	###	UI End User Optimizations
 	"DisableActionCenter",          # "EnableActionCenter",
 	"EnableLockScreen",		# "DisableLockScreen",
 	"EnableLockScreenRS1",		# "DisableLockScreenRS1",
@@ -211,7 +220,7 @@ $tweaks = @(
 	# "DisableThumbnails",          # "EnableThumbnails",
 	# "DisableThumbsDB",            # "EnableThumbsDB",
 
-	### Application Tweaks ###
+	### Application Customizations 
         # "EnableOneDrive",
 	"UninstallMsftBloat",           # "InstallMsftBloat",
 	"UninstallThirdPartyBloat",     # "InstallThirdPartyBloat",
@@ -229,17 +238,13 @@ $tweaks = @(
 	"UninstallXPSPrinter",          # "InstallXPSPrinter",
 	"RemoveFaxPrinter"             # "AddFaxPrinter",
 
-	### Server Specific Tweaks ###
+	### Server Specific Customizations
 	# "HideServerManagerOnLogin",   # "ShowServerManagerOnLogin",
 	# "DisableShutdownTracker",     # "EnableShutdownTracker",
 	# "DisablePasswordPolicy",      # "EnablePasswordPolicy",
 	# "DisableCtrlAltDelLogin",     # "EnableCtrlAltDelLogin",
 	# "DisableIEEnhancedSecurity",  # "EnableIEEnhancedSecurity",
 	# "EnableAudio",                # "DisableAudio",
-
-	### Unpinning ###
-	"UnpinStartMenuTiles",
-	"UnpinTaskbarIcons"
 )
 
 
@@ -251,7 +256,7 @@ $tweaks = @(
 # ::::::::::::::                                          ::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-function Show-Choco-Menu {
+function OnlineInstallTask {
 	param(
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
@@ -262,9 +267,8 @@ function Show-Choco-Menu {
 		[string]$ChocoInstall
 	)
 
-	#Clear-Host
-	Write-Progress -Activity "-- Adding and Removing Software:" -CurrentOperation "$Title ..."
-	choco install $ChocoInstall -y -r
+	Write-Progress -Activity "-- $BRANDING OEM Software Tasks:" -CurrentOperation "$Title ..." -Status "Processing Software Deployment Instructions"
+	choco install $ChocoInstall -y -no-desktopshortcuts 
 }
 
 Function RTDRegistryTweaks {
@@ -284,10 +288,10 @@ Function RTDRegistryTweaks {
 }
 
 Function InstallRTDProgs {
-	Write-Progress -Activity "-- Installing Chocolatey" -Status "Processing"
-	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+	Write-Progress -Activity "-- Prerequisite Configuration" -CurrentOperation "Enabeling Software Management..." -Status "Core Setup..."
+	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco install chocolatey-core.extension -y
-	Write-Progress -Activity "-- Installing Chocolatey" -Status "Running O&O Shutup with Recommended Settings"
+	Write-Progress -Activity "-- Prerequisite Configuration" -CurrentOperation "Enabeling Software Management..." -Status "Running O&O Shutup with Recommended Settings"
 	Import-Module BitsTransfer
 	Start-BitsTransfer -Source "https://raw.githubusercontent.com/ChrisTitusTech/win10script/master/ooshutup10.cfg" -Destination ooshutup10.cfg
 	Start-BitsTransfer -Source "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -Destination OOSU10.exe
@@ -295,21 +299,21 @@ Function InstallRTDProgs {
 }
 
 Function InstallRTDImageBundle {
-	Show-Choco-Menu -Title "Installing RTD Image Bundle: Krita" -ChocoInstall "krita"
-	Show-Choco-Menu -Title "Installing RTD Image Bundle: Blender" -ChocoInstall "blender"
-	Show-Choco-Menu -Title "Installing RTD Image Bundle: GNU Image Manipulation Program" -ChocoInstall "gimp"
-	Show-Choco-Menu -Title "Installing RTD Image Bundle: Infranview Fast Image Viewer" -ChocoInstall "irfanview"
+	OnlineInstallTask -Title "Installing RTD Image Bundle: Krita" -ChocoInstall "krita"
+	OnlineInstallTask -Title "Installing RTD Image Bundle: Blender" -ChocoInstall "blender"
+	OnlineInstallTask -Title "Installing RTD Image Bundle: GNU Image Manipulation Program" -ChocoInstall "gimp"
+	OnlineInstallTask -Title "Installing RTD Image Bundle: Infranview Fast Image Viewer" -ChocoInstall "irfanview"
 }
 
 
 Function InstallPDFToolsBundle {
-	Show-Choco-Menu -Title "Installing PDF Tools: Adobe Reader" -ChocoInstall "adobereader"
-	#Show-Choco-Menu -Title "Installing PDF Tools: Foxit Reader" -ChocoInstall "foxitreader"
-	Show-Choco-Menu -Title "Installing PDF Tools: Cute PDF" -ChocoInstall "cutepdf"
+	OnlineInstallTask -Title "Installing PDF Tools: Adobe Reader" -ChocoInstall "adobereader"
+	#OnlineInstallTask -Title "Installing PDF Tools: Foxit Reader" -ChocoInstall "foxitreader"
+	OnlineInstallTask -Title "Installing PDF Tools: Cute PDF" -ChocoInstall "cutepdf"
 }
 
 Function InstallFirefox {
-	Show-Choco-Menu -Title "Installing Mozilla Firefox" -ChocoInstall "firefox"
+	OnlineInstallTask -Title "Installing Mozilla Firefox" -ChocoInstall "firefox"
 	# set Firefox as default...
 	$regKey      = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\{0}\UserChoice"
 	$regKeyFtp   = $regKey -f 'ftp'
@@ -321,7 +325,7 @@ Function InstallFirefox {
 }
 
 Function InstallBrave {
-	Show-Choco-Menu -Title "Installing Brave Browser" -ChocoInstall "brave"
+	OnlineInstallTask -Title "Installing Brave Browser" -ChocoInstall "brave"
 	# The brave browser always want to open a window and show you womething... lets get rid of that...
 	for ( $i = 0; $i -lt 100; $i++ ){
 		$systemBrowser = Get-Process | Where-Object { $_.ProcessName -eq "brave" }
@@ -333,35 +337,35 @@ Function InstallBrave {
 }
 
 Function Install7Zip {
-	Show-Choco-Menu -Title "Installing 7-Zip" -ChocoInstall "7zip"
+	OnlineInstallTask -Title "Installing 7-Zip" -ChocoInstall "7zip"
 }
 
 function InsstallKVMSpiceTools {
-	Show-Choco-Menu -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
-	Show-Choco-Menu -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
+	OnlineInstallTask -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
+	OnlineInstallTask -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
 }
 
 
 Function InstallGameBundle {
-	Show-Choco-Menu -Title "Installing Game Bundle: Steam" -ChocoInstall "steam"
-	Show-Choco-Menu -Title "Installing Game Bundle: Discord" -ChocoInstall "discord"
-	Show-Choco-Menu -Title "Installing Minecraft Laucher" -ChocoInstall "minecraft"
-	Show-Choco-Menu -Title "Installing 0AD Realtime Strategy Game" -ChocoInstall "0ad"
+	OnlineInstallTask -Title "Installing Game Bundle: Steam" -ChocoInstall "steam"
+	OnlineInstallTask -Title "Installing Game Bundle: Discord" -ChocoInstall "discord"
+	OnlineInstallTask -Title "Installing Minecraft Laucher" -ChocoInstall "minecraft"
+	OnlineInstallTask -Title "Installing 0AD Realtime Strategy Game" -ChocoInstall "0ad"
 }
 
 Function InstallVLC {
-	Show-Choco-Menu -Title "Installing VLC" -ChocoInstall "vlc"
+	OnlineInstallTask -Title "Installing VLC" -ChocoInstall "vlc"
 }
 
 Function InstallDeveloperToolsBundle {
-	Show-Choco-Menu -Title "Installing Developer Tools Bundle: VSCode" -ChocoInstall "vscode"
-	Show-Choco-Menu -Title "Installing Developer Tools Bundle: FileZilla FTP/SFTP file manager" -ChocoInstall "filezilla"
-	Show-Choco-Menu -Title "Installing Developer Tools Bundle: Putty" -ChocoInstall "putty"
-	Show-Choco-Menu -Title "Installing Developer Tools Bundle: Notepad++" -ChocoInstall "notepadplusplus"
+	OnlineInstallTask -Title "Installing Developer Tools Bundle: VSCode" -ChocoInstall "vscode"
+	OnlineInstallTask -Title "Installing Developer Tools Bundle: FileZilla FTP/SFTP file manager" -ChocoInstall "filezilla"
+	OnlineInstallTask -Title "Installing Developer Tools Bundle: Putty" -ChocoInstall "putty"
+	OnlineInstallTask -Title "Installing Developer Tools Bundle: Notepad++" -ChocoInstall "notepadplusplus"
 }
 
 Function InstallLibreOffice {
-	Show-Choco-Menu -Title "Installing LibreOffice" -ChocoInstall "libreoffice"
+	OnlineInstallTask -Title "Installing LibreOffice" -ChocoInstall "libreoffice"
 }
 
 Function ChangeDefaultApps {
@@ -1695,7 +1699,7 @@ Function AddENKeyboard {
 Function RemoveENKeyboard {
 	Write-Progress "Removing secondary en-US keyboard..."
 	$langs = Get-WinUserLanguageList
-	Set-WinUserLanguageList ($langs | ? {$_.LanguageTag -ne "en-US"}) -Force
+	Set-WinUserLanguageList ($langs | Where-Object {$_.LanguageTag -ne "en-US"}) -Force
 }
 
 # Enable NumLock after startup
@@ -2331,16 +2335,17 @@ Function InstallWindowsStore {
 # Disable Xbox features
 Function DisableXboxFeatures {
 	Write-Progress "Disabling Xbox features..."
-	Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
+	Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage -ErrorAction SilentlyContinue
 	Get-AppxPackage "Microsoft.XboxIdentityProvider" | Remove-AppxPackage -ErrorAction SilentlyContinue
-	Get-AppxPackage "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.XboxGameOverlay" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage
+	Get-AppxPackage "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage -ErrorAction SilentlyContinue
+	Get-AppxPackage "Microsoft.XboxGameOverlay" | Remove-AppxPackage -ErrorAction SilentlyContinue
+	Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage -ErrorAction SilentlyContinue
 	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
 	If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
 		New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" | Out-Null
 	}
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0
+	Clear-Host
 }
 
 # Enable Xbox features
@@ -2696,6 +2701,7 @@ Function WaitForKey {
 # Restart system
 Function RestartPC {
 	Write-Progress "Restarting Computer..."
+	Start-Sleep -s 10
 	Restart-Computer
 }
 
@@ -2793,7 +2799,7 @@ If ($args -And $args[0].ToLower() -eq "-preset") {
 If ($args) {
 	$tweaks = $args
 	If ($preset) {
-		$tweaks = Get-Content $preset -ErrorAction Stop | ForEach-Object { $_.Trim() } | Where { $_ -ne "" -and $_[0] -ne "#" }
+		$tweaks = Get-Content $preset -ErrorAction Stop | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" -and $_[0] -ne "#" }
 	}
 }
 
@@ -2801,4 +2807,9 @@ If ($args) {
 $tweaks | ForEach-Object { Invoke-Expression $_ } *>&1 | Out-File C:\setup.log
 
 ### Restart Computer when all changes are made  ###
-RestartPC
+If (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+	RestartPC
+	Exit
+}
+
+
