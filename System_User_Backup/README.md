@@ -21,7 +21,7 @@ It will aks if you want ot back up some usual options:
  11. All VirtualBox VMs 
  12. Teamviewer Configuration 
  13. Backup entire HOME folder
- 14. Backup All KVM Virtual Machines (requires admin assword)
+ 14. Backup All Virtual Machines (KVM)
 ~~~~
 
 Any option or options may be selected. The files will be encrypted and highly compressed to a destination of choice. 
