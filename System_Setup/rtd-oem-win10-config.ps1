@@ -59,11 +59,11 @@
 # By default windows users starting a scripr would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
-  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
-  Start-Process powershell -Verb runAs -ArgumentList $arguments
-}
+# if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+# {  
+#   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+#   Start-Process powershell -Verb runAs -ArgumentList $arguments
+# }
 
 
 
