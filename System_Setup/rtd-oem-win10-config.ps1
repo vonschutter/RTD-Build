@@ -239,7 +239,7 @@ $tweaks = @(
 
 	### Unpinning ###
 	"UnpinStartMenuTiles",
-	"UnpinTaskbarIcons",
+	"UnpinTaskbarIcons"
 
 	Restart
 )
