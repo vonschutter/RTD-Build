@@ -1,7 +1,7 @@
-# RTD OEM System Builder: 
+# RTD System Configurator: 
 ![RTD Builder Screenshot](Media_files/Scr2.png?raw=true "Executing the Script")
 
-The RTD OEM System builder is intended to facilitate adding optional software to a vanilla install of Ubuntu or Debian based distribution. The bootstrap script will identify Linux/Mac/BSD/windows versions and execute those configurations scripts if they are defined. The non Linux references are essentially empty in the bootstrap script, since most of the items intended for windows and Mac are proprietary and may not be distributed. 
+The RTD System Configurator intended to facilitate adding optional software and optimizing configuration of a vanilla install of Ubuntu, Debian (or derivatives), SUSE, Fedora, CentOS based distribution as well as Windows. The bootstrap script will identify Linux/Mac/BSD/Windows versions and execute those configurations scripts if they are defined. The non Linux or Windows references are essentially empty in the bootstrap script, due to lack of testing equipment. However, most of the software intended for Windows and Mac are proprietary and may not be distributed so only freely available software is added. Please keep in mind that this does not mean that the Open Source Software (OSS), or any of the free software in the Windows or linux repositories is less capable. You may well be able to do just about anything with OSS that you can do with proprietary software. Teh OSS does have one advantage though: it is peer reviewed and will unlikely come with built in back doors (intended or otherwise).   
 
 If a graphical environment is not detected, the RTD OEM System Builder will interpret this as it is being run on a server without a graphical environment and will offer to setup the productivity tools for that environment. 
 
