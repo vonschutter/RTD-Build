@@ -310,12 +310,17 @@ Function InstallPDFToolsBundle {
 
 Function InstallFirefox {
 	Show-Choco-Menu -Title "Installing Mozilla Firefox" -ChocoInstall "firefox"
+	# set Firefox as default...
+	$regKey      = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\{0}\UserChoice"
+	$regKeyFtp   = $regKey -f 'ftp'
+	$regKeyHttp  = $regKey -f 'http'
+	$regKeyHttps = $regKey -f 'https'
+	Set-ItemProperty $regKeyFtp   -name ProgId FirefoxURL
+	Set-ItemProperty $regKeyHttp  -name ProgId FirefoxURL
+	Set-ItemProperty $regKeyHttps -name ProgId FirefoxURL
 }
 
 Function InstallBrave {
-	# Invoke-WebRequest -Uri "https://brave-browser-downloads.s3.brave.com/latest/brave_installer-x64.exe" -OutFile $env:USERPROFILE\Downloads\brave.exe
-	# #Invoke-WebRequest -Uri "https://laptop-updates.brave.com/download/CHR253" -OutFile $env:USERPROFILE\Downloads\brave.exe
-	# ~/Downloads/brave.exe --install --silent --system-level
 	Show-Choco-Menu -Title "Installing Brave Browser" -ChocoInstall "brave"
 	# The brave browser always want to open a window and show you womething... lets get rid of that...
 	for ( $i = 0; $i -lt 100; $i++ ){
@@ -340,6 +345,8 @@ function InsstallKVMSpiceTools {
 Function InstallGameBundle {
 	Show-Choco-Menu -Title "Installing Game Bundle: Steam" -ChocoInstall "steam"
 	Show-Choco-Menu -Title "Installing Game Bundle: Discord" -ChocoInstall "discord"
+	Show-Choco-Menu -Title "Installing Minecraft Laucher" -ChocoInstall "minecraft"
+	Show-Choco-Menu -Title "Installing 0AD Realtime Strategy Game" -ChocoInstall "0ad"
 }
 
 Function InstallVLC {
