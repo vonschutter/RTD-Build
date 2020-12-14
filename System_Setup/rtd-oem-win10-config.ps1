@@ -88,6 +88,7 @@ $tweaks = @(
 	### RTD Useful Software Additions to improve convenience and productivity
 	"RTDRegistryTweaks",
 	"InstallRTDProgs", #REQUIRED FOR OTHER PROGRAM INSTALLS!
+	"InsstallKVMSpiceTools"
 	"Install7Zip",
 	"InstallGameBundle",
 	"InstallDeveloperToolsBundle",
@@ -322,13 +323,24 @@ Function InstallBrave {
 	# ~/Downloads/brave.exe --install --silent --system-level
 	Show-Choco-Menu -Title "Installing Brave Browser" -ChocoInstall "brave"
 	# The brave browser always want to open a window and show you womething... lets get rid of that...
-	$systemBrowser = Get-Process | Where-Object { $_.ProcessName -eq "Brave Browser" }
-	if ( $systemBrowser ) { $systemBrowser | ForEach-Object { $_.Kill() } }
+	for ( $i = 0; $i -lt 100; $i++ ){
+		$systemBrowser = Get-Process | Where-Object { $_.ProcessName -eq "brave" }
+		if ( $systemBrowser ) {
+		    $systemBrowser | ForEach-Object { $_.Kill() } 
+		    $i = 100
+		}
+	}
 }
 
 Function Install7Zip {
 	Show-Choco-Menu -Title "Installing 7-Zip" -ChocoInstall "7zip"
 }
+
+function InsstallKVMSpiceTools {
+	Show-Choco-Menu -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
+	Show-Choco-Menu -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
+}
+
 
 Function InstallGameBundle {
 	Show-Choco-Menu -Title "Installing Game Bundle: Steam" -ChocoInstall "steam"
