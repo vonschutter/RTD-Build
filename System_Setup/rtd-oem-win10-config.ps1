@@ -61,8 +61,7 @@
 # By default windows users starting a scripr would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
-### Require administrator privileges ###
-	RequireAdmin
+
 
 
 
@@ -78,7 +77,8 @@
 # a statement means that it is ignored. 
 
 $tweaks = @(
-
+	### Require administrator privileges ###
+	"RequireAdmin",
 	### Create a recovery option if something serious would occur...
 	"CreateRestorePoint",
 	
@@ -240,8 +240,6 @@ $tweaks = @(
 	### Unpinning ###
 	"UnpinStartMenuTiles",
 	"UnpinTaskbarIcons"
-
-	Restart
 )
 
 
@@ -2689,7 +2687,7 @@ Function WaitForKey {
 }
 
 # Restart system
-Function Restart {
+Function RestartPC {
 	Write-Progress "Restarting Computer..."
 	Restart-Computer
 }
@@ -2794,3 +2792,6 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach-Object { Invoke-Expression $_ } *>&1 | Out-File C:\setup.log
+
+### Restart Computer when all changes are made  ###
+RestartPC
