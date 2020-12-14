@@ -1,5 +1,5 @@
 # RTD System Configurator: 
-![RTD Builder Screenshot](Media_files/Scr2.png?raw=true "Executing the Script")
+![RTD Builder Screenshot](Media_files/header-time.jpg "Executing the Script")
 
 The RTD System Configurator intended to facilitate adding optional software and optimizing configuration of a vanilla install of Ubuntu, Debian (or derivatives), SUSE, Fedora, CentOS based distribution as well as Windows. The bootstrap script will identify Linux/Mac/BSD/Windows versions and execute those configurations scripts if they are defined. The non Linux or Windows references are essentially empty in the bootstrap script, due to lack of testing equipment. However, most of the software intended for Windows and Mac are proprietary and may not be distributed so only freely available software is added. Please keep in mind that this does not mean that the Open Source Software (OSS), or any of the free software in the Windows or linux repositories is less capable. You may well be able to do just about anything with OSS that you can do with proprietary software. Teh OSS does have one advantage though: it is peer reviewed and will unlikely come with built in back doors (intended or otherwise).   
 
