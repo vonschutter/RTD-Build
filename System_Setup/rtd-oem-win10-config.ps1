@@ -3,22 +3,25 @@
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# :: Author:			Stephan Schutter
+# :: Version: 			1.0
+# ::
 # :: Special Thanks to: 
-# :: 	Primary Author Source: https://github.com/Disassembler0/Win10-Initial-Setup-Script
-# :: 	Tweaked Source: https://gist.github.com/alirobe/7f3b34ad89a159e6daa1/
+# :: 	Primary Author Source: 	https://github.com/Disassembler0/Win10-Initial-Setup-Script
+# :: 	Tweaked Source: 	https://gist.github.com/alirobe/7f3b34ad89a159e6daa1/
+# ::
+# :: 	This Script Souce:	https://github.com/vonschutter/RTD-Build 
 # ::
 # :: Purpose: 	The purpose of the script is to:
 # ::		- Remove unnessesary software from Windows 10
-# ::		- Turn off unnessesary services (may be turned on again)
-# ::		- Add some useful software
+# ::		- Turn off unnessesary services and telemetry (may be turned on again)
+# ::		- Add some useful software (OSS and freeware)
+# ::		- Make som UI Tweaks for better usability		
 # ::		
 # ::		NOTE: Individual items may be turned on or off in the settings section of this script.
 # ::
-# :: Background: This system configuration and installation script was originally developed
-# :: 		for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
-# :: 		was to install and/or configure Ubuntu, Zorin, or Microsoft OS PC's. This OEM and store nolonger
-# :: 		exists as its owner has passed away. This script is shared in the hopes that
-# :: 		someone will find it usefull.
+# :: Background: This script is shared in the hopes that someone will find it usefull. To encourage sharing changes 
+# :: 		 back to the source this script is released under the GPL v3. (see source location for details)
 # ::
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -36,14 +39,15 @@
 #		
 # 
 #
-#	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
-#	to make the script more readable. Each function shall also be documented to the point of the obvious.
-#	Suggested function structure per google guidelines:
+#		Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
+#		to make the script more readable. Each function shall also be documented to the point of the obvious.
+#		Suggested function structure per google guidelines and as per the suggestions of 
+#		John Savill "PowerShell Master Class series":
 #
-#	function function_name {
-#		# Documentation and comments... 
-#		...code...
-#	}
+#		function function_name {
+#			# Documentation and comments... 
+#			...code...
+#		}
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
@@ -74,7 +78,6 @@
 # a statement means that it is ignored. 
 
 $tweaks = @(
-
 
 	### Create a recovery option if something serious would occur...
 	"CreateRestorePoint",
@@ -364,10 +367,13 @@ Function ChangeDefaultApps {
 
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::           Privacy Tweaks                 ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Privacy Tweaks
-###########################################################################
 
 # Disable Telemetry
 # Note: This tweak may cause Enterprise edition to stop receiving Windows updates.
@@ -711,10 +717,13 @@ Function EnableWAPPush {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::           Security Tweaks                ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Security Tweaks
-###########################################################################
 
 # Lower UAC level (disabling it completely would break apps)
 Function SetUACLow {
@@ -990,10 +999,15 @@ Function DisableMeltdownCompatFlag {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::        Service optimizations             ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Service Tweaks
-###########################################################################
+
+
 
 # Disable offering of Malicious Software Removal Tool through Windows Update
 Function DisableUpdateMSRT {
@@ -1290,10 +1304,62 @@ Function EnableFastStartup {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::          UI Optimizations                ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# UI Tweaks
-###########################################################################
+
+Function EnableDarkMode {
+	Write-Progress "Enabling Dark Mode"
+	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
+	New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
+	New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "0" -PropertyType "Dword"
+	New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "0" -PropertyType "Dword"
+}
+
+Function DisableDarkMode {
+	Write-Progress "Disabling Dark Mode"
+	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
+	New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
+	New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "1" -PropertyType "Dword"
+	New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "1" -PropertyType "Dword"
+}
+
+Function Stop-EdgePDF {
+	#Stops edge from taking over as the default .PDF viewer    
+	Write-Progress "Stopping Edge from taking over as the default .PDF viewer"
+	$NoPDF = "HKCR:\.pdf"
+	$NoProgids = "HKCR:\.pdf\OpenWithProgids"
+	$NoWithList = "HKCR:\.pdf\OpenWithList" 
+	If (!(Get-ItemProperty $NoPDF  NoOpenWith)) {
+	    New-ItemProperty $NoPDF NoOpenWith 
+	}        
+	If (!(Get-ItemProperty $NoPDF  NoStaticDefaultVerb)) {
+	    New-ItemProperty $NoPDF  NoStaticDefaultVerb 
+	}        
+	If (!(Get-ItemProperty $NoProgids  NoOpenWith)) {
+	    New-ItemProperty $NoProgids  NoOpenWith 
+	}        
+	If (!(Get-ItemProperty $NoProgids  NoStaticDefaultVerb)) {
+	    New-ItemProperty $NoProgids  NoStaticDefaultVerb 
+	}        
+	If (!(Get-ItemProperty $NoWithList  NoOpenWith)) {
+	    New-ItemProperty $NoWithList  NoOpenWith
+	}        
+	If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
+	    New-ItemProperty $NoWithList  NoStaticDefaultVerb 
+	}
+		
+	#Appends an underscore '_' to the Registry key for Edge
+	$Edge = "HKCR:\AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_"
+	If (Test-Path $Edge) {
+	    Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_ 
+	}
+    }
+
 
 # Disable Action Center
 Function DisableActionCenter {
@@ -1657,10 +1723,6 @@ Function DisableNumlock {
 
 
 
-###########################################################################
-# Explorer UI Tweaks
-###########################################################################
-
 # Show known file extensions
 Function ShowKnownExtensions {
 	Write-Progress "Showing known file extensions..."
@@ -2013,9 +2075,17 @@ Function EnableThumbsDB {
 
 
 
-###########################################################################
-# Application Tweaks
-###########################################################################
+
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::     Applicaiton Optimizations            ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
 
 # Disable OneDrive
 Function DisableOneDrive {
@@ -2066,9 +2136,8 @@ Function InstallOneDrive {
 	Start-Process $onedrive -NoNewWindow
 }
 
-###########################################################################
+
 # Uninstall default Microsoft applications
-###########################################################################
 Function UninstallMsftBloat {
 	$Bloatware = @(
 		"Microsoft.3DBuilder" 
@@ -2112,9 +2181,8 @@ Function UninstallMsftBloat {
 	}
 }
 
-###########################################################################
+
 # Install default Microsoft applications
-###########################################################################
 Function InstallMsftBloat {
 	$Bloatware = @(
 		"Microsoft.3DBuilder" 
@@ -2160,13 +2228,9 @@ Function InstallMsftBloat {
 		Get-AppxPackage -AllUsers "$Bloat" | ForEach-Object {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
 	}
 }
-# In case you have removed them for good, you can try to restore the files using installation medium as follows
-# New-Item C:\Mnt -Type Directory | Out-Null
-# dism /Mount-Image /ImageFile:D:\sources\install.wim /index:1 /ReadOnly /MountDir:C:\Mnt
-# robocopy /S /SEC /R:0 "C:\Mnt\Program Files\WindowsApps" "C:\Program Files\WindowsApps"
-# dism /Unmount-Image /Discard /MountDir:C:\Mnt
-# Remove-Item -Path C:\Mnt -Recurse
 
+
+# Remove 3rd party and sponsor bloatware
 function UninstallThirdPartyBloat {
 	$Bloatware = @(
 		"2414FC7A.Viber" 
@@ -2205,7 +2269,8 @@ function UninstallThirdPartyBloat {
 	}
 }
 
-# Install default third party applications
+
+# Install 3rd party and sponsor bloatware
 Function InstallThirdPartyBloat {
 	$Bloatware = @(
 		"2414FC7A.Viber" 
@@ -2470,10 +2535,13 @@ Function AddFaxPrinter {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::        Server Optimizations              ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Server specific Tweaks
-###########################################################################
 
 # Hide Server Manager after login
 Function HideServerManagerOnLogin {
@@ -2566,10 +2634,13 @@ Function DisableAudio {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::          UI Optimizations                ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Unpinning
-###########################################################################
 
 # Unpin all Start Menu tiles - Note: This function has no counterpart. You have to pin the tiles back manually.
 Function UnpinStartMenuTiles {
@@ -2595,12 +2666,15 @@ Function UnpinTaskbarIcons {
 }
 
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script Functions                ::::::::::::::::::::::
+# ::::::::::::::      Script Level Management             ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-# Auxiliary Functions
-###########################################################################
 
-# Relaunch the script with administrator privileges
+# Relaunch the script with administrator privileges if no admin access
 Function RequireAdmin {
 	If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
 		Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
@@ -2608,67 +2682,20 @@ Function RequireAdmin {
 	}
 }
 
+# read -p "" equivalint
 Function WaitForKey {
 	Write-Progress "Press any key to continue..."
 	[Console]::ReadKey($true) | Out-Null
 }
 
+# Restart system
 Function Restart {
 	Write-Progress "Restarting Computer..."
 	Restart-Computer
 }
 
 
-Function EnableDarkMode {
-	Write-Progress "Enabling Dark Mode"
-	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
-	New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
-	New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "0" -PropertyType "Dword"
-	New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "0" -PropertyType "Dword"
-}
-
-Function DisableDarkMode {
-	Write-Progress "Disabling Dark Mode"
-	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
-	New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" -Name "Personalize" –Force
-	New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "1" -PropertyType "Dword"
-	New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value "1" -PropertyType "Dword"
-}
-
-
-Function Stop-EdgePDF {
-    
-    #Stops edge from taking over as the default .PDF viewer    
-    Write-Progress "Stopping Edge from taking over as the default .PDF viewer"
-    $NoPDF = "HKCR:\.pdf"
-    $NoProgids = "HKCR:\.pdf\OpenWithProgids"
-    $NoWithList = "HKCR:\.pdf\OpenWithList" 
-    If (!(Get-ItemProperty $NoPDF  NoOpenWith)) {
-        New-ItemProperty $NoPDF NoOpenWith 
-    }        
-    If (!(Get-ItemProperty $NoPDF  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoPDF  NoStaticDefaultVerb 
-    }        
-    If (!(Get-ItemProperty $NoProgids  NoOpenWith)) {
-        New-ItemProperty $NoProgids  NoOpenWith 
-    }        
-    If (!(Get-ItemProperty $NoProgids  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoProgids  NoStaticDefaultVerb 
-    }        
-    If (!(Get-ItemProperty $NoWithList  NoOpenWith)) {
-        New-ItemProperty $NoWithList  NoOpenWith
-    }        
-    If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoWithList  NoStaticDefaultVerb 
-    }
-            
-    #Appends an underscore '_' to the Registry key for Edge
-    $Edge = "HKCR:\AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_"
-    If (Test-Path $Edge) {
-        Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_ 
-    }
-}
-
+# Create restore point such that changes may be rolled back
 Function CreateRestorePoint {
   Write-Progress "Creating Restore Point incase something bad happens"
   Enable-ComputerRestore -Drive "C:\"
@@ -2676,9 +2703,7 @@ Function CreateRestorePoint {
 }
 
 Function DebloatAll {
-
 	$Bloatware = @(
-
 		#Unnecessary Windows 10 AppX Apps
 		"Microsoft.BingNews"
 		"Microsoft.GetHelp"
@@ -2742,9 +2767,14 @@ Function DebloatAll {
 	}
 }
 
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# ::  ***             Executive              ***      ::
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::          Script EXECUTIVE                ::::::::::::::::::::::
+# ::::::::::::::        Flow and EXE controll             ::::::::::::::::::::::
+# ::::::::::::::                                          ::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 
 # Normalize path to preset file
 $preset = ""
