@@ -7,13 +7,11 @@ If a graphical environment is not detected, the RTD OEM System Builder will inte
 
 ![RTD Builder Screenshot 2](Media_files/Scr-13-43-45.png?raw=true "Executing the Script")
 
-As promised, the rtd-me.sh.cmd script will run under windows as well. Simply download it and double click on it. Please note that at this time the windows functionality i less extensive. However, the script will optimize Windows by removing bloatware and turning off services that most do not use to enhance both performance ad security. 
+As promised, the rtd-me.sh.cmd script will run under windows as well. Simply download it and double click on it. Please NOTE that at this time the windows functionality is less extensive. However, the script will optimize Windows by removing bloatware (Sponsored Software) and turning off services that most do not use to enhance both performance ad security. Several useful and fun software titles are automatically added. The windows changes are made with PowerShell. 
 
-![RTD Builder Screenshot 2](Media_files/Scr10.png?raw=true "Executing the Script in Windows")
+![RTD Builder Screenshot 2](Media_files/Scr11.png?raw=true "Executing the Script in Windows")
 
 # RTD-Build
 
-Here you will find some scripts for windows and Linux that I have created and/or modified over the years. I have added them here simply to share in the hopes that someone will find something useful. 
-
-It would make me happy if any modification are shared back. 
+It would make me happy if any modification are shared back. Please read the license file for details. 
 
