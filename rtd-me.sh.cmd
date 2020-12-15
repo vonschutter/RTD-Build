@@ -219,8 +219,10 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	::
 	ECHO Welcome to %COMSPEC%
 	ECHO This is a windows script!
-	:: setlocal &  pushd %~dp0
+	setlocal &  pushd %~dp0
 	:: %debug%
+	color 17
+	title RTD OEM Launcher
 
 :SETINGS
 	::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -247,9 +249,9 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	:: In this case it is easier to manage a straight table than a for loop or array:
 
 	:: DOS Based versions of Windows:
-	:: ver | find "4.0" > nul && goto CMD1 	rem Windows 95
-	:: ver | find "4.10" > nul && goto CMD1 rem Windows 98
-	:: ver | find "4.90" > nul && goto CMD1	rem Windows ME
+	ver | find "4.0" > nul && goto BAT1 	rem Windows 95
+	ver | find "4.10" > nul && goto BAT1	rem Windows 98
+	ver | find "4.90" > nul && goto BAT1	rem Windows ME
 
 	:: Windows 32 and 64 Bit versions:
 	ver | find "NT 4.0" > nul && call :CMD1 Windows NT 4.0
@@ -298,16 +300,23 @@ echo			-	RTD System System Managment Bootstrap Script      -
 
 
 :CMD1
-	:: Pre windows 7 instruction go here (except vista)...
+	:: Pre windows 7 instruction go here...
 	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to
 	:: fetch a script over the internet and execute it.
-
 	echo Detected %* ...
 	echo executing PRE Windows 7 instructions...
 
 	goto end
 
 
+:BAT1
+	:: DOS Based instructions go here ...
+	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to
+	:: fetch a script over the internet and execute it.
+	echo Detected an ancient Micorsoft OS...
+	echo executing DOS Based instructions...
+
+	goto END
 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -338,4 +347,4 @@ goto eof
 
 
 :end
-:eof
+:EOF
