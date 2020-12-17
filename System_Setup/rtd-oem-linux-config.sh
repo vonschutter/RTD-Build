@@ -107,15 +107,7 @@
 # rtd software recipie book by rtd-me.sh, or on a RTD OEM system where these components would have been 
 # downloaded by the preseed or kickstart process as part of the install.
 
-if  [[ -f /opt/rtd/scripts/_rtd_functions ]]; then 
-	source /opt/rtd/scripts/_rtd_functions
-else 
-        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
-        echo -e $YELLOW " " $ENDCOLOR
-        echo -e $YELLOW "Cannot ensure that the correct functionality is available" $ENDCOLOR
-        echo -e $YELLOW "Quiting rather than cause potential damage..." $ENDCOLOR
-        exit 1
-fi
+
 
 
 
@@ -160,6 +152,7 @@ option_22="Steam Gaming Platform"
 option_23="Install the Microsoft Windows subsystem"
 option_24="Vivaldi Web Browser"
 option_25="Brave Security Enhanced Browser"
+option_26="Remove all non-western (latin) fonts"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -205,6 +198,7 @@ function choices_graphical () {
 			$zstatus "$option_23"
 			$zstatus "$option_24"
 			$zstatus "$option_25"
+			$zstatus "$option_26"
 			)
 	choices=$("${cmd[@]}" "${options[@]}" )
 }
@@ -215,88 +209,41 @@ function choices_graphical () {
 # Function to do what the choices instruct. We read the output from 
 # the choices and execute commands that accomplish the task requested. 
 function do_instructions_from_choices (){
+	IFS_SAV=$IFS
         IFS=$','
 	for choice in $choices
 	do
 		IFS=$' '
 		case $choice in
-		"$option_1")
-		add_software_task recipie_OEM_config 
-		;;
-		"$option_2")
-		add_software_task recipie_wps_office
-		;;
-		"$option_3")	
-		add_software_task recipie_developer_software
-		;;
-		"$option_4")
-		add_software_task recipie_compression_tools
-		;;
-		"$option_5")
-		add_software_task recipie_games
-		;;
-		"$option_6")
-		add_software_task recipie_admin_tools
-		;;
-		"$option_7")
-		add_software_task recipie_java 
-		;;
-		"$option_8")
-		add_software_task recipie_bleachbit
-		;;
-		"$option_9")
-		add_software_task recipie_codecs
-		;;
-		"$option_10")
-		add_software_task recipie_vlc
-		;;
-		"$option_11")
-		add_software_task recipie_anydesk
-		;;
-		"$option_12")
-		add_software_task recipie_google_chrome
-		;;
-		"$option_13")
-		add_software_task recipie_teamviewer
-		;;
-		"$option_14")
-		add_software_task recipie_skype
-		;;
-		"$option_15")
-		add_software_task recipie_mega.nz
-		;;
-		"$option_16")
-		add_software_task recipie_dropbox
-		;;
-		"$option_17")
-		add_software_task recipie_secure_communication
-		;;
-		"$option_18")
-		add_software_task recipie_video_editing 
-		;;
-		"$option_19")
-		add_software_task recipie_media_streamers	
-		;;
-		"$option_20")
-		add_software_task recipie_audio_tools
-		;;
-		"$option_21")
-		add_software_task recipie_virtualbox
-		;;
-		"$option_22")
-		add_software_task recipie_steam 
-		;;
-		"$option_23")
-		add_software_task recipie_wine 
-		;;
-		"$option_24")
-		add_software_task recipie_vivaldi
-		;;
-		"$option_25")
-		add_software_task recipie_brave
-		;;
+		"$option_1")	add_software_task recipie_OEM_config ;;
+		"$option_2")	add_software_task recipie_wps_office ;;
+		"$option_3")	add_software_task recipie_developer_software ;;
+		"$option_4")	add_software_task recipie_compression_tools ;;
+		"$option_5")	add_software_task recipie_games	;;
+		"$option_6")	add_software_task recipie_admin_tools ;;
+		"$option_7")	add_software_task recipie_java ;;
+		"$option_8")	add_software_task recipie_bleachbit ;;
+		"$option_9")	add_software_task recipie_codecs ;;
+		"$option_10")	add_software_task recipie_vlc ;;
+		"$option_11")	add_software_task recipie_anydesk ;;
+		"$option_12")	add_software_task recipie_google_chrome	;;
+		"$option_13")	add_software_task recipie_teamviewer ;;
+		"$option_14")	add_software_task recipie_skype	;;
+		"$option_15")	add_software_task recipie_mega.nz ;;
+		"$option_16")	add_software_task recipie_dropbox ;;
+		"$option_17")	add_software_task recipie_secure_communication ;;
+		"$option_18")	add_software_task recipie_video_editing ;;
+		"$option_19")	add_software_task recipie_media_streamers ;;
+		"$option_20")	add_software_task recipie_audio_tools ;;
+		"$option_21")	add_software_task recipie_virtualbox ;;
+		"$option_22")	add_software_task recipie_steam ;;
+		"$option_23")	add_software_task recipie_wine ;;
+		"$option_24")	add_software_task recipie_vivaldi ;;
+		"$option_25")	add_software_task recipie_brave	;;
+		"$option_26")	rtd_oem_remove_non_western_latin_fonts ;;
 		esac
-	done  
+	done
+	IFS=$IFS_SAV
 }
 
 
@@ -311,39 +258,45 @@ function do_instructions_from_choices (){
 
 # Ensure that this script is run with administrative priveledges such that it may
 # alter system wide configuration. 
-ensure_admin
-PS_SAV=PS1
-PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
-
-rtd_wait_for_internet_availability
-rtd_oem_reset_default_environment_config
-
-
-# Check that the relevant software maintenance system is available and ready, 
-# and if it is not wait. When it is OK continue and ensure all is up to date. 
-SofwareManagmentAvailabilityCHK
-up2date
-
-
-
-if [[ -z $DISPLAY ]]; then 
-	echo "No X server at \$DISPLAY [$DISPLAY]" >&2
-    	check_dependencies whiptail
-	check_dependencies newt
-	rtd_setup_choices_term_fallback
+# ensure_admin
+if [[ ! $UID -eq 0 ]]; then
+	echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
+	sudo bash $0 $*
 else
-	check_dependencies zenity
-	choices_graphical 
-	do_instructions_from_choices
-	zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
-		if [ $? = 0 ];
-	      	then
-		  echo "OK Rebooting."
-		  reboot
-		fi
+	PS_SAV=PS1
+	PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
+
+	if  [[ -f /opt/rtd/scripts/_rtd_library ]]; then 
+		source /opt/rtd/scripts/_rtd_library
+	else 
+		echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
+		echo -e $YELLOW " " $ENDCOLOR
+		echo -e $YELLOW "Cannot ensure that the correct functionality is available" $ENDCOLOR
+		echo -e $YELLOW "Quiting rather than cause potential damage..." $ENDCOLOR
+		exit 1
+	fi
+
+	rtd_wait_for_internet_availability
+	rtd_oem_reset_default_environment_config
+	SofwareManagmentAvailabilityCHK
+	up2date
+
+	if [[ -z $DISPLAY ]]; then 
+		echo "No X server at \$DISPLAY [$DISPLAY]" >&2
+		check_dependencies dialog
+		rtd_setup_choices_term_fallback
+	else
+		check_dependencies zenity
+		choices_graphical
+		do_instructions_from_choices
+		zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
+			if [ $? = 0 ];
+			then
+			echo "OK Rebooting."
+			reboot
+			fi
+	fi
 fi
-
-
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
