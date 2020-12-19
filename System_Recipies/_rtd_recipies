@@ -843,10 +843,11 @@ recipie_set_gnome_wallpaper (){
 rtd_oem_reseal () {
 
 	if cat /etc/os-release |grep ubuntu ; then
-		InstallSoftwareFromRepo oem-config
-		oem-config
-	elif cat /etc/os-release |grep debian ; then
-		echo "I dont know of any OEM configuration for Debian"
+		InstallSoftwareFromRepo oem-config-gtk
+		oem-config-prepare
+	elif cat /etc/os-release |grep kubuntu ; then
+		InstallSoftwareFromRepo oem-config-kde
+		oem-config-prepare
 	elif cat /etc/os-release |grep suse ; then
 		echo "I dont know of any OEM configuration for SuSE"
 	elif cat /etc/os-release |grep fedora ; then

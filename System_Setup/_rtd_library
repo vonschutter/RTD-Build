@@ -243,7 +243,9 @@ rtd_oem_remove_non_western_latin_fonts ()
 # The function will not return any sucess or failure codes. It will do its best and exit.
 # End of documentation
 
-	font_list="fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lklug-sinhala fonts-lohit-guru fonts-guru fonts-nanum fonts-noto-cjk fonts-takao-pgothic fonts-tibetan-machine fonts-guru-extra fonts-lao fonts-sil-padauk fonts-sil-abyssinica fonts-tlwg-* fonts-beng fonts-beng-extra fonts-deva fonts-deva-extra fonts-gubbi fonts-gujr fonts-gujr-extra fonts-kalapi fonts-knda fonts-lohit-* fonts-noto-* fonts-orya* fonts-pagul fonts-sahadeva fonts-samyak-* fonts-sarai fonts-smc fonts-smc-* fonts-taml fonts-telu fonts-telu-extra"
+	font_list="fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lklug-sinhala fonts-lohit-guru fonts-guru fonts-nanum fonts-noto-cjk fonts-takao-pgothic fonts-tibetan-machine fonts-guru-extra \
+		fonts-lao fonts-sil-padauk fonts-sil-abyssinica fonts-tlwg-* fonts-beng fonts-beng-extra fonts-deva fonts-deva-extra fonts-gubbi fonts-gujr fonts-gujr-extra fonts-kalapi fonts-knda \
+		fonts-lohit-* fonts-noto-* fonts-orya* fonts-pagul fonts-sahadeva fonts-samyak-* fonts-sarai fonts-smc fonts-smc-* fonts-taml fonts-telu fonts-telu-extra"
 	echo "Attempting to remove non-western fonts..."
 	count=0
 	for i in $font_list ; do 
@@ -275,20 +277,20 @@ rtd_oem_remove_software ()
 
 	if [[ $(echo $OSTYPE |grep "linux") ]]; then
 		echo "Trying to remove package $*"
-		if hash pkcon 2>/dev/null; then
-			pkcon remove $* -y --autoremove
+		if hash dnf 2>/dev/null; then
+			dnf -y remove $*
 			return $?
 		elif hash yum 2>/dev/null; then
 			yum -y remove $*
 			return $?
-		elif hash dnf 2>/dev/null; then
-			dnf -y remove $*
+		elif hash zypper 2>/dev/null; then
+			zypper -y remove $*
 			return $?
 		elif hash apt 2>/dev/null; then
 			apt-get -y remove $* && apt -y autoremove
 			return $?
-		elif hash zypper 2>/dev/null; then
-			zypper -y remove $*
+		elif hash pkcon 2>/dev/null; then
+			pkcon remove $* -y --autoremove
 			return $?
 		else
 			echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
