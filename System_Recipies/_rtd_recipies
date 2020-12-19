@@ -135,6 +135,8 @@ recipie_baseapps (){
 			do
 			     InstallSoftwareFromRepo $i
 			done
+			check_dependencies wget
+			wget https://download.teamviewer.com/download/linux/teamviewer_amd64.tar.xz -P /opt/rtd/cache/
 			
 }
 
@@ -150,38 +152,54 @@ recipie_brave () {
 			echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
 			apt update
 			apt install brave-browser -y
-
-		fi
-		if cat "/etc/os-release" | grep "fedora" ; then
-			dnf install dnf-plugins-core
+			return $?
+		elif cat "/etc/os-release" | grep "fedora" ; then
+			dnf install dnf-plugins-core -y
 			dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
 			rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-			dnf install brave-browser
-		fi
-		if  cat "/etc/os-release" | grep "suse" ; then
-			zypper install curl
+			dnf install brave-browser -y
+			return $?
+		elif  cat "/etc/os-release" | grep "suse" ; then
+			zypper install curl -y
 			rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
 			zypper addrepo https://brave-browser-rpm-release.s3.brave.com/x86_64/ brave-browser
-			zypper install brave-browser
+			zypper install brave-browser -y
+			return $?
+		else 
+			echo "${FUNCNAME[0]}: Neither debian, fedora, or suse base distros could be found; NOT installing brave."
+			return 1
 		fi
 }
 
 
 
 recipie_vivaldi (){
-		# This function uses the RTD function "dl" to download a distribution speciffic package directly
-		# from the vendors website. It will work until the vendor removes the exact file... 
-		echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
+		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
+		# # from the vendors website. It will work until the vendor removes the exact file... 
+		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
+		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
 		if cat "/etc/os-release" | grep "debian" ; then
-			dl https://downloads.vivaldi.com/stable/vivaldi-stable_2.11.1811.33-1_amd64.deb
-		fi
-		if cat "/etc/os-release" | grep "fedora" ; then
-			dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
-		fi
-		if  cat "/etc/os-release" | grep "suse" ; then
-			dl https://downloads.vivaldi.com/stable/vivaldi-stable-2.11.1811.33-1.x86_64.rpm
+			apt -y install wget gnupg2 software-properties-common
+			wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
+			echo 'deb https://repo.vivaldi.com/archive/deb/ stable main' | sudo tee /etc/apt/sources.list.d/vivaldi.list
+			apt update
+			apt install vivaldi-stable -y
+			return $?
+		elif cat "/etc/os-release" | grep "fedora" ; then
+			dnf install dnf-utils -y
+			dnf config-manager --add-repo https://repo.vivaldi.com/archive/vivaldi-fedora.repo
+			dnf install vivaldi-stable -y
+			return $?
+		elif  cat "/etc/os-release" | grep "suse" ; then
+			zypper install curl
+			dl https://downloads.vivaldi.com/stable/vivaldi-stable-3.5.2115.81-1.x86_64.rpm 2>>$_ERRLOGFILE
+			return $?
+		else 
+			echo "${FUNCNAME[0]}: Neither debian, fedora, or suse base distros could be found; NOT installing vivaldi."
+			return 1
 		fi
 }
+
 
 recipie_wine (){
 			InstallSoftwareFromRepo wine
@@ -368,12 +386,12 @@ recipie_admin_tools (){
 recipie_java (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
-	        	# Add the Oracle Java repository and install the software. 
-    	    		add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
-     	   		apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-    	    		echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
-    	    		apt install -y oracle-java12-installer    1>>$_LOGFILE 2>>$_ERRLOGFILE
-   	     		apt install -y oracle-java12-set-default  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# Add the Oracle Java repository and install the software. 
+			add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
+			apt install -y oracle-java12-installer    1>>$_LOGFILE 2>>$_ERRLOGFILE
+			apt install -y oracle-java12-set-default  1>>$_LOGFILE 2>>$_ERRLOGFILE
 }
 
 
@@ -550,12 +568,12 @@ recipie_OEM_config (){
 			rtd_oem_check_splash () {
 				if -f $1 ; then 
 					if cat $1 |grep "-desktop" ; then
-						echo 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'>> /etc/default/grub
-						InstallSoftwareFromRepo splash
+						InstallSoftwareFromRepo splash && echo 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'>> /etc/default/grub
 						update-grub
 					fi
 				fi
 			}
+			# If this system was built using the RTD process and is debian based, use instructions in said file.
 			rtd_oem_check_splash /opt/rtd/log/preseed.cfg
 
 			#Tune to virtual machine guest or tune according to hardware type::

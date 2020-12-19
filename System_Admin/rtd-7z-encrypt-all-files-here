@@ -43,7 +43,8 @@
 # Simple compression logic: 7za a -t7z $line.7z $line
 # To change all filename to have whitespace replaced with _: list=`ls | sed -e 's/ /\\\\ /g'`
 # Alternatively use: IFS=$(echo -en "\n\b") Here IFS is altered to not consider a whitespace as a separator.
-
+# To see all options type "man 7z"
+# or go to: https://www.mankier.com/1/7z#
 
 ###########################################################################
 ##                                                                       ##
@@ -85,7 +86,7 @@ SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
   for line in $(ls -I "*.7z")
    do
-    7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on -mhe=on -p$passtoken $line.7z $line
+    7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on -v24m -p$passtoken $line.7z $line
    done
    IFS=$SAVEIFS
 echo Created the following encrypted files:

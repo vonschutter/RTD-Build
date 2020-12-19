@@ -285,7 +285,7 @@ rtd_oem_remove_software ()
 			dnf -y remove $*
 			return $?
 		elif hash apt 2>/dev/null; then
-			apt-get -y --ignore-missing remove $* && apt -y autoremove
+			apt-get -y remove $* && apt -y autoremove
 			return $?
 		elif hash zypper 2>/dev/null; then
 			zypper -y remove $*
