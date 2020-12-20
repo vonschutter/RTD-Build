@@ -70,37 +70,36 @@ source /opt/rtd/scripts/_rtd_library
 # don't fail. Here IFS is altered to not consider a whitespace as a separator.
 
 [ "$DIR" == "" ] && echo usage...
- 
+
+# Attempting to deal with filenemes with spaces in them... 
+# Please excuse all the code for a relatively simple task.
 OLDIFS=$IFS
 IFS=$'\n'
-fileArray=($(ls -I $@))
+fileArray=($(ls $@))
 IFS=$OLDIFS
 tLen=${#fileArray[@]}
 
 clear
-echo -e "$colorcircle"
 echo -e  "Hello $YELLOW $USER $ENDCOLOR ... I am going to compress $YELLOW $tLen $ENDCOLOR files: "
-for (( i=0; i<${tLen}; i++ ));
-do
-	echo -e $GREEN "${fileArray[$i]}	$ENDCOLOR"
-done
+for (( i=0; i<${tLen}; i++ )); do echo -e $GREEN "${fileArray[$i]}        $ENDCOLOR"  ; done
 
 echo  "To cancel this, just close the terminal or press "CRTL C"."
 echo " "
 read -p "Press the [ENTER] key to continue..."
-
 echo -e "☕ Please be patient as lots of data may take time to compress..."
+
 for (( i=0; i<${tLen}; i++ ));
 do
-  7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on "${fileArray[$i]}".7z "${fileArray[$i]}"
+	7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on "${fileArray[$i]}".7z "${fileArray[$i]}"
 done
 
 echo "Created the following archive(s) UN-encrypted:"
 echo " FILENAME         STATUS"
-for (( i=0; i<${tLen}; i++ )); do 
-        [[ -e "${fileArray[$i]}".7z ]] && echo -e "$GREEN Confirmed     $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR" || echo -e "$RED Failed!    $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR"
+for (( i=0; i<${tLen}; i++ )); do
+	[[ -e "${fileArray[$i]}".7z ]] && echo -e "$GREEN Confirmed     $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR" || echo -e "$RED Failed!    $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR"
 done
 echo "Please review the output above to review all the progress ⏫"
+
 
 
 
