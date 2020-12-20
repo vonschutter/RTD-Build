@@ -52,25 +52,10 @@
 ##                                                                       ##
 ###########################################################################
 #
-# Set colors for prompting on screen.
+DIR="$*"
 source /opt/rtd/scripts/_rtd_library
+ 
 
-# Ask for encryption phrase and store it temporarily.
-clear
-echo -e "
-Hello $YELLOW $USER $ENDCOLOR ... I am going to compress $GREEN $@ $ENDCOLOR
-To cancel this, just close the terminal or press "CRTL C".
-"
-read -p "Press the [ENTER] key to continue..."
-echo "
-
-To encrypt the content you have to give me a phrase to encrypt it with.
-This can be anything in one long word, but never forget it!
-"
-
-echo -e $YELLOW
-read -sp 'Enter encryption phrase: ' passtoken
-echo -e $ENDCOLOR
 
 ###########################################################################
 ##                                                                       ##
@@ -78,22 +63,41 @@ echo -e $ENDCOLOR
 ##                                                                       ##
 ###########################################################################
 #
-# List everything in the current folder and cpmpress each item.
 # And remember to handle or replace white spaces with underscore so the shell commands
 # don't fail. Here IFS is altered to not consider a whitespace as a separator.
 
-echo "☕ Please be patient, Large sets of files may take serious time..."
+[ "$DIR" == "" ] && echo "Usage: rtd-7z-this [filename] [filename filename2] [*.ext]" ; exit 1
 
-  for line in $( echo $* )
-   do
-    7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken $line.7z $line
-   done
+# Attempting to deal with filenemes with spaces in them... 
+# Please excuse all the code for a relatively simple task.
+OLDIFS=$IFS
+IFS=$'\n'
+fileArray=($(ls $@))
+IFS=$OLDIFS
+tLen=${#fileArray[@]}
 
-echo "Created the following archive(s) encrypted:"
-echo " FILENAME		STATUS"
-for d in $( echo $@ ); do 
-	[[ -e $d.7z ]] && echo -e "$GREEN Confirmed	$ENDCOLOR: $YELLOW $d.z7 $ENDCOLOR" || echo -e "$RED Failed!	$ENDCOLOR: $YELLOW $d.z7 $ENDCOLOR"
+clear
+echo -e  "Hello $YELLOW $USER $ENDCOLOR ... I am going to compress $YELLOW $tLen $ENDCOLOR files: "
+for (( i=0; i<${tLen}; i++ )); do echo -e $GREEN "${fileArray[$i]}        $ENDCOLOR"  ; done
+
+echo  "To cancel this, just close the terminal or press [CRTL + C]."
+read -p "Press the [ENTER] key to continue..."
+echo -e "To encrypt the content you have to give me a phrase to encrypt it with. \n This can be anything in one long word, but never forget it!"
+echo -e $YELLOW
+read -sp 'Enter encryption phrase: ' passtoken
+echo -e $ENDCOLOR
+clear
+echo -e "☕ Please be patient as lots of data may take time to compress..."
+
+for (( i=0; i<${tLen}; i++ ));
+do
+	7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken "${fileArray[$i]}".7z "${fileArray[$i]}"
+done
+unset passtoken
+
+echo "Created the following archive(s) UN-encrypted:"
+echo " FILENAME         STATUS"
+for (( i=0; i<${tLen}; i++ )); do
+	[[ -e "${fileArray[$i]}".7z ]] && echo -e "$GREEN Confirmed     $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR" || echo -e "$RED Failed!    $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR"
 done
 echo "Please review the output above to review all the progress ⏫"
-
-
