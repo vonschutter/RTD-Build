@@ -57,6 +57,17 @@
 DIR="$*"
 source /opt/rtd/scripts/_rtd_library
  
+###########################################################################
+##                                                                       ##
+##                       Script Functions                                ##
+##                                                                       ##
+###########################################################################
+
+
+
+
+
+
 
 
 ###########################################################################
@@ -69,7 +80,9 @@ source /opt/rtd/scripts/_rtd_library
 # And remember to handle or replace white spaces with underscore so the shell commands
 # don't fail. Here IFS is altered to not consider a whitespace as a separator.
 
-[ "$DIR" == "" ] && echo usage...
+
+
+[ "$DIR" == "" ] && echo "Usage: rtd-7z-this [filename] [filename filename2] [*.ext]" ; exit 1
 
 # Attempting to deal with filenemes with spaces in them... 
 # Please excuse all the code for a relatively simple task.
