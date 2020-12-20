@@ -63,7 +63,7 @@ clear
 echo  Hello $USER ... I am going to compress each file or folder that
 echo  I find in this folder. These are:
 echo
-ls -I "*.XXX" --color=always
+ls -I "*.7z" --color=always
 echo
 echo  To cancel this, just close the terminal or press "CRTL C".
 echo
@@ -82,7 +82,7 @@ read -p "Press the [ENTER] key to continue..."
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-  for line in $(ls -I "*.XXX")
+  for line in $(ls -I "*.7z")
    do
     7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on -v24m $line.7z $line
    done
