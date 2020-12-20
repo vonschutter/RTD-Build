@@ -73,7 +73,7 @@ source /opt/rtd/scripts/_rtd_library
  
 OLDIFS=$IFS
 IFS=$'\n'
-fileArray=($(ls -I $*))
+fileArray=($(ls -I $@))
 IFS=$OLDIFS
 tLen=${#fileArray[@]}
 
