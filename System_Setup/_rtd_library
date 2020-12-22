@@ -181,6 +181,7 @@ ensure_admin ()
 # End of documentation
 	[[ "$UID" -eq 0 ]] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[[ "$UID" -eq 0 ]] || sudo bash "$0" "$*"
+	[[ "$UID" -eq 0 ]] || exit
 }
 
 
