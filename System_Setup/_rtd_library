@@ -183,6 +183,7 @@ ensure_admin ()
 		echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 		sudo bash "$0" "$*"
 		exit 4
+	fi
 }
 
 
