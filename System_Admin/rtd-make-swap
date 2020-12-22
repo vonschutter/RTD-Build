@@ -37,7 +37,8 @@
 ##                                                                       ##
 ###########################################################################
 source /opt/rtd/scripts/_rtd_library
-ensure_admin 
+ensure_admin
+#clear
 
 ###########################################################################
 ##                                                                       ##
@@ -55,16 +56,9 @@ if [ ! "$#" -ge 1 ]; then
 	exit 1
 fi
 
-if mount |grep "/ " |grep btrfs; then
-	echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. Please use an ext4 or xfs partition $ENDCOLOR"
-	exit 1
-fi
-
-
-
 
 ## Intro
-echo "Welcome to Swap setup script! This script will automatically setup a swap file and enable it."
+echo -e $BLUE"Welcome to Swap setup script! This script will automatically setup a swap file and enable it."$ENDCOLOR
 echo
 
 ## Setup variables
@@ -80,17 +74,24 @@ if [ ! -z "$2" ]; then
 		echo -e "$RED ERROR: the file $SWAP_PATH already exists! Please chose a different name."
 		exit 1
 	fi
+
+	sudo fallocate -l "$SWAP_SIZE" "$SWAP_PATH"	|| echo -e $RED Error creting actual swapfile using fallocate!$ENDCOLOR ; exit 1
+	sudo chmod 600 "$SWAP_PATH"			|| echo -e $RED Error changing premissions$ENDCOLOR ; exit 1
+	sudo mkswap "$SWAP_PATH"			|| echo -e $RED Error formating $SWAP_PATH as a swapspace!$ENDCOLOR ; exit 1
+
+	if sudo swapon "$SWAP_PATH" ; then
+		echo "$SWAP_PATH   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
+		echo
+		echo -e "$GREEN Done! You now have a $SWAP_SIZE swap file at $SWAP_PATH $ENDCOLOR"
+	else 
+		if df -T $SWAP_PATH |grep btrfs >/dev/null ; then
+			echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
+			This is a BUG and hopefully it will be fixed soon... $ENDCOLOR"
+			exit 1
+		fi
+	fi
 fi
 
 
 
-sudo fallocate -l "$SWAP_SIZE" "$SWAP_PATH"  # Allocate size
-sudo chmod 600 "$SWAP_PATH"                # Make it non-world readable (bad!)
-sudo mkswap "$SWAP_PATH"                   # Setup swap"
-sudo swapon "$SWAP_PATH"                   # Enable swap
-echo "$SWAP_PATH   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
-
-
-echo
-echo -e "$GREEN Done! You now have a $SWAP_SIZE swap file at $SWAP_PATH $ENDCOLOR"
 

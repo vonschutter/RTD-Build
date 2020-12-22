@@ -179,9 +179,10 @@ ensure_admin ()
 # or configuration may be done. This function will make the script call itself
 # with sudo if the user ID is not 0 e.g. root.
 # End of documentation
-	[[ "$UID" -eq 0 ]] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
-	[[ "$UID" -eq 0 ]] || sudo bash "$0" "$*"
-	[[ "$UID" -eq 0 ]] || exit
+	if ! "$UID" -eq 0 ; then
+		echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
+		sudo bash "$0" "$*"
+		exit 4
 }
 
 
