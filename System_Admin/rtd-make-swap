@@ -56,7 +56,7 @@ if [ ! "$#" -ge 1 ]; then
 fi
 
 if mount |grep "/ " |grep btrfs; then
-	echo "$RED ERROR: swapfiles cannot be allocated on BTRFS. Please use an ext4 or xfs partition $ENDCOLOR"
+	echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. Please use an ext4 or xfs partition $ENDCOLOR"
 	exit 1
 fi
 
