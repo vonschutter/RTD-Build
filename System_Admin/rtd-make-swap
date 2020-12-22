@@ -47,6 +47,10 @@ if [ ! "$#" -ge 1 ]; then
     exit 1
 fi
 
+if [ mount |grep "/ " |grep btrfs ]; then
+    echo "$RED ERROR: swapfiles cannot be allocated on BTRFS. Please use an ext4 or xfs partition"
+    exit 1
+fi
 
 ## Intro
 echo "Welcome to Swap setup script! This script will automatically setup a swap file and enable it."
