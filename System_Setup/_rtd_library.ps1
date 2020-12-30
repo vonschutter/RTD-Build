@@ -1,3 +1,9 @@
+
+
+
+
+
+
 function Set-DefaultBrowser
 {
 	<#
@@ -62,10 +68,10 @@ Function Restart {
 	Write-Output "Restarting..."
 	Restart-Computer
  
-
-
 }
-    Function ChangeTheDefaultBrowser {
+
+
+Function ChangeTheDefaultBrowser {
 	param($defaultBrowser)
     
 	$regKey = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\{0}\UserChoice"

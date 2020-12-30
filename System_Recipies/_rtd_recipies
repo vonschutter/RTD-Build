@@ -131,13 +131,10 @@ recipie_baseapps (){
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
-			for i in diodon gnome-twitch polari filezilla 
+			for i in diodon polari filezilla 
 			do
 			     InstallSoftwareFromRepo $i
 			done
-			check_dependencies wget
-			wget https://download.teamviewer.com/download/linux/teamviewer_amd64.tar.xz -P /opt/rtd/cache/
-			
 }
 
 
@@ -504,10 +501,12 @@ recipie_dropbox (){
 
 recipie_openshot (){
 			# Special case for installing Openshot video editor
-			echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
-			add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
+			# add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			check_dependencies flatpack
+			flatpak install flathub org.openshot.OpenShot --noninteractive -y 
 
 }
 

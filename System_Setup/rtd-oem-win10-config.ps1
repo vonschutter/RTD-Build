@@ -3,7 +3,7 @@
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# :: Author:			Stephan Schutter
+# :: Author:			Vonschutter
 # :: Version: 			1.0
 # ::
 # :: Special Thanks to: 
@@ -16,13 +16,13 @@
 # ::		- Remove unnessesary software from Windows 10
 # ::		- Turn off unnessesary services and telemetry (may be turned on again)
 # ::		- Add some useful software (OSS and freeware)
-# ::		- Make som UI Tweaks for better usability		
+# ::		- Make some UI Tweaks for better usability		
 # ::		
 # ::		NOTE: Individual items may be turned on or off in the settings section of this script.
 # ::
 # :: Background: This script is shared in the hopes that someone will find it usefull. To encourage sharing changes 
 # :: 		 back to the source this script is released under the GPL v3. (see source location for details)
-# ::
+# ::		 https://github.com/vonschutter/RTD-Build/raw/master/LICENSE.md
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -37,8 +37,6 @@
 #		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
 #		and facilitates several users working on the same scripts over time.
 #		
-# 
-#
 #		Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
 #		to make the script more readable. Each function shall also be documented to the point of the obvious.
 #		Suggested function structure per google guidelines and as per the suggestions of 
@@ -49,6 +47,7 @@
 #			...code...
 #		}
 
+
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::          Script initialization           ::::::::::::::::::::::
@@ -58,9 +57,10 @@
 # Some prerequisites need to be met before the script is likely to run at all. 
 # These items are cared for in this section. 
 
-# By default windows users starting a scripr would not have administrateive access. 
+# By default windows users starting a script would not have administrateive access. 
 # Therefore we must check if we have administrative access already, and if not
 # call this script itself with elevated priviledges. 
+
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
 }
@@ -77,6 +77,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 # or off by adding or removing a pound sign "#" infront of each option you 
 # want to add or remove from the script behavior. A pound sign in front of
 # a statement means that it is ignored. 
+
 $BRANDING = "RTD"
 
 $tweaks = @(
@@ -97,7 +98,7 @@ $tweaks = @(
 
 	###	OEM Software Tasks 
 	"RTDRegistryTweaks",
-	"InsstallKVMSpiceTools"
+	"InstallVMSDriverTools"
 	"Install7Zip",
 	"InstallGameBundle",
 	"InstallDeveloperToolsBundle",
@@ -150,8 +151,8 @@ $tweaks = @(
 	"DisableMeltdownCompatFlag",    # "EnableMeltdownCompatFlag"    
 
 	###	Service Optimizations 
-	"DisableUpdateMSRT",            # "EnableUpdateMSRT",
-	"DisableUpdateDriver",          # "EnableUpdateDriver",
+	#"DisableUpdateMSRT",           # "EnableUpdateMSRT",
+	#"DisableUpdateDriver",         # "EnableUpdateDriver",
 	"DisableUpdateRestart",         # "EnableUpdateRestart",
 	"DisableHomeGroups",            # "EnableHomeGroups",
 	"DisableSharedExperiences",     # "EnableSharedExperiences",
@@ -164,7 +165,7 @@ $tweaks = @(
 	"DisableSuperfetch",            # "EnableSuperfetch",
 	"EnableIndexing",
 	"SetBIOSTimeUTC",               # "SetBIOSTimeLocal",
-	"DisableHibernation",		# "EnableHibernation",          # 
+	#"DisableHibernation",		# "EnableHibernation", 
 	"EnableSleepButton",		# "DisableSleepButton",         
 	"DisableSleepTimeout",          # "EnableSleepTimeout",
 	# "DisableFastStartup",         # "EnableFastStartup",
@@ -257,6 +258,7 @@ $tweaks = @(
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 function OnlineInstallTask {
+	# Define a common package manager for adding and removeing software.
 	param(
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
@@ -340,9 +342,33 @@ Function Install7Zip {
 	OnlineInstallTask -Title "Installing 7-Zip" -ChocoInstall "7zip"
 }
 
-function InsstallKVMSpiceTools {
-	OnlineInstallTask -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
-	OnlineInstallTask -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
+function InstallVMSDriverTools {
+	# Software optimization check: install virtualization drivers and agents if this 
+	# script is being run in a VM. Check for Hyper-V, VMware, VirtualBox, or KVM.
+	try { 
+		$ComputerSystemInfo = Get-WmiObject -Class Win32_ComputerSystem  
+		switch ($ComputerSystemInfo.Manufacturer) { 
+		# Hyper-V Machine Type 
+		"Virtual Machine" { 
+			OnlineInstallTask -Title "Installing Drivers for VMware Hypervisor" -ChocoInstall "boxstarter.hyperv"
+			} 
+		# VMware Machine Type 
+		"VMware Virtual Platform" { 
+			OnlineInstallTask -Title "Installing Drivers for VMware Hypervisor" -ChocoInstall  "vmware-tools"
+			} 
+		# Oracle VM Machine Type 
+		"VirtualBox" { 
+			OnlineInstallTask -Title "Installing Drivers for Oracle Virtualbox Hypervisor" -ChocoInstall "virtualbox-guest-additions-guest.install"
+			} 
+		# KVM/QEMU 
+		"QEMU" {
+			OnlineInstallTask -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
+			OnlineInstallTask -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
+			}
+		}
+	} catch {
+		Write-Progress "Did not detect a Virtual Machine: skipping install of virtual agents and drivers..."
+	}
 }
 
 

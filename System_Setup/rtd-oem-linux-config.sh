@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-#::             RTD Ubuntu + derivatives software addon and configuration script
+#::             	Linux software addon and configuration script
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
+#:: Author(s):   	Vonschutter, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
 #:: Version 1.00
 #::
 #::
@@ -260,19 +260,16 @@ function do_instructions_from_choices (){
 # alter system wide configuration. 
 # ensure_admin
 if [[ ! $UID -eq 0 ]]; then
-	echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
+	echo -e "This script needs administrative access..." 
 	sudo bash $0 $*
 else
-	PS_SAV=PS1
-	PS1='\[\e]0;System Setup\a\]\u@\h:\w\$ '
-
 	if  [[ -f /opt/rtd/scripts/_rtd_library ]]; then 
 		source /opt/rtd/scripts/_rtd_library
 	else 
-		echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
-		echo -e $YELLOW " " $ENDCOLOR
-		echo -e $YELLOW "Cannot ensure that the correct functionality is available" $ENDCOLOR
-		echo -e $YELLOW "Quiting rather than cause potential damage..." $ENDCOLOR
+		echo -e "RTD functions NOT loaded!" 
+		echo -e " " 
+		echo -e "Cannot ensure that the correct functionality is available" 
+		echo -e "Quiting rather than cause potential damage..." 
 		exit 1
 	fi
 
@@ -304,6 +301,5 @@ fi
 #::::::::::::::          Finalize.....                   ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-PS1=PS_SAV
 exit
-
+EOF
