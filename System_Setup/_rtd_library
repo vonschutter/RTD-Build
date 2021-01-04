@@ -481,14 +481,10 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	prepare_environment_for_iso_creation
 
 	# Retreive list of available Ubuntu versions:
-	all=$(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu)
+	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$($RTD_GUI \
-			--inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... I will allways choose the latest available version. " \
-			8 78 "${all[-1]}" \
-			--title "Select Release Version of Ubuntu" \
-			3>&1 1>&2 2>&3)
+	UBUNTU_VER=$(dialog --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  0 0 "${all[-1]}" 3>&1 1>&2 2>&3)
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
 	# Find the precice location of the requested ISO image:
@@ -1320,14 +1316,14 @@ rtd_update_system ()
 	}
 
 
-        rtd_software_task ()
-        {
+	rtd_software_task ()
+	{
 		log_item "running rtd_software_task with parameters $*"
 		# make some decent display terminal graphics...
 		PAD="------------------------------------------"
 		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 		echo -ne "--- Executing $LINE:"\ & "$@" >>"$LOGFILE" 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-        }
+	}
 
 	if hash pkcon 2>/dev/null; then
 		# If package kit is available then prefer this
@@ -1388,18 +1384,18 @@ add_software_task ()
 
 
 
+
+
+
 dl ()
 {
-# Function to ease and make consistent the downloading of the non repository packages and
+# Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
 # install them. It can install any package that Package Kit can manage (available on most Linux dists)
 # It expects one parameter: the complete URL to download from.
 # End of documentation
 
 	download_url="$1"
-	echo "$1"
-	fetch_file () { 
-		wget -P /opt/rtd/cache $download_url 1>>$_LOGFILE 2>>$_ERRLOGFILE 
-	}
+	fetch_file () { wget -P /opt/rtd/cache "$download_url" 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
 
 	echo  "    - getting package $download_url ..."
 	if hash wget >/dev/null ; then
@@ -1409,14 +1405,16 @@ dl ()
 		fetch_file
 	fi
 
-	echo "    - Installing package: $(basename $download_url)..."
+	echo "    - Installing package $(basename "$download_url") ..."
 	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/$(basename $download_url) 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else 
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	else
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/$(basename $download_url) 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
 	fi
 }
+
+
 
 
 
@@ -1619,7 +1617,6 @@ InstallSoftwareFromRepo ()
 	else
 		echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
 	fi
-: --
 }
 
 
@@ -1637,19 +1634,19 @@ check_dependencies ()
 	#---------------------------------------------------------------
 	echo "Checking for script dependencies and install if not there..."
 	#---------------------------------------------------------------
-	    if is_software_package_installed $1 ; then
+	if is_software_package_installed $1 ; then
 		echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
-	    else
+	else
 		echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
 		InstallSoftwareFromRepo $1
-		    if [ $? != 0 ];
-		    then
+		if [ $? != 0 ];
+		then
 			echo -e $RED "That install didn't work out so well."
 			echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
 			exit
-		    fi
+		fi
 		echo "OK Done! Continuing..."
-	    fi
+	fi
 }
 
 
@@ -1693,10 +1690,10 @@ system_update ()
 
 backup_running_vm ()
 {
-	# Function to back up all funning virtual machines on the host it is being run on.
-	# This function should be called from within this script and down not require any
-	# parameters passed.
-
+# Function to back up all funning virtual machines on the host it is being run on.
+# This function should be called from within this script and down not require any
+# parameters passed.
+# End of documentation
 
 	do_vm_backup () {
 		echo "Atempting backup of the folloing VM's:"
@@ -1831,31 +1828,10 @@ done
 }
 
 
-dl ()
-{
-	# Function to ease and make consistent the downloading of the non repository packages and
-	# install them. It can install any package that Package Kit can manage (available on most Linux dists)
-	# It expects one parameter: the complete URL to download from.
 
-	download_url="$1"
-	fetch_file () { wget -P /opt/rtd/cache "$download_url" 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
 
-	echo  "    - getting package $download_url ..."
-	if hash wget >/dev/null ; then
-		fetch_file
-	else
-		check_dependencies wget
-		fetch_file
-	fi
 
-	echo "    - Installing package $(basename "$download_url") ..."
-	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else
-		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	fi
-}
+
 
 
 rtd_oem_find_live_release()
@@ -1869,6 +1845,7 @@ rtd_oem_find_live_release()
 	# rtd_oem_find_live_release 	      10              debian         live           cinnamon
 	# rtd_oem_find_live_release 	      10              debian         net            ssh-server
 	# rtd_oem_find_live_release 	      19.04.2         ubuntu         live
+	# End of documentation
 	distro_version="${1:-10}"
 	distro_flavor="${2:-debian}"
 	live_or_not="${3:-live}"
@@ -1989,6 +1966,224 @@ rtd_setup_choices_term_fallback ()
 		done
 }
 
+
+
+
+
+cleanup_and_finish () {
+	# Function to remove all temporary file locations left over from building
+	# the new netinstall ISO etc. and clean  up some variables...
+	# go back to initial directory
+	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
+	# Cleanup folder structure...
+	rm -r "$TMP_DOWNLOAD_DIR"
+	rm -r "$TMP_DISC_DIR"
+	rm -r "$TMP_INITRD_DIR"
+	rm -r "$SCRIPT_DIR/custom"
+
+	if [[  "$1" != "nomessage" ]]; then
+		COMPLETION_MESSAGE="	Your ISO image is ready!
+		It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
+
+		Next steps:
+		- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
+		- If you are using Virtual Machines select the ISO as install media
+		- Boot from the media created: allow it to install the system
+		- login as the temporary user (temporary password: letmein)
+		- Adjust passwords for the encrypted volume and login... "
+
+		$RTD_GUI --backtitle "RTD OEM System Builder" --title "DONE" --msgbox "$COMPLETION_MESSAGE" 15 80
+	else
+		echo "Cleanup..."
+	fi
+
+	unset BIN_7Z
+	unset BIN_XORRISO
+	unset BIN_CPIO
+	unset ISOHDPFX_BIN
+	unset VOLUME_TITLE
+	unset TARGET_ISO_FILE_NAME
+	unset SOURCE_ISO_URL
+	unset SSH_PUBLIC_KEY_FILE
+	unset PRESEED_TEMPLATE
+	unset CONFIG
+	clear
+	return
+}
+
+
+
+
+generate_report_disk_space_used_by_directory () {
+	# Function to generate a report for folders' disk space use. 
+	# This function requres one argument; what root folder to analyse the directories in. 
+	# This functio will return a report contained in the variable $return that may then be used.
+	# Example: 
+	# generate_report_disk_space_used_by_directory /home
+	# 
+	# This will generate a report on the disk space per directory in the /home folder.
+	#
+	
+	DIRS=$( ls $1 )
+	store=/$tmp/out.ct
+	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
+		echo "Storage Utilization Report:" >>$store
+		echo "______________________________" >>$store
+		n=$(ls $1 | wc -l ) 
+		i=0
+		for f in $DIRS
+		do
+			du -cksh $1/$f 2>/dev/null | grep -v total >>$store
+			PCT=$(( 100*(++i)/n ))
+			cat <<-EOF
+			XXX
+			$PCT
+			Completed calculation for: "$f"...
+			XXX
+			EOF
+			sleep 1
+		done
+	)
+	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH 
+	result="$(cat $store )" ; rm $store
+}
+
+
+
+
+
+
+make_preseed_cfg () {
+	# Function to write out a debina preeseed file to a location requested by the first parameter.
+	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+	# some parameters have defaults.
+	# Example:
+	# functoin_name          location        config          function
+	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+
+	SAVETO=$1
+	CONFIG=$2
+	SRVFUNC=${3:-Tasks}
+	PRESEED=preseed.cfg
+	PRESEED_FILE="$SAVETO/$PRESEED"
+	TASK_FILE="$SAVETO/task.sh"
+	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
+	touch "$SAVETO/$PRESEED"
+
+	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
+	rtd_oem_preseed_cfg_Unattended_Install "$SAVETO"
+	rtd_oem_preseed_cfg_Network_Configuration "$SAVETO"
+	rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO"
+	rtd_oem_cfg_Account_Setup "$SAVETO"
+	rtd_oem_preseed_cfg_Localization "$SAVETO"
+	rtd_oem_preseed_cfg_EFI "$SAVETO"
+	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO"
+	rtd_oem_preseed_cfg_Disk_Layout "$SAVETO"
+	rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG"
+	rtd_oem_cfg_post_task_sequence_default "$SAVETO"
+	rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::    Internal Confgiration Repository      ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#
+# Below please find the internally stored and maintained configuration cards.
+# When creating Linux installation configurations for use in a virtual envoironment
+# or for transferring to physical media to install on a laptop or PC; require
+# the creation of preseed and kick start configuration files that "answer" the
+# installer's questions. These pieces of configuration files are stored below
+# such that they may be applied to the actual configuration file as needed and
+# wiht variable instructions, for example: what software to install. Any configuration
+# item that needs to be written out to a separate file should be stored in this section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rtd_setup_choices_preseed () {
+	# Function to write out a debina preeseed file to a location requested by the first parameter.
+	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+	# some parameters have defaults.
+	# Example:
+	# functoin_name          location        config          function
+	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+
+	SAVETO=$1
+	CONFIG=$2
+	SRVFUNC=$3
+	: "${SRVFUNC:=Tasks}"
+	: "${PRESEED:=preseed.cfg}"
+	PRESEED_FILE="$SAVETO/$PRESEED"
+	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
+	touch "$1/$PRESEED"
+
+	cmd=("$RTD_GUI" --backtitle "$BRANDING" --title "VM Auto Answer Setup Questions" --separate-output --checklist "Please preconfiguration components below. You will be prompted to manually add information for sections that you de-select:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
+	options=(1 "rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options" on
+		 2 "rtd_oem_preseed_cfg_Unattended_Install" on
+		 3 "rtd_oem_preseed_cfg_Network_Configuration" on
+		 4 "rtd_oem_preseed_cfg_Prevent_Install_On_USB" on
+		 5 "rtd_oem_cfg_Account_Setup" on
+		 6 "rtd_oem_preseed_cfg_Localization" on
+		 7 "rtd_oem_preseed_cfg_EFI" on
+		 8 "rtd_oem_preseed_cfg_GRUB_Bootloader_Installation" on
+		 9 "rtd_oem_preseed_cfg_Disk_Layout" on
+		 10 "rtd_oem_preseed_cfg_Package_Selection" on
+		 11 "rtd_oem_preseed_cfg_Addon_${SRVFUNC}" on
+		)
+
+		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+		clear
+		for choice in $choices
+		do
+			case $choice in
+			1) rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO" ;;
+			2) rtd_oem_preseed_cfg_Unattended_Install "$SAVETO" ;;
+			3) rtd_oem_preseed_cfg_Network_Configuration "$SAVETO" ;;
+			4) rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO" ;;
+			5) rtd_oem_cfg_Account_Setup "$SAVETO" ;;
+			6) rtd_oem_preseed_cfg_Localization "$SAVETO" ;;
+			7) rtd_oem_preseed_cfg_EFI "$SAVETO" ;;
+			8) rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO" ;;
+			9) rtd_oem_preseed_cfg_Disk_Layout "$SAVETO" ;;
+			10) rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG" ;;
+			11) rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO" ;;
+			esac
+		done
+}
 
 
 
@@ -2262,223 +2457,6 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 	EOF
 }
-
-cleanup_and_finish () {
-	# Function to remove all temporary file locations left over from building
-	# the new netinstall ISO etc. and clean  up some variables...
-	# go back to initial directory
-	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
-	# Cleanup folder structure...
-	rm -r "$TMP_DOWNLOAD_DIR"
-	rm -r "$TMP_DISC_DIR"
-	rm -r "$TMP_INITRD_DIR"
-	rm -r "$SCRIPT_DIR/custom"
-
-	if [[  "$1" != "nomessage" ]]; then
-		COMPLETION_MESSAGE="	Your ISO image is ready!
-		It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
-
-		Next steps:
-		- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
-		- If you are using Virtual Machines select the ISO as install media
-		- Boot from the media created: allow it to install the system
-		- login as the temporary user (temporary password: letmein)
-		- Adjust passwords for the encrypted volume and login... "
-
-		$RTD_GUI --backtitle "RTD OEM System Builder" --title "DONE" --msgbox "$COMPLETION_MESSAGE" 15 80
-	else
-		#silent
-		echo "Cleanup..."
-	fi
-
-	# Print COMPLETION_MESSAGE
-	unset BIN_7Z
-	unset BIN_XORRISO
-	unset BIN_CPIO
-	unset ISOHDPFX_BIN
-	unset VOLUME_TITLE
-	unset TARGET_ISO_FILE_NAME
-	unset SOURCE_ISO_URL
-	unset SSH_PUBLIC_KEY_FILE
-	unset PRESEED_TEMPLATE
-	unset CONFIG
-	clear
-	return
-}
-
-
-generate_report_disk_space_used_by_directory () {
-	# Function to generate a report for folders' disk space use. 
-	# This function requres one argument; what root folder to analyse the directories in. 
-	# This functio will return a report contained in the variable $return that may then be used.
-	# Example: 
-	# generate_report_disk_space_used_by_directory /home
-	# 
-	# This will generate a report on the disk space per directory in the /home folder.
-	#
-	
-	DIRS=$( ls $1 )
-	store=/$tmp/out.ct
-	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
-		echo "Storage Utilization Report:" >>$store
-		echo "______________________________" >>$store
-		n=$(ls $1 | wc -l ) 
-		i=0
-		for f in $DIRS
-		do
-			du -cksh $1/$f 2>/dev/null | grep -v total >>$store
-			PCT=$(( 100*(++i)/n ))
-			cat <<-EOF
-			XXX
-			$PCT
-			Completed calculation for: "$f"...
-			XXX
-			EOF
-			sleep 1
-		done
-	)
-	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH 
-	result="$(cat $store )" ; rm $store
-}
-
-
-
-
-
-
-make_preseed_cfg () {
-	# Function to write out a debina preeseed file to a location requested by the first parameter.
-	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-	# some parameters have defaults.
-	# Example:
-	# functoin_name          location        config          function
-	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
-
-	SAVETO=$1
-	CONFIG=$2
-	SRVFUNC=${3:-Tasks}
-	PRESEED=preseed.cfg
-	PRESEED_FILE="$SAVETO/$PRESEED"
-	TASK_FILE="$SAVETO/task.sh"
-	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
-	touch "$SAVETO/$PRESEED"
-
-	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
-	rtd_oem_preseed_cfg_Unattended_Install "$SAVETO"
-	rtd_oem_preseed_cfg_Network_Configuration "$SAVETO"
-	rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO"
-	rtd_oem_cfg_Account_Setup "$SAVETO"
-	rtd_oem_preseed_cfg_Localization "$SAVETO"
-	rtd_oem_preseed_cfg_EFI "$SAVETO"
-	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO"
-	rtd_oem_preseed_cfg_Disk_Layout "$SAVETO"
-	rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG"
-	rtd_oem_cfg_post_task_sequence_default "$SAVETO"
-	rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO"
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::    Internal Confgiration Repository      ::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
-# Below please find the internally stored and maintained configuration cards.
-# When creating Linux installation configurations for use in a virtual envoironment
-# or for transferring to physical media to install on a laptop or PC; require
-# the creation of preseed and kick start configuration files that "answer" the
-# installer's questions. These pieces of configuration files are stored below
-# such that they may be applied to the actual configuration file as needed and
-# wiht variable instructions, for example: what software to install. Any configuration
-# item that needs to be written out to a separate file should be stored in this section.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-rtd_setup_choices_preseed () {
-	# Function to write out a debina preeseed file to a location requested by the first parameter.
-	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-	# some parameters have defaults.
-	# Example:
-	# functoin_name          location        config          function
-	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
-
-	SAVETO=$1
-	CONFIG=$2
-	SRVFUNC=$3
-	: "${SRVFUNC:=Tasks}"
-	: "${PRESEED:=preseed.cfg}"
-	PRESEED_FILE="$SAVETO/$PRESEED"
-	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
-	touch "$1/$PRESEED"
-
-	cmd=("$RTD_GUI" --backtitle "$BRANDING" --title "VM Auto Answer Setup Questions" --separate-output --checklist "Please preconfiguration components below. You will be prompted to manually add information for sections that you de-select:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
-	options=(1 "rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options" on
-		 2 "rtd_oem_preseed_cfg_Unattended_Install" on
-		 3 "rtd_oem_preseed_cfg_Network_Configuration" on
-		 4 "rtd_oem_preseed_cfg_Prevent_Install_On_USB" on
-		 5 "rtd_oem_cfg_Account_Setup" on
-		 6 "rtd_oem_preseed_cfg_Localization" on
-		 7 "rtd_oem_preseed_cfg_EFI" on
-		 8 "rtd_oem_preseed_cfg_GRUB_Bootloader_Installation" on
-		 9 "rtd_oem_preseed_cfg_Disk_Layout" on
-		 10 "rtd_oem_preseed_cfg_Package_Selection" on
-		 11 "rtd_oem_preseed_cfg_Addon_${SRVFUNC}" on
-		)
-
-		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-		clear
-		for choice in $choices
-		do
-			case $choice in
-			1) rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO" ;;
-			2) rtd_oem_preseed_cfg_Unattended_Install "$SAVETO" ;;
-			3) rtd_oem_preseed_cfg_Network_Configuration "$SAVETO" ;;
-			4) rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO" ;;
-			5) rtd_oem_cfg_Account_Setup "$SAVETO" ;;
-			6) rtd_oem_preseed_cfg_Localization "$SAVETO" ;;
-			7) rtd_oem_preseed_cfg_EFI "$SAVETO" ;;
-			8) rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO" ;;
-			9) rtd_oem_preseed_cfg_Disk_Layout "$SAVETO" ;;
-			10) rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG" ;;
-			11) rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO" ;;
-			esac
-		done
-}
-
-
 
 
 
