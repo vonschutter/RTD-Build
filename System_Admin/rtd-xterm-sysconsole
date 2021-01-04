@@ -19,7 +19,8 @@
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Lunches 4 Xterm windows and starts system monitoring tool in them.
+# Lunches 4 Xterm windows and starts system monitoring tool in them. This is intended to demonstrate how to 
+# launch windows from the ternminal and determin where on the screen they should appear. 
 #
 # Xterm obeys the following on screen positions:
 #
@@ -29,7 +30,7 @@
 # +0-0    lower left hand corner.
 
 
-xterm  -geometry 110x30+0+0 -e htop&
+xterm  -geometry 110x30+0+0 -e 'htop' &
 xterm  -geometry 110x30-0+0 -e 'tail -f /var/log/syslog' &
 xterm  -geometry 110x30-0-0 -e 'watch df -h '&
 xterm  -geometry 110x30+0-0 -e 'bmon' &

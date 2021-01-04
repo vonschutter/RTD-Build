@@ -154,7 +154,7 @@ function find_active_newtork_interface (){
 }
 
 
- function minecraft_update() {
+function minecraft_update() {
 	# Get minecraft version publication file and get the latest server URL
 	# This is an unneccessarily complicated way by Mojang! 
 	cd $MINECRAFT_HOME || { echo "Failure change to Minecraft folder. Is it there?"; exit 1; }

@@ -66,46 +66,46 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 ensure_admin () {
 	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-        [ "$UID" -eq 0 ] || exit
+	[ "$UID" -eq 0 ] || exit
 
 }
 
 
 task_setup_rtd_basics() {
 	echo "Task: Attempting to get the latest RTD tools..." 
-        [[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
+	[[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
 	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
 	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd 
-        if [ $? != 0 ]; then
-                echo -e $RED Sorry but I think I FAILED to get the latest updates! $ENDCOLOR
-                exit 1
-        else
-                echo "Task: Instructions sucessfully retrieved..." 
-                chmod +x $_RTDSCR/* 
-                pushd /bin
-                echo "Updating executable links (to simplify running the tools)..."
-                ln -f -s $_RTDSCR/rtd* .
-                popd
-        fi
+	if [ $? != 0 ]; then
+		echo -e $RED Sorry but I think I FAILED to get the latest updates! $ENDCOLOR
+		exit 1
+	else
+		echo "Task: Instructions sucessfully retrieved..." 
+		chmod +x $_RTDSCR/* 
+		pushd /bin
+		echo "Updating executable links (to simplify running the tools)..."
+		ln -f -s $_RTDSCR/rtd* .
+		popd
+	fi
 }
 
 
 tell_info() {
-        echo -e $YELLOW 
-        echo "RTD Tools Updater Version $RTD_UPDATE_SELF_VERSION"
-        echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
-        echo " "
-        echo "To cancel this, just close the terminal or press "CRTL C"."
-        echo " "
-        read -p "Press [ ENTER ] to continue with update" 
-        echo -e $ENDCOLOR
+	echo -e $YELLOW 
+	echo "RTD Tools Updater Version $RTD_UPDATE_SELF_VERSION"
+	echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
+	echo " "
+	echo "To cancel this, just close the terminal or press "CRTL C"."
+	echo " "
+	read -p "Press [ ENTER ] to continue with update" 
+	echo -e $ENDCOLOR
 }
 
 
 set_color () {
-        YELLOW="\033[1;33m"
-        RED="\033[0;31m"
-        ENDCOLOR="\033[0m"
+	YELLOW="\033[1;33m"
+	RED="\033[0;31m"
+	ENDCOLOR="\033[0m"
 }
 
 

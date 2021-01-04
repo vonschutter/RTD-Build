@@ -27,6 +27,7 @@
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
 _LOCALINT="ens3"
 _VPNINT="tun0"
 _LOCALNET="192.168.1.0"
@@ -67,4 +68,7 @@ fi
 check_dependencies curl
 check_dependencies dnsutils
 
-curl ipinfo.io/`dig +short myip.opendns.com @resolver1.opendns.com`
+result=$( curl ipinfo.io/$(dig +short myip.opendns.com @resolver1.opendns.com))
+display_result
+
+

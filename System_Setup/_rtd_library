@@ -62,6 +62,14 @@ Library_Documentation
 ##                                                                       ##
 ###########################################################################
 
+
+
+
+
+
+
+
+
 source /opt/rtd/scripts/_rtd_recipies
 source /opt/rtd/scripts/_branding
 
@@ -74,6 +82,22 @@ _RTDLOGSD=$(if [ -f /var/log/rtd ]; then echo /var/log/rtd ; else ( mkdir -p /va
 _ERRLOGFILE=$_RTDLOGSD/$( basename $0)-error.log
 _LOGFILE=$_RTDLOGSD/$( basename $0).log
 _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ###########################################################################
 ##                                                                       ##
@@ -239,6 +263,24 @@ change_disk_pass ()
 
 }
 
+
+
+
+
+display_result ()
+{
+# Function to read a variable "result" and display its contents. The purpose of this function
+# is simply to make it easy and convenient to display a mesage to an end user in a terminal 
+# in a nice way. To use this function simply call it after populating the variable result.
+# Example: 
+#
+# result=$( command with output)
+# display result "title of the mesage" 
+#
+# End of Documentation
+
+	$RTD_GUI --backtitle "$BRANDING" --title "$1" --msgbox "$result" $HEIGHT $WIDTH 
+}
 
 
 
@@ -1060,6 +1102,9 @@ rtd_oem_remove_software ()
 }
 
 
+
+
+
 set_install_command ()
 {
 # set_install_command
@@ -1131,6 +1176,8 @@ check_menu_availability ()
 
 
 
+
+
 err_no_menu_system_found ()
 {
 # Function to handle the error condition if a manu system is not found on the system.
@@ -1187,6 +1234,8 @@ enable_firewall ()
 			echo -e $faded_orange "UFW not present on this system: please turn on the firewall and configure it manually!" $ENDCOLOR
 	fi
 }
+
+
 
 
 
@@ -2330,6 +2379,24 @@ make_preseed_cfg () {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::    Internal Confgiration Repository      ::::::::::::::::::::::
@@ -2344,6 +2411,75 @@ make_preseed_cfg () {
 # such that they may be applied to the actual configuration file as needed and
 # wiht variable instructions, for example: what software to install. Any configuration
 # item that needs to be written out to a separate file should be stored in this section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rtd_setup_choices_preseed () {
+	# Function to write out a debina preeseed file to a location requested by the first parameter.
+	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+	# some parameters have defaults.
+	# Example:
+	# functoin_name          location        config          function
+	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+
+	SAVETO=$1
+	CONFIG=$2
+	SRVFUNC=$3
+	: "${SRVFUNC:=Tasks}"
+	: "${PRESEED:=preseed.cfg}"
+	PRESEED_FILE="$SAVETO/$PRESEED"
+	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
+	touch "$1/$PRESEED"
+
+	cmd=("$RTD_GUI" --backtitle "$BRANDING" --title "VM Auto Answer Setup Questions" --separate-output --checklist "Please preconfiguration components below. You will be prompted to manually add information for sections that you de-select:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
+	options=(1 "rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options" on
+		 2 "rtd_oem_preseed_cfg_Unattended_Install" on
+		 3 "rtd_oem_preseed_cfg_Network_Configuration" on
+		 4 "rtd_oem_preseed_cfg_Prevent_Install_On_USB" on
+		 5 "rtd_oem_cfg_Account_Setup" on
+		 6 "rtd_oem_preseed_cfg_Localization" on
+		 7 "rtd_oem_preseed_cfg_EFI" on
+		 8 "rtd_oem_preseed_cfg_GRUB_Bootloader_Installation" on
+		 9 "rtd_oem_preseed_cfg_Disk_Layout" on
+		 10 "rtd_oem_preseed_cfg_Package_Selection" on
+		 11 "rtd_oem_preseed_cfg_Addon_${SRVFUNC}" on
+		)
+
+		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+		clear
+		for choice in $choices
+		do
+			case $choice in
+			1) rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO" ;;
+			2) rtd_oem_preseed_cfg_Unattended_Install "$SAVETO" ;;
+			3) rtd_oem_preseed_cfg_Network_Configuration "$SAVETO" ;;
+			4) rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO" ;;
+			5) rtd_oem_cfg_Account_Setup "$SAVETO" ;;
+			6) rtd_oem_preseed_cfg_Localization "$SAVETO" ;;
+			7) rtd_oem_preseed_cfg_EFI "$SAVETO" ;;
+			8) rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO" ;;
+			9) rtd_oem_preseed_cfg_Disk_Layout "$SAVETO" ;;
+			10) rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG" ;;
+			11) rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO" ;;
+			esac
+		done
+}
+
+
+
 
 
 
@@ -2577,7 +2713,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				mountpoint{ /boot }                     \
 									\
 			.                                               \
-			2000 2000 2000 linux-swap                       \
+			2000 2000 200% linux-swap                       \
 				$lvmok{ } lv_name{ swap }               \
 				in_vg { crypt }                         \
 				$primary{ }                             \
@@ -2701,6 +2837,28 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 		# --------------------------------------------------- #
 	EOF
 }
+
+
+
+
+
+
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Internal Functions       ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+
+
 
 
 

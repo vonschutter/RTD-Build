@@ -95,5 +95,5 @@ rtd_join_avis () {
 }
 
 
-dialog --buildlist --title "AVI Joiner" 
+rtd_join_avis
  
