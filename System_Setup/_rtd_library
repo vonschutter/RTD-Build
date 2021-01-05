@@ -10,10 +10,10 @@ RTD_VERSION=2.0
 ::
 ::	Purpose:	To collect and enable the use of code snipplets in other scripts.
 ::			To document these thuroughly so that they may be usefull for learning BASH.
-::     Usage: 		call this file using the "source" statment in bash.
+::	Usage: 		call this file using the "source" statment in bash.
 ::
-::     This script is shared in the hopes that
-::     someone will find it usefull.
+::	This script is shared in the hopes that
+::	someone will find it usefull.
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -21,25 +21,70 @@ RTD_VERSION=2.0
 
 	Functions defined in this library:
 
-	Function Name: 				Description:
+	Function Name: 					Description:
 	----------------------------------------------------------------------------------------------------------------
-	check_dependencies			: Checks that software requirements are met so scripts do not fail
-	debug_list_loaded_functions		: Lists all loaded RTD functions in the environment
-	dl					: Downloads and installs a package from the internet (a bit insecure)
-	enable_firewall				: Will turn on UFW and add the Allow SSH rule
-	ensure_admin				: Elevates priveledges to admin "root" for the whole script (asks for password)
-	InstallSoftwareFromRepo			: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.)
-	is_software_package_available		: Checks to see if a software package is availabel in a repository (RPM and DEB)
-	is_software_package_installed		: Checks to see if a software package allready is installed
-	notice_rtd_loaded			: Notifies a script that RTD functions are loaded
-	set_colors				: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
-	set_install_command			: Determines what install command should be used to install packages from repositories
-	SofwareManagmentAvailabilityCHK		: Checks to see that the software managment system is not busy
-	system_update				: Newer more universal software update function
-	date					: Older universal software update function
-	rtd_setup_choices_term_fallback		: For server setup, displays a menu where you may chose CLI productivity software (vim, alpine, byobu etc.).
-
-
+	add_software_task 				: # 
+	backup_running_vm 				: #2 
+	change_disk_pass 				: #3 
+	check_dependencies 				: Checks that software requirements are met so scripts do not fail 
+	check_if_password_p0wned 			: #5 
+	check_menu_availability 			: #6 
+	cleanup_and_finish 				: #7 
+	create_iso_image 				: #8 
+	create_iso_image_debian 			: #9 
+	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
+	display_result 					: #10 
+	dl						: Downloads and installs a package from the internet (a bit insecure)
+	download_and_manipulate_iso_debian 		: #12 
+	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
+	ensure_admin					: Elevates priveledges to admin "root" for the whole script (asks for password)
+	err_no_menu_system_found 			: #15 
+	generate_report_disk_space_used_by_directory 	: #16 
+	InstallSoftwareFromRepo				: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.) 
+	is_software_package_available			: Checks to see if a software package is availabel in a repository (RPM and DEB)
+	is_software_package_installed			: Checks to see if a software package allready is installed
+	make_kvm_virtual_machine_now_from_debian_org 	: #20 
+	make_kvm_virtual_machine_now_from_iso 		: #21 
+	make_kvm_virtual_machine_now_from_ubuntu_com 	: #22 
+	make_preseed_cfg 				: #23 
+	notice_rtd_loaded				: Notifies a script that RTD functions are loaded
+	oem_PowerShell_compatability 			: #24 
+	prepare_environment_for_iso_creation 		: #25 
+	rtd_oem_cfg_Account_Setup 			: #26 
+	rtd_oem_cfg_post_task_sequence_default	 	: #27 
+	rtd_oem_check_inet_access 			: #28 
+	rtd_oem_find_live_release 			: #29 
+	rtd_oem_kde_set_wallpaper 			: #30 
+	rtd_oem_pause 					: #31 
+	rtd_oem_preseed_cfg_Addon_MinecraftServer 	: #32 
+	rtd_oem_preseed_cfg_Addon_Tasks 		: #33 
+	rtd_oem_preseed_cfg_Disk_Layout 		: #34 
+	rtd_oem_preseed_cfg_EFI 			: #35 
+	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation:  #36 
+	rtd_oem_preseed_cfg_Localization 		: #37 
+	rtd_oem_preseed_cfg_Network_Configuration 	: #38 
+	rtd_oem_preseed_cfg_Package_Selection 		: #39 
+	rtd_oem_preseed_cfg_Prevent_Install_On_USB 	: #40 
+	rtd_oem_preseed_cfg_Unattended_Install 		: #41 
+	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options 	: 42 
+	rtd_oem_release_upgrade 			: #43 
+	rtd_oem_remove_non_western_latin_fonts 		: #44 
+	rtd_oem_remove_software 			: #45 
+	rtd_oem_reseal 					: #46 
+	rtd_oem_reset_default_environment_config 	: #47 
+	rtd_oem_setup_brand_splash_screen 		: #48 
+	rtd_oem_ubuntu_auto_install_iso_builder 	: #49 
+	rtd_ppa_checker 				: #50 
+	rtd_setup_choices_preseed 			: #51 
+	rtd_setup_choices_term_fallback			: For server setup, displays a menu where you may chose CLI productivity software (vim, alpine, byobu etc.).
+	rtd_update_system 				: #53 
+	rtd_wait_for_internet_availability 		: #54 
+	run_command_in_gnome_user_session 		: #55 
+	set_colors					: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
+	set_install_command				: Determines what install command should be used to install packages from repositories
+	SofwareManagmentAvailabilityCHK			: Checks to see that the software managment system is not busy
+	system_update					: Newer more universal software update function
+	up2date						: Older universal software update function
 
 Use Google Coding standards:
 In general any function that is not both obvious and short must be commented. Any function in a library must be commented regardless of 
@@ -56,6 +101,15 @@ All function comments should describe the intended API behaviour using:
 
 Library_Documentation
 
+
+#              .--.           .---.        .-.
+#          .---|--|   .-.     | A |  .---. |~|    .--.
+#       .--|===|Ch|---|_|--.__| S |--|:::| |~|-==-|==|---.
+#       |%%|NT2|oc|===| |~~|%%| C |--|   |_|~|CATS|  |___|-.
+#       |  |   |ah|===| |==|  | I |  |:::|=| |    |GB|---|=|
+#       |  |   |ol|   |_|__|  | I |__|   | | |    |  |___| |
+#       |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
+#       ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
 ###########################################################################
 ##                                                                       ##
 ##                         Settings                                      ##
@@ -95,16 +149,39 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 
 
 
-
-
-
+#     |>>>                                                      |>>>
+#     |                     |>>>          |>>>                  |
+#     *                     |             |                     *
+#    / \                    *             *                    / \
+#   /___\                 _/ \           / \_                 /___\
+#   [   ]                |/   \_________/   \|                [   ]
+#   [ I ]                /     \       /     \                [ I ]
+#   [   ]_ _ _          /       \     /       \          _ _ _[   ]
+#   [   ] U U |        {#########}   {#########}        | U U [   ]
+#   [   ]====/          \=======/     \=======/          \====[   ]
+#   [   ]    |           |   I |_ _ _ _| I   |           |    [   ]
+#   [___]    |_ _ _ _ _ _|     | U U U |     |_ _ _ _ _ _|    [___]
+#   \===/  I | U U U U U |     |=======|     | U U U U U | I  \===/
+#    \=/     |===========| I   | + W + |   I |===========|     \=/
+#     |  I   |           |     |_______|     |           |   I  |
+#     |      |           |     |||||||||     |           |      |
+#     |      |           |   I ||vvvvv|| I   |           |      |
+# _-_-|______|-----------|_____||     ||_____|-----------|______|-_-_
+#    /________\         /______||     ||______\         /________\
+#   |__________|-------|________\_____/________|-------|__________|
 
 ###########################################################################
 ##                                                                       ##
 ##                         Functions                                     ##
 ##                                                                       ##
 ###########################################################################
-#
+
+
+
+
+
+
+
 
 
 
@@ -689,10 +766,6 @@ SSH_KEY_KEYGEN
 		find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
 		cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/install.amd/gtk/initrd.gz"
 	popd || (echo -e $RED "Failed to popd" $ENDCOLOR & rtd_oem_pause 1)
-
-echo "$TMP_INITRD_DIR/initrd"
-echo "$TMP_DISC_DIR/install.amd/gtk/initrd.gz"
-read -p "check the tmp files now"
 	rtd_oem_setup_brand_splash_screen
 }
 
@@ -1961,10 +2034,13 @@ rtd_setup_choices_term_fallback ()
 
 
 
-cleanup_and_finish () {
-	# Function to remove all temporary file locations left over from building
-	# the new netinstall ISO etc. and clean  up some variables...
-	# go back to initial directory
+cleanup_and_finish ()
+{
+# Function to remove all temporary file locations left over from building
+# the new netinstall ISO etc. and clean  up some variables...
+# go back to initial directory
+# End of documentation
+
 	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
 	# Cleanup folder structure...
 	rm -r "$TMP_DOWNLOAD_DIR"
@@ -2005,16 +2081,18 @@ cleanup_and_finish () {
 
 
 
-generate_report_disk_space_used_by_directory () {
-	# Function to generate a report for folders' disk space use. 
-	# This function requres one argument; what root folder to analyse the directories in. 
-	# This functio will return a report contained in the variable $return that may then be used.
-	# Example: 
-	# generate_report_disk_space_used_by_directory /home
-	# 
-	# This will generate a report on the disk space per directory in the /home folder.
-	#
-	
+generate_report_disk_space_used_by_directory ()
+{
+# Function to generate a report for folders' disk space use. 
+# This function requres one argument; what root folder to analyse the directories in. 
+# This functio will return a report contained in the variable $return that may then be used.
+# Example: 
+# generate_report_disk_space_used_by_directory /home
+# 
+# This will generate a report on the disk space per directory in the /home folder.
+#
+# End of documentation
+
 	DIRS=$( ls $1 )
 	store=/$tmp/out.ct
 	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
@@ -2044,13 +2122,15 @@ generate_report_disk_space_used_by_directory () {
 
 
 
-make_preseed_cfg () {
-	# Function to write out a debina preeseed file to a location requested by the first parameter.
-	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-	# some parameters have defaults.
-	# Example:
-	# functoin_name          location        config          function
-	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+make_preseed_cfg ()
+{
+# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+# some parameters have defaults.
+# Example:
+# functoin_name          location        config          function
+# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+# End of documentation
 
 	SAVETO=$1
 	CONFIG=$2
@@ -2087,13 +2167,25 @@ make_preseed_cfg () {
 
 
 
-
-
-
-
-
-
-
+#                        ---                                     
+#                     -        --                             
+#                 --( /     \ )XXXXXXXXXXXXX                   
+#             --XXX(   O   O  )XXXXXXXXXXXXXXX-              
+#            /XXX(       U     )        XXXXXXX\               
+#          /XXXXX(              )--   XXXXXXXXXXX\             
+#         /XXXXX/ (      O     )   XXXXXX   \XXXXX\
+#         XXXXX/   /            XXXXXX   \   \XXXXX----        
+#         XXXXXX  /          XXXXXX         \  ----  -         
+# ---     XXX  /          XXXXXX      \           ---        
+#   --  --  /      /\  XXXXXX            /     ---=         
+#     -        /    XXXXXX              '--- XXXXXX         
+#       --\/XXX\ XXXXXX                      /XXXXX         
+#         \XXXXXXXXX                        /XXXXX/
+#          \XXXXXX                         /XXXXX/         
+#            \XXXXX--  /                -- XXXX/       
+#             --XXXXXXX---------------  XXXXX--         
+#                \XXXXXXXXXXXXXXXXXXXXXXXX-            
+#                  --XXXXXXXXXXXXXXXXXX-
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
@@ -2126,12 +2218,13 @@ make_preseed_cfg () {
 
 
 rtd_setup_choices_preseed () {
-	# Function to write out a debina preeseed file to a location requested by the first parameter.
-	# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-	# some parameters have defaults.
-	# Example:
-	# functoin_name          location        config          function
-	# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+# some parameters have defaults.
+# Example:
+# functoin_name          location        config          function
+# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+# End of documentation
 
 	SAVETO=$1
 	CONFIG=$2
@@ -2181,6 +2274,13 @@ rtd_setup_choices_preseed () {
 
 rtd_oem_cfg_post_task_sequence_default ()
 {
+# Default opst install script to be inserted in to build media (ISO).
+# Script will take care to configure automatic login and execution of 
+# the next post configurations script **"rtd-me.sh.cmd"** a unified bootstrap
+# script that runs on any bash supported system (BE, Apple OS X, Linux, BSD) 
+# as well as Windows Shell script (Winsows NT, XP, 7, 8, 10 etc.) as well 
+# as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME). 
+# End of documentation
 	cat >> $1/task.sh <<-'EOF'
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
@@ -2337,9 +2437,6 @@ rtd_oem_cfg_post_task_sequence_default ()
 			OEM_GDM3_LOGIN_OPTION
 
 		fi
-
-
-
 	}
 
 
@@ -2369,24 +2466,24 @@ rtd_oem_cfg_post_task_sequence_default ()
 		# 1. Back up your initramfs disk
 		cp  /boot/initrd.img-$(uname -r)  /boot/initrd.img-$(uname -r).bak
 
-			# cat << OEM_CRYPTLOCK_OPTION > /boot/grub/grub.cfg
-			#### BEGIN /etc/grub.d/10_linux ###
-			#
-			# menuentry 'Debian GNU/Linux, with Linux $(uname -r) (crypto safe)' --class debian --class gnu-linux --class gnu --class os {
-			#       load_video
-			#       insmod gzio
-			#       insmod part_msdos
-			#       insmod ext2
-			#       set root='hd0,msdos1'
-			#       search --no-floppy --fs-uuid --set=root 2a5e9b7f-2128-4a50-83b6-d1c285410145
-			#       echo    'Loading Linux $(uname -r) ...'
-			#       linux   /vmlinuz-$(uname -r) root=/dev/mapper/dradispro-root ro  quiet
-			#       echo    'Loading initial ramdisk ...'
-			#       initrd  /initrd.img-$(uname -r).safe
-			# }
-			# ...
-			### END /etc/grub.d/10_linux ###
-			# OEM_CRYPTLOCK_OPTION
+			cat << OEM_CRYPTLOCK_OPTION > /boot/grub/grub.cfg
+			### BEGIN /etc/grub.d/10_linux ###
+			
+			menuentry 'Debian GNU/Linux, with Linux $(uname -r) (crypto safe)' --class debian --class gnu-linux --class gnu --class os {
+			      load_video
+			      insmod gzio
+			      insmod part_msdos
+			      insmod ext2
+			      set root='hd0,msdos1'
+			      search --no-floppy --fs-uuid --set=root 2a5e9b7f-2128-4a50-83b6-d1c285410145
+			      echo    'Loading Linux $(uname -r) ...'
+			      linux   /vmlinuz-$(uname -r) root=/dev/mapper/dradispro-root ro  quiet
+			      echo    'Loading initial ramdisk ...'
+			      initrd  /initrd.img-$(uname -r).safe
+			}
+			...
+			## END /etc/grub.d/10_linux ###
+			OEM_CRYPTLOCK_OPTION
 
 		# 2. Create the key file in the unencrypted /boot partition
 		dd if=/dev/urandom of=/boot/keyfile bs=1024 count=4
@@ -2454,7 +2551,9 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 {
+
 	cat > $1/ks.cfg <<- EOF
+
 		# --------------------------------------------------- #
 		# KS.CFG Options
 		# --------------------------------------------------- #
@@ -2467,6 +2566,7 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 		#
 		# Please note that some options in kickstart are superceeded by preseed.
 		#
+		# End of documentation
 		lang en_US.UTF-8
 		keyboard se
 		install
@@ -2478,6 +2578,7 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 		reboot
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2485,15 +2586,18 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 rtd_oem_preseed_cfg_Unattended_Install ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
 		# Unattended Installation
 		# --------------------------------------------------- #
 		# Simple instruction to tell the debian installer that
 		# this is intended to be an unattended install and to only
 		# ask critical questions (wich we will answer in this file)
+		# End of documentation
 		d-i auto-install/enable boolean true
 		d-i debconf/priority select critical
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2506,6 +2610,12 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 		# Network configuration
 		# --------------------------------------------------- #
 		# Network setup. This can be a static setup or dhcp.
+		# The RTD default prefferred config is to rely on DHCP,
+		# and for wireless networks (systems with only wireless cards)
+		# default to an SSID named "loader" and the guest wpa string
+		# "letmein1234". This allows supported systems to be 
+		# installed directly over WiFi with no user input. 
+		# End of documentation
 		d-i netcfg/choose_interface select manual
 		d-i netcfg/hostname string RTD-Client
 		d-i netcfg/get_hostname string unassigned-hostname
@@ -2525,6 +2635,7 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 		d-i netcfg/wireless_wpa string letmein1234
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2532,6 +2643,7 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 rtd_oem_cfg_Account_Setup ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
 		# Account setup (temporary user account)
 		# --------------------------------------------------- #
@@ -2540,6 +2652,7 @@ rtd_oem_cfg_Account_Setup ()
 		# An encrypted password is set here, and should be changed
 		# ASAP after the system is built. Preferebly connect to LDAP/AD
 		# in a managed environment.
+		# End of documentation
 		d-i passwd/root-login boolean false
 		d-i passwd/user-fullname string RTD User
 		d-i passwd/username string tangarora
@@ -2549,6 +2662,7 @@ rtd_oem_cfg_Account_Setup ()
 		d-i passwd/auto-login boolean true
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2556,6 +2670,7 @@ rtd_oem_cfg_Account_Setup ()
 rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
 		# Do NOT install on the USB stick(!)
 		# --------------------------------------------------- #
@@ -2565,6 +2680,7 @@ rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 		# detect logic which disallows installing on USB devices.
 		#
 		# d-i partman/early_command string [ "$(ls -A /tmp)" ] && umount -l /media || echo "Empty" ;
+		# End of documentation
 		d-i partman/early_command string \
 			USBDEV=$(mount | grep hd-media | cut -d" " -f1 | sed "s/\(.*\)./\1/");\
 			BOOTDEV=$(list-devices disk | grep -v \$USBDEV | head -1);\
@@ -2572,6 +2688,7 @@ rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 			debconf-set grub-installer/bootdev $BOOTDEV;
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2579,6 +2696,7 @@ rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 rtd_oem_preseed_cfg_EFI ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
 		# EFI
 		# --------------------------------------------------- #
@@ -2590,7 +2708,9 @@ rtd_oem_preseed_cfg_EFI ()
 		# Here we tell setup to install EFI boot setup if possible so that both NEW and old systems may be handled
 		# and the installed system can be started.
 		d-i partman-efi/non_efi_system boolean true
+		# End of documentation
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2604,9 +2724,11 @@ rtd_oem_preseed_cfg_Localization ()
 		# Provide localizaton preferences so that the prefferred
 		# language is used for display and formats. Comparable to
 		# the MUI in Microsoft environments.
+		# End of documentation
 		d-i debian-installer/locale string en_US.UTF-8
 		d-i localechooser/supported-locales multiselect en_US.UTF-8, se_SE.UTF-8
 		d-i console-setup/ask_detect boolean false
+
 		# --------------------------------------------------- #
 
 
@@ -2634,6 +2756,7 @@ rtd_oem_preseed_cfg_Localization ()
 		d-i time/zone string Etc/UTC
 		d-i clock-setup/ntp boolean true
 		d-i clock-setup/ntp-server string ntp.ubuntu.com
+
 		# --------------------------------------------------- #
 
 		EOF
@@ -2642,26 +2765,37 @@ rtd_oem_preseed_cfg_Localization ()
 rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
 		# GRUB bootloader installation
 		# --------------------------------------------------- #
 		#
 		# Tell the grub-installer to install to the MBR even if it also finds some other
 		# OS, which is more likely to allow the newly installed Linux OS to boot without issue.
+		# End of documentation
 		d-i grub-installer/only_debian boolean true
 		d-i grub-installer/with_other_os boolean true
 		# --------------------------------------------------- #
+
 	EOF
 }
 
 rtd_oem_preseed_cfg_Disk_Layout ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
-		#   Disk layout
+		#   Disk layout (default encrypted disk)
 		# --------------------------------------------------- #
 		#
-		## Set option to encrypt the hard disk:
+		# Set option to encrypt the hard disk:
+		# By default the harddisk will be encrypted to pretect data
+		# and will need to be unlocked with a password when the
+		# system is booted. In addition a default is prefferred 
+		# where the swap space is set to 200% of RAM so that 
+		# hibernate can be supported. 
+		# End of documentation
+
 		d-i partman-auto/method string crypto
 		d-i partman-crypto/passphrase password letmein1234
 		d-i partman-crypto/passphrase-again password letmein1234
@@ -2718,13 +2852,16 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 		d-i partman/choose_partition select finish
 		d-i partman/confirm boolean true
 		d-i partman/confirm_nooverwrite boolean true
+
 		# --------------------------------------------------- #
+
 	EOF
 }
 
 rtd_oem_preseed_cfg_Package_Selection ()
 {
 	cat >> $1/$PRESEED <<-EOF
+
 		# --------------------------------------------------- #
 		# Package selection
 		# --------------------------------------------------- #
@@ -2737,6 +2874,7 @@ rtd_oem_preseed_cfg_Package_Selection ()
 		# lxde-desktop, web-server, ssh-server, print-server.
 		# The "OEM" line below ist to make it simple to replace the line with a
 		# relevant chice of debian role using "sed" or similar.
+		# End of documentation
 		tasksel tasksel/first multiselect $2
 		d-i pkgsel/include string splash openssh-server virt-what wget spice-vdagent
 
@@ -2749,15 +2887,18 @@ rtd_oem_preseed_cfg_Package_Selection ()
 		# if you don’t want it, you can set this to "false" to turn it off.
 		# d-i pkgsel/updatedb boolean false
 		# --------------------------------------------------- #
+		
 	EOF
 }
 
 rtd_oem_preseed_cfg_Addon_MinecraftServer()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
-		# Addon Tasks
+		# Addon Tasks for Minecraft Server
 		# --------------------------------------------------- #
+		# End of documentation
 		d-i preseed/late_command string \
 			in-target mkdir -p /etc/systemd/system/getty@tty1.service.d ; \
 			in-target echo "***********  Updating Autologin information... ************ "; \
@@ -2770,6 +2911,7 @@ rtd_oem_preseed_cfg_Addon_MinecraftServer()
 			in-target wget https://github.com/vonschutter/RTD-Minecraft-Server-Manager/raw/master/minecraft-server -O /home/tangarora/minecraft.server && chmod +x /home/tangarora/minecraft.server  ; \
 			umount -l /media || echo "Empty"; \
 			eject || true; \
+			reboot; \
 			echo "------  initial Setup Complete!  ------"
 
 		# Answer the last question
@@ -2782,24 +2924,28 @@ rtd_oem_preseed_cfg_Addon_MinecraftServer()
 		d-i finish-install/reboot_in_progress note
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
 rtd_oem_preseed_cfg_Addon_Tasks ()
 {
 	cat >> $1/$PRESEED <<-'EOF'
+
 		# --------------------------------------------------- #
-		# Addon Tasks
+		# Default preseed Addon Tasks 
 		# --------------------------------------------------- #
+		# End of documentation
 		d-i preseed/late_command string \
 			mkdir -p /target/opt/rtd/scripts; \
 			mkdir -p /target/opt/rtd/log; \
 			cp -r /task.sh /target/opt/rtd/scripts/; \
 			cp /preseed.cfg /target/opt/rtd/log/; \
 			in-target chmod +x /opt/rtd/scripts/task.sh; \
-			in-target /opt/rtd/scripts/task.sh; \
+			in-target /bin/bash /opt/rtd/scripts/task.sh; \
 			umount -l /media || echo "Empty"; \
 			eject || true; \
+			reboot; \
 			echo "------  initial Setup Complete!  ------"
 
 		# Answer the last question
@@ -2812,6 +2958,7 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 		d-i finish-install/reboot_in_progress note
 
 		# --------------------------------------------------- #
+
 	EOF
 }
 
@@ -2824,7 +2971,22 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 
 
 
-
+#                 __ 
+#               .'  '. 
+#              :      :
+#              | _  _ |
+#           .-.|(o)(o)|.-.        _._          _._
+#          ( ( | .--. | ) )     .',_ '.      .' _,'.
+#           '-/ (    ) \-'     / /' `\ \ __ / /' `\ \
+#            /   '--'   \     / /     \.'  './     \ \
+#            \ `"===="` /     `-`     : _  _ :      `-`
+#             `\      /'              |(o)(o)|
+#               `\  /'                |      |
+#               /`-.-`\_             /        \
+#         _..:;\._/V\_./:;.._       /   .--.   \
+#       .'/;:;:;\ /^\ /:;:;:\'.     |  (    )  | 
+#      / /;:;:;:;\| |/:;:;:;:\ \    _\  '--'  /__
+#     / /;:;:;:;:;\_/:;:;:;:;:\ \ .'  '-.__.-'   `-.
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
@@ -2852,6 +3014,7 @@ oem_PowerShell_compatability ()
 # need additional scripting. Currently there are these verb subject components:
 # write_host (Write-Host), write_error (Write-Error), write_status (Write-Status), 
 # write_warning (Write-Warning) and write_information (Write-Information)
+# End of Documentation
 
 
 	write_host () 
