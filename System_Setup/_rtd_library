@@ -481,10 +481,10 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	prepare_environment_for_iso_creation
 
 	# Retreive list of available Ubuntu versions:
-	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+)/ && print "$1\n"' | sort -Vu))
+	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$(dialog --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  0 0 "${all[-1]}" 3>&1 1>&2 2>&3)
+	UBUNTU_VER=$(dialog --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  0 0 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
 	# Find the precice location of the requested ISO image:
@@ -588,7 +588,6 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	rm -rf $mnt $auto
 
 	if ($RTD_GUI --title "Media ready" --yesno "Created $auto.iso Would you like to test the new image?." 0 0); then
-		echo "User selected Yes, exit status was $?."
 		check_dependencies qemu-kvm
 		qemu-img create -f qcow2 "$PUT_QCOW_FILE_HERE_WHEN_DONE/$auto.qcow2" 10G
 		qemu-system-x86_64 -smp 2 -enable-kvm -m 4G --cdrom "$TARGET_ISO" "$PUT_QCOW_FILE_HERE_WHEN_DONE/$auto.qcow2"
