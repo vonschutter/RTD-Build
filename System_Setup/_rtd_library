@@ -1333,6 +1333,24 @@ rtd_oem_pause ()
 
 
 
+rtd_oem_reseal () {
+
+	if cat /etc/os-release |grep ubuntu ; then
+		InstallSoftwareFromRepo oem-config-gtk
+		oem-config-prepare
+	elif cat /etc/os-release |grep kubuntu ; then
+		InstallSoftwareFromRepo oem-config-kde
+		oem-config-prepare
+	elif cat /etc/os-release |grep suse ; then
+		echo "I dont know of any OEM configuration for SuSE"
+	elif cat /etc/os-release |grep fedora ; then
+		echo "I dont know of any OEM configuration for Fedora"	
+	fi
+}
+
+
+
+
 check_if_password_p0wned () {
 	pass_str=$($RTD_GUI --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
 	result=$(

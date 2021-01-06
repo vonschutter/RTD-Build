@@ -591,7 +591,7 @@ recipie_OEM_config (){
 			systemctl enable --now tuned
 			tuned-adm profile balanced
 			recipie_baseapps
-			
+
 			rtd_oem_check_splash () {
 				if -f $1 ; then 
 					if cat $1 |grep "-desktop" ; then
@@ -701,7 +701,7 @@ recipie_tweak_user_gnome_ui (){
 			if  cat /etc/os-release |grep "debian" &>/dev/null ; then 
 				InstallSoftwareFromRepo gtk2-engines-murrine
 				InstallSoftwareFromRepo gtk2-engines-pixbuf
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb 
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
 			elif /etc/os-release |grep "fedora" &>/dev/null; then
 				InstallSoftwareFromRepo gtk-murrine-engine
 				InstallSoftwareFromRepo gtk2-engines
@@ -714,7 +714,6 @@ recipie_tweak_user_gnome_ui (){
 			wget -q https://github.com/vonschutter/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
 			unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
 			unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
-
 
 			cat >> gtweak.sh <<-'EOF'
 			#!/bin/bash
@@ -867,19 +866,5 @@ recipie_set_gnome_wallpaper (){
 
 
 
-rtd_oem_reseal () {
-
-	if cat /etc/os-release |grep ubuntu ; then
-		InstallSoftwareFromRepo oem-config-gtk
-		oem-config-prepare
-	elif cat /etc/os-release |grep kubuntu ; then
-		InstallSoftwareFromRepo oem-config-kde
-		oem-config-prepare
-	elif cat /etc/os-release |grep suse ; then
-		echo "I dont know of any OEM configuration for SuSE"
-	elif cat /etc/os-release |grep fedora ; then
-		echo "I dont know of any OEM configuration for Fedora"	
-	fi
-}
 
 
