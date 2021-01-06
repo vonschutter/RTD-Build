@@ -23,23 +23,23 @@ RTD_VERSION=2.0
 
 	Function Name: 					Description:
 	----------------------------------------------------------------------------------------------------------------
-	add_software_task 				: # 
-	backup_running_vm 				: #2 
-	change_disk_pass 				: #3 
+	add_software_task 				: Wrapper function to execute a command and display pretty terminal OK or FAIL  
+	backup_running_vm 				: Backs up all running virtual machines on the local computer 
+	change_disk_pass 				: Allows user to change password of the system partition encrypted disk
 	check_dependencies 				: Checks that software requirements are met so scripts do not fail 
-	check_if_password_p0wned 			: #5 
-	check_menu_availability 			: #6 
-	cleanup_and_finish 				: #7 
-	create_iso_image 				: #8 
-	create_iso_image_debian 			: #9 
+	check_if_password_p0wned 			: Allows user to check if an intended password is already in well known dictionaries 
+	check_menu_availability 			: Checks if it is possible to display graphical menus in a terminal
+	cleanup_and_finish 				: Cleans and clears variables and temp files used by the media creations functions
+	create_iso_image 				: Creates aan OS iso image 
+	create_iso_image_debian 			: Creates a Debian iso image
 	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
-	display_result 					: #10 
+	display_result 					: Displays command results in a pretty terminal box 
 	dl						: Downloads and installs a package from the internet (a bit insecure)
-	download_and_manipulate_iso_debian 		: #12 
+	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install + OEM addons 
 	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
 	ensure_admin					: Elevates priveledges to admin "root" for the whole script (asks for password)
-	err_no_menu_system_found 			: #15 
-	generate_report_disk_space_used_by_directory 	: #16 
+	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
+	generate_report_disk_space_used_by_directory 	: Generate a disk usage report 
 	InstallSoftwareFromRepo				: Installs a package from a repository (supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.) 
 	is_software_package_available			: Checks to see if a software package is availabel in a repository (RPM and DEB)
 	is_software_package_installed			: Checks to see if a software package allready is installed
@@ -60,13 +60,13 @@ RTD_VERSION=2.0
 	rtd_oem_preseed_cfg_Addon_Tasks 		: #33 
 	rtd_oem_preseed_cfg_Disk_Layout 		: #34 
 	rtd_oem_preseed_cfg_EFI 			: #35 
-	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation:  #36 
+	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation: #36 
 	rtd_oem_preseed_cfg_Localization 		: #37 
 	rtd_oem_preseed_cfg_Network_Configuration 	: #38 
 	rtd_oem_preseed_cfg_Package_Selection 		: #39 
 	rtd_oem_preseed_cfg_Prevent_Install_On_USB 	: #40 
 	rtd_oem_preseed_cfg_Unattended_Install 		: #41 
-	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options 	: 42 
+	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options 	: #42 
 	rtd_oem_release_upgrade 			: #43 
 	rtd_oem_remove_non_western_latin_fonts 		: #44 
 	rtd_oem_remove_software 			: #45 
@@ -102,6 +102,13 @@ All function comments should describe the intended API behaviour using:
 Library_Documentation
 
 
+
+
+
+
+
+
+
 #              .--.           .---.        .-.
 #          .---|--|   .-.     | A |  .---. |~|    .--.
 #       .--|===|Ch|---|_|--.__| S |--|:::| |~|-==-|==|---.
@@ -112,7 +119,7 @@ Library_Documentation
 #       ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
 ###########################################################################
 ##                                                                       ##
-##                         Settings                                      ##
+##                        Library Settings                               ##
 ##                                                                       ##
 ###########################################################################
 
@@ -172,7 +179,7 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 
 ###########################################################################
 ##                                                                       ##
-##                         Functions                                     ##
+##                       Library Functions                               ##
 ##                                                                       ##
 ###########################################################################
 
@@ -2575,8 +2582,21 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 		zerombr yes
 		clearpart --all --initlabel
 		skipx
-		reboot
-
+		# --------------------------------------------------- #
+		# Default preseed Addon Tasks 
+		# --------------------------------------------------- #
+		# End of documentation
+		preseed preseed/late_command string \
+			mkdir -p /target/opt/rtd/scripts; \
+			mkdir -p /target/opt/rtd/log; \
+			cp -r /task.sh /target/opt/rtd/scripts/; \
+			cp /preseed.cfg /target/opt/rtd/log/; \
+			in-target chmod +x /opt/rtd/scripts/task.sh; \
+			in-target /bin/bash /opt/rtd/scripts/task.sh; \
+			umount -l /media || echo "Empty"; \
+			eject || true; \
+			reboot; \
+			echo "------  initial Setup Complete!  ------"
 		# --------------------------------------------------- #
 
 	EOF
