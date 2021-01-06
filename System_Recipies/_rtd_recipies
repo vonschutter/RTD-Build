@@ -590,7 +590,8 @@ recipie_OEM_config (){
 			check_dependencies tuned
 			systemctl enable --now tuned
 			tuned-adm profile balanced
-
+			recipie_baseapps
+			
 			rtd_oem_check_splash () {
 				if -f $1 ; then 
 					if cat $1 |grep "-desktop" ; then
