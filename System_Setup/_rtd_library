@@ -554,8 +554,9 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 # By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
 # Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
 # :: function name				:: target		:: iso version to download
-# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop
-#
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	live	⏭ creates auoinstall iso using the Ubuntu live dvd
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	server	⏭ creates auoinstall iso using the Ubuntu server dvd
 #
 # End of Documentation
 
@@ -568,7 +569,7 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  0 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
+	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  24 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
 	# Find the precice location of the requested ISO image:
@@ -576,7 +577,6 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 		echo "requested iso for download : $ISO_URL"
 		ISO_FILENAME=$(basename $ISO_URL)
 		BASE=$(basename $ISO_URL .iso)
-
 
 	echo "Checking if $ISO_FILENAME already downloaded..."
 	iso=$(find "$PERMANENT_DOWNLOAD_DIR" -name "$ISO_FILENAME")
@@ -586,27 +586,28 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 		iso="$PERMANENT_DOWNLOAD_DIR/$ISO_FILENAME"
 	fi
 
-
 	mnt="${TMP_DISC_DIR:=$(mktemp -d )}"
 	TMP_DISC_DIR=$mnt
-
+	write_status "Mounting intallation media..."
 	mount $iso $mnt -o user,ro || rtd_oem_pause 1
+	write_status "Verifying media presence..."
 	cat $mnt/.disk/*info || rtd_oem_pause 1
 	auto="$BRANDING_ORG-$CONFIG-auto-install-from-${BASE}"
-	echo -e "$YELLOW Creating Installations media: $auto $BLUE"
+	write_information "Creating Installations media: $YELOW $auto "
 	if [ ! -e $auto ]; then
 		cp -a $mnt $auto
 		chmod -R +w $auto
 	fi
-
-	echo -e "$YELLOW Unmounting $mnt... $ENDCOLOR"
+	write_status "Modifying startup instructions...  "
+	rtd_oem_setup_brand_splash_screen $mnt/isolinux/splash.png || rtd_oem_pause 1
+	write_status "Unmounting $mnt... "
 	umount $mnt || rtd_oem_pause 1
-	echo -e "$BLUE Modifying installation instructions...  $BLUE"
+
 
 	case "$2" in
 		desktop | Desktop | live | Live)
 			#configure_auto_unattended_ubuntu_live_boot_media $auto $CONFIG && echo -e "$GREEN OK! $ENDCOLOR" || rtd_oem_pause 1
-
+			write_status "Modifying installation instructions in live media... "
 			cat > $auto/isolinux/txt.cfg <<- EOF
 				default live-install
 				label live-install
@@ -620,6 +621,7 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 		;;
 		*)
 			#configure_auto_unattended_ubuntu_server_boot_media $auto $CONFIG && echo -e "$GREEN OK! $ENDCOLOR" || rtd_oem_pause 1
+			write_status "Modifying installation instructions in server image... "
 			cat > $auto/isolinux/isolinux.cfg <<- EOF
 				default install
 				label install
@@ -645,11 +647,10 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 		;;
 	esac
 
-	echo -e "$YELLOW Modifying startup instructions...  $BLUE"
 
 	TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$auto.iso"
 
-	rtd_oem_setup_brand_splash_screen $mnt/isolinux/splash.png || rtd_oem_pause 1
+
 	if [[ -f $TARGET_ISO ]]; then
 		rm $TARGET_ISO
 	fi
@@ -2148,7 +2149,6 @@ make_preseed_cfg ()
 	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
 	touch "$SAVETO/$PRESEED"
 
-	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
 	rtd_oem_preseed_cfg_Unattended_Install "$SAVETO"
 	rtd_oem_preseed_cfg_Network_Configuration "$SAVETO"
 	rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO"
@@ -2160,6 +2160,7 @@ make_preseed_cfg ()
 	rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG"
 	rtd_oem_cfg_post_task_sequence_default "$SAVETO"
 	rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO"
+	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
 }
 
 
@@ -2289,6 +2290,7 @@ rtd_oem_cfg_post_task_sequence_default ()
 # as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME). 
 # End of documentation
 	cat >> $1/task.sh <<-'EOF'
+	#!/bin/bash
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::          Script Settings                 ::::::::::::::::::::::
@@ -2559,47 +2561,43 @@ rtd_oem_cfg_post_task_sequence_default ()
 rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 {
 
-	cat > $1/ks.cfg <<- EOF
+	cat $1/preseed.cfg >$1/ks.cfg 
+		#<<- EOF
 
-		# --------------------------------------------------- #
-		# KS.CFG Options
-		# --------------------------------------------------- #
-		# Simple instruction to tell the Ubuntu installer that
-		# this is intended to be an unattended install and to only
-		# ask critical questions (wich we will answer in this file)
-		# Add options here from these instructions:
-		#
-		# https://pykickstart.readthedocs.io/en/latest/kickstart-docs.html#chapter-2-kickstart-commands-in-fedora
-		#
-		# Please note that some options in kickstart are superceeded by preseed.
-		#
-		# End of documentation
-		lang en_US.UTF-8
-		keyboard se
-		install
-		cdrom
-		bootloader --location=mbr
-		zerombr yes
-		clearpart --all --initlabel
-		skipx
-		# --------------------------------------------------- #
-		# Default preseed Addon Tasks 
-		# --------------------------------------------------- #
-		# End of documentation
-		preseed preseed/late_command string \
-			mkdir -p /target/opt/rtd/scripts; \
-			mkdir -p /target/opt/rtd/log; \
-			cp -r /task.sh /target/opt/rtd/scripts/; \
-			cp /preseed.cfg /target/opt/rtd/log/; \
-			in-target chmod +x /opt/rtd/scripts/task.sh; \
-			in-target /bin/bash /opt/rtd/scripts/task.sh; \
-			umount -l /media || echo "Empty"; \
-			eject || true; \
-			reboot; \
-			echo "------  initial Setup Complete!  ------"
-		# --------------------------------------------------- #
+		# # --------------------------------------------------- #
+		# # KS.CFG Options
+		# # --------------------------------------------------- #
+		# # Simple instruction to tell the Ubuntu installer that
+		# # this is intended to be an unattended install and to only
+		# # ask critical questions (wich we will answer in this file)
+		# # Add options here from these instructions:
+		# #
+		# # https://pykickstart.readthedocs.io/en/latest/kickstart-docs.html#chapter-2-kickstart-commands-in-fedora
+		# #
+		# # Please note that some options in kickstart are superceeded by preseed.
+		# #
+		# # End of documentation
+		# lang en_US.UTF-8
+		# keyboard se
+		# install
+		# cdrom
+		# bootloader --location=mbr
+		# zerombr yes
+		# clearpart --all --initlabel
+		# skipx
+		# text
+		# ubiquity ubiquity/success_command string \
+		#  	mkdir -p /target/opt/rtd/scripts ;\
+		#  	mkdir -p /target/opt/rtd/log ;\
+		#  	cp -r /task.sh /target/opt/rtd/scripts/ ;\
+		#  	cp /preseed.cfg /target/opt/rtd/log/ ;\
+		#  	chmod +x /target/opt/rtd/scripts/task.sh ;\
+		#  	/bin/bash /target/opt/rtd/scripts/task.sh;\
+		# 	read -p "Press any key to continue...."
+		
+		# # --------------------------------------------------- #
 
-	EOF
+	#EOF
 }
 
 
@@ -2827,7 +2825,6 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 		d-i partman-lvm/confirm_nooverwrite boolean true
 		d-i partman-auto-lvm/guided_size string max
 		d-i partman-auto-lvm/new_vg_name string crypt
-		# d-i partman-auto/disk string /dev/sdb
 		d-i partman-auto/choose_recipe select root-encrypted
 		d-i partman-auto/expert_recipe string                   \
 		root-encrypted ::                                       \
@@ -2967,6 +2964,16 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 			eject || true; \
 			reboot; \
 			echo "------  initial Setup Complete!  ------"
+
+		# for ubuntu to work...
+		ubiquity ubiquity/success_command string \
+		 	mkdir -p /target/opt/rtd/scripts ;\
+		 	mkdir -p /target/opt/rtd/log ;\
+		 	cp -r /cdrom/task.sh /target/opt/rtd/scripts/ ;\
+		 	cp /cdrom/preseed.cfg /target/opt/rtd/log/ ;\
+		 	chmod +x /target/opt/rtd/scripts/task.sh ;\
+		 	in-target /opt/rtd/scripts/task.sh ;\
+			read -p "Press any key to continue...."
 
 		# Answer the last question
 		d-i debian-installer/splash boolean true

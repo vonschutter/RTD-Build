@@ -127,14 +127,39 @@
 
 
 
-recipie_baseapps (){
+recipie_baseapps () {
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
-			for i in diodon polari filezilla 
+			for i in diodon polari filezilla
 			do
 			     InstallSoftwareFromRepo $i
 			done
+
+			# Ensure Flatpack support
+			check_dependencies flatpak
+			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+			# Ensure Snap support
+			check_dependencies snapd
+			snap install core
+			snap install snap-store
+
+			# Configure Desktop software managers depending on desktop used
+			case "$DESKTOP_SESSION" in
+				plasma )
+					check_dependencies plasma-discover
+					check_dependencies plasma-discover-backend-flatpak
+					check_dependencies plasma-discover-backend-snap
+				;;
+				* )
+					check_dependencies gnome-software
+					check_dependencies gnome-software-plugin-flatpak
+					check_dependencies gnome-software-plugin-snap
+				;;
+			esac
+
+
+
 }
 
 
@@ -236,7 +261,7 @@ recipie_screenshot (){
 
 recipie_wps_office () {
 			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
-			dl http://kdl.cc.ksosoft.com/wps-community/download/8722/wps-office_11.1.0.8722_amd64.deb wps-office_11.1.0.8722_amd64.deb
+			flatpak install flathub com.wps.Office
 }
 
 
@@ -292,7 +317,8 @@ recipie_developer_software (){
 			done
 			check_dependencies snapd
 			snap install atom --classic  2>>$_ERRLOGFILE
-			snap install gitkraken 2>>$_ERRLOGFILE
+			snap install gitkraken --classic 2>>$_ERRLOGFILE
+			sudo snap install code --classic 2>>$_ERRLOGFILE
 }
 
 
@@ -300,7 +326,6 @@ recipie_developer_software (){
 recipie_compression_tools (){
 			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR	
 			for i in p7zip-full p7zip-rar rar zip 
-
 			do
 			     InstallSoftwareFromRepo $i
 			done
@@ -382,13 +407,15 @@ recipie_admin_tools (){
 
 recipie_java (){
 			# Special case for installing Oracle Java...
-			echo -e $YELLOW"--- Adding Oracle Java..." $ENDCOLOR
+			echo -e $YELLOW"--- Adding Java JRE..." $ENDCOLOR
 			# Add the Oracle Java repository and install the software. 
-			add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
-			echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
-			apt install -y oracle-java12-installer    1>>$_LOGFILE 2>>$_ERRLOGFILE
-			apt install -y oracle-java12-set-default  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
+			# apt install -y oracle-java12-installer    1>>$_LOGFILE 2>>$_ERRLOGFILE
+			# apt install -y oracle-java12-set-default  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			InstallSoftwareFromRepo default-jre
+
 }
 
 
@@ -440,7 +467,6 @@ recipie_teamviewer (){
 recipie_anydesk () {
 			check_dependencies flatpak
 			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
-
 }
 
 
@@ -540,7 +566,8 @@ recipie_virtualbox (){
 			for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
 			do
 			     InstallSoftwareFromRepo $i
-			done	
+			done
+			[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
 			# Ensure that the current user can use USB etc... 			
 			if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 			    echo      $SUDO_USER already belongs to vboxusers group
