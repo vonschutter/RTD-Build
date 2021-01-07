@@ -652,8 +652,7 @@ recipie_OEM_config (){
 				wget -q https://github.com/vonschutter/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
 				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
 			fi
-			#rtd_oem_reseal
-
+			cp /home/$SUDO_USER/.config /etc/skel/
 }
 
 

@@ -438,7 +438,7 @@ rtd_oem_setup_brand_splash_screen()
 # Usage: 
 # rtd_oem_setup_brand_splash_screen [string] [string]
 # 
-# [string]: /path/to/imagefile.png, "test to brand image with"
+# [string]: /path/to/imagefile.png, "text to brand image with"
 #
 # rtd_oem_setup_brand_splash_screen /tmp/splash.png "Hi! I am a lable!"
 #
@@ -461,7 +461,6 @@ rtd_oem_setup_brand_splash_screen()
 		elif [ -f $TMP_DISC_DIR/isolinux/splash.png ]; then
 			echo "$TMP_DISC_DIR/isolinux/splash.png"
 		fi )" }"
-
 	: "${text_to_brand_with:="$( echo " RunTime Data OEM Install: $PREFERENCE" )" }"
 
 	echo -e $GREEN "found: $image_file_to_brand"  $ENDCOLOR
@@ -471,7 +470,6 @@ rtd_oem_setup_brand_splash_screen()
 		convert $image_file_to_brand -gravity north -stroke '#000C' -strokewidth 3 -annotate 0 "$text_to_brand_with" -stroke none -strokewidth 3 -fill white -annotate 0 " $text_to_brand_with "  edit-out.png
 		rm $image_file_to_brand
 		mv edit-out.png $image_file_to_brand || echo -e $RED "Image [ $image_file_to_brand ] NOT branded!  " $ENDCOLOR
-
 	fi
 }
 
@@ -565,20 +563,20 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	ISO_VER=$2
 	prepare_environment_for_iso_creation
 
-	# Retreive list of available Ubuntu versions:
+	write_information "Retreive list of available Ubuntu versions..."
 	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... "  24 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
+	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
-	# Find the precice location of the requested ISO image:
+	write_information Find the precice location of the requested ISO image:
 	ISO_URL=$(rtd_oem_find_live_release $UBUNTU_VER ubuntu $ISO_VER)
 		echo "requested iso for download : $ISO_URL"
 		ISO_FILENAME=$(basename $ISO_URL)
 		BASE=$(basename $ISO_URL .iso)
 
-	echo "Checking if $ISO_FILENAME already downloaded..."
+	write_status "Checking if $ISO_FILENAME already downloaded..."
 	iso=$(find "$PERMANENT_DOWNLOAD_DIR" -name "$ISO_FILENAME")
 	if [ ! -e "$iso" ]; then
 		echo "$ISO_FILENAME is not in cache, downloading..."
@@ -593,13 +591,19 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	write_status "Verifying media presence..."
 	cat $mnt/.disk/*info || rtd_oem_pause 1
 	auto="$BRANDING_ORG-$CONFIG-auto-install-from-${BASE}"
-	write_information "Creating Installations media: $YELOW $auto "
+	write_information "Creating Installations media: $auto "
 	if [ ! -e $auto ]; then
 		cp -a $mnt $auto
 		chmod -R +w $auto
 	fi
 	write_status "Modifying startup instructions...  "
-	rtd_oem_setup_brand_splash_screen $mnt/isolinux/splash.png || rtd_oem_pause 1
+		for f in splash.pcx splash.png blank.pcx ; do
+			rtd_oem_setup_brand_splash_screen $auto/isolinux/$f
+		done
+		pushd ./$auto/isolinux/
+			rm -r bootlogo || rtd_oem_pause 1
+			find . | cpio -ov >bootlogo
+		popd
 	write_status "Unmounting $mnt... "
 	umount $mnt || rtd_oem_pause 1
 
@@ -955,9 +959,17 @@ make_kvm_virtual_machine_now_from_iso ()
 			$RTD_GUI --backtitle "$BRANDING" --title "NOTICE!" --msgbox "OOOPS! I cannot find the ISO image to build the VM... " 10 60
 			show_main_menu
 		fi
+	# Discover if the appropriate VM net interface is (default or br'0 - n')
+	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
 
 	# create image and run installer
-	virt-install --name VM_Template_"$1"_"$RANDOM" --vcpus "${"2"}" --memory "${"2048"}" --network default --cdrom="$TARGET_ISO" --disk size="${"20"}" --os-variant="${1:-"debian10"}"
+	virt-install --name VM_Template_"$1"_"$RANDOM" 
+		--vcpus "${"2"}" \
+		--memory "${"2048"}" \
+		--network "${VIRT_NET}" \
+		--cdrom="${TARGET_ISO}" \
+		--disk size="${"20"}" \
+		--os-variant="${1:-"debian10"}"
 	$RTD_GUI --backtitle "$BRANDING" --title "NOTICE!" --msgbox "The virtual machine is currently being built. You may attach to this server and see the progress at IP: $(hostname -I)" 10 60
 }
 
@@ -988,7 +1000,19 @@ create_iso_image ()
 
 	cd "$TMP_DISC_DIR" || echo "failed to enter $TMP_DISC_DIR "
 	rm -r '[BOOT]'
-	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b isolinux.bin -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
+	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" \
+			-J -b isolinux.bin \
+			-c boot.cat \
+			-no-emul-boot \
+			-boot-load-size 4 \
+			-boot-info-table \
+			-input-charset utf-8 \
+			-isohybrid-mbr "$ISOHDPFX_BIN" \
+			-eltorito-alt-boot \
+			-e boot/grub/efi.img \
+			-no-emul-boot \
+			-isohybrid-gpt-basdat \
+			-o "$TARGET_ISO" ./ || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
 	chmod 777 "$TARGET_ISO" || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
 }
 
@@ -2991,7 +3015,7 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 		 	cp /cdrom/preseed.cfg /target/opt/rtd/log/ ;\
 		 	chmod +x /target/opt/rtd/scripts/task.sh ;\
 		 	in-target /opt/rtd/scripts/task.sh ;\
-			read -p "Press any key to continue...."
+			echo "------  initial Setup Complete!  ------"
 
 		# Answer the last question
 		d-i debian-installer/splash boolean true
@@ -3048,18 +3072,6 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 
 
 
-
-oem_PowerShell_compatability ()
-{
-# Internal PowerShell compatability Library. 
-# This is a collection of functions acting a simpified CMDlets. 
-# The purpose of these internal libraries are to facilitate for scriptors that
-# are familiar with the PowerShell scripting. 
-# This should also profide simple and consistent way to do certain tasks that would
-# need additional scripting. Currently there are these verb subject components:
-# write_host (Write-Host), write_error (Write-Error), write_status (Write-Status), 
-# write_warning (Write-Warning) and write_information (Write-Information)
-# End of Documentation
 
 
 	write_host () 
@@ -3148,8 +3160,6 @@ oem_PowerShell_compatability ()
 		[ -z "$text" ] && echo -e "$blue$text$endcolor"
 
 	}
-# End of Documentation
-}
 
 
 
