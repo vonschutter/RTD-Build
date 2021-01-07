@@ -986,14 +986,18 @@ make_kvm_virtual_machine_now_from_iso ()
 
 create_iso_image ()
 {
-# Function to generate the new ISO file from the extracted and
-# altered original ISO.
+# Function to generate a bootable ISO file from source folder or an extracted and
+# altered original ISO. The function takes 3 arguments: target file name, folder to use as source
+# and volume title. The first argument is mandatory since it makes not sense unless it is known 
+# what source to use for makeing the ISO file. 
+#
+# create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
 # Delete old iso file if there...
 #
 # End of Documentation
 
-	TARGET_ISO=$1
-	TMP_DISC_DIR=$2
+	TARGET_ISO=$2
+	TMP_DISC_DIR=$1
 	VOLUME_TITLE=$3 
 
 	check_dependencies isolinux 
