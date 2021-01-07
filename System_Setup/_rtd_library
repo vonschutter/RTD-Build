@@ -992,6 +992,14 @@ create_iso_image ()
 #
 # End of Documentation
 
+	TARGET_ISO=$1
+	TMP_DISC_DIR=$2
+	VOLUME_TITLE=$3 
+
+	check_dependencies isolinux 
+	check_dependencies mlocate && updatedb
+
+	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"  
 
 	echo "------ CREATING ISO: $TARGET_ISO    --------"
 	if [ -f "$TARGET_ISO" ]; then
