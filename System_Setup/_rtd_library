@@ -992,20 +992,26 @@ create_iso_image ()
 # what source to use for makeing the ISO file. 
 #
 # create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
-# Delete old iso file if there...
+#
+# This function will over write the old iso file if there...
 #
 # End of Documentation
 
-	TARGET_ISO=$2
+	# Check for required input...
 	TMP_DISC_DIR=$1
-	VOLUME_TITLE=$3 
+	[[ -z "$TMP_DISC_DIR" ]] || rtd_oem_pause 1 "${FUNCNAME[0]} requires atleast one parameter."
+
+	# Check for other input and create them if not defined...
+	TARGET_ISO=$2
+	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
+	VOLUME_TITLE=$3
+	: "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}"
 
 	check_dependencies isolinux 
 	check_dependencies mlocate && updatedb
-
 	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"  
 
-	echo "------ CREATING ISO: $TARGET_ISO    --------"
+	write_status "------ CREATING ISO: $TARGET_ISO    --------"
 	if [ -f "$TARGET_ISO" ]; then
 		rm -f "$TARGET_ISO"
 	fi
@@ -1358,9 +1364,10 @@ rtd_oem_pause ()
 # in both of these cases script executoi will halt and wait for confirmation
 # before continuing. 
 # End of documentation
+	ERRMSG=$@
 
 	if [ ! $1 -eq 0 ]; then
-		read -p "Press  [ ENTER ] to continue:"
+		read -p "$ERRMSG: Press  [ ENTER ] to continue:"
 	fi
 }
 
