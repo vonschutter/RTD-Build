@@ -196,7 +196,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 ::
 :: The preferred method of coding well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7
 :: This is to ensure a secure and controlled way to execute components in the script. This may be an old way
-:: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more poserfull
+:: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more powerfull
 :: scripting languages are available. These should be used where appropriate in the stage 2 of this process.
 :: This bootstrap sctipt is intended for compatibility and this section therefore focuses on Windows CMD as this
 :: works in all earlier 32 and 64 bit versions of Windows.
@@ -242,10 +242,10 @@ echo			-	RTD System System Managment Bootstrap Script      -
 :GetInterestingThigsToDoOnThisSystem
 	:: Given that Microsoft Windows has been detected and the CMD chell portion of this script is executed,
 	:: the second stage script must be downloaded from an online location. Depending on the version of windows
-	:: there are different methods available to get and run remote files. All versions of windows do not neccesarily
+	:: there are different methods available to get and run remote files. All versions of Windows do not neccesarily
 	:: support powershell scripting. Therefore the base of this activity is coded in simple command CMD.EXE shell scripting
 	::
-	:: Table of evaluating verson of windos and calling the appropriate action fiven the version of windows found.
+	:: Table of evaluating verson of Windows and calling the appropriate action given the version of Windows found.
 	:: In this case it is easier to manage a straight table than a for loop or array:
 
 	:: DOS Based versions of Windows:
@@ -298,7 +298,6 @@ echo			-	RTD System System Managment Bootstrap Script      -
 
 
 
-
 :CMD1
 	:: Pre windows 7 instruction go here...
 	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to
@@ -313,7 +312,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 	:: DOS Based instructions go here ...
 	:: Windows NT, XP, and 2000 etc. do not have powershell and must find a different way to
 	:: fetch a script over the internet and execute it.
-	echo Detected an ancient Micorsoft OS...
+	echo Detected an ancient Microsoft OS...
 	echo executing DOS Based instructions...
 
 	goto END
