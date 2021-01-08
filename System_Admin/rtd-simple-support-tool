@@ -3,14 +3,14 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
-    RTD_Version=1.08
+    RTD_Version=2.0-Beta
 #::
 #::
 #::	Purpose: To simplify support tasks
 #::		  - Display system information
 #::		  - Update system software
 #:: 		  - Bakup virtual machines
-#::               - Cleanup/Report on PPA's
+#::               - Cleanup/Report on PPA's (Ubuntu only)
 #::               - Show systems physical location
 #::		  - Check if a password you intend to use is for sale on the Darknet
 #::
@@ -88,7 +88,12 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 
@@ -100,12 +105,13 @@
 #
 # You may comment out or edit items as you deem necessary.
 # Some formatting options for cli graphic display.
-BRANDING="RunTime Data : Simple Server Support Tool"
-DIALOG_CANCEL=1
-DIALOG_ESC=255
-HEIGHT=20
-WIDTH=80
-LIST_HEIGHT=12
+export BRANDING="RunTime Data : Simple Support Tool"
+export BRANDING_ORG="RTD"
+export DIALOG_CANCEL=1
+export DIALOG_ESC=255
+export HEIGHT=20
+export WIDTH=90
+export LIST_HEIGHT=12
 
 # Set location to backup virtual machines to. This location must have addequate space
 # to store several copies of the virtual machine disks. This may be a network share or
@@ -124,31 +130,36 @@ BLUE="\033[1;34m"
 
 # Set the background color of the tool. The appearance of the manu system may
 # look different on different systems depending on their default settings.
-# Here we define the bacground color for consistency.
+# Here we define the bacground color for consistency by seting the NEWT_COLORS= option. If "dialog"
+# is the desired front end then you may set the DIALOG_COLORS= optoin for preferred colors.
+# You may select a front end to the rtd tool below by seting the RTD_GUI= option. This will
+# override what is detected and preferred! 
+# Valid choices are: "dialog", "whiptail".
+RTD_GUI=
 export NEWT_COLORS='root=,gray '
+# DIALOG_COLORS=WHITE,BLUE,ON
 
 # Details for the ISO image creator. To change from one Ubuntu release to another you
 # may change the "RELEASE" option. If you wold like to use the ISO maker to build a custom
 # Debian installer you may change the "SOURCE_ISO_URL" option to poit to the Debian location.
 # Finally, should you desire using your own preseed template (answers to the install questions)
 # you should change the "PRESEED_TEMPLATE" option to point to the location of you own template.
-RELEASE=eoan
 TARGET_ISO_FILE_NAME=
 SOURCE_ISO_URL=
 SSH_PUBLIC_KEY_FILE=
 PUT_ISO_FILE_HERE_WHEN_DONE=
+PUT_QCOW_FILE_HERE_WHEN_DONE=
 VOLUME_TITLE=
-PRESEED_TEMPLATE=
+
 
 # Set location to where to log information:
 # in the system log directory in a file named the same as this script.
 LOGFILE="/var/log/${0##*/}.log"
+#DBG=#
 
-
-
-
-
-
+# Determine log file directory
+_ERRLOGFILE="/var/log/${0##*/}-error.log"
+_LOGFILE="/var/log/${0##*/}.log"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -162,807 +173,108 @@ LOGFILE="/var/log/${0##*/}.log"
 #
 #
 
-rtd_oem_pause() {
-	read -p "Press [ENTER] To continue ... "
-
-}
-
-ensure_admin () {
-        # Function to ensure administrative privileges such that system wide settings
-        # or configuration may be done. This function will make the script call itself
-        # with sudo if the user ID is not 0 e.g. root.
-        [ "$UID" -eq 0 ] || echo -e $YELLOW "The $BLUE $BRANDING $YELLOW needs administrative access..." $ENDCOLOR
-        [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-    }
-
-
-
-check_if_password_p0wned () {
-	pass_str=$(whiptail --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
-	result=$(
-		sha1=$(echo -n $pass_str | tr -d '\n' | sha1sum); echo "Hash prefix: ${sha1:0:5}"; echo "Hash suffix: ${sha1:5:35}";
-		query_result=$(curl https://api.pwnedpasswords.com/range/${sha1:0:5} 2>/dev/null | grep $(echo ${sha1:5:35} | tr '[:lower:]' '[:upper:]'));
-		printf "Your password appeared %d times for sale in the Darknet per the P0wned online database...." "${query_result#*:}" 2>/dev/null ;
-		unset pass_str ;
-		)
-	display_result "Password P0wned Status"
-}
-
-
-
-convert_vdi_2_qcow2 () {
-	# Function to import a VirtualBox image to KVM. qcow is a file format for disk
-	# image files used by QEMU, a hosted virtual machine monitor.[1] It stands for
-	# "QEMU Copy On Write" and uses a disk storage optimization strategy that delays
-	# allocation of storage until it is actually needed. This is the required format for
-	# qemu/KVM virtual machines. VDI: This format is the VirtualBox-specific VirtualBox Disk Image
-	qemu-img convert -f vdi -O qcow2 $VDI $QCOW2
-}
-
-
-
-change_disk_pass () {
-	# Function to change the passphrase fo an encrypted storage device.
-	# It will offer to change the first encrypted volume found by blockid.
-	# It is unclear how this will work if there are multiple encrypted volumes found.
-	clear
-	echo Changing the disk encryption password for your hard drive:
-	cryptsetup luksChangeKey $(blkid | grep crypto_LUKS|  cut -d : -f 1)
-	read -p "Press  [ ENTER ] to continue:"
-
-}
-
-
-
-rtd_oem_setup_brand_splash_screen() {
-	# Function to brand the installer splash screen for the customized installer
-	# downloaded from a ginve vendor. This function expects a few simple peices of information: 
-	# parameter 1: full path to image file to be branded. 
-	# parameter 2: quoted text to be incerted. 
-	image_file_to_brand=$1
-	text_to_brand_with=$2
-
-	# Ensure that imagemagik is installed so images can be manipulated.  
-	check_dependencies imagemagick
-	
-	# Default locations and splash screens based on debian and ubuntu, meaning this function will assume you are 
-	# making an ubuntu or debian boot iso as this is generally what this function was written to do. However these values
-	# can be overridden by passing the 2 parameters to this script. 
-	: "${image_file_to_brand:="$(
-		if [ -f $TMP_DISC_DIR/splash.png ]; then
-			echo "$TMP_DISC_DIR/splash.png"
-		elif [ -f $TMP_DISC_DIR/isolinux/splash.png ]; then 
-			echo "$TMP_DISC_DIR/isolinux/splash.png"
-		fi )" }"
-	
-	: "${text_to_brand_with:="$( echo " RunTime Data OEM Install: $PREFERENCE" )" }"
-
-	echo -e $GREEN "found: $image_file_to_brand"  $ENDCOLOR
-	echo -e $GREEN "branding with: $text_to_brand_with " $ENDCOLOR
-
-	if [ -f $image_file_to_brand ]; then
-		convert $image_file_to_brand -gravity north -stroke '#000C' -strokewidth 3 -annotate 0 "$text_to_brand_with" -stroke none -strokewidth 3 -fill white -annotate 0 " $text_to_brand_with "  edit-out.png
-		rm $image_file_to_brand
-		mv edit-out.png $image_file_to_brand
-		#echo -e $RED "Image [ $image_file_to_brand ] NOT branded!  " $ENDCOLOR
-		
-	fi
-}
-
-
-
-
-
-prepare_environment_for_iso_creation () {
-	# Function to check that all dependencies are available for manipulating the
-	# net install ISO from Ubuntu. Subsequently, the temporary file locations
-	# are setup and templates are downloaded.
-
-	#Include the path to where the isofile will be put...
-	: "${TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"}"
-	# Ensure that all needed software, outside of the most rudimantary,
-	# is available to us... If not, the script should exit.
-	: "${_DEPENDENCIES="dos2unix cpio gzip genisoimage whois pwgen wget fakeroot xorriso"}"
-	#set -e
-	for i in $_DEPENDENCIES
-	do
-		check_dependencies $i
-	done
-	
-	# Find full paths for the binaries needed since if they are recently
-	# added, they may not be found in the current $PATH. These statements will be evaluated
-	# when the variables are referenced not here because of the ":". FYI...
-	: "${BIN_7Z:=$(type -P 7z)}"
-	: "${BIN_XORRISO:=$(type -P xorriso)}"
-	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
-	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
-	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER"}"
-	: "${VOLUME_TITLE:="RTD Auto Installer"}"
-	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
-	# Find the location of the public key on this machine...
-	# This should be updated to create a key if not there...
-	if [ ! -f "$SSH_PUBLIC_KEY_FILE" ];
-	then
-		echo "Error: public SSH key $SSH_PUBLIC_KEY_FILE not found!"
-		echo "You will need to setup automatic login using ssh manually each time oyu build a server with this media."
-		read -p "Press [Enter] to continue..."
-		# exit 1
-	fi
-
-	# Setup the required folder structure...
-	CURRENT_DIR="`pwd`"
-	SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-	TMP_DOWNLOAD_DIR="`mktemp -d`"
-	TMP_DISC_DIR="`mktemp -d`"
-	TMP_INITRD_DIR="`mktemp -d`"
-}
-
-
-
-
-download_and_manipulate_iso () {
-	# This is a simple command sequence to read the preference of distribution to install
-	# and what release to get... then download the network install file from ubuntu
-	# and manipulate the iso file to complete the edited instruction in the preseed.cfg...
-	RELEASE=$1
-	PREFERENCE=$2
-	: "${PRESEED_TEMPLATE:="https://github.com/vonschutter/Blind_Install/raw/master/custom/preseed.ubuntu.template"}"
-	: "${TARGET_ISO_FILE_NAME:="$RELEASE-netinstall-auto.iso"}"
-	: "${SOURCE_ISO_URL:="http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/installer-amd64/current/images/netboot/mini.iso"}"
-	#: "${SOURCE_UBUNTU_FIRMWARE:="http://archive.ubuntu.com/ubuntu/pool/main/l/linux-firmware/linux-firmware_1.183_all.deb"}"
-	: "${SOURCE_FIRMWARE:="http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/buster/current/firmware.zip"}"
-
-	# Load the installation answers template.
-	echo -e $YELLOW Geting intall instructions template... $ENDCOLOR
-	mkdir -p $SCRIPT_DIR/custom
-	wget $PRESEED_TEMPLATE --output-document=$SCRIPT_DIR/custom/preseed.template
-	TARGET_ISO=$PUT_ISO_FILE_HERE_WHEN_DONE/$PREFERENCE-$TARGET_ISO_FILE_NAME
-	cd "$TMP_DOWNLOAD_DIR"
-	wget -4 "$SOURCE_ISO_URL" -O "./netboot.iso"
-	"$BIN_7Z" x "./netboot.iso" "-o$TMP_DISC_DIR"
-	cd "$TMP_DISC_DIR"
-	mkdir "$TMP_DISC_DIR/firmware"
-	# wget -4 "$SOURCE_UBUNTU_FIRMWARE" -P "$TMP_DISC_DIR/firmware"
-	wget -4  -q --show-progress "$SOURCE_FIRMWARE" -O "$TMP_DOWNLOAD_DIR/firmware.zip"
-	mkdir $TMP_DISC_DIR/firmware
-	"$BIN_7Z" x "$TMP_DOWNLOAD_DIR/firmware.zip" "-o$TMP_DISC_DIR/firmware"
-	
-
-
-echo "# ------------------- Patch 1 grub.cfg ------------------------ #"
-
-patch ./boot/grub/grub.cfg <<PATCH_GRUB
-11a12
-> set timeout=10
-13c14
-< menuentry "Install" {
----
-> menuentry "Automatic Install" {
-PATCH_GRUB
-
-echo "# -------------------------------------------------------------- #"
-
-
-echo "# ---------------------Patch 2 isolinux.cfg -------------------- #"
-
-dos2unix "./isolinux.cfg"
-patch ./isolinux.cfg <<PATCH_ISOLINUX
-7c7
-< timeout 0
----
-> timeout 100
-PATCH_ISOLINUX
-
-echo "# -------------------------------------------------------------- #"
-echo 25%
-
-	cat "$SCRIPT_DIR/custom/preseed.template" > "$SCRIPT_DIR/custom/preseed.cfg"
-	sed -i s/oem-replace-me-desktop-selection/$PREFERENCE/g "$SCRIPT_DIR/custom/preseed.cfg"
-	cd "$TMP_INITRD_DIR"
-	mkdir ./custom
-	cp "$SCRIPT_DIR/custom/preseed.cfg" "./preseed.cfg"
-	cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
-
-echo "# ---------------------Create ssh key service ------------------ #"
-
-cat << SSH_KEY_KEYGEN > ./custom/ssh-host-keygen.service
-[Unit]
-Description=OpenSSH Server Key Generation
-Before=ssh.service
-
-[Service]
-ExecStart=/usr/bin/ssh-keygen -A
-Type=oneshot
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-SSH_KEY_KEYGEN
-
-echo "# -------------------------------------------------------------- #"
-	
-	# Inject crated content into the new ISO...
-	cat "$TMP_DISC_DIR/initrd.gz" | gzip -d > "./initrd"
-	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/initrd.gz"
-	
-	rtd_oem_setup_brand_splash_screen
-}
-
-
-
-
-download_and_manipulate_iso_debian () {
-	# This is a simple command sequence to read the preference of distribution to install
-	# and what release to get... then download the network install file from ubuntu
-	# and manipulate the iso file to complete the edited instruction in the preseed.cfg...
-	: "${PRESEED_TEMPLATE:="https://github.com/vonschutter/Blind_Install/raw/master/custom/preseed.debian.template"}"
-	: "${TARGET_ISO_FILE_NAME:="$1-$2-mini-netinstall-auto.iso"}"
-	: "${SOURCE_ISO_URL:="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.2.0-amd64-netinst.iso"}"
-	: "${SOURCE_FIRMWARE:="http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/buster/current/firmware.zip"}"
-	TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"
-	PREFERENCE=$2
-	
-	echo -e $YELLOW Geting install image... 
-	echo -e $GREEN Download: $SOURCE_ISO_URL $ENDCOLOR
-	# Download the current version of Debian stable and extract its contents
-	# to a known location.
-	cd "$TMP_DOWNLOAD_DIR"
-	wget -4  -q --show-progress "$SOURCE_ISO_URL" -O "./netboot.iso"
-	"$BIN_7Z" x "./netboot.iso" "-o$TMP_DISC_DIR"
-	echo -e $BLUE; ls $TMP_DISC_DIR ; echo -e $ENDCOLOR
-
-	echo -e $YELLOW Geting non-free firmware... 
-	echo -e $GREEN Download: $SOURCE_FIRMWARE $ENDCOLOR
-	# By default Debian does not include non-free firmware to be able to use
-	# some wireless cards; so these will need to be downloaded.
-	wget -4  -q --show-progress "$SOURCE_FIRMWARE" -O "$TMP_DOWNLOAD_DIR/firmware.zip"
-	mkdir $TMP_DISC_DIR/firmware
-	"$BIN_7Z" x "$TMP_DOWNLOAD_DIR/firmware.zip" "-o$TMP_DISC_DIR/firmware"
-	echo -e $BLUE ; ls $TMP_DISC_DIR/firmware ; echo -e $ENDCOLOR
-
-	cd "$TMP_DISC_DIR"
-	
-	# Load the installation answers template.
-	echo -e $YELLOW Getting intall instructions template... $ENDCOLOR
-	mkdir -p $SCRIPT_DIR/custom
-	wget -q --show-progress $PRESEED_TEMPLATE --output-document=$SCRIPT_DIR/custom/preseed.template
-
-# ------------------- Patch 1 grub .cfg ------------------------ #
-
-patch ./boot/grub/grub.cfg <<PATCH
-11a12
-> set timeout=10
-13c14
-< menuentry "Install" {
----
-> menuentry "Automatic Install" {
-PATCH
-
-# -------------------------------------------------------------- #
-
-
-# ---------------------Patch 2 isolinux.cfg -------------------- #
-
-dos2unix "./isolinux/isolinux.cfg"
-patch ./isolinux/isolinux.cfg <<PATCH_II
-7c7
-< timeout 0
----
-> timeout 100
-PATCH_II
-
-# -------------------------------------------------------------- #
-
-	# Edit the installation instructions file...
-	cat "$SCRIPT_DIR/custom/preseed.template" > "$SCRIPT_DIR/custom/preseed.cfg"
-	sed -i s/oem-replace-me-desktop-selection/$PREFERENCE/g "$SCRIPT_DIR/custom/preseed.cfg"
-	cd "$TMP_INITRD_DIR"
-	mkdir ./custom
-	cp "$SCRIPT_DIR/custom/preseed.cfg" "./preseed.cfg"
-	cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
-
-# ---------------------Create ssh key service ------------------ #
-
-cat << SSH_KEY_KEYGEN > ./custom/ssh-host-keygen.service
-[Unit]
-Description=OpenSSH Server Key Generation
-Before=ssh.service
-
-[Service]
-ExecStart=/usr/bin/ssh-keygen -A
-Type=oneshot
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-SSH_KEY_KEYGEN
-
-# -------------------------------------------------------------- #
-
-	# Inject crated content into the new ISO...
-	echo -e $GREEN "# Modify the CLI Installer" $ENDCOLOR 
-	cat "$TMP_DISC_DIR/install.amd/initrd.gz" | gzip -d > "./initrd"
-	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/install.amd/initrd.gz"
-	rm ./initrd
-	
-	echo -e $GREEN "# Modify the GTK Installer" $ENDCOLOR 
-	cat "$TMP_DISC_DIR/install.amd/gtk/initrd.gz" | gzip -d > "./initrd"
-	echo "./preseed.cfg" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	find "./custom" | fakeroot "$BIN_CPIO" -o -H newc -A -F "./initrd"
-	cat "./initrd" | gzip -9c > "$TMP_DISC_DIR/install.amd/gtk/initrd.gz"
-
-	rtd_oem_setup_brand_splash_screen
-}
-
-
-
-create_iso_image (){
-	# Function to generate the new ISO file from the extracted and
-	# altered original ISO.
-	# Delete old iso file if there...
-	echo "------ CREATING ISO: $TARGET_ISO    --------"
-	if [ -f "$TARGET_ISO" ]; then
-		rm -f "$TARGET_ISO"
-	fi
-
-	cd "$TMP_DISC_DIR"
-	rm -r '[BOOT]'
-	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b isolinux.bin -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
-	chmod 777 "$TARGET_ISO" || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-}
-
-
-
-create_iso_image_debian (){
-	# Function to generate the new ISO file from the extracted and
-	# altered original ISO.
-	# Delete old iso file if there...
-	echo "------ CREATING ISO: $TARGET_ISO    --------"
-	if [ -f "$TARGET_ISO" ]; then
-		rm -f "$TARGET_ISO"
-	fi
-
-	cd "$TMP_DISC_DIR"
-	rm -r '[BOOT]'
-	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" -J -b "isolinux/isolinux.bin" -c boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -input-charset utf-8 -isohybrid-mbr "$ISOHDPFX_BIN" -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o "$TARGET_ISO" ./
-	chmod 777 "$TARGET_ISO" || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+rtd_oem_ensure_rtd_library_available ()
+{
+	rtd_library="/opt/rtd/scripts/_rtd_library"
+	get_rtd_oem_library ()
+	{
+		if ( $RTD_GUI --keep-window --title "RTD: Get Parts" --yesno "For this tool to run correctly I need to download the RunTime Data Library file from the internet. Is this OK?" 10 90 ); then
+			mkdir -p /opt/rtd/scripts
+			wget -q https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library -P /opt/rtd/scripts/
+			source $rtd_library || $RTD_GUI --colors --title "\Zb\Z1 ERROR!" --pause  "Failed to download Library! PLEASE check that you are connected to the internet." 10 90 10
+			rtd_oem_pause $?
+		else
+			if ( $RTD_GUI --title "RTD: Get Parts" --no-label "EXIT" --yes-label "Go back" --yesno "Since you have dissalowed me to get the RunTime Data Library, I cannot continue. \n Press [ENTER] to quit" 10 90 ); then
+				get_rtd_oem_library 
+			else
+				exit 1
+			fi
+		fi
 	}
 
-
-
-
-
-make_qcow2 () {
-	# Function to create a KVM virtual michine disk and define a VM. This function should be
-	# used on a Qemu/KVM virtual host that the virtual guest is to be used on.
-	# NOTE: QCOW2 is a storage format for virtual .
-	# machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
-	# layer from the virtual layer by adding a mapping between logical and physical blocks.
-	# NOTE2: Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux®.
-	# Specifically, KVM lets you turn Linux into a hypervisor that allows a host machine to run multiple,
-	# isolated virtual environments called guests or virtual machines (VMs). KVM is part of Linux.
-	# For complete info: https://www.redhat.com/en/topics/virtualization/what-is-KVM
-	# set -e
-	# Use the check_dependencies function to make sure the needed software is available.
-	check_dependencies qemu-img
-	check_dependencies kvm
-	# Lookup specific binaries: use full path since they may just have been added and not in $PATH yet.
-	: "${BIN_QEMU_IMG:=$(type -P qemu-img)}"
-	: "${BIN_KVM:=$(type -P kvm)}"
-
-	# Get parameters if provided, otherwise use defaults.
-	RAM_SIZE=${1:-"1024"}
-	DISK_SIZE=${2:-"10G"}
-	DISK_FORMAT=${3:-"qcow2"}
-	DISK_FILE=${5:-"`pwd`/TARGET_ISO_FILE_NAME-$RAM_SIZE-$DISK_SIZE.$DISK_FORMAT"}
-
-	# Verify ISO presesnce
-		if [ -f "$TARGET_ISO" ]; then
-			whiptail --backtitle "$BRANDING" --title "NOTICE!" --msgbox "OOOPS! You did a booboo... you have to first choose to create an ISO in the menu" 10 60
-			clear
-			exit
+	if [ -f $rtd_library ]; then
+		if [[ "$(head $rtd_library |grep Version: | cut -f 3)" > 2 ]]; then 
+			source $rtd_library
+			rtd_oem_pause $?
+		else 
+			get_rtd_oem_library && echo -e $GREEN "RunTime Data Library download seems sucessful!" $ENDCOLOR || echo -e $RED "RunTime Data Library download seems FAILED!" $ENDCOLOR
+			rtd_oem_pause $?
 		fi
-
-	# create image and run installer
-	"$BIN_QEMU_IMG" create "$DISK_FILE" -f "$DISK_FORMAT" "$DISK_SIZE"
-	"$BIN_KVM" -m "$RAM_SIZE" -cdrom "$TARGET_ISO" -boot once=d "$DISK_FILE"
-
-	# remove tmp
-	rm -r -f "$TMP_ISO_DIR"
-}
-
-
-
-
-set_install_command () {
-	# add global install command for portability and convenience
-	# If you need to use this script in an rpm based system you could modify the install
-	# command here to suit dnf, yum, zypper... By default packages of patternd that do not
-	# match should be skipped. Use "export option" so child processes also see the variiables.
-	if [[ 'echo $OSTYPE" |grep "linux"' ]]; then
-		if hash pkcon 2>/dev/null; then
-			# If package kit is available then prefer this
-			echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR
-			export _INSTCMD="pkcon -y  install"
-		elif hash yum 2>/dev/null; then
-			# If package kit is not available try yum (RedHat, Cent OS, Fedora)
-			echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
-			export _INSTCMD="yum -y  install"
-		elif hash apt 2>/dev/null; then
-			# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
-			echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR
-			export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-			export DEBIAN_FRONTEND=noninteractive
-		elif hash zypper 2>/dev/null; then
-			# If package kit is not available try zypper (Open SUSE)
-			echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
-			export _INSTCMD="zypper install -y "
-		else
-			echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
-			exit 1
-		fi
-
-	elif [[ "$OSTYPE" == "freebsd"* ]]; then
-		echo "Free BSD is currently unsupported... "
-		export _INSTCMD="echo I dont know how to install suff on FreeBSD!"
 	else
-	echo "I have no Idea what this system is"
-		export _INSTCMD="Whatever!"
+		get_rtd_oem_library && echo -e $GREEN "RunTime Data Library download seems sucessful!" $ENDCOLOR || echo -e $RED "RunTime Data Library download seems FAILED!" $ENDCOLOR
+		rtd_oem_pause $?
+	fi
+
+	echo "RTDFUNCTIONS = $RTDFUNCTIONS"
+	if [[ $RTDFUNCTIONS -eq 1 ]]; then
+		echo -e $GREEN "RTD Library confirmed that it has loaded!" $ENDCOLOR
+	else
+		$RTD_GUI --colors --title "\Zb\Z1 ERROR!" --pause "RunTime Data Library did not load scucessfully!! \n Please make sure that you are connected to the internet and that sudo and wget are installed." 10 90 10
 		exit 1
 	fi
 }
 
 
 
-is_software_package_installed () {
-	# Function to check if a piece of software is installed. This function will first check
-	# if the package manager is deb, zypper or rpm, and then take one parameter passed
-	# and evauate if a software package by that name is installed. This function
-	# will return a "0" or "1" return based on the package managers return code.
-	# Call this function by:
-	# is_software_package_installed "package name"
-	#                 or
-	# is_software_package_installed "$1" if calling this function from a script
-	# or another function receiving a parameter.
-	#
-	if hash yum 2>/dev/null; then
-		rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
-	elif hash apt 2>/dev/null; then
-		dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
-	elif hash zypper 2>/dev/null; then
-		zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
+
+
+
+rtd_oem_check_inet_access ()
+{
+# Function to verrify internet availabiltiy. 
+# The funciton will pause for 10 seconds by default, and will accept 
+# an integer to indicate a non-decault time to pause. 
+# Usage:
+# rtd_oem_check_inet_access [ integer ]
+#     
+# Example:
+# rtd_oem_check_inet_access 60
+#   
+# If an argument is omitted rtd_oem_check_inet_access will wait indefinitley
+# for input. 
+# 
+# End of documentation
+	_ARG=$1
+	if ! hash curl &>/dev/null; then 
+		read -t 10 -p "N O T I C E ! --  Could not check for internet connectivity... Please install (curl) web crawler/downloader. Press [ENTER] to continue and [CTRL] + [C] to exit! Continuing in 10 seconds..." 
 	else
-		return 3
+		if [[ -z "$_ARG" ]]; then 
+			curl ipinfo.io &>/dev/null || ( read -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  " )
+		else	
+			curl ipinfo.io &>/dev/null || ( read -t ${1:-10} -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  Continuing in ${1:-10} seconds..." )
+		fi
 	fi
 }
 
 
 
-is_software_package_available () {
-	# Function to chek if a package is available in whetever repository, and
-	# if there return a "0" and if not return a "1" or a "3" if there is no recognizable
-	# package manager found. The function expects the name of the package
-	# to be a parameter passed to this fuction. Call this function by:
-	# is_software_package_available "package name"
-	#                 or
-	# is_software_package_available "$1" if calling this function from a script
-	# or another function receiving a parameter.
-	#
-	# Supported base distributions: Fedora . SuSE . Debian
-	if hash yum 2>/dev/null; then
-		yum list available "$1" &> /dev/null && return 0 || return 1
-	elif hash apt 2>/dev/null; then
-		apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
-	elif hash zypper 2>/dev/null; then
-		return zypper info "$1" &> /dev/null && return 0 || return 1
-	else
-		return 3
-	fi
-
-	}
 
 
 
-InstallSoftwareFromRepo () {
-	# Function to simplify the installation of software by including all display and
-	# installation logic for a given software provider. This should be expanded to include flatpack
-	# snap for example. It should be the same consistent way no matter flavor of Linux.
-	# This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley and could
-	# be an RPM or deb string, or even snap or flatpack. A preference order between package system and
-	# snap or flatpack use.
 
-	# make some decent display terminal Graphics...
-	# This function uses set_install_command and ensure_admin to be able to, and know how to, install a package...
-	#
-	set_install_command
-	ensure_admin
-	PAD="--------------------------------------------------"
-	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	# Test if package name is installed, if not then...
-	if ! is_software_package_installed "$@"; then
-		if is_software_package_available   "$@"; then
-		echo -ne "--- Installing "$LINE" ":" "\ & $_INSTCMD "$@" >>$LOGFILE.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+
+check_menu_availability ()
+{
+# First discover what menu system is installed. Some systems use "dialog" and
+# other systems use whiptail for the terminal to show menus and dialogs.
+# If nothing is found, then make sure it is available before continuing.
+# End of documentation
+	if hash dialog 2>/dev/null ; then
+		: "${RTD_GUI:=dialog --clear}"
+		export RTD_GUI
+	elif hash whiptail 2>/dev/null ; then
+		: "${RTD_GUI:="whiptail --fb"}"
+		export RTD_GUI
+		if ( $RTD_GUI --backtitle "$BRANDING" --title "System Information Menu" --no-button "NO: Use whiptail" --yes-button "YES: Install dialog" --yesno "Please NOTE that we are using WHIPTAIL as a terminal menu system, which is missing several features compared to the default: DIALOG menu system. There are a few reasons we may be using WHIPTAIL instead: I was forced to use it or it is the only terminal menu system available... If you continue with the current WHIPTAIL some things might not work. \n \n May I please try to install the dialog system in stead? . \n  " 20 90 ); then
+			RTD_GUI=dialog
+			err_no_menu_system_found
 		else
-		echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Not available $ENDCOLOR \n"
+			echo "User selected No, exit status was $?."
 		fi
 	else
-		echo -ne "--- Installing "$LINE" ":" "\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Already installed $ENDCOLOR \n"
-	fi
-
-}
-
-
-
-check_dependencies () {
-    # Function to check that a piece of software is installed and if not install it.
-    # Works for apt, yum, and rpm based systems currently as long as the package name is the same.
-    # The function will take a parameter that is expected to match the software command line name
-    # or rather the name of the package. This function now relies on the return value of
-    # the function "is_software_package_installed" as it is a more reliable way to see if a package of
-    # software is installed according to the package manamgent system rather than the "hash" function
-    # that checks if a command is available, since command name and package name are not allways the same...
-
-	#---------------------------------------------------------------
-        echo "Validating dependencies and installing them if not there..."
-	#---------------------------------------------------------------
-        if is_software_package_installed $1 ; then
-		echo -e "$YELLOW $1 $ENDCOLOR is present on this system..."
-        else
-                echo -e "$YELLOW $1 $ENDCOLOR not found: I will try to get it... "
-                InstallSoftwareFromRepo $1
-                if [ $? != 0 ];
-                then
-                        echo -e $RED "That install didn't work out so well!"
-                        echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
-                        exit 1
-                fi
-        echo "OK Done! Continuing..."
-        fi
-}
-
-
-
-
-rtd_update_system () {
-        PUBLICATION="$BRANDING Update Manager for Linux"
-        VERSION="1.13 (built in)"
-        # System update function. The purpose of this function is to update installed software from
-	# distribution reopositories and the newer self contained universal software stores like
-        # snap and flatpak.
-	LOGFILE="${LOGFILE:=$0}"
-
-
-        echo -e $GREEN"$PUBLICATION: Version $VERSION" $ENDCOLOR
-        echo -e $GREEN"------------------------------------------------" $ENDCOLOR
-
-        echo I am updating software from all channels i can find on the system.
-        echo I will update via the native package manager as well as newer formats
-        echo -e "like $YELLOW"snap"$ENDCOLOR and $YELLOW"flatpak"$ENDCOLOR..."
-        echo " "
-
-
-        log_item ()
-        {
-                DATE=$(date '+%d/%m/%Y %H:%M:%S');
-                echo "$DATE --- : $@" >> $LOGFILE
-        }
-
-        deb_software_task ()
-        {
-                log_item "running deb_software_task with parameters $@"
-                # make some decent display terminal graphics...
-                PAD="------------------------------------------"
-                LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-                echo -ne "--- Executing "$LINE"":""\ & $@ >>$LOGFILE 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-        }
-        # Update native software packages; since it is not known what distribution
-	# this script is being executed on, it is best to check and see if we are able
-	# to perform an update and then do the update...
-	# One could choose to check for a supported exact version: e.g. Ubuntu, but we would
-	# like to be nice and add value for as many as we can. Specially if it is this easy! :)
-	if hash pkcon 2>/dev/null; then
-		# If package kit is available then prefer this
-		echo -e $YELLOW "Using: Package Kit" $ENDCOLOR
-		pkcon -y refresh 2>> $LOGFILE
-		pkcon -y update 2>> $LOGFILE
-		#| whiptail --gauge "Updating native packages..." 6 50 0
-	elif hash yum 2>/dev/null; then
-		# If package kit is not available try yum (RedHat, Cent OS, Fedora)
-		echo -e $YELLOW "Using: YUM" $ENDCOLOR
-		deb_software_task yum -y upgrade 2>> $LOGFILE
-	elif hash apt 2>/dev/null; then
-		# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
-		echo -e $YELLOW "Using: DEB" $ENDCOLOR
-		deb_software_task apt-get update
-		deb_software_task apt-get upgrade -y
-		deb_software_task apt-get autoremove -y
-	elif hash zypper 2>/dev/null; then
-		# If package kit is not available try zypper (Open SUSE)
-		echo -e $YELLOW "Using: ZYPPER" $ENDCOLOR
-		deb_software_task zypper up -y 2>> $LOGFILE
-	else
-		echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
-		exit 1
-	fi
-
-        # updating snaps if snap is present on the system...
-        if hash snap 2>/dev/null; then
-                snap refresh 2>> $LOGFILE
-		#| whiptail --gauge "Updating snap packages..." 6 50 0
-        else
-                echo "--- snap software is not present on this system... skipping..."
-        fi
-
-        # updating flatpacks if flatpack is present on system...
-        if hash flatpak 2>/dev/null; then
-                flatpak update -y 2>> $LOGFILE
-		#| whiptail --gauge "Updating flapak packages..." 6 50 0
-        else
-                echo "--- flatpak software is not present on this system... skipping..."
-        fi
-}
-
-
-
-backup_running_vm () {
-	# Function to back up all funning virtual machines on the host it is being run on.
-	# This function should be called from within this script and down not require any
-	# parameters passed.
-	clear
-	ensure_admin
-	if hash virsh ; then
-		echo Virtual Machinces on this system:
-		echo " "
-		virsh list --all
-	else
-		echo KVM Virtualization is not installed on this machine.
-	fi
-
-	# To exclude a VM (domain), add "nobackup" to its name and it will be ignored.
-	# To rename: shutdown the guest, then use this command: virsh domrename "oldname" "newname".
-
-	DATE=`date +%Y-%m-%d.%H:%M:%S`
-	LOG=${LOGFILE:="/var/log/kvm-backup.$DATE.LOG"}
-	BACKUPROOT=${VM_BACKUP_TARGET:=/mnt/vmdsk/VM_BACKUP}
-
-	#Get list of all running virtual machines
-	DOMAINS=$(virsh list --all | tail -n +3 | awk '{print $2}')
-
-	for DOMAIN in $DOMAINS; do
-		echo "-----------WORKER START $DOMAIN-----------" > $LOG
-		echo "Starting backup for $DOMAIN on $(date +'%d-%m-%Y %H:%M:%S')"  >> $LOG
-
-		if [[ $DOMAIN == *"nobackup"* ]];then
-		        echo "Skipping $DOMAIN , because its excluded." > $LOG
-		        exit 1
-		fi
-
-		VMSTATE=`virsh list --all | grep $DOMAIN | awk '{print $3}'`
-		if [[ $VMSTATE != "running" ]]; then
-		        echo "Skipping $DOMAIN , because its not running." > $LOG
-		        exit 1
-		fi
-
-		BACKUPFOLDER=$BACKUPROOT/KVM-BACKUPS/$DOMAIN
-		mkdir -p $BACKUPFOLDER
-		TARGETS=$(virsh domblklist $DOMAIN --details | grep disk | awk '{print $3}')
-		IMAGES=$(virsh domblklist $DOMAIN --details | grep disk | awk '{print $4}')
-		DISKSPEC=""
-		for TARGET in $TARGETS; do
-		        DISKSPEC="$DISKSPEC --diskspec $TARGET,snapshot=external"
-		done
-
-		virsh snapshot-create-as --domain $DOMAIN --name "backup-$DOMAIN" --no-metadata --atomic --disk-only $DISKSPEC >> $LOG
-		if [ $? -ne 0 ]; then
-		        echo "Failed to create snapshot for $DOMAIN" > $LOG
-		        exit 1
-		fi
-
-		for IMAGE in $IMAGES; do
-		        NAME=$(basename $IMAGE)
-		        if test -f "$BACKUPFOLDER/$NAME"; then
-		        echo "Backup exists, merging only changes to image" > $LOG
-		        rsync -apvz --inplace $IMAGE $BACKUPFOLDER/$NAME >> $LOG
-		        else
-		        echo "Backup does not exist, creating a full sparse copy" > $LOG
-		        rsync -apvz --sparse $IMAGE $BACKUPFOLDER/$NAME >> $LOG
-		        fi
-		done
-
-		BACKUPIMAGES=$(virsh domblklist $DOMAIN --details | grep disk | awk '{print $4}')
-		for TARGET in $TARGETS; do
-		        virsh blockcommit $DOMAIN $TARGET --active --pivot >> $LOG
-
-		        if [ $? -ne 0 ]; then
-		                echo "Could not merge changes for disk of $TARGET of $DOMAIN. VM may be in invalid state." > $LOG
-		                exit 1
-		        fi
-		done
-
-		for BACKUP in $BACKUPIMAGES; do
-		        if [[ $BACKUP == *"backup-"* ]];then
-
-		        echo "deleted temporary image $BACKUP" > $LOG
-		        rm -f $BACKUP
-		        fi
-		done
-
-		virsh dumpxml $DOMAIN > $BACKUPFOLDER/$DOMAIN.xml
-		echo "-----------WORKER END $DOMAIN-----------" >> $LOG
-		echo "Finished backup of $DOMAIN at $(date +'%d-%m-%Y %H:%M:%S')" >> $LOG
-done
-}
-
-
-
-rtd_ppa_checker () {
-  for f in /etc/apt/sources.list.d/*.list; do
-    grep -Po "(?<=^deb\s).*?(?=#|$)" "$f" | while read -r ENTRY ; do
-    echo "ENTRY: $ENTRY"
-        HOST=$(cut -d/ -f3 <<< "$ENTRY")
-
-        if [ "ppa.launchpad.net" = "$HOST" ]; then
-		USER=$(cut -d/ -f4 <<< "$ENTRY")
-		PPA=$(cut -d/ -f5 <<< "$ENTRY")
-		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*"$PPA"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
-		echo "PPA: ppa:$USER/$PPA"
-		echo "FILENAME: $f"
-		echo "$packageCount package(s) installed"
-		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
-		sudo rm "$f" && echo "$f deleted"
-		fi
-		echo
-        else
-		USER=$(cut -d/ -f3 <<< "$ENTRY")
-		PPA=$(cut -d/ -f4 <<< "$ENTRY")
-		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
-		echo "REPOSITORY: $USER/$PPA"
-		echo "FILENAME: $f"
-		echo "$packageCount package(s) installed"
-		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
-			sudo rm "$f" && echo "$f deleted"
-		fi
-		echo
-        fi
-    done
-done
-}
-
-
-
-
-dl () {
-	# Function to ease and make consistent the downloading of the non repository packages and
-	# install them. This function presently only works with apt. This should be expanded to include
-	# RPM packages as well.
-	# First parameter is the URL, second is the name of the deb, to bypass version
-	# naming issues, use wildcards like skype*.deb
-	check_dependencies wget
-	echo -e $YELLOW "   - Geting package $2 ..." $ENDCOLOR
-	wget -P /var/apt/cache/archives/ $1
-	echo -e YELLOW "    - Installing package $2 ..." $ENDCOLOR
-
-	if hash pkcon 2>/dev/null; then
-		pkcon install-local -y /var/apt/cache/archives/$2
-    	else
-        	echo "You seem to have no Package Kit... I will try to get it... "
-        	echo "I will need to become admin to do that..."
-        	sudo check_dependencies packagekit
-			if [ $? != 0 ];
-			then
-				echo "That install didn't work out so well."
-				echo "Please install Package Kit and try again, or install $2 manually"
-				read -p "Press [Enter] key to return to the main menu: "
-        		fi
-		echo "OK trying again!"
-		pkcon install-local -y /var/apt/cache/archives/$2
+		err_no_menu_system_found dialog && return 1 || exit 1
 	fi
 }
-
 
 
 
@@ -981,29 +293,25 @@ dl () {
 BRAND="  $BRANDING		Verson:$RTD_Version : on $HOSTNAME"
 BRANDING=$BRAND
 
-display_result () {
-        whiptail --backtitle "$BRANDING" --title "$1" \
-        --msgbox "$result" 20 80
-}
 
 
 
 display_notice () {
 	# Function to display a notice that the ISO creation is complete.
 	# And describe what to de next.
-	whiptail --backtitle "$BRANDING" \
+	$RTD_GUI --backtitle "$BRANDING" \
 	--title "About" \
 	--msgbox "
 This tool is part of the RTD System Support Tools. The purpose of this tool is to generate an unattended installation ISO file that can be used directly by a virtual machine in KVM, Oracle Virtual Box, or VMware. Alternatively, this Image may be appled to a thumb drive using "dd" or "etcher", or burned to optical media using "K3B" or another favorite CD/DVD burining software.
 
 This script will:
   - Download the latest installation image
-  - Patch the installation image with the instructions to complete an install
+  - Patch the installation media with the instructions to auto-install.
   - The instructios will encrypt the hard drive and install, automatically.
-  - The disk encryption password is: "letmein1234"
-  - The system login and admin temporary password is: "letmein""  20 80
+  - The default disk encryption password is: 'letmein1234'
+  - The default system login and admin temporary password is: 'letmein'
+  - The defaults will be used if you make no other active choices"  $HEIGHT $WIDTH $LIST_HEIGHT
 }
-
 
 
 show_notice_on_fist_run () {
@@ -1017,54 +325,13 @@ The RTD tools run in a separate terminal that you can re connect to if you shoul
 - re-connecting to the server with ssh
 - then running command "byobu" if a session is already running on the server"
 
-		whiptail --backtitle "$BRANDING" --title "DONE" --msgbox "$show_notice_on_fist_run_TEXT" 15 80
-		touch ~/.config/rtd-first-run-$RTD_Version
+		$RTD_GUI --backtitle "$BRANDING" --title "DONE" --msgbox "$show_notice_on_fist_run_TEXT" 15 80
+		mkdir -p ~/.config ; touch ~/.config/rtd-first-run-$RTD_Version
 		clear
 	fi
 
 
 }
-
-
-
-cleanup_and_finish () {
-	# Function to remove all temporary file locations left over from building
-	# the new netinstall ISO.
-	# go back to initial directory
-	cd "$CURRENT_DIR"
-	# Cleanup folder structure...
-	rm -r "$TMP_DOWNLOAD_DIR"
-	rm -r "$TMP_DISC_DIR"
-	rm -r "$TMP_INITRD_DIR"
-	rm -r "$SCRIPT_DIR/custom"
-
-        # Print COMPLETION_MESSAGE
-	BIN_7Z=
-	BIN_XORRISO=
-	BIN_CPIO=
-	ISOHDPFX_BIN=
-	VOLUME_TITLE=
-	TARGET_ISO_FILE_NAME=
-	SOURCE_ISO_URL=
-	SSH_PUBLIC_KEY_FILE=
-	PUT_ISO_FILE_HERE_WHEN_DONE=
-	VOLUME_TITLE=
-	PRESEED_TEMPLATE=
-
-	COMPLETION_MESSAGE="	Your ISO image is ready!
-	It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
-	Next steps:
-	- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
-	- If you are using Virtual Machines select the ISO as install media
-	- Boot from the media created: allow it to install the system
-	- login as the temporary user (temporary password: letmein)
-	- Adjust passwords for the encrypted volume and login... "
-            whiptail --backtitle "RTD OEM System Builder" --title "DONE" --msgbox "$COMPLETION_MESSAGE" 15 80
-            clear
-	    show_main_menu
-}
-
-
 
 
 rtd_setup_choices_cli_workstation () {
@@ -1075,7 +342,7 @@ rtd_setup_choices_cli_workstation () {
 	# may be very poor over the internet (as for example with the great firewall of China). In
 	# Such a case it would be usefull to have the good old CLI software! :)
 	# List Options to be available for choice in the RTD System Configurator...
-	cmd=(whiptail --backtitle "$BRANDING" --title "Terminal Software add on Options Menu" --separate-output --checklist "You can be productive in the cli environment. Please Select Software titles below that you want to add to this system:" 22 85 16 )
+	cmd=( $RTD_GUI --backtitle "$BRANDING" --title "Terminal Software add on Options Menu" --separate-output --checklist "You can be productive in the cli environment. Please Select Software titles below that you want to add to this system:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
 	options=(1 "Base RTD OEM Software (basic admin tools usually needed)" on
 		 2 "Alpine email client" off
 		 3 "Vim text editor" on
@@ -1095,99 +362,250 @@ rtd_setup_choices_cli_workstation () {
 		 17 "Games: Bastet Tetris Game" off
 		)
 
-			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-			clear
-			for choice in $choices
-			do
-			    case $choice in
-				1)
-				for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done
-				;;
-				2)
-				InstallSoftwareFromRepo alpine
-				;;
-				3)
-				InstallSoftwareFromRepo vim
-				;;
-				4)
-				InstallSoftwareFromRepo finch
-				;;
-				5)
-				InstallSoftwareFromRepo wordgrinder
-				;;
-				6)
-				InstallSoftwareFromRepo sc
-				;;
-				7)
-				InstallSoftwareFromRepo tpp
-				;;
-				8)
-				InstallSoftwareFromRepo mc
-				;;
-				9)
-				InstallSoftwareFromRepo cmus
-				;;
-				10)
-				InstallSoftwareFromRepo byobu
-				;;
-				11)
-				InstallSoftwareFromRepo w3m
-				;;
-				12)
-				InstallSoftwareFromRepo lynx
-				;;
-				13)
-				dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/ megacmd-*.deb
-				;;
-				14)
-				InstallSoftwareFromRepo rtorrent
-				;;
-				15)
-				InstallSoftwareFromRepo openvpn
-				;;
-				16)
-				InstallSoftwareFromRepo freesweep
-				;;
-				17)
-				InstallSoftwareFromRepo bastet
-				;;
+		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+		clear
+		for choice in $choices
+		do
+			case $choice in
+			1) for i in wine-stable ffmpeg netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done ;;
+			2) InstallSoftwareFromRepo alpine ;;
+			3) InstallSoftwareFromRepo vim ;;
+			4) InstallSoftwareFromRepo finch ;;
+			5) InstallSoftwareFromRepo wordgrinder ;;
+			6) InstallSoftwareFromRepo sc ;;
+			7) InstallSoftwareFromRepo tpp ;;
+			8) InstallSoftwareFromRepo mc ;;
+			9) InstallSoftwareFromRepo cmus ;;
+			10) InstallSoftwareFromRepo byobu ;;
+			11) InstallSoftwareFromRepo w3m ;;
+			12) InstallSoftwareFromRepo lynx ;;
+			13) dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/ megacmd-*.deb ;;
+			14) InstallSoftwareFromRepo rtorrent ;;
+			15) InstallSoftwareFromRepo openvpn ;;
+			16) InstallSoftwareFromRepo freesweep ;;
+			17) InstallSoftwareFromRepo bastet ;;
 			esac
 		done
 }
 
 
-
-
-show_make_media_gui () {
-	# List Options to be available for choice in the RTD System Configurator...
+show_make_media_gui_server ()
+{
 	while true; do
 		exec 3>&1
-		selection=$(whiptail \
-		--backtitle "$BRANDING" --title "ISO Menu"  --menu "Creating the ISO file is complete, what do you want to do now?: \
-                You may choose to create and automatic Installer ISO (Burn to CD, USB, or use with VM)." 0 0 4 \
-		"1" "Generate an Automatic Install ISO for Ubuntu Standard Desktop (more MAC like)" \
-		"2" "Generate an Automatic Install ISO for Ubuntu with Plasma Desktop (more Windows like)" \
-		"3" "Generate an Automatic Install ISO for Ubuntu Gnome (without Ubuntu customization)" \
-                "4" "Generate an Automatic Install ISO for Ubuntu Minimal Standard desktop" \
-		"5" "Generate an Automatic Install ISO for Graphical Server (Xubuntu-core)" \
-		"6" "Generate an Automatic Install ISO for Debian Default Desktop" \
-		"7" "Generate an Automatic Install ISO for Debian Light Weight Desktop" \
-		"8" "Generate an Automatic Install ISO for Debian Plasma Desktop" \
-		"9" "Generate an Automatic Install ISO for Debian Graphical Server" \
-		"10" "Generate an Automatic Install ISO for Debian Minimal Server (Core)" \
+		selection=$($RTD_GUI \
+		--backtitle "$BRANDING" --title "Create Automatic OS Install Media"  --menu "Please select which automatic operating system installation media to create.  (to Burn to CD, or trafer to a USB, or use with a VM):" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT"  \
+		"1" "Automatic Install ISO for Ubuntu Server" \
+		"2" "Automatic Install ISO for Ubuntu Graphical Server" \
+		"3" "Automatic Install ISO for Debian Graphical Server" \
+		"4" "Automatic Install ISO for Debian Minimal Server" \
+		"5" "Automatic Install ISO for Minecraft Server (Latest)" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
+		clear
 
 		case $exit_status in
-		$DIALOG_CANCEL)
-		echo "Returning to main menu..."
-		show_main_menu
+			"$DIALOG_CANCEL") return	;;
+			"$DIALOG_ESC") return ;;
+		esac
+
+		case $selection in
+		0 )
+			echo "Program terminated by user..."
 		;;
-		$DIALOG_ESC)
-		echo "Program aborted." >&2
-		exit 1
+		1 )
+			rtd_oem_ubuntu_auto_install_iso_builder openssh-server server
+			cleanup_and_finish
 		;;
+		2 )
+			rtd_oem_ubuntu_auto_install_iso_builder xubuntu-core server
+			cleanup_and_finish
+		;;
+		3 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian lxde-desktop server
+			create_iso_image_debian
+			cleanup_and_finish
+		;;
+		4 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian openssh-server server
+			create_iso_image_debian
+			cleanup_and_finish
+		;;
+		5 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian openssh-server MinecraftServer
+			create_iso_image_debian
+			cleanup_and_finish
+                ;;
+		esac
+	done
+}
+
+
+
+show_make_media_gui_desktop () {
+	# List Options to be available for choice in the RTD System Configurator...
+	while true; do
+		exec 3>&1
+		selection=$($RTD_GUI \
+		--backtitle "$BRANDING" --title "Create Automatic OS Install Media"  --menu "Please select which automatic operating system installation media to create:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT"  \
+		"1" "Automatic Install Media for Ubuntu Standard Desktop (more MAC like)" \
+		"2" "Automatic Install Media for Ubuntu with Plasma Desktop (more Windows like)" \
+		"3" "Automatic Install Media for Ubuntu Gnome (without Ubuntu customization)" \
+                "4" "Automatic Install Media for Ubuntu Minimal Standard desktop" \
+		"5" "Automatic Install Media for Debian Default Desktop" \
+		"6" "Automatic Install Media for Debian Light Weight Desktop" \
+		"7" "Automatic Install Media for Debian Plasma Desktop" \
+		2>&1 1>&3)
+		exit_status=$?
+		exec 3>&-
+		clear
+
+		case $exit_status in
+			"$DIALOG_CANCEL") return	;;
+			"$DIALOG_ESC") return ;;
+		esac
+
+		case $selection in
+		0 )
+			echo "Program terminated by user..."
+		;;
+		1 )
+			rtd_oem_ubuntu_auto_install_iso_builder ubuntu-desktop desktop
+			cleanup_and_finish
+		;;
+		2 )
+			rtd_oem_ubuntu_auto_install_iso_builder kubuntu-desktop server
+			cleanup_and_finish
+		;;
+		3 )
+			rtd_oem_ubuntu_auto_install_iso_builder ubuntu-gnome-desktop server
+			cleanup_and_finish
+		;;
+                4 )
+			rtd_oem_ubuntu_auto_install_iso_builder ubuntu-desktop-minimal desktop
+			cleanup_and_finish
+		;;
+		5 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian-desktop desktop
+			create_iso_image_debian
+			cleanup_and_finish
+		;;
+		6 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian cinnamon-desktop
+			create_iso_image_debian
+			cleanup_and_finish
+		;;
+		7 )
+			prepare_environment_for_iso_creation
+			download_and_manipulate_iso_debian debian kde-desktop
+			create_iso_image_debian
+			cleanup_and_finish
+		;;
+		esac
+	done
+}
+
+
+
+show_manage_vm_gui () {
+	# List Options to be available for choice in the RTD System Configurator...
+	while true; do
+		exec 3>&1
+		selection=$($RTD_GUI \
+		--backtitle "$BRANDING" \
+		--title "VM Managment Menu"  \
+		--menu "Please select what you would like to do below:"  "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" \
+		"1" "List all virtual machines on this system" \
+		"2" "Backup all running virtual machines on this server" \
+		"3" "Monitor VM's on this system "\
+		"4" "Deploy a VM on this server" \
+		2>&1 1>&3 )
+		exit_status=$?
+		exec 3>&-
+		clear
+
+		case $exit_status in
+			"$DIALOG_CANCEL") return ;;
+			"$DIALOG_ESC") return ;;
+		esac
+
+		case $selection in
+		0 )
+			echo "Program terminated by user..."
+		;;
+		1 )
+			if hash virsh ; then
+				result=$(virsh list --all )
+				display_result "Virtual Machinces on this system:"
+			else
+				echo KVM Virtualization is not installed on this machine.
+			fi
+		;;
+		2 )
+			backup_running_vm
+		;;
+		3)
+			echo "VM Status on This HOST: Press [Q] to quit."
+			check_dependencies virt-top
+			virt-top
+		;;
+		4 )
+			while true; do
+				exec 3>&1
+				subselection2=$($RTD_GUI --backtitle "$BRANDING" --title "Make Virtual Machine" --menu "    "  $HEIGHT $WIDTH $LIST_HEIGHT \
+				"1" "Make a SERVER VM (Minimal single purpose system)" \
+				"2" "Make a VDI VM (chose desktop and distribution)" \
+				2>&1 1>&3)
+				exit_status=$?
+				exec 3>&-
+				clear
+
+				case $exit_status in
+					"$DIALOG_CANCEL") return	;;
+					"$DIALOG_ESC") return ;;
+				esac
+
+				case $subselection2 in
+					0) echo "Program terminated."
+					;;
+					1) show_deploy_server_VM_now_menu
+					;;
+					2) show_deploy_VDI_VM_now_menu
+					;;
+				esac
+			done
+		;;
+		esac
+	done
+}
+
+
+show_deploy_server_VM_now_menu ()
+{
+
+		while true; do
+		exec 3>&1
+		selection=$($RTD_GUI \
+		--backtitle "$BRANDING" --title "Deploy VM Server"  --menu "Please select which type of VM to create:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" \
+		"1" "Ubuntu Server" \
+		"2" "Ubuntu Graphical Server" \
+		"3" "Debian Graphical Server" \
+		"4" "Debian Minimal Server" \
+                "5" "Minecraft Server" \
+		2>&1 1>&3)
+		exit_status=$?
+		exec 3>&-
+		clear
+
+		case $exit_status in
+			"$DIALOG_CANCEL") return ;;
+			"$DIALOG_ESC") return ;;
 		esac
 
 		case $selection in
@@ -1196,227 +614,169 @@ show_make_media_gui () {
 			echo "Program terminated by user..."
 		;;
 		1 )
-			clear
-			prepare_environment_for_iso_creation
-			download_and_manipulate_iso $RELEASE ubuntu-desktop
-			create_iso_image
+			rtd_oem_ubuntu_auto_install_iso_builder ssh-server server
+			make_kvm_virtual_machine_now_from_iso ubuntu19.10
 			cleanup_and_finish
-			clear
 		;;
 		2 )
-			clear
-			prepare_environment_for_iso_creation
-			download_and_manipulate_iso $RELEASE kubuntu-desktop
-			create_iso_image
+			rtd_oem_ubuntu_auto_install_iso_builder xubuntu-core server
+			make_kvm_virtual_machine_now_from_iso ubuntu19.10
 			cleanup_and_finish
-			clear
 		;;
 		3 )
-			clear
-			prepare_environment_for_iso_creation
-			download_and_manipulate_iso $RELEASE ubuntu-gnome-desktop
-			create_iso_image
-			cleanup_and_finish
-			clear
+			make_preseed_cfg "$( mktemp -d )" lxde-desktop
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
 		;;
-                4 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso $RELEASE ubuntu-desktop-minimal
-                        create_iso_image
-                        cleanup_and_finish
-                        clear
-                ;;
-                5 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso $RELEASE xubuntu-core
-                        create_iso_image
-                        cleanup_and_finish
-                        clear
-                ;;
-		6 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso_debian debian desktop
-                        create_iso_image_debian
-                        cleanup_and_finish
-                        clear
-                ;;
-		7 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso_debian debian cinnamon-desktop
-                        create_iso_image_debian
-                        cleanup_and_finish
-                        clear
-                ;;
-		8 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso_debian debian kde-desktop
-                        create_iso_image_debian
-                        cleanup_and_finish
-                        clear
-                ;;
-		9 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso_debian debian lxde-desktop
-                        create_iso_image_debian
-                        cleanup_and_finish
-                        clear
-                ;;
-                10 )
-                        clear
-                        prepare_environment_for_iso_creation
-                        download_and_manipulate_iso_debian debian ssh-server
-                        create_iso_image_debian
-                        cleanup_and_finish
-                        clear
-                ;;
+		4 )
+			make_preseed_cfg "$( mktemp -d )" openssh-server
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		5 )
+			make_preseed_cfg "$( mktemp -d )" openssh-server MinecraftServer
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
 		esac
-	done
-}
 
-show_manage_vm_gui () {
-	# List Options to be available for choice in the RTD System Configurator...
-	while true; do
-	exec 3>&1
-	selection=$(whiptail \
-	--backtitle "$BRANDING" \
-	--title "VM Managment Menu"  \
-	--menu "Please select what you would like to do below:"  0 0 4 \
-	"1" "List all virtual machines on this system" \
-	"2" "Backup all running virtual machines on this server" \
-	"3" "Generate boot media for auto installing a virtual machine on this server (Ubuntu and others)" \
-	2>&1 1>&3 )
-	exit_status=$?
-	exec 3>&-
-
-	case $exit_status in
-	$DIALOG_CANCEL)
-		echo "Returning to main menu..."
-		show_main_menu
-	;;
-	$DIALOG_ESC)
-		echo "Program aborted." >&2
-		exit 1
-	;;
-	esac
-
-	case $selection in
-	0 )
-		clear
-		echo "Program terminated by user..."
-	;;
-	1 )
-		clear
-		if hash virsh ; then
-			result=$(virsh list --all )
-			display_result "Virtual Machinces on this system:"
-		else
-			echo KVM Virtualization is not installed on this machine.
-		fi
-		clear
-	;;
-	2 )
-		clear
-		if hash virsh ; then
-			backup_running_vm
-		else
-			echo KVM Virtualization is not installed on this machine.
-		fi
-		read -p "Press [Enter] key to return to the main menu: "
-		clear
-	;;
-	3 )
-		clear
-		display_notice
-		show_make_media_gui
-		read -p "Press [Enter] key to return to the main menu: "
-		clear
-	;;
-	esac
 	done
 }
 
 
-
-show_view_informaion_about_this_system () {
-
+show_deploy_VDI_VM_now_menu ()
+{
 	while true; do
 		exec 3>&1
-		selection=$(whiptail \
-		--backtitle "$BRANDING" \
-		--title "System Information Menu" \
-		--menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
-		"1" "Show system summary" \
-		"2" "Show storage device space utilization" \
-		"3" "Show users HOME folder storage use" \
-		"4" "Show system temperature information" \
-		"5" "Show detailed system CPU information" \
-		"6" "Show systems physical location (city, county etc.)" \
+		selection=$($RTD_GUI --backtitle "$BRANDING" --title "Deploy Virtual Desktop (VDI)"  --menu "Please select which VDI to create on this server:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" \
+		"1" "Ubuntu Standard Desktop (more MAC like)" \
+		"2" "Ubuntu with Plasma Desktop (more Windows like)" \
+		"3" "Ubuntu Gnome (without Ubuntu customization)" \
+                "4" "Ubuntu Minimal Standard desktop" \
+		"5" "Debian Default Desktop" \
+		"6" "Debian Cinnamon Desktop" \
+		"7" "Debian Plasma Desktop" \
+		"8" "Debian Light Weight Desktop (LXDE)" \
+		"9" "Windows 10 VDI" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
+		clear
 
 		case $exit_status in
-		$DIALOG_CANCEL)
-			echo "Returning to main menu..."
-			show_main_menu
-		;;
-		$DIALOG_ESC)
-			echo "Program aborted." >&2
-			exit 1
-		;;
+			"$DIALOG_CANCEL") return ;;
+			"$DIALOG_ESC") return ;;
 		esac
 
 		case $selection in
 		0 )
-		clear
-		echo "Program terminated by user..."
+			echo "Program terminated by user..."
 		;;
 		1 )
-			clear
+			echo "***   Deploying a Ubuntu VDI with Gnome Desktop from ubuntu.com"
+			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04 
+		;;
+		2 )
+			make_preseed_cfg "$( mktemp -d )" kubuntu-desktop
+			make_kvm_virtual_machine_now_from_iso ubuntu20.04
+		;;
+		3 )
+			make_preseed_cfg "$( mktemp -d )" ubuntu-gnome-desktop 
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
+		;;
+                4 )
+			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop-minimal 
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
+		;;
+		5 )
+			make_preseed_cfg "$( mktemp -d )" gnome-desktop
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		6 )
+			make_preseed_cfg "$( mktemp -d )" cinnamon-desktop
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		7 )
+			make_preseed_cfg "$( mktemp -d )" kde-desktop
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		8 )
+			make_preseed_cfg "$( mktemp -d )" lxde-desktop
+			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		9 )
+			make_kvm_virtual_machine_now_from_microsoft
+		;;
+		esac
+
+	done
+}
+
+
+show_view_informaion_about_this_system () {
+	while true; do
+		exec 3>&1
+		selection=$($RTD_GUI --keep-tite --backtitle "$BRANDING" --title "System Information Menu" --menu "" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" \
+		"1" "Show system summary" \
+		"2" "Show storage device space utilization" \
+		"3" "Show users HOME folder storage use" \
+		"4" "Show complete storage utilization by directory" \
+		"5" "Show system temperature information" \
+		"6" "Show detailed system CPU information" \
+		"7" "Show systems physical location (city, county etc.)" \
+		2>&1 1>&3)
+		exit_status=$?
+		exec 3>&-
+		clear
+
+		case $exit_status in
+			"$DIALOG_CANCEL") return	;;
+			"$DIALOG_ESC") return ;;
+		esac
+
+		case $selection in
+		0 )
+			echo "Program terminated by user..."
+		;;
+		1 )
 			check_dependencies neofetch
-			clear
 			neofetch --memory_display barinfo
 			ip -br addr
 			read -p "Press [Enter] key to return to the main menu: "
 		;;
 		2 )
-			clear
-			echo "Please wait while I calculate disk space... "
 			result=$(df -h -x squashfs -x tmpfs)
-			# Custom display of info, with scrollbar
-			whiptail --backtitle "$BRANDING" --title "System Sorage Space" --msgbox --scrolltext "$result" 20 100
+			$RTD_GUI --backtitle "$BRANDING" --title "System Storage Space" --msgbox "$result" 20 100
 		;;
 		3 )
-			clear
-			echo "Please wait while I calculate disk space... "
-			result=$(du -sh /home/* 2> /dev/null)
+			generate_report_disk_space_used_by_directory /home
 			display_result "Home Space Utilization (All Users)"
 		;;
 		4 )
+			generate_report_disk_space_used_by_directory /
+			display_result "Total Space Utilization root directory:"
+		;;
+		5 )
 			check_dependencies lm-sensors
 			sudo /etc/init.d/kmod start
 			check_dependencies hddtemp
 			sudo sensors-detect --auto
-			clear
-			result=$(sudo hddtemp /dev/sda; sensors )
+			result=$( sensors )
 			display_result "System Temperature Information"
 		;;
-		5 )
-			clear
+		6 )
 			result=$(lscpu)
 			display_result "System CPU Information"
 		;;
-		6 )
-			clear
+		7 )
 			check_dependencies curl &>/dev/null
 			check_dependencies dnsutils &>/dev/null
-			result=$(curl ipinfo.io/`dig +short myip.opendns.com @resolver1.opendns.com`)
+			result=$(curl ipinfo.io/$(dig +short myip.opendns.com @resolver1.opendns.com))
 			display_result "This systems location on the Internet"
 		;;
 		esac
@@ -1424,12 +784,11 @@ show_view_informaion_about_this_system () {
 }
 
 
-
 show_manage_software_gui () {
 	# List Options to be available for choice in the RTD System Configurator...
 	while true; do
 		exec 3>&1
-		selection=$(whiptail \
+		selection=$($RTD_GUI \
 		--backtitle "$BRANDING" --title "Software Managment Menu"  --menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
 		"1" "Update all software on this system" \
 		"2" "Show what Personal Package Archives (PPA's) are defined on this system" \
@@ -1439,46 +798,46 @@ show_manage_software_gui () {
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
+		clear
 
 		case $exit_status in
-		$DIALOG_CANCEL)
-			echo "Returning to main menu..."
-			show_main_menu
-		;;
-		$DIALOG_ESC)
-			echo "Program aborted." >&2
-			exit 1
-		;;
+			$DIALOG_CANCEL) return	;;
+			$DIALOG_ESC) return ;;
 		esac
 
 		case $selection in
 		0 )
-			clear
-			echo "Program terminated by user..."
+			exit_status=$?
 		;;
 		1 )
-			clear
-			rtd_update_system
-			read -p "Press [Enter] key to return to the main menu: "
+			rtd_update_system ; rtd_oem_pause 1
 		;;
 		2 )
-			clear
-			rtd_ppa_checker
-			read -p "Press [Enter] key to let me know when you are done reading."
+			dist_info="$(hostnamectl)"
+			if echo $dist_info |grep ".*buntu" &>/dev/null ; then
+				result="$(rtd_ppa_checker)"
+				display_result "Packages Installed from Personal Package Archives"
+			elif echo $dist_info |grep "Pop!_OS" 2>/dev/null ; then
+				result="$(rtd_ppa_checker)"
+				display_result "Packages Installed from Personal Package Archives"
+			else
+				result="Non Ubuntu based distributions do not Support the use of Personal Package Archives \n Press [ OK ] to return to the prevous menu."
+				display_result "Functionality Not Supported"
+			fi
 		;;
 		3 )
-			clear
-			rtd_ppa_checker --delete
-			read -p "Press [Enter] key to let me know when you are done reading."
+			dist_info="$(hostnamectl)"
+			if echo $dist_info |grep ".*buntu" &>/dev/null ; then
+				rtd_ppa_checker --delete | $RTD_GUI --programbox "Personal Package Archive Check:" $HEIGHT $WIDTH
+			elif echo $dist_info |grep "Pop!_OS" 2>/dev/null ; then
+				rtd_ppa_checker --delete | $RTD_GUI --programbox "Personal Package Archive Check:" $HEIGHT $WIDTH
+			else
+				result="Non Ubuntu based distributions do not Support the use of Personal Package Archives \n Press [ OK ] to return to the prevous menu."
+				display_result "Functionality Not Supported"
+			fi
 		;;
 		4 )
-			clear
-			if hash do-release-upgrade 2>/dev/null ; then
-				do-release-upgrade
-				read -p "Press [Enter] key to let me know when you are done reading."
-			else
-				read -p "This function requires the program "do-release-upgrade" (Ubuntu) on your system. Press [Enter] key to return to menu."
-			fi
+			rtd_oem_release_upgrade
 		;;
 		5 )
 			rtd_setup_choices_cli_workstation
@@ -1488,64 +847,73 @@ show_manage_software_gui () {
 }
 
 
-
 show_main_menu () {
 	while true; do
 		exec 3>&1
-		# Dialog Display Menu Items...
-			selection=$(whiptail \
-				--backtitle "$BRANDING" \
-				--title "RTD Tool Main Menu" \
-				--menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
-				"1" "View information about this system" \
-				"2" "Manage Software on this system" \
-				"3" "Manage KVM on this system" \
-				"4" "Manage encryption phrases and passwords" \
-				"5" "Shortcut: Make an automatic install ISO image (for VM's and CD burning)" \
-				"6" "Shortcut: Update this system now"\
-				2>&1 1>&3)
-			exit_status=$?
-			exec 3>&-
+		selection=$( $RTD_GUI --keep-tite --backtitle "$BRANDING" --cancel-button "EXIT" --title "RTD Tool Main Menu" --menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
+			"1" "View information about this system" \
+			"2" "Manage Software on this system" \
+			"3" "Manage Virtual Machines (KVM) on this system" \
+			"4" "Manage encryption phrases and passwords" \
+			"5" "Make media to automatically install OS (for VM's and CD burning)" \
+			"6" "Shortcut: Update this system now"\
+			2>&1 1>&3)
+		exit_status=$?
+		exec 3>&-
+		clear
 
-		# Cases for how program exited...
 		case $exit_status in
 			$DIALOG_CANCEL)
 				clear
 				echo "Program terminated."
-				exit
+				exit 0
 			;;
 			$DIALOG_ESC)
 				clear
 				echo "Program aborted." >&2
-				exit 1
+				exit 0
 			;;
 		esac
 
-		# What to do depending on selection...
 		case $selection in
 			0 )
-				clear
 				echo "Program terminated."
 			;;
-			1 )
-				show_view_informaion_about_this_system
+			1 )	show_view_informaion_about_this_system
 			;;
-			2 )
-				show_manage_software_gui
+			2 )	show_manage_software_gui
 			;;
-			3 )
-				show_manage_vm_gui
+			3 )	show_manage_vm_gui
 			;;
-			4 )
-				show_manage_crypt_sec
+			4 )	show_manage_crypt_sec
 			;;
 			5 )
-				display_notice
-				show_make_media_gui
-				read -p "Press [Enter] key to return to the main menu: "
-			;;
-			6 )
+			while true; do
+				exec 3>&1
+					subselection1=$($RTD_GUI --backtitle "$BRANDING" --title "Create Automatic OS Install Media" --menu "Please select if you need to make media for a server or a desktop. You will be aksed if you you want to transfer the media to a DC/DVD/USB Stick or deploy directly as a VM"  $HEIGHT $WIDTH $LIST_HEIGHT \
+					"1" "Make media to build a server (ISO or USB Disk)" \
+					"2" "Make media to build a Desktop environment (ISO or USB Disk)" \
+					2>&1 1>&3)
+				exit_status=$?
+				exec 3>&-
 				clear
+
+				case $exit_status in
+					$DIALOG_CANCEL) show_main_menu ;;
+					$DIALOG_ESC) return ;;
+				esac
+	
+				case $subselection1 in
+					0 ) echo "Program terminated."
+					;;
+					1 ) show_make_media_gui_server
+					;;
+					2 ) show_make_media_gui_desktop
+					;;
+				esac
+			done
+			;;
+			6 )	
 				rtd_update_system
 				read -p "Press [Enter] key to return to the main menu: "
 			;;
@@ -1554,40 +922,28 @@ show_main_menu () {
 }
 
 
-
 show_manage_crypt_sec () {
 	while true; do
 		exec 3>&1
-		# Dialog Display Menu Items...
-			selection=$(whiptail \
-				--backtitle "$BRANDING" \
-				--title "Manage encryption phrases and passwords" \
-				--menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
-				"1" "Check if a password is stolen" \
-				"2" "Change systems disk encrytion pass phrase" \
-				"3" "Change "$SUDO_USER" password" \
-				2>&1 1>&3)
-			exit_status=$?
-			exec 3>&-
+		selection=$($RTD_GUI \
+			--backtitle "$BRANDING" \
+			--title "Manage encryption phrases and passwords" \
+			--menu "" $HEIGHT $WIDTH $LIST_HEIGHT \
+			"1" "Check if a password is stolen" \
+			"2" "Change systems disk encrytion pass phrase" \
+			"3" "Change "$SUDO_USER" password" \
+			2>&1 1>&3)
+		exit_status=$?
+		exec 3>&-
+		clear
 
-		# Cases for how program exited...
 		case $exit_status in
-			$DIALOG_CANCEL)
-				clear
-				echo "Program terminated."
-				show_main_menu
-			;;
-			$DIALOG_ESC)
-				clear
-				echo "Program aborted." >&2
-				exit 1
-			;;
+			$DIALOG_CANCEL) return ;;
+			$DIALOG_ESC) return ;;
 		esac
 
-		# What to do depending on selection...
 		case $selection in
 			0 )
-				clear
 				echo "Program terminated."
 			;;
 			1 )
@@ -1622,7 +978,7 @@ menu_template () {
 	while true; do
 		exec 3>&1
 		# Dialog Display Menu Items...
-			selection=$(whiptail \
+			selection=$($RTD_GUI \
 				--backtitle "$BRANDING" \
 				--title "Menu Title" \
 				--menu "Please tell me what I can do for you:" $HEIGHT $WIDTH $LIST_HEIGHT \
@@ -1632,6 +988,7 @@ menu_template () {
 				2>&1 1>&3)
 			exit_status=$?
 			exec 3>&-
+			clear
 
 		# Cases for how program exited...
 		case $exit_status in
@@ -1692,25 +1049,32 @@ menu_template () {
 # "sudoers" security group. This helps adhere to the best practice of NOT using a root interactive
 # terminal.
 
-if [ -z "${BASH_VERSINFO}" ]; then
+if [[ -z "$BASH_VERSINFO" ]]; then
 	echo "ERROR: You must execute this script in a BASH Shell" >&2
 	exit 255
 fi
 
 
-
-if [[ "$TERM" == screen* ]]; then
-	ensure_admin
-	show_notice_on_fist_run
-	check_dependencies whiptail
-	show_main_menu
-else
-	if hash byobu 2>/dev/null; then
-		byobu new-session -s "RTD Simple Server Support Tools" "$0 $@"
-		#clear
+if [ "$UID" -eq 0 ]; then
+	if xset q &>/dev/null; then xhost local:root ; fi
+	if [[ "$TERM" == screen* ]]; then
+		rtd_oem_check_inet_access		# Confirm what to do if no internet access (internal).
+		check_menu_availability			# Can we display menus and ask questions (internal)?
+		rtd_oem_ensure_rtd_library_available	# If the required system managment library available?
+		show_notice_on_fist_run			# Is this the first time this is used on this computer?
+		show_main_menu				# If all is OK, display the system admin menu!
 	else
-		check_dependencies byobu && echo -e $RED "A critical component needed for this script to work properly was attempted to be added... Attempting to run the script again!" $ENDCOLOR
-		su -c "$0 $@" $SUDO_USER
-		clear
+		if hash byobu 2>/dev/null; then
+			byobu new-session -s "RTD Simple Server Support Tools" "$0 $*"
+			#clear
+		else
+			check_dependencies byobu && echo -e "$RED" "A critical component needed for this script to work properly was attempted to be added... Attempting to run the script again!" "$ENDCOLOR"
+			su -c "$0 $*" "$SUDO_USER"
+			clear
+		fi
 	fi
+else 
+	echo -e $RED "This script needs administrative access..." 
+	sudo bash "$0" "$*"
+	exit 
 fi
