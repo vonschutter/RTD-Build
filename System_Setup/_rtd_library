@@ -894,6 +894,35 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 
 
 
+make_kvm_virtual_machine_now_from_microsoft ()
+{
+
+	# Lookup specific binaries: use full path since they may just have been added and not in $PATH yet.
+	: "${BIN_VIRT_INSTALL:=$(type -p virt-install)}"
+
+	# Discover if the appropriate VM net interface is (default or br'0 - n')
+	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
+
+	# create image and run installer
+	"${BIN_VIRT_INSTALL}" --connect qemu:///system --name VDI_Windows10_"$CONFIG"_"$RANDOM" \
+		--vcpus "${2:-2}" \
+		--memory "${3:-2048}" \
+		--network "$VIRT_NET" \
+		--video qxl \
+		--disk size="${4:-40}" \
+		--os-type windows \
+		--os-variant=win10 \
+		--cdrom /var/lib/libvirt/boot/Win10_20H2_v2_English_x64.iso \
+		--disk /var/lib/libvirt/boot/win.IMA,device=floppy \
+		--livecd --noautoconsole || read -p "An ERROR has occurred. Please press [ENTER] to continue..."
+
+}
+
+
+
+
+
+
 
 make_kvm_virtual_machine_now_from_iso ()
 {
@@ -1569,8 +1598,9 @@ rtd_oem_reset_default_environment_config ()
 	# Disable the automatically trying to install OEM software
 	[[ -f /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop ]] && mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
 	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
-	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts
+	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
 	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
+
 }
 
 

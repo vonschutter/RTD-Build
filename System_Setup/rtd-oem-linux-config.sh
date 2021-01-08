@@ -153,7 +153,6 @@ option_23="Install the Microsoft Windows subsystem"
 option_24="Vivaldi Web Browser"
 option_25="Brave Security Enhanced Browser"
 option_26="Remove all non-western (latin) fonts"
-option_27="Reaseal they system for user (OEM Reseal)"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -172,14 +171,6 @@ option_27="Reaseal they system for user (OEM Reseal)"
 # for the future so that you only have one place to list the option while
 # more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 function choices_graphical () {
-	#conditional default value option for the OEM reaseal
-	if hostnamectl |grep "Ubuntu" 2>/dev/null ; then
-		reseal=true
-	elif hostnamectl |grep "Pop!_OS" 2>/dev/null ; then
-		reseal=true
-	else
-		reseal=false
-	fi
 
 	cmd=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
 	zstatus="${zstatus:=true}"
@@ -209,7 +200,6 @@ function choices_graphical () {
 			$zstatus "$option_24"
 			$zstatus "$option_25"
 			$zstatus "$option_26"
-			$reseal  "$option_27"
 			)
 	choices=$("${cmd[@]}" "${options[@]}" )
 }
@@ -252,13 +242,35 @@ function do_instructions_from_choices (){
 		"$option_24")	add_software_task recipie_vivaldi ;;
 		"$option_25")	add_software_task recipie_brave	;;
 		"$option_26")	rtd_oem_remove_non_western_latin_fonts ;;
-		"$option_27")	rtd_oem_reseal ;;
 		esac
 	done
 	IFS=$IFS_SAV
 }
 
 
+
+complete_setup () {
+	#conditional default value option for the OEM reaseal
+	if hostnamectl |grep "Ubuntu" 2>/dev/null ; then
+		ConditionalResealOption="Reseal system and prepare for delivery to new user"
+	elif hostnamectl |grep "Pop!_OS" 2>/dev/null ; then
+		ConditionalResealOption="Reseal system and prepare for delivery to new user"
+	else
+		unset ConditionalResealOption
+	fi
+
+	completion=$(printf "Restart system and start using it now\nExit now and do no more\n${ConditionalResealOption}\n" | zenity \
+				--list \
+				--title "System Setup Complete" \
+				--text "Please select if you witsh to reseal the sysetm, restart and use the system, or just exit" \
+				--column "Options" --width=1024 --height=768 )
+	case "$completion" in 
+		"Restart system and start using it now" ) write_information "Restarting system..." ; reboot ;;
+		"${ConditionalResealOption:-"Ignore"}" ) write_information "Resealing system..." ; rtd_oem_reseal ;;
+		"Exit now and do no more" ) write_information "Quitting..." ; exit ;;
+		* ) echo unknown option ; exit 1 ;;
+	esac
+}
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -298,12 +310,7 @@ else
 		check_dependencies zenity
 		choices_graphical
 		do_instructions_from_choices
-		zenity  --question --title "Alert" --width=400 --height=400  --text "System update is complete! You may restart your system and start using it now! Would you like to RESTART NOW?"
-			if [ $? = 0 ];
-			then
-			echo "OK Rebooting."
-			reboot
-			fi
+		complete_setup
 	fi
 fi
 
