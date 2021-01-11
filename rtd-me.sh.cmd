@@ -194,7 +194,7 @@ echo			-	RTD System System Managment Bootstrap Script      -
 :: 	call <path>\command.cmd or command...
 ::
 ::
-:: The preferred method of coding well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7
+:: The preferred method of coding NT Shell well is per the Tim Hill Windows NT Shell Scripting book, ISBN: 1-57878-047-7
 :: This is to ensure a secure and controlled way to execute components in the script. This may be an old way
 :: but it is relible and it works in all versions of Windows starting with Windows NT. However, newer more powerfull
 :: scripting languages are available. These should be used where appropriate in the stage 2 of this process.

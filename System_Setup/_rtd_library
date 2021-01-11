@@ -37,6 +37,7 @@ RTD_VERSION=2.0
 	cleanup_and_finish 				: Cleans and clears variables and temp files used by the media creations functions
 	create_iso_image 				: Creates aan OS iso image 
 	create_iso_image_debian 			: Creates a Debian iso image
+	create_physical_media_from_iso			: Create physical media (thumb drive) from an ISO file
 	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
 	display_result 					: Displays command results in a pretty terminal box 
 	dl						: Downloads and installs a package from the internet (a bit insecure)
@@ -86,10 +87,15 @@ RTD_VERSION=2.0
 	rtd_wait_for_internet_availability 		: Checks that the internet is reachable and waits until it is...
 	run_command_in_gnome_user_session 		: Running with elevated priviledges; will allow to switch back to user who started process to execute script in that environment
 	set_colors					: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
+	set_gnome_ui_common_tweaks_for_user		: Set common UI usability tweaks
+	set_gnome_ui_mac_tweaks_for_user		: Set MAC UI usability tweaks
+	set_gnome_ui_win10_tweaks_for_user		: Set Windows 10 UI usability tweaks
 	set_install_command				: Determines what install command should be used to install packages from repositories
 	SofwareManagmentAvailabilityCHK			: Checks to see that the software managment system is not busy
 	system_update					: Newer more universal software update function
+	toggle_oem_auto_login				: Toggel the auto login option for the user
 	up2date						: Older universal software update function
+
 
 Use Google Coding standards:
 In general any function that is not both obvious and short must be commented. Any function in a library must be commented regardless of 
@@ -1107,6 +1113,300 @@ create_iso_image ()
 
 
 
+create_physical_media_from_iso ()
+{
+# create_physical_media_from_iso:
+# Function to automatically write ISO (virtual DVD/CD/BlueRay) to a thumb drive. No argumenst are
+# required, but a source ISO file location can may be provided when calling the function.
+# If information is required, but not provided, the end user will be interactively prompted. 
+# This function requires elevated priviledges to be able to write media to a thumb drive 
+# (boot sector) and other system restrictied activities. If the function is NOT called in a 
+# script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
+# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will be displayed 
+# asking what media to write to. If no media is present, a warning error message will be displayed. 
+# 
+# USAGE:
+# 
+# "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
+# 
+# NOTE:
+# An ISO file, often called an ISO image, is a single file that's a perfect representation of an 
+# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file. 
+# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image 
+# that contains everything that would be written to an optical disc, disk sector by disc sector, including the 
+# optical disc file system.[2] ISO images are expected to contain the binary image of an optical media file system 
+# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly 
+# as they were stored on the disc. The data inside the ISO image will be structured according to the file system 
+# that was used on the optical disc from which it was created. 
+# 
+# A USB flash drive[note 1] is a data storage device that includes flash memory with an integrated USB interface. 
+# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz). 
+# Since first appearing on the market in late 2000
+# End of documentation
+
+
+	: ${BackTitle="Physical Installation Media Creator"}  
+	: ${Title="OS Media Manger"}
+	
+	if [ ! "$UID" -eq 0 ]; then
+		data=$(tempfile 2>/dev/null)
+		trap "rm -f $data" 0 1 2 5 15
+		dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+		ret=$? ; clear
+		case $ret in
+			0) cat $data | sudo -S bash "$0" "$*" ;;
+			1) echo "Request cancelled" ;;
+			255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
+			* ) rm $data &>/dev/null ; exit 1
+		esac
+		rm $data &>/dev/null 
+		exit
+	fi
+	
+	if [[ -z "$1" ]]; then
+		[[ -d /home/${SUDO_USER}/Virtual-DVDs ]] && SuggestedFolder="/home/${SUDO_USER}/Virtual-DVDs/" || SuggestedFolder="/home/${SUDO_USER}"
+		TARGET_ISO=$(dialog --stdout --title "${Title}" --backtitle "${BackTitle}" --fselect "${SuggestedFolder}" 15 110 2)
+		UserResponse=$? ; clear
+		case ${UserResponse} in
+			  1) echo "Request cancelled"; return 0 ;;
+			  255) echo "[ESC] key pressed."; return 255 ;;
+		esac
+	else 
+		TARGET_ISO=$1
+	fi
+
+	if [[ -z "${TARGET_ISO}" ]]; then
+		DIALOGRC=~/.dialogrc
+		if [[ -e ${DIALOGRC} ]]; then 
+			mv ${DIALOGRC} ${DIALOGRC}.bak 
+		fi 
+		
+		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+		dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n You must provide an ISO file as argument! \n Usage: ${0##*/} ~/filename.iso"  14 90
+		clear ; rm ${DIALOGRC} 
+
+		if [[ -e ${DIALOGRC}.bak ]]; then 
+			mv ${DIALOGRC}.bak ${DIALOGRC}
+		fi 
+		return 1
+	else
+		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
+
+		if [[ -z ${devlist} ]]; then 
+			DIALOGRC=~/.dialogrc
+			echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+			dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n No removable media could be found! Please insert a thumb drive and try again."  14 90
+			clear ; rm ${DIALOGRC} 
+			return 1
+		else
+			declare -A RemovableMediaList
+			index=1
+			for media in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' '); 
+			do 
+				SuggestedRemovableDevice="${media}"
+				RemovableMediaList[$index]=$(echo -e \'$(fdisk -l /dev/$media |head -1)\')
+				(( index++ ))
+			done
+
+			DiscoveredItems="\n
+			\n Removable media found: ${#RemovableMediaList[@]}
+			\n --------------------------------------------------------
+			
+			$(until [ $i -gt ${#RemovableMediaList[@]} ]
+			do
+				[[ $i -gt 0 ]] && echo -e "Removable Disk $i:   ${RemovableMediaList[$i]} \n" 
+				((i=i+1))
+			done
+			)"
+
+			USBTargetDevice=$( dialog --stdout --no-collapse --title "${Title}" --backtitle "${BackTitle}"  --inputbox "${DiscoveredItems}" 15 110 /dev/${SuggestedRemovableDevice} ) 
+			Response=$?
+			clear
+			case ${Response} in
+				0 )
+					dialog --title "${Title}" --backtitle "${BackTitle}" --yesno "Please Confirm:\n Write the ISO file: \n ${TARGET_ISO} \n To the drive: \n ${USBTargetDevice}" 25 90
+						case $? in
+							0 ) ( dd if=${TARGET_ISO} of=${USBTargetDevice} status=progress 2>&1 |dialog --title "${Title}" --backtitle "${BackTitle}" --programbox "Please wait, writing disk now:" 25 90) ;;
+							1 ) echo "Request cancelled"; create_physical_media_from_iso ;;
+							255 ) echo "[ESC] key pressed."; return 255 ;;
+							* ) echo "An unknown event occurred!" ; return 1 ;;
+						esac
+					clear ; return
+				;;
+				1 ) echo "Request cancelled"; return 0 ;;
+				255 ) echo "[ESC] key pressed."; return 255 ;;
+				* ) echo "An unknown event occurred!" ; return 1 ;;
+			esac
+		fi
+	fi
+}
+
+
+
+
+
+
+
+
+set_gnome_ui_common_tweaks_for_user ()
+{
+# set_gnome_ui_common_tweaks_for_user:
+# Configure Gnome for OEM look and feel. This is completely as desired. 
+# This function takes no arguments. Simply call it to make the changes.
+# Howerver, this function must be called as the user it should apply to.
+# if it is called in a script with "sudo" priviledges, it will make chages to 
+# the look and feel for the "root" user. 
+#
+# To run this function as the user who started a script with sudo script content 
+# could be echoed out ot a temporary file and executed as follows
+# sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus temporary_script.sh > /dev/null 2>&1
+# or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh". 
+#
+# USAGE:
+# 
+# set_gnome_ui_common_tweaks_for_user
+#  
+# End of documentation
+
+	write_status "Seting common OEM tweaks..."
+	# Terminal and Tilix Dark Theme
+		gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
+		gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
+
+	#Better Font Smoothing
+	gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+
+	#Usability Improvements
+		gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
+		gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+		gsettings set org.gnome.desktop.calendar show-weekdate true
+		gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
+		gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+		gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+
+	#This indexer is nice, but can be detrimental for laptop users battery life
+		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
+		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
+		gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
+
+	#Nautilus (File Manager) Usability
+		gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
+		gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
+		gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+		gsettings set org.gnome.nautilus.list-view use-tree-view true
+		gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
+
+	# Set the GNOME Shell Apps Dashboard sort app in categories based on the FreeDesktop standard.
+		gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
+}
+
+
+
+
+
+set_gnome_ui_mac_tweaks_for_user ()
+{
+# Function to set UI look to resemble MAC for users accustomed to that.
+# 
+# The function expects no arguments. 
+# Usage: 
+# set_gnome_ui_mac_tweaks_for_user
+#    
+# End of documentation
+	set_gnome_ui_common_tweaks_for_user
+	write_status "Setting MAC like tweaks..."
+	# Gnome Shell Theming
+	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+
+	# Set font
+	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+
+	#Set Extensions for gnome
+	gsettings set org.gnome.shell disable-user-extensions false
+	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
+}
+
+
+
+
+
+set_gnome_ui_win10_tweaks_for_user ()
+{
+# Function to set UI look to resemble MAC for users accustomed to that.
+# 
+# The function expects no arguments. 
+# Usage: 
+# set_gnome_ui_win10_tweaks_for_user
+#    
+# End of documentation
+	set_gnome_ui_common_tweaks_for_user
+	write_status "Setting MAC like tweaks..."
+	# Gnome Shell Theming
+	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+
+	# Set font
+	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+
+	#Set Extensions for gnome
+	gsettings set org.gnome.shell disable-user-extensions false
+	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
+
+	# Configure dash-to-panel
+	gnome-shell-extension-tool -e dash-to-panel
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
+}
+
+
+
+
+
+run_command_in_gnome_user_session () {
+# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
+# This functon expects any number of parameters that would make up the command or commands
+# to be run in the users session. For example:
+# 	run_command_in_gnome_user_session script_name.sh parameter one two etc
+#
+#    
+# End of documentation
+	echo -------------------------- Begin as user: $SUDO_USER ---------------------
+	echo "$*"
+	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* > /dev/null 2>&1
+	echo " "
+	echo -------------------------- End as user: $SUDO_USER   ---------------------
+}
+
+
 
 
 
@@ -1439,10 +1739,89 @@ enable_firewall ()
 
 
 
+make_system_recovery_partition ()
+{
+# make_system_recovery_partition
+# Function to enable system OEM Recovery 
+# End of documentation
+
+	devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
+
+	if [[ -z ${devlist} ]]; then
+		DIALOGRC="/root/.dialogrc"
+		if -e ${DIALOGRC} ; then 
+			mv ${DIALOGRC} ${DIALOGRC}.bak 
+		fi 
+		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+		dialog --title "Physical Installation Media Creator Error!" --backtitle "OS Media Manger" --msgbox "No removable media could be found!"  14 90
+		rm ${DIALOGRC} 
+		if -e ${DIALOGRC}.bak ; then 
+			mv ${DIALOGRC}.bak ${DIALOGRC} 
+		fi 
+		return 1
+	else
+		declare -A RemovableMediaList
+		key=0
+		for i in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' '); 
+		do 
+			SuggestedRemovableDevice="${i}"
+			element="$(fdisk -l /dev/$i |head -1)"
+			RemovableMediaList[$key]=$(echo -e \'"$element"\')
+			(( key++ ))
+		done
+
+		if [[ 1 -eq ${#RemovableMediaList[@]} ]]; then
+			mkdir /boot/iso
+			dd if=/dev/${SuggestedRemovableDevice} of=/boot/iso/recovery.iso
+			cat >> /etc/grub.d/40_custom <<-'EOF'
+			menuentry "Reset to Factory Defaults" {
+				set isofile="/boot/iso/recovery.iso"
+				loopback loop (hd0,8)$isofile
+				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+				initrd (loop)/casper/initrd.lz
+			}
+			EOF 
+		else
+
+			ChosenMediaItem="
+			Removable media found: \n
+			------------------------------------------------------------------------------- \n
+			\n
+			$(until [ $i -gt ${#RemovableMediaList[@]} ]
+			do
+				echo -e "Removable Disk $i:   ${RemovableMediaList[$i]}" \n
+				((i=i+1))
+			done
+			)"
+
+			USBTargetDevice=$( dialog --stdout --title "Physical Installation Media Creator" \
+			--backtitle "OS Media Manger" \
+			--inputbox "\n ${DiscoveredItems}" 0 0 /dev/${SuggestedRemovableDevice} ) 
+
+			mkdir /boot/iso
+			dd if=/dev/${ChosenMediaItem} of=/boot/iso/recovery.iso
+			cat >> /etc/grub.d/40_custom <<-'EOF'
+			menuentry "Reset to Factory Defaults" {
+				set isofile="/boot/iso/recovery.iso"
+				loopback loop (hd0,8)$isofile
+				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+				initrd (loop)/casper/initrd.lz
+			}
+			EOF
+		fi
+	fi
+}
+
+
+
+
+
 
 
 rtd_oem_reseal () {
-
+# rtd_oem_reseal
+# Function to reseal a newly installed system for delivery to end user.
+# End of documentation
 	if cat /etc/os-release |grep ubuntu ; then
 		InstallSoftwareFromRepo oem-config-gtk
 		oem-config-prepare
@@ -1669,7 +2048,7 @@ rtd_oem_reset_default_environment_config ()
 	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
 	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
 	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
-
+	toggle_oem_auto_login
 }
 
 
@@ -1692,6 +2071,127 @@ rtd_wait_for_internet_availability ()
 		write_status "Waiting..."
 		sleep 10
 	done
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+toggle_oem_auto_login()
+{
+# Function to toggle auto login for admin purposes. 
+# Call the functoin onece to set auto login and call it again to 
+# unset auto login. 
+#
+# USAGE:
+#
+# toggle_oem_auto_login
+# End of documentation
+
+
+	if [[ -f /etc/lightdm/lightdm.conf ]]; then
+		if [[ -f /etc/lightdm/lightdm.conf.rtd-bak ]]; then
+			rm /etc/lightdm/lightdm.conf && mv /etc/lightdm/lightdm.conf.rtd-bak /etc/lightdm/lightdm.conf
+		else
+			cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
+			cat > /etc/lightdm/lightdm.conf <<-OEM_LXDM_LOGIN_OPTION
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/lightdm/lightdm.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[SeatDefaults]
+			autologin-user=$SUDO_USER
+			autologin-user-timeout=0
+			OEM_LXDM_LOGIN_OPTION
+		fi
+	fi
+
+	if [[ -f /etc/sddm.conf ]]; then 
+		if [[ -f /etc/sddm.conf.rtd-bak ]]; then
+			rm /etc/sddm.conf && mv /etc/sddm.conf.rtd-bak /etc/sddm.conf
+		else
+			cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
+			cat > /etc/sddm.conf <<-OEM_SDDM_LOGIN_OPTION
+			cat << OEM_SDDM_LOGIN_OPTION > 
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/sddm.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[Autologin]
+			User=$SUDO_USER
+			Session=plasma.desktop
+			OEM_SDDM_LOGIN_OPTION
+		fi
+	fi
+
+	if [[ -f /etc/gdm3/daemon.conf ]]; then
+		if [[ -f /etc/gdm3/daemon.conf.rtd-bak ]]; then
+			rm /etc/gdm3/daemon.conf && mv /etc/gdm3/daemon.conf.rtd-bak /etc/gdm3/daemon.conf
+		else
+			cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
+			cat >  /etc/gdm3/daemon.conf <<-OEM_GDM3_LOGIN_OPTION
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/gdm3/daemon.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[daemon]
+			AutomaticLoginEnable=True
+			AutomaticLogin=$SUDO_USER
+			WaylandEnable=false
+			OEM_GDM3_LOGIN_OPTION
+		fi
+	fi
+}
+
+
+
+
+
+
+set_oem_elevated_priviledge_gui ()
+{
+# Some Debian and other Linux distribution do not allow gui apps to 
+# be run when invoked by "sudo" or in a root (system elevated authority) 
+# environment. To mitigate this some stemp may need to taken. 
+# Will work on Slackware as well as Debian to give root permission to open X programs.
+# End of documentation
+
+	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
+
+	# Allows runing an X program as root
+	touch /root/.bashrc
+	echo "export XAUTHORITY=/home/$_OEM_USER/.Xauthority" >>/root/.bashrc
+}
+
+
+
+
+
+
+set_enable_oem_elevated_priveledge()
+{
+# Set no password elevated priviledges.
+# This will allow apps to be run when invoked by "sudo" without being prompted 
+# for a password. This emulates the "UAC" from Microsoft. Please remember to 
+# turn this off using the function "rtd_oem_reset_default_environment_config"
+# End of documentation
+	# Add instruction to a sudoers include file:
+	# This should be removed when OEM setup is complete as it would represent a back door... 
+	echo "$SUDO_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
+
+	# Check that your sudoers include file passed the visudo syntax checks:
+	sudo visudo -cf /etc/sudoers.d/99_sudo_include_file
 }
 
 
@@ -2142,6 +2642,7 @@ rtd_oem_find_live_release()
 	;;
 	esac
 }
+
 
 
 
@@ -3644,12 +4145,11 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				$reusemethod{ }                         \
 				method{ efi } format{ }                 \
 			.                                               \
-			500 500 500 ext3                                \
+			3500 3500 3500 ext3                             \
 				$primary{ } $bootable{ }                \
 				method{ format } format{ }              \
 				use_filesystem{ } filesystem{ ext4 }    \
 				mountpoint{ /boot }                     \
-									\
 			.                                               \
 			200% 200% 200% linux-swap                       \
 				$lvmok{ } lv_name{ swap }               \
@@ -3664,12 +4164,6 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				method{ format } format{ }              \
 				use_filesystem{ } filesystem{ ext4 }    \
 				mountpoint{ / }                         \
-			.                                               \
-			2000 2000 2000 ext4                             \
-				$primary{ }                             \
-				method{ keep }                          \
-				use_filesystem{ } filesystem{ ext4 }    \
-				label{ rescuedisk }                     \
 			.
 
 		d-i partman-md/device_remove_md boolean true
@@ -3703,7 +4197,7 @@ rtd_oem_preseed_cfg_Package_Selection ()
 		# relevant chice of debian role using "sed" or similar.
 		# End of documentation
 		tasksel tasksel/first multiselect $2
-		d-i pkgsel/include string splash openssh-server virt-what wget spice-vdagent
+		d-i pkgsel/include string openssh-server virt-what wget spice-vdagent linux-firmware-nonfree dkms bcmwl-kernel-source
 
 		# Valid choices for pkgsel/upgrade are: safe-upgrade full-upgrade none
 		d-i pkgsel/upgrade select none
@@ -4195,7 +4689,7 @@ else
 		--devhelp )
 			while true; do
 				exec 3>&1
-				selection=$(dialog --clear --no-collapse --backtitle "${BRANDING:-" RunTime Data : Function library : Script Development Support"}" --title "RTD Library Loaded Functions:" --menu "\n Chose a function below to see more details about the function." "${HEIGHT:-25}" "${WIDTH:-110}" "${LIST_HEIGHT:-14}" $(debug_list_loaded_internal_functions) 2>&1 1>&3)
+				selection=$(dialog --clear --no-collapse --backtitle "${BRANDING:-" RunTime Data : Function library : Script Development Support"}" --title "RTD Library Loaded Functions:" --menu "\n Chose a function below to see more details about the function." "${HEIGHT:-0}" "${WIDTH:-90}" "${LIST_HEIGHT:-0}" $(debug_list_loaded_internal_functions) 2>&1 1>&3)
 				exit_status=$?
 				exec 3>&-
 
