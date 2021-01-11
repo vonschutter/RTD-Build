@@ -1122,26 +1122,28 @@ create_physical_media_from_iso ()
 # This function requires elevated priviledges to be able to write media to a thumb drive 
 # (boot sector) and other system restrictied activities. If the function is NOT called in a 
 # script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
-# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will be displayed 
-# asking what media to write to. If no media is present, a warning error message will be displayed. 
+# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will 
+# be displayed asking what media to write to. If no media is present, a warning error 
+# message will be displayed. 
 # 
 # USAGE:
 # 
 # "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
 # 
 # NOTE:
-# An ISO file, often called an ISO image, is a single file that's a perfect representation of an 
-# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file. 
-# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image 
-# that contains everything that would be written to an optical disc, disk sector by disc sector, including the 
-# optical disc file system.[2] ISO images are expected to contain the binary image of an optical media file system 
-# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly 
-# as they were stored on the disc. The data inside the ISO image will be structured according to the file system 
+# An optical disc image (or ISO image, from the ISO 9660 file
+# system used  with CD-ROM media) is a disk image that contains everything that would be 
+# written to an optical disc, disk sector by  disc sector, including the optical disc file 
+# system.[2] ISO images are expected to contain the binary image of an optical media 
+# file system  (usually ISO 9660 and its extensions or UDF), including the data in 
+# its files in binary format, copied exactly as they were stored on the disc. 
+# The data inside the ISO image will be structured according to the file system 
 # that was used on the optical disc from which it was created. 
 # 
-# A USB flash drive[note 1] is a data storage device that includes flash memory with an integrated USB interface. 
-# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz). 
-# Since first appearing on the market in late 2000
+# A USB flash drive[note 1] is a data storage device that includes flash memory with an 
+# integrated USB interface. It is typically removable, rewritable and much smaller than 
+# an optical disc. Most weigh less than 30 g (1 oz). Since first appearing on the market 
+# in late 2000.
 # End of documentation
 
 
