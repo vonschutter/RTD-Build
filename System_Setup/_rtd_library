@@ -1192,7 +1192,8 @@ create_physical_media_from_iso ()
 		fi 
 		return 1
 	else
-		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
+		#          List removable dev : not loop dev: not CD    : not nvme HD : filter: header w. name
+		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep -v nvme |grep 1 | cut -f1 -d' ')"
 
 		if [[ -z ${devlist} ]]; then 
 			DIALOGRC=~/.dialogrc
@@ -1203,8 +1204,8 @@ create_physical_media_from_iso ()
 		else
 			declare -A RemovableMediaList
 			index=1
-			#              List removable dev : not loop dev: not CD    : not nvme HD : filter: header w. name
-			for media in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep -v nvme |grep 1 | cut -f1 -d' '); 
+			
+			for media in ${devlist}; 
 			do 
 				SuggestedRemovableDevice="${media}"
 				RemovableMediaList[$index]=$(echo -e \'$(fdisk -l /dev/$media |head -1)\')
