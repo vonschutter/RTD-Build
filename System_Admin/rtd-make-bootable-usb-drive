@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source /opt/rtd/scripts/_rtd_library
+
+create_physical_media_from_iso

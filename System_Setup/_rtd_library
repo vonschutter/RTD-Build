@@ -1122,8 +1122,9 @@ create_physical_media_from_iso ()
 # This function requires elevated priviledges to be able to write media to a thumb drive 
 # (boot sector) and other system restrictied activities. If the function is NOT called in a 
 # script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
-# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will be displayed 
-# asking what media to write to. If no media is present, a warning error message will be displayed. 
+# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will 
+# be displayed asking what media to write to. If no media is present, a warning error 
+# message will be displayed. 
 # 
 # USAGE:
 # 
