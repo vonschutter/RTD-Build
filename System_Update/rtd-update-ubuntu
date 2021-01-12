@@ -35,8 +35,6 @@ VERSION="1.13"
 echo -e $GREEN"$PUBLICATION: Version $VERSION" $ENDCOLOR
 echo -e $GREEN"--------------------------------------------------------" $ENDCOLOR
 
-# get parameter if this script was called with one...
-#  ${0##*/} - 
 echo This tool makes it simple to update software from all channels 
 echo available on the system at once. It will update via the native
 echo -e "package manager as well as newer formats like $YELLOW"snap"$ENDCOLOR and $YELLOW"flatpak"$ENDCOLOR..."

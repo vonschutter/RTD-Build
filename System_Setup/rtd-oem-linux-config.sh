@@ -124,7 +124,7 @@ export zstatus="$1"
 
 
 # Set the background tilte:
-_BACK_TITLE="${_BACK_TITLE:="RTD OEM Simple System Setup"}"
+: "${_BACK_TITLE:-"RTD OEM Simple System Setup"}"
 
 # Set the options to appear in the menu as choices:
 option_1="Apply Themes and Desktop Tweaks"
@@ -300,7 +300,7 @@ else
 	rtd_wait_for_internet_availability
 	rtd_oem_reset_default_environment_config
 	SofwareManagmentAvailabilityCHK
-	up2date
+	rtd_update_system
 
 	if [[ -z $DISPLAY ]]; then 
 		echo "No X server at \$DISPLAY [$DISPLAY]" >&2

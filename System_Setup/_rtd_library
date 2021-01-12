@@ -19,8 +19,8 @@ RTD_VERSION=2.0
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!**!  To see options to use this library type _rtd_library --help
-!**!  To see usefull documentation on each function in this library: _rtd_library --devhelp
+!**!  To see options to use this library type "bash _rtd_library --help"
+!**!  To see usefull documentation on each function in this library: "bash _rtd_library --devhelp"
 
 
 
@@ -204,9 +204,54 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 
 
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::           Function Section               ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
-#  **************   S Y S T E M    M A N A G E M E N T   *******************
+#              ________________________________________________
+#             /                                                \
+#            |    _________________________________________     |
+#            |   |                                         |    |
+#            |   |  C:\> _                                 |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |                                         |    |
+#            |   |_________________________________________|    |
+#            |                                                  |
+#             \_________________________________________________/
+#                    \___________________________________/
+#                 ___________________________________________
+#              _-'    .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.  --- `-_
+#           _-'.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.--.  .-.-.`-_
+#        _-'.-.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-`__`. .-.-.-.`-_
+#     _-'.-.-.-.-. .-----.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-----. .-.-.-.-.`-_
+#  _-'.-.-.-.-.-. .---.-. .-------------------------. .-.---. .---.-.-.-.`-_
+# :-------------------------------------------------------------------------:
+# `---._.-------------------------------------------------------------._.---'
+# ----------------------------------------------------------------
+#  ____            _                 
+# / ___| _   _ ___| |_ ___ _ __ ___  
+# \___ \| | | / __| __/ _ \ '_ ` _ \ 
+#  ___) | |_| \__ \ ||  __/ | | | | |
+# |____/ \__, |___/\__\___|_| |_| |_|
+#        |___/                       
+#  __  __                                              _   
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+# | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
+#                           |___/ 
+# ----------------------------------------------------------------
 
 
 
@@ -237,59 +282,851 @@ change_disk_pass ()
 
 
 
-rtd_oem_release_upgrade ()
+
+
+
+check_menu_availability ()
 {
-# Function to attempt to perform a release upgade on several Linux distributions. 
-# Supported distributions are: Ubuntu, Pop! OS, Debian, SUSE, and fedora.
-# This function does not require any arguments but will respect "interactive". The "interactive"
-# parameter will force the function to pause if a supported distribution is not found.
-# It will check for a supported distribution and attempt the upgrade if possible. 
-# If a supported distribution is not detected the function will do nothing.
-# 
-# Usage (in a script):
-#  rtd_oem_release_upgrade [ string ]
-#
-# [ string ] : interactive
-#
-# End of Documentation
-
-
-
-	local set interactive=$1
-	unset result
-	TMP_DISC_DIR=$(mktemp -d )
-		if hostnamectl |grep "Ubuntu" 2>/dev/null ; then
-			write_warning "this may take some time, please be patient!" 
-			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
-			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
-			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
-			display_result "Release Upgrade Attempt Result: "
-			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
-		elif hostnamectl |grep "Pop!_OS" 2>/dev/null ; then
-			write_warning "this may take some time, please be patient!" 
-			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
-			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
-			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
-			display_result "Release Upgrade Attempt Result: "
-			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
-		elif hostnamectl |grep "Debian" 2>/dev/null ; then
-			write_error "Debian does not provide an upgrade tool between major releases... Please use the manual upgrade method." 
-			result="Debian does not have an in place upgrade tool. Please edit the /etc/apt/sources.list and use the disd-upgrade option"
-			display_result "Release Upgrade Attempt Result: "
-		elif hostnamectl |grep "SUSE" 2>/dev/null ; then
-			write_warning "This REALLY may take some time, please be patient!" 
-			zypper dup 
-		elif hostnamectl |grep "fedora" 2>/dev/null ; then
-			releasever=$($RTD_GUI --title "Fedora Upgrade Confirmation" --inputbox "Please enter the Fedora version you want to upgrade to. Please make sure that it has been published. You are currently using: $(hosnamectl)  only numbers are valid" 8 78  3>&1 1>&2 2>&3)
-			sudo dnf upgrade --refresh
-			sudo dnf install dnf-plugin-system-upgrade
-			sudo dnf system-upgrade download --refresh --releasever="$releasever"
-			sudo dnf system-upgrade
+# First discover what menu system is installed. Some systems use "dialog" and
+# other systems use whiptail for the terminal to show menus and dialogs.
+# If nothing is found, then make sure it is available before continuing.
+# End of documentation
+	if hash dialog 2>/dev/null ; then
+		: "${RTD_GUI:=dialog --clear}"
+		export RTD_GUI
+	elif hash whiptail 2>/dev/null ; then
+		: "${RTD_GUI:="whiptail --fb"}"
+		export RTD_GUI
+		if ( $RTD_GUI --backtitle "$BRANDING" --title "System Information Menu" --no-button "NO: Use whiptail" --yes-button "YES: Install dialog" --yesno "Please NOTE that we are using WHIPTAIL as a terminal menu system, which is missing several features compared to the default: DIALOG menu system. There are a few reasons we may be using WHIPTAIL instead: I was forced to use it or it is the only terminal menu system available... If you continue with the current WHIPTAIL some things might not work. \n \n May I please try to install the dialog system in stead? . \n  " 20 90 ); then
+			RTD_GUI=dialog
+			err_no_menu_system_found
 		else
-			[[ "$interactive" == "interactive" ]] && read -p "This option requires the program (do-release-upgrade) (Ubuntu) or OpenSUSE (zypper) on your system. Press [Enter] key to return to menu."
+			echo "User selected No, exit status was $?."
 		fi
-		return 
+	else
+		err_no_menu_system_found dialog && return 1 || exit 1
+	fi
 }
+
+
+
+
+
+
+
+err_no_menu_system_found ()
+{
+# Function to handle the error condition if a manu system is not found on the system.
+# On occasion it may be neede to display dialog boxes and selection menus even in a terminal.
+# for these cases; dialog, whiptail (newt), or zenity may be needed. 
+# This function will attempt to install the desired menu system and if it cannot or the user
+# opts out it will error and exit the script. 
+#
+# End of documentation
+
+	echo -e $RED" ______________________________________________________________________ \n There is eiter no way to display menus on this system or you have told me \n to install the default  menu system! \n This is required to display the administrative menus... \n \n     ¯\_( ͡👁️ ͜ʖ ͡👁️)_/¯ \n ______________________________________________________________________ \n"
+	echo -e $YELLOW"May I attepmpt to install this ability to your system? \a $ENDCOLOR"
+	read -p "Add software: (y/n)?" choice
+	case "$choice" in
+	y|Y )
+		: "${RTD_GUI:=$1}"
+		for i in dnf yum zypper apt-get; do
+			if hash $i 2>/dev/null; then
+				$i install $RTD_GUI -y 
+				if $? eq 0 ;  then 
+					echo -e $YELLOW"$RTD_GUI installed... exporting..."
+					RTD_GUI="dialog --clear"
+					export RTD_GUI
+					return 0
+				fi
+			fi
+		done
+	;;
+	n|N ) err_no_menu_system_available ;;
+	* ) read -p  "Invalid Selection" && err_no_menu_system_found || exit 1 ;;
+	esac
+}
+
+
+
+
+
+
+
+enable_firewall ()
+{
+# enable_firewall
+# Function to enable system firewall and add a given rule. This simple function
+# enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to
+# pass. This function expects no arguments. However nothing will be done if
+# no ufw firewall is present on the system. The cunction will not attempt to add 
+# the ufw since this may conflict with any firewall present. To use this funciton 
+# to enable ufw, first any other firewall software must be disabled and ufw added.
+# End of documentation
+	if hash ufw 2>/dev/null; then
+			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
+			ufw enable && ufw allow ssh
+	else
+			echo -e $faded_orange "UFW not present on this system: please turn on the firewall and configure it manually!" $ENDCOLOR
+	fi
+}
+
+
+
+
+
+
+
+rtd_oem_reset_default_environment_config ()
+{
+# Function to reset temporary configurations to their original setings from the
+# distributor. To configure and/or automatically install Linux systems RTD OEM
+# load process must make some changes to the system in question that are not
+# good security practice or that may be disruptive during normal operations.
+# These setings are not limited to bu include "auto login", "auto sudo" and
+# "auto running scripts"...
+# End of documentation
+
+	# Disable the automatically trying to install OEM software
+	[[ -f /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop ]] && mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
+	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
+	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
+	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
+	toggle_oem_auto_login
+}
+
+
+
+
+rtd_wait_for_internet_availability ()
+{
+# Function that, when called, will wait for an active internet connection
+# to be available before before continuing. Most softwrare install activities
+# need an active internet connection to be able to install and update software.
+# Naturally, some in house loads use local mirrors, but if you can see the
+# internet, you would have access to your own ropositories as well...
+# End of documentation
+
+
+
+	write_status "Waiting for internet access..."
+	write_information "NOTE: Free access to the internet is required to continue."
+	while ! ping -c 1 -W 1 8.8.8.8 &>/dev/null ; do
+		write_status "Waiting..."
+		sleep 10
+	done
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+toggle_oem_auto_login()
+{
+# Function to toggle auto login for admin purposes. 
+# Call the functoin onece to set auto login and call it again to 
+# unset auto login. 
+#
+# USAGE:
+#
+# toggle_oem_auto_login
+# End of documentation
+
+
+	if [[ -f /etc/lightdm/lightdm.conf ]]; then
+		if [[ -f /etc/lightdm/lightdm.conf.rtd-bak ]]; then
+			rm /etc/lightdm/lightdm.conf && mv /etc/lightdm/lightdm.conf.rtd-bak /etc/lightdm/lightdm.conf
+		else
+			cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
+			cat > /etc/lightdm/lightdm.conf <<-OEM_LXDM_LOGIN_OPTION
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/lightdm/lightdm.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[SeatDefaults]
+			autologin-user=$SUDO_USER
+			autologin-user-timeout=0
+			OEM_LXDM_LOGIN_OPTION
+		fi
+	fi
+
+	if [[ -f /etc/sddm.conf ]]; then 
+		if [[ -f /etc/sddm.conf.rtd-bak ]]; then
+			rm /etc/sddm.conf && mv /etc/sddm.conf.rtd-bak /etc/sddm.conf
+		else
+			cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
+			cat > /etc/sddm.conf <<-OEM_SDDM_LOGIN_OPTION
+			cat << OEM_SDDM_LOGIN_OPTION > 
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/sddm.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[Autologin]
+			User=$SUDO_USER
+			Session=plasma.desktop
+			OEM_SDDM_LOGIN_OPTION
+		fi
+	fi
+
+	if [[ -f /etc/gdm3/daemon.conf ]]; then
+		if [[ -f /etc/gdm3/daemon.conf.rtd-bak ]]; then
+			rm /etc/gdm3/daemon.conf && mv /etc/gdm3/daemon.conf.rtd-bak /etc/gdm3/daemon.conf
+		else
+			cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
+			cat >  /etc/gdm3/daemon.conf <<-OEM_GDM3_LOGIN_OPTION
+			# This configuration file was created by RTD Setup.
+			# You may safely replace this file with the original backed up: 
+			# /etc/gdm3/daemon.conf.rtd-bak
+			# If this file is not there, then it wa not there to begin with
+			# and you can delete this file. 
+			[daemon]
+			AutomaticLoginEnable=True
+			AutomaticLogin=$SUDO_USER
+			WaylandEnable=false
+			OEM_GDM3_LOGIN_OPTION
+		fi
+	fi
+}
+
+
+
+
+
+
+set_oem_elevated_priviledge_gui ()
+{
+# Some Debian and other Linux distribution do not allow gui apps to 
+# be run when invoked by "sudo" or in a root (system elevated authority) 
+# environment. To mitigate this some stemp may need to taken. 
+# Will work on Slackware as well as Debian to give root permission to open X programs.
+# End of documentation
+
+	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
+
+	# Allows runing an X program as root
+	touch /root/.bashrc
+	echo "export XAUTHORITY=/home/$_OEM_USER/.Xauthority" >>/root/.bashrc
+}
+
+
+
+
+
+
+set_enable_oem_elevated_priveledge()
+{
+# Set no password elevated priviledges.
+# This will allow apps to be run when invoked by "sudo" without being prompted 
+# for a password. This emulates the "UAC" from Microsoft. Please remember to 
+# turn this off using the function "rtd_oem_reset_default_environment_config"
+# End of documentation
+	# Add instruction to a sudoers include file:
+	# This should be removed when OEM setup is complete as it would represent a back door... 
+	echo "$SUDO_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
+
+	# Check that your sudoers include file passed the visudo syntax checks:
+	sudo visudo -cf /etc/sudoers.d/99_sudo_include_file
+}
+
+
+
+
+
+
+make_system_recovery_partition ()
+{
+# make_system_recovery_partition
+# Function to enable system OEM Recovery 
+# End of documentation
+
+	devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
+
+	if [[ -z ${devlist} ]]; then
+		DIALOGRC="/root/.dialogrc"
+		if -e ${DIALOGRC} ; then 
+			mv ${DIALOGRC} ${DIALOGRC}.bak 
+		fi 
+		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+		dialog --title "Physical Installation Media Creator Error!" --backtitle "OS Media Manger" --msgbox "No removable media could be found!"  14 90
+		rm ${DIALOGRC} 
+		if -e ${DIALOGRC}.bak ; then 
+			mv ${DIALOGRC}.bak ${DIALOGRC} 
+		fi 
+		return 1
+	else
+		declare -A RemovableMediaList
+		key=0
+		for i in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' '); 
+		do 
+			SuggestedRemovableDevice="${i}"
+			element="$(fdisk -l /dev/$i |head -1)"
+			RemovableMediaList[$key]=$(echo -e \'"$element"\')
+			(( key++ ))
+		done
+
+		if [[ 1 -eq ${#RemovableMediaList[@]} ]]; then
+			mkdir /boot/iso
+			dd if=/dev/${SuggestedRemovableDevice} of=/boot/iso/recovery.iso
+			cat >> /etc/grub.d/40_custom <<-'EOF'
+			menuentry "Reset to Factory Defaults" {
+				set isofile="/boot/iso/recovery.iso"
+				loopback loop (hd0,8)$isofile
+				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+				initrd (loop)/casper/initrd.lz
+			}
+			EOF 
+		else
+
+			ChosenMediaItem="
+			Removable media found: \n
+			------------------------------------------------------------------------------- \n
+			\n
+			$(until [ $i -gt ${#RemovableMediaList[@]} ]
+			do
+				echo -e "Removable Disk $i:   ${RemovableMediaList[$i]}" \n
+				((i=i+1))
+			done
+			)"
+
+			USBTargetDevice=$( dialog --stdout --title "Physical Installation Media Creator" \
+			--backtitle "OS Media Manger" \
+			--inputbox "\n ${DiscoveredItems}" 0 0 /dev/${SuggestedRemovableDevice} ) 
+
+			mkdir /boot/iso
+			dd if=/dev/${ChosenMediaItem} of=/boot/iso/recovery.iso
+			cat >> /etc/grub.d/40_custom <<-'EOF'
+			menuentry "Reset to Factory Defaults" {
+				set isofile="/boot/iso/recovery.iso"
+				loopback loop (hd0,8)$isofile
+				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+				initrd (loop)/casper/initrd.lz
+			}
+			EOF
+		fi
+	fi
+}
+
+
+
+
+
+
+
+rtd_oem_reseal () {
+# rtd_oem_reseal
+# Function to reseal a newly installed system for delivery to end user.
+# End of documentation
+	if cat /etc/os-release |grep ubuntu ; then
+		InstallSoftwareFromRepo oem-config-gtk
+		oem-config-prepare
+	elif cat /etc/os-release |grep kubuntu ; then
+		InstallSoftwareFromRepo oem-config-kde
+		oem-config-prepare
+	elif cat /etc/os-release |grep suse ; then
+		echo "I dont know of any OEM configuration for SuSE"
+	elif cat /etc/os-release |grep fedora ; then
+		echo "I dont know of any OEM configuration for Fedora"	
+	fi
+}
+
+
+
+
+
+
+
+
+check_if_password_p0wned () {
+	pass_str=$($RTD_GUI --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
+	result=$(
+		sha1=$(echo -n $pass_str | tr -d '\n' | sha1sum); echo "Hash prefix: ${sha1:0:5}"; echo "Hash suffix: ${sha1:5:35}";
+		query_result=$(curl https://api.pwnedpasswords.com/range/${sha1:0:5} 2>/dev/null | grep "$(echo "${sha1:5:35}" | tr '[:lower:]' '[:upper:]')");
+		printf "Your password appeared %d times for sale in the Darknet per the P0wned online database...." "${query_result#*:}" 2>/dev/null ;
+		unset pass_str ;
+		)
+	display_result "Password P0wned Status"
+}
+
+
+
+
+
+
+
+
+rtd_oem_find_live_release()
+{
+	# This function will return the URL for the version of Debian, Ubuntu server or Destktop requested.
+	# 3 parameters are required for this function to know what to do: distro_version/
+	# It will also try to read the available iso images and grab the latest or requested iso.
+	# Example:
+	# Function name 		: distro_version : distro_flavor : live_or_not : desktop_env
+	# rtd_oem_find_live_release 	      10              debian         live           kde
+	# rtd_oem_find_live_release 	      10              debian         live           cinnamon
+	# rtd_oem_find_live_release 	      10              debian         net            ssh-server
+	# rtd_oem_find_live_release 	      19.04.2         ubuntu         live
+	# End of documentation
+	distro_version="${1:-10}"
+	distro_flavor="${2:-debian}"
+	live_or_not="${3:-live}"
+	desktop_env="${4:-standard}"
+
+	case "$distro_flavor" in
+	Ubuntu | ubuntu )
+		case "$live_or_not" in
+		Live | live | current-live | desktop)
+			echo "http://releases.ubuntu.com/$distro_version/$(curl --silent http://releases.ubuntu.com/$distro_version/SHA256SUMS | \grep -o 'ubuntu-.*-desktop-amd64.iso')"
+		;;
+		server | netinst | net | mini )
+			# 18.04 and later need to use the alternative installer
+			# since the switch to subiquity
+			if [ ${1:0:2} -ge 18 ]; then
+				echo "http://cdimage.ubuntu.com/releases/$distro_version/release/ubuntu-$distro_version-live-server-arm64.iso"
+			else
+				rel=http://releases.ubuntu.com/$1
+				echo "$rel/$(curl --silent $rel/MD5SUMS | \grep -o 'ubuntu-.*-server-amd64.iso')"
+			fi
+		;;
+		* )
+			$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 4th parameter should be either of: Live | live | current-live | server | netinst | net | mini! Not $live_or_not" 10 60
+		;;
+		esac
+	;;
+	Debian | debian)
+		case "$live_or_not" in
+		Live | live | current-live )
+			# Debian renames the current iso images for each release. To get around this when downloading
+			# the vesion number must be ignored and the desired flavor of the iso should be grabed.
+			case "$desktop_env" in
+			kde | gnome | xfce | cinnamon | lxde | lxqt | mate | standard )
+				rel=https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/
+				echo "$rel/$(curl --silent $rel/MD5SUMS | \grep -o "debian-.*$desktop_env*.iso")"
+			;;
+			* )
+				$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 4th parameter should be wither of: kde | gnome | xfce | cinnamon | lxde | lxqt | mate | standard! Not $live_or_not " 10 60
+			;;
+			esac
+		;;
+		netinst | net | mini )
+			# Find and download mini iso...
+		;;
+		* )
+			$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 2nd parameter should be either of: Live | live | current-live | netinst | net | mini ! not $live_or_not" 10 60
+		;;
+		esac
+	;;
+	*)
+		$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 2nd parameter should be either of: Ubuntu | ubuntu Debian | debian! not $distro_flavor" 10 60
+	;;
+	esac
+}
+
+
+
+
+
+
+cleanup_and_finish ()
+{
+# Function to remove all temporary file locations left over from building
+# the new netinstall ISO etc. and clean  up some variables...
+# go back to initial directory
+# End of documentation
+
+	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
+	# Cleanup folder structure...
+	rm -r "$TMP_DOWNLOAD_DIR"
+	rm -r "$TMP_DISC_DIR"
+	rm -r "$TMP_INITRD_DIR"
+	rm -r "$SCRIPT_DIR/custom"
+
+	if [[  "$1" != "nomessage" ]]; then
+		COMPLETION_MESSAGE="	Your ISO image is ready!
+		It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
+
+		Next steps:
+		- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
+		- If you are using Virtual Machines select the ISO as install media
+		- Boot from the media created: allow it to install the system
+		- login as the temporary user (temporary password: letmein)
+		- Adjust passwords for the encrypted volume and login... "
+
+		$RTD_GUI --backtitle "RTD OEM System Builder" --title "DONE" --msgbox "$COMPLETION_MESSAGE" 15 80
+	else
+		echo "Cleanup..."
+	fi
+
+	unset BIN_7Z
+	unset BIN_XORRISO
+	unset BIN_CPIO
+	unset ISOHDPFX_BIN
+	unset VOLUME_TITLE
+	unset TARGET_ISO_FILE_NAME
+	unset SOURCE_ISO_URL
+	unset SSH_PUBLIC_KEY_FILE
+	unset PRESEED_TEMPLATE
+	unset CONFIG
+	clear
+	return
+}
+
+
+
+
+generate_report_disk_space_used_by_directory ()
+{
+# Function to generate a report for folders' disk space use. 
+# This function requres one argument; what root folder to analyse the directories in. 
+# This functio will return a report contained in the variable $return that may then be used.
+# Example: 
+# generate_report_disk_space_used_by_directory /home
+# 
+# This will generate a report on the disk space per directory in the /home folder.
+#
+# End of documentation
+
+	DIRS=$( ls $1 )
+	store=/$tmp/out.ct
+	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
+		echo "Storage Utilization Report:" >>$store
+		echo "______________________________" >>$store
+		n=$(ls $1 | wc -l ) 
+		i=0
+		for f in $DIRS
+		do
+			du -cksh $1/$f 2>/dev/null | grep -v total >>$store
+			PCT=$(( 100*(++i)/n ))
+			cat <<-EOF
+			XXX
+			$PCT
+			Completed calculation for: "$f"...
+			XXX
+			EOF
+			sleep 1
+		done
+	)
+	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH 
+	result="$(cat $store )" ; rm $store
+}
+
+
+
+
+
+
+make_preseed_cfg ()
+{
+# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+# some parameters have defaults.
+# Example:
+# functoin_name          location        config          function
+# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+# End of documentation
+
+	SAVETO=$1
+	CONFIG=$2
+	SRVFUNC=${3:-Tasks}
+	PRESEED=preseed.cfg
+	PRESEED_FILE="$SAVETO/$PRESEED"
+	TASK_FILE="$SAVETO/task.sh"
+	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
+	touch "$SAVETO/$PRESEED"
+
+	rtd_oem_preseed_cfg_Unattended_Install "$SAVETO"
+	rtd_oem_preseed_cfg_Network_Configuration "$SAVETO"
+	rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO"
+	rtd_oem_cfg_Account_Setup "$SAVETO"
+	rtd_oem_preseed_cfg_Localization "$SAVETO"
+	rtd_oem_preseed_cfg_EFI "$SAVETO"
+	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO"
+	rtd_oem_preseed_cfg_Disk_Layout "$SAVETO"
+	rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG"
+	rtd_oem_cfg_post_task_sequence_default "$SAVETO"
+	rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO"
+	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
+}
+
+
+
+
+
+
+
+
+
+
+set_gnome_ui_common_tweaks_for_user ()
+{
+# set_gnome_ui_common_tweaks_for_user:
+# Configure Gnome for OEM look and feel. This is completely as desired. 
+# This function takes no arguments. Simply call it to make the changes.
+# Howerver, this function must be called as the user it should apply to.
+# if it is called in a script with "sudo" priviledges, it will make chages to 
+# the look and feel for the "root" user. 
+#
+# To run this function as the user who started a script with sudo script content 
+# could be echoed out ot a temporary file and executed as follows
+# sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus temporary_script.sh > /dev/null 2>&1
+# or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh". 
+#
+# USAGE:
+# 
+# set_gnome_ui_common_tweaks_for_user
+#  
+# End of documentation
+
+	write_status "Seting common OEM tweaks..."
+	# Terminal and Tilix Dark Theme
+		gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
+		gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
+		gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
+
+	#Better Font Smoothing
+	gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+
+	#Usability Improvements
+		gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
+		gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+		gsettings set org.gnome.desktop.calendar show-weekdate true
+		gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
+		gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+		gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+
+	#This indexer is nice, but can be detrimental for laptop users battery life
+		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
+		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
+		gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
+
+	#Nautilus (File Manager) Usability
+		gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
+		gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
+		gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+		gsettings set org.gnome.nautilus.list-view use-tree-view true
+		gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
+
+	# Set the GNOME Shell Apps Dashboard sort app in categories based on the FreeDesktop standard.
+		gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
+		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
+}
+
+
+
+
+
+set_gnome_ui_mac_tweaks_for_user ()
+{
+# Function to set UI look to resemble MAC for users accustomed to that.
+# 
+# The function expects no arguments. 
+# Usage: 
+# set_gnome_ui_mac_tweaks_for_user
+#    
+# End of documentation
+	set_gnome_ui_common_tweaks_for_user
+	write_status "Setting MAC like tweaks..."
+	# Gnome Shell Theming
+	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+
+	# Set font
+	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+
+	#Set Extensions for gnome
+	gsettings set org.gnome.shell disable-user-extensions false
+	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
+}
+
+
+
+
+
+set_gnome_ui_win10_tweaks_for_user ()
+{
+# Function to set UI look to resemble MAC for users accustomed to that.
+# 
+# The function expects no arguments. 
+# Usage: 
+# set_gnome_ui_win10_tweaks_for_user
+#    
+# End of documentation
+	set_gnome_ui_common_tweaks_for_user
+	write_status "Setting MAC like tweaks..."
+	# Gnome Shell Theming
+	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+
+	# Set font
+	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+
+	#Set Extensions for gnome
+	gsettings set org.gnome.shell disable-user-extensions false
+	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
+
+	# Configure dash-to-panel
+	gnome-shell-extension-tool -e dash-to-panel
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
+}
+
+
+
+
+
+run_command_in_gnome_user_session () {
+# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
+# This functon expects any number of parameters that would make up the command or commands
+# to be run in the users session. For example:
+# 	run_command_in_gnome_user_session script_name.sh parameter one two etc
+#
+#    
+# End of documentation
+	echo -------------------------- Begin as user: $SUDO_USER ---------------------
+	echo "$*"
+	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* > /dev/null 2>&1
+	echo " "
+	echo -------------------------- End as user: $SUDO_USER   ---------------------
+}
+
+
+
+
+
+ensure_admin ()
+{
+# Function to elevate priviledges of script execution and to ensure administrative privileges 
+# such that system wide settings or configuration may be done. 
+# 
+# The function expects no arguments, but will prompt for system password if required. 
+# Usage: 
+# ensure_admin
+#    
+# End of documentation
+
+	if [ "$UID" -eq 0 ]; then
+		write_warning "This script needs administrative access..." 
+		sudo bash "$0" "$*"
+		exit 
+	else 
+		if xset q &>/dev/null; then xhost local:root ; fi
+	fi
+}
+
+
+
+
+
+
+
+rtd_oem_check_inet_access ()
+{
+# Function to verrify internet availabiltiy. 
+# The funciton will pause for 10 seconds by default, and will accept 
+# an integer to indicate a non-decault time to pause. 
+# Usage:
+# rtd_oem_check_inet_access [ integer ]
+#     
+# Example:
+# rtd_oem_check_inet_access 60
+#   
+# If an argument is omitted rtd_oem_check_inet_access will wait indefinitley
+# for input. 
+# 
+# End of documentation
+	_ARG=$1
+	if ! hash curl &>/dev/null; then 
+		read -t 10 -p "N O T I C E ! --  Could not check for internet connectivity... Please install (curl) web crawler/downloader. Press [ENTER] to continue and [CTRL] + [C] to exit! Continuing in 10 seconds..." 
+	else
+		if [[ -z "$_ARG" ]]; then 
+			curl ipinfo.io &>/dev/null || ( read -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  " )
+		else	
+			curl ipinfo.io &>/dev/null || ( read -t ${1:-10} -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  Continuing in ${1:-10} seconds..." )
+		fi
+	fi
+}
+
+
+
+
+
+
+rtd_oem_kde_set_wallpaper ()
+{
+# rtd_oem_kde_set_wallpaper
+# Function to set KDE Plasma wallpaper from a script. this function expects one variable 
+# indication what file to set as background. You must provide the full path to the file. 
+# rtd_oem_kde_set_wallpaper /opt/oem/wallpaper.png Supported fule types are: 
+# webm, mp4, png, jpeg, gif, webp. 
+# End of documentation
+
+	echo "Setting wallpaper $1" 
+	full_image_path=$(realpath "$1")
+	ext=$(file -b --mime-type "$full_image_path")
+
+	if [ -z "$2" ]; then
+	# Identify filetype and make changes
+	case $(echo $ext | cut -d'/' -f2) in
+		"mp4"|"webm") type='VideoWallpaper' ; write='VideoWallpaperBackgroundVideo';;
+		"png"|"jpeg") type='org.kde.image' ; write='Image' ;;
+		"gif"|"webp") type='GifWallpaper' ; write="GifWallpaperBackgroundGif" ;;
+	esac
+	else
+	type="$2";
+	write="$3";
+	fi
+
+	wallpaper_set_script="var allDesktops = desktops();
+	print (allDesktops);
+	for (i=0;i<allDesktops.length;i++)
+	{
+		d = allDesktops[i];
+		d.wallpaperPlugin = '${type}';
+		d.currentConfigGroup = Array('Wallpaper', '${type}', 'General');
+		d.writeConfig('Image', 'file:///dev/null')
+		d.writeConfig('$write', 'file://${full_image_path}')
+	}"
+
+	qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "${wallpaper_set_script}"
+	kwriteconfig5 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file://$full_image_path"
+}
+
+
 
 
 
@@ -584,6 +1421,301 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 
 
 
+rtd_oem_setup_brand_splash_screen()
+{
+# Function to brand the installer splash screen for the customized installer
+# downloaded from a ginve vendor. This function expects a few simple peices of information:
+# parameter 1: full path to image file to be branded.
+# parameter 2: quoted text to be incerted.
+#   
+# Usage: 
+# rtd_oem_setup_brand_splash_screen [string] [string]
+# 
+# [string]: /path/to/imagefile.png, "text to brand image with"
+#
+# rtd_oem_setup_brand_splash_screen /tmp/splash.png "Hi! I am a lable!"
+#
+# End of Documentation
+
+	image_file_to_brand=$1
+	text_to_brand_with=$2
+
+	# Ensure that imagemagik is installed so images can be manipulated.
+	check_dependencies imagemagick
+
+	# Default locations and splash screens based on debian and ubuntu, meaning this function will assume you are
+	# making an ubuntu or debian boot iso as this is generally what this function was written to do. However these values
+	# can be overridden by passing the 2 parameters to this script.
+	: "${image_file_to_brand:="$(
+		if [ -f $TMP_DISC_DIR/splash.png ]; then
+			echo "$TMP_DISC_DIR/splash.png"
+		elif  [ -f $TMP_DISC_DIR/isolinux/splash.png ]; then
+			echo "$TMP_DISC_DIR/isolinux/splash.png"
+		elif [ -f $TMP_DISC_DIR/isolinux/splash.png ]; then
+			echo "$TMP_DISC_DIR/isolinux/splash.png"
+		fi )" }"
+	: "${text_to_brand_with:="$( echo " RunTime Data OEM Install: $PREFERENCE" )" }"
+
+	echo -e $GREEN "found: $image_file_to_brand"  $ENDCOLOR
+	echo -e $GREEN "branding with: $text_to_brand_with " $ENDCOLOR
+
+	if [ -f $image_file_to_brand ]; then
+		convert $image_file_to_brand -gravity north -stroke '#000C' -strokewidth 3 -annotate 0 "$text_to_brand_with" -stroke none -strokewidth 3 -fill white -annotate 0 " $text_to_brand_with "  edit-out.png
+		rm $image_file_to_brand
+		mv edit-out.png $image_file_to_brand || echo -e $RED "Image [ $image_file_to_brand ] NOT branded!  " $ENDCOLOR
+	fi
+}
+
+
+
+
+
+
+
+
+prepare_environment_for_iso_creation ()
+{
+# Function to check that all dependencies are available for manipulating the
+# net install ISO from Ubuntu. Subsequently, the temporary file locations
+# are setup and templates are downloaded.
+# 
+# Several key software components are required to create ISO files (virtual DVD/CD/BlueRay)
+# as well as a few others needed to download files from the internet, etc.
+#
+# DEPENDENCIES: dos2unix, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, xorriso.
+#
+# This function will find full paths for the binaries needed since if they are recently
+# added, they may not be found in the current $PATH. 
+#
+#	Software PATH insurance:
+#	: "${BIN_7Z:=$(type -P 7z)}"
+#	: "${BIN_XORRISO:=$(type -P xorriso)}"
+#	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
+#	: "${BIN_QEMU_IMG:=$(type -P qemu-img)}"
+#	: "${BIN_KVM:=$(type -P kvm)}"
+#	: "${BIN_QEMU_SYSTEM_X86_64:=$(type -P qemu-system-x86_64 )}"
+#	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
+#	: "${PUT_QCOW_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-HDs"}"
+#	: "${VOLUME_TITLE:="RTD Auto Installer"}"
+#	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
+#	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
+# 
+# The main tool to create ISO files system is "xorriso". 
+# [xorriso] copies file objects from POSIX compliant filesystems into Rock Ridge 
+# enhanced ISO 9660 filesystems and allows session-wise manipulation of such filesystems. 
+# It can load the management information of existing ISO images and it writes the session results 
+# to optical media or to filesystem objects. 
+#
+# At this time this function expects no arguments.
+#
+# End of Documentation
+
+
+	#Include the path to where the isofile will be put...
+	: "${TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"}"
+	# Ensure that all needed software, outside of the most rudimantary,
+	# is available to us... If not, the script should exit.
+	: "${_DEPENDENCIES="dos2unix cpio gzip genisoimage whois pwgen wget fakeroot xorriso"}"
+	#set -e
+	for i in $_DEPENDENCIES
+	do
+		check_dependencies $i
+	done
+
+	: "${BIN_7Z:=$(type -P 7z)}"
+	: "${BIN_XORRISO:=$(type -P xorriso)}"
+	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
+	: "${BIN_QEMU_IMG:=$(type -P qemu-img)}"
+	: "${BIN_KVM:=$(type -P kvm)}"
+	: "${BIN_QEMU_SYSTEM_X86_64:=$(type -P qemu-system-x86_64 )}"
+	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
+	: "${PUT_QCOW_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-HDs"}"
+	: "${VOLUME_TITLE:="RTD Auto Installer"}"
+	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
+	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
+	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
+		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
+	else
+		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
+		check_dependencies isolinux 
+		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
+		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
+		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
+	fi
+	# Find the location of the public key on this machine...
+	# This should be updated to create a key if not there...
+	if [ ! -f "$SSH_PUBLIC_KEY_FILE" ];
+	then
+		echo "Error: public SSH key $SSH_PUBLIC_KEY_FILE not found!"
+		echo "You will need to setup automatic login using ssh manually each time you build a server with this media."
+		read -p "Press [Enter] to continue..."
+	fi
+
+	# Setup the required folder structure...
+	CURRENT_DIR="$(pwd)"
+	SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	TMP_DOWNLOAD_DIR=$(mktemp -d )
+	TMP_DISC_DIR=$(mktemp -d )
+	TMP_INITRD_DIR=$(mktemp -d )
+
+	for i in $PUT_QCOW_FILE_HERE_WHEN_DONE\
+		$PUT_ISO_FILE_HERE_WHEN_DONE\
+		$PERMANENT_DOWNLOAD_DIR
+	do
+		mkdir -p "$i" && chown "$SUDO_USER":"$SUDO_USER" "$i"
+	done
+}
+
+
+
+
+
+
+
+
+
+
+rtd_oem_ubuntu_auto_install_iso_builder()
+{
+# Function to generate an edited ISO file from a folder.
+# this function expects a minimum of one parameter: ssh-server, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, lubuntu-desktop etc.
+# By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
+# Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
+# 
+# :: function name				:: target		:: iso version to download
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	live	⏭ creates auoinstall iso using the Ubuntu live dvd
+# rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	server	⏭ creates auoinstall iso using the Ubuntu server dvd
+#
+# End of Documentation
+
+
+	CONFIG=$1
+	ISO_VER=$2
+	prepare_environment_for_iso_creation
+
+	write_information "Retreive list of available Ubuntu versions..."
+	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
+
+	# Ask for desired version to use:
+	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
+	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
+
+	write_information Find the precice location of the requested ISO image:
+	ISO_URL=$(rtd_oem_find_live_release $UBUNTU_VER ubuntu $ISO_VER)
+		echo "requested iso for download : $ISO_URL"
+		ISO_FILENAME=$(basename $ISO_URL)
+		BASE=$(basename $ISO_URL .iso)
+
+	write_status "Checking if $ISO_FILENAME already downloaded..."
+	iso=$(find "$PERMANENT_DOWNLOAD_DIR" -name "$ISO_FILENAME")
+	if [ ! -e "$iso" ]; then
+		echo "$ISO_FILENAME is not in cache, downloading..."
+		wget -nc $ISO_URL -P "$PERMANENT_DOWNLOAD_DIR" || read -p "Failure to download ISO file"
+		iso="$PERMANENT_DOWNLOAD_DIR/$ISO_FILENAME"
+	fi
+
+	mnt="${TMP_DISC_DIR:=$(mktemp -d )}"
+	TMP_DISC_DIR=$mnt
+	write_status "Mounting intallation media..."
+	mount $iso $mnt -o user,ro || rtd_oem_pause 1
+	write_status "Verifying media presence..."
+	cat $mnt/.disk/*info || rtd_oem_pause 1
+	auto="$BRANDING_ORG-$CONFIG-auto-install-from-${BASE}"
+	write_information "Creating Installations media: $auto "
+	if [ ! -e $auto ]; then
+		cp -a $mnt $auto
+		chmod -R +w $auto
+	fi
+	write_status "Modifying startup instructions...  "
+		for f in splash.pcx splash.png ; do
+			rtd_oem_setup_brand_splash_screen $auto/isolinux/$f
+		done
+		pushd ./$auto/isolinux/
+			find splash.pcx | cpio -ov >>bootlogo
+			find splash.png | cpio -ov >>bootlogo
+		popd
+	write_status "Unmounting $mnt... "
+	umount $mnt || rtd_oem_pause 1
+
+
+	case "$2" in
+		desktop | Desktop | live | Live)
+			#configure_auto_unattended_ubuntu_live_boot_media $auto $CONFIG && echo -e "$GREEN OK! $ENDCOLOR" || rtd_oem_pause 1
+			write_status "Modifying installation instructions in live media... "
+			cat > $auto/isolinux/txt.cfg <<- EOF
+				default live-install
+				label live-install
+				menu label ^^Auto Install Ubuntu $CONFIG
+				kernel /casper/vmlinuz
+				append  file=/cdrom/preseed.cfg auto=true priority=critical debian-installer/locale=en_US keyboard-configuration/layoutcode=us console-setup/ask_detect=false ubiquity/reboot=true languagechooser/language-name=English countrychooser/shortlist=US localechooser/supported-locales=en_US.UTF-8 boot=casper automatic-ubiquity initrd=/casper/initrd quiet splash noprompt noshell ---
+			EOF
+
+			make_preseed_cfg $auto $CONFIG
+
+		;;
+		*)
+			#configure_auto_unattended_ubuntu_server_boot_media $auto $CONFIG && echo -e "$GREEN OK! $ENDCOLOR" || rtd_oem_pause 1
+			write_status "Modifying installation instructions in server image... "
+			cat > $auto/isolinux/isolinux.cfg <<- EOF
+				default install
+				label install
+				gfxmode=791
+				ui gfxboot bootlogo
+				path
+				timeout 100
+				menu label ^Auto Install Ubuntu $CONFIG
+				kernel /install/vmlinuz
+				append file=/cdrom/preseed/ubuntu-server.seed initrd=/install/initrd.gz ks=cdrom:/ks.cfg preseed/file=/cdrom/preseed.cfg --
+			EOF
+
+			touch $auto/preseed.cfg
+			cat > $auto/boot/grub/grub.cfg <<- 'EOF'
+			set timeout=10
+			GRUB_GFXMODE="1024x768"
+			set menu_color_normal=white/black
+			set menu_color_highlight=black/light-gray
+			EOF
+
+			make_preseed_cfg $auto $CONFIG
+
+		;;
+	esac
+
+
+	TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$auto.iso"
+
+
+	if [[ -f $TARGET_ISO ]]; then
+		rm $TARGET_ISO
+	fi
+
+	$BIN_XORRISO -as mkisofs -isohybrid-mbr "$ISOHDPFX_BIN" \
+		-c isolinux/boot.cat -b isolinux/isolinux.bin \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		-eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
+		-isohybrid-gpt-basdat -o "$PUT_ISO_FILE_HERE_WHEN_DONE/$auto.iso" $auto
+	rtd_oem_pause $?
+	umount -l $mnt
+	rm -rf $mnt $auto
+
+	if ($RTD_GUI --title "Media ready" --yesno "Created $auto.iso Would you like to test the new image?." 0 0); then
+		check_dependencies qemu-kvm
+		qemu-img create -f qcow2 "$PUT_QCOW_FILE_HERE_WHEN_DONE/$auto.qcow2" 10G
+		qemu-system-x86_64 -smp 2 -enable-kvm -m 4G --cdrom "$TARGET_ISO" "$PUT_QCOW_FILE_HERE_WHEN_DONE/$auto.qcow2"
+	else
+		echo "User selected No, exit status was $?."
+	fi
+}
+
+
+
+
+
+
+
+
+
 download_and_manipulate_iso_debian ()
 {
 # download_and_manipulate_iso_debian "debian" "openssh-server" "MinecraftTasks"
@@ -697,6 +1829,13 @@ SSH_KEY_KEYGEN
 
 
 
+
+
+
+
+
+
+
 create_iso_image_debian ()
 {
 # Function to generate the new ISO file from the extracted and
@@ -743,6 +1882,1246 @@ create_iso_image_debian ()
 
 	test_iso_boot_media ${TARGET_ISO}
 }
+
+
+
+
+
+
+
+
+create_iso_image_debian ()
+{
+# Function to generate the new ISO file from the extracted and
+# altered original ISO.
+# Delete old iso file if there...
+#
+# End of Documentation
+
+	# Check for other input and create them if not defined...
+	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
+	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
+
+	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
+		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
+	else
+		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
+		check_dependencies isolinux 
+		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
+		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
+		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
+	fi
+
+	write_status "------ CREATING ISO: $TARGET_ISO    --------"
+	if [ -f "$TARGET_ISO" ]; then
+		rm -f "$TARGET_ISO"
+	fi
+
+	cd "$TMP_DISC_DIR" || echo "Failed to enter $TMP_DISC_DIR"
+	rm -r '[BOOT]'
+	"$BIN_XORRISO" -as mkisofs -r \
+		-V "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}" \
+		-J -b "isolinux/isolinux.bin" \
+		-c boot.cat \
+		-no-emul-boot \
+		-boot-load-size 4 \
+		-boot-info-table \
+		-input-charset utf-8 \
+		-isohybrid-mbr "${ISOHDPFX_BIN}" \
+		-eltorito-alt-boot \
+		-e boot/grub/efi.img \
+		-no-emul-boot \
+		-isohybrid-gpt-basdat -o "$TARGET_ISO" ./ || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+
+	test_iso_boot_media ${TARGET_ISO}
+}
+
+
+
+
+
+
+
+
+
+
+
+create_iso_image ()
+{
+# Function to generate a bootable ISO file from source folder or an extracted and
+# altered original ISO. The function takes 3 arguments: target file name, folder to use as source
+# and volume title. The first argument is mandatory since it makes not sense unless it is known 
+# what source to use for makeing the ISO file. 
+#
+# create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
+#
+# This function will over write the old iso file if there...
+#
+# End of Documentation
+
+	# Check for required input...
+	TMP_DISC_DIR=$1
+	[[ -z "$TMP_DISC_DIR" ]] || rtd_oem_pause 1 "${FUNCNAME[0]} requires atleast one parameter."
+
+	# Check for other input and create them if not defined...
+	TARGET_ISO=$2
+	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
+	VOLUME_TITLE=$3
+	: "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}"
+
+	check_dependencies isolinux 
+	check_dependencies mlocate && updatedb
+	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"  
+
+	write_status "------ CREATING ISO: $TARGET_ISO    --------"
+	if [ -f "$TARGET_ISO" ]; then
+		rm -f "$TARGET_ISO"
+	fi
+
+	cd "$TMP_DISC_DIR" || echo "failed to enter $TMP_DISC_DIR "
+	rm -r '[BOOT]'
+	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" \
+			-J -b isolinux.bin \
+			-c boot.cat \
+			-no-emul-boot \
+			-boot-load-size 4 \
+			-boot-info-table \
+			-input-charset utf-8 \
+			-isohybrid-mbr "$ISOHDPFX_BIN" \
+			-eltorito-alt-boot \
+			-e boot/grub/efi.img \
+			-no-emul-boot \
+			-isohybrid-gpt-basdat \
+			-o "$TARGET_ISO" ./ || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
+}
+
+
+
+
+
+create_physical_media_from_iso ()
+{
+# create_physical_media_from_iso:
+# Function to automatically write ISO (virtual DVD/CD/BlueRay) to a thumb drive. No argumenst are
+# required, but a source ISO file location can may be provided when calling the function.
+# If information is required, but not provided, the end user will be interactively prompted. 
+# This function requires elevated priviledges to be able to write media to a thumb drive 
+# (boot sector) and other system restrictied activities. If the function is NOT called in a 
+# script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
+# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will 
+# be displayed asking what media to write to. If no media is present, a warning error 
+# message will be displayed. 
+# 
+# USAGE:
+# 
+# "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
+# 
+# NOTE:
+# [Note 1] An ISO file, often called an ISO image, is a single file that's a perfect representation of an 
+# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file. 
+# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image 
+# that contains everything that would be written to an optical disc, disk sector by disc sector, including the 
+# optical disc file system. ISO images are expected to contain the binary image of an optical media file system 
+# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly 
+# as they were stored on the disc. The data inside the ISO image will be structured according to the file system 
+# that was used on the optical disc from which it was created. 
+# 
+# [Note 2] A USB flash drive is a data storage device that includes flash memory with an integrated USB interface. 
+# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz). 
+# Since first appearing on the market in late 2000
+# End of documentation
+
+
+	: ${BackTitle="Physical Installation Media Creator"}  
+	: ${Title="OS Media Manger"}
+	
+	if [ ! "$UID" -eq 0 ]; then
+		# find  a diferent way... tempfile not universal...
+		data=$(tempfile 2>/dev/null)
+		trap "rm -f $data" 0 1 2 5 15
+		dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+		ret=$? ; clear
+		case $ret in
+			0) cat $data | sudo -S bash "$0" "$*" ;;
+			1) echo "Request cancelled" ;;
+			255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
+			* ) rm $data &>/dev/null ; exit 1
+		esac
+		rm $data &>/dev/null 
+		exit
+	fi
+	
+	if [[ -z "$1" ]]; then
+		[[ -d /home/${SUDO_USER}/Virtual-DVDs ]] && SuggestedFolder="/home/${SUDO_USER}/Virtual-DVDs/" || SuggestedFolder="/home/${SUDO_USER}"
+		TARGET_ISO=$(dialog --stdout --title "${Title}" --backtitle "${BackTitle}" --fselect "${SuggestedFolder}" 15 110 2)
+		UserResponse=$? ; clear
+		case ${UserResponse} in
+			  1) echo "Request cancelled"; return 0 ;;
+			  255) echo "[ESC] key pressed."; return 255 ;;
+		esac
+	else 
+		TARGET_ISO=$1
+	fi
+
+	if [[ -z "${TARGET_ISO}" ]]; then
+		DIALOGRC=~/.dialogrc
+		if [[ -e ${DIALOGRC} ]]; then 
+			mv ${DIALOGRC} ${DIALOGRC}.bak 
+		fi 
+		
+		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+		dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n You must provide an ISO file as argument! \n Usage: ${0##*/} ~/filename.iso"  14 90
+		clear ; rm ${DIALOGRC} 
+
+		if [[ -e ${DIALOGRC}.bak ]]; then 
+			mv ${DIALOGRC}.bak ${DIALOGRC}
+		fi 
+		return 1
+	else
+		#          List removable dev : not loop dev: not CD    : not nvme HD : filter: header w. name
+		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep -v nvme |grep 1 | cut -f1 -d' ')"
+
+		if [[ -z ${devlist} ]]; then 
+			DIALOGRC=~/.dialogrc
+			echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
+			dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n No removable media could be found! Please insert a thumb drive and try again."  14 90
+			clear ; rm ${DIALOGRC} 
+			return 1
+		else
+			declare -A RemovableMediaList
+			index=1
+			
+			for media in ${devlist}; 
+			do 
+				SuggestedRemovableDevice="${media}"
+				RemovableMediaList[$index]=$(echo -e \'$(fdisk -l /dev/$media |head -1)\')
+				(( index++ ))
+			done
+
+			DiscoveredItems="\n
+			\n Removable media found: ${#RemovableMediaList[@]}
+			\n --------------------------------------------------------
+			
+			$(until [ $i -gt ${#RemovableMediaList[@]} ]
+			do
+				[[ $i -gt 0 ]] && echo -e "Removable Disk $i:   ${RemovableMediaList[$i]} \n" 
+				((i=i+1))
+			done
+			)"
+
+			USBTargetDevice=$( dialog --stdout --no-collapse --title "${Title}" --backtitle "${BackTitle}"  --inputbox "${DiscoveredItems}" 15 110 /dev/${SuggestedRemovableDevice} ) 
+			Response=$?
+			clear
+			case ${Response} in
+				0 )
+					dialog --title "${Title}" --backtitle "${BackTitle}" --yesno "Please Confirm:\n Write the ISO file: \n ${TARGET_ISO} \n To the drive: \n ${USBTargetDevice}" 25 90
+						case $? in
+							0 ) ( dd if=${TARGET_ISO} of=${USBTargetDevice} status=progress 2>&1 |dialog --title "${Title}" --backtitle "${BackTitle}" --programbox "Please wait, writing disk now:" 25 90) ;;
+							1 ) echo "Request cancelled"; create_physical_media_from_iso ;;
+							255 ) echo "[ESC] key pressed."; return 255 ;;
+							* ) echo "An unknown event occurred!" ; return 1 ;;
+						esac
+					clear ; return
+				;;
+				1 ) echo "Request cancelled"; return 0 ;;
+				255 ) echo "[ESC] key pressed."; return 255 ;;
+				* ) echo "An unknown event occurred!" ; return 1 ;;
+			esac
+		fi
+	fi
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::           Function Section               ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+#                  .88888888:.
+#                 88888888.88888.
+#               .8888888888888888.
+#               888888888888888888
+#               88' _`88'_  `88888
+#               88 88 88 88  88888
+#               88_88_::_88_:88888
+#               88:::,::,:::::8888
+#               88`:::::::::'`8888
+#              .88  `::::'    8:88.
+#             8888            `8:888.
+#           .8888'             `888888.
+#          .8888:..  .::.  ...:'8888888:.
+#         .8888.'     :'     `'::`88:88888
+#        .8888        '         `.888:8888.
+#       888:8         .           888:88888
+#     .888:88        .:           888:88888:
+#     8888888.       ::           88:888888
+#     `.::.888.      ::          .88888888
+#    .::::::.888.    ::         :::`8888'.:.
+#   ::::::::::.888   '         .::::::::::::
+#   ::::::::::::.8    '      .:8::::::::::::.
+#  .::::::::::::::.        .:888:::::::::::::
+#  :::::::::::::::88:.__..:88888:::::::::::'
+#   `'.:::::::::::88888888888.88:::::::::'
+#         `':::_:' -- '' -'-' `':_::::'`
+# ----------------------------------------------------------------
+#  ____         __ _                          
+# / ___|  ___  / _| |___      ____ _ _ __ ___ 
+# \___ \ / _ \| |_| __\ \ /\ / / _` | '__/ _ \
+#  ___) | (_) |  _| |_ \ V  V / (_| | | |  __/
+# |____/ \___/|_|  \__| \_/\_/ \__,_|_|  \___|
+#                                             
+#  __  __                                              _   
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+# | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
+#                           |___/                          
+# ----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+up2date ()
+{
+# Function to simplify updating system completely. At present this function sets the
+# highest preference to use "pkcon", the command line interface of "Package Kit" since
+# this is the most consistent across different distrbutions. It may even work on BSD.
+# Only if "pkcon" is not available, will the function use the identified distro native
+# software manager: apt, yum, zypper etc. This is to maintain stability since a distro may
+# alias another distributions command (like SuSE does with apt) to be helpfull.
+# This is one of the first update functions written and is kept for compatibility.
+# End of documentation
+
+	write_status "Running up2date function:" 
+
+	if hash pkcon 2>/dev/null; then
+		pkcon update -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
+	elif hash yum 2>/dev/null; then
+		yum update -y 			1>>$_LOGFILE 2>>$_ERRLOGFILE
+	elif hash apt 2>/dev/null; then
+		apt-get update 			1>>$_LOGFILE 2>>$_ERRLOGFILE
+		apt-get upgrade -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
+		apt-get autoremove -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
+	elif hash zypper 2>/dev/null; then
+		return zypper up -y		1>>$_LOGFILE 2>>$_ERRLOGFILE
+	else
+		return 3
+	fi
+}
+
+
+
+
+
+
+
+
+is_software_package_installed ()
+{
+# Function to check if a piece of software is installed. This function will first check
+# if the package manager is deb, zypper or rpm, and then take one parameter passed
+# and evauate if a software package by that name is installed. This function
+# will return a "0" or "1" return based on the package managers return code.
+# Call this function by:
+# is_software_package_installed "package name"
+#                 or
+# is_software_package_installed "$1" if calling this function from a script
+# or another function receiving a parameter.
+#
+# End of documentation
+
+	if hash yum 2>/dev/null; then
+		rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
+	elif hash apt 2>/dev/null; then
+		dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
+	elif hash zypper 2>/dev/null; then
+		zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
+	else
+		return 3
+	fi
+}
+
+
+
+
+
+
+
+
+is_software_package_available ()
+{
+# Function to chek if a package is available in whetever repository, and
+# if there return a "0" and if not return a "1" or a "3" if there is no recognizable
+# package manager found. the function expects the name of the package
+# to be a parameter passed to this fuction. Call this function by:
+# is_software_package_available "package name"
+#                 or
+# is_software_package_available "$1" if calling this function from a script
+# or another function receiving a parameter.
+#
+# Supported base distributions: Fedora . SuSE . Debian
+# End of documentation
+
+	if hash yum 2>/dev/null; then
+		yum list available "$1" &> /dev/null && return 0 || return 1
+	elif hash apt 2>/dev/null; then
+		apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
+	elif hash zypper 2>/dev/null; then
+		return zypper info "$1" &> /dev/null && return 0 || return 1
+	else
+		return 3
+	fi
+
+}
+
+
+
+
+
+
+
+InstallSoftwareFromRepo ()
+{
+# Function to simplify the installation of software by including all display and
+# installation logic for a given software provider. This should be expanded to include flatpack
+# snap for example. It should be the same consistent way no matter flavor of Linux.
+# This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley
+# in the "set_install_command" function (a dependency to this function) and could
+# be an RPM or deb string, or even snap or flatpack. A preference order between package system and
+# snap or flatpack use.
+# End of documentation
+
+	# Ask function how to install software... 
+	set_install_command >>/dev/null 2>&1
+
+	# make some decent display terminal Graphics...
+	PAD="------------------------------------------------"
+	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+	PRE=" - Installing $LINE :"
+	# Test if package name is installed, if not then...
+	if ! is_software_package_installed "$1"; then
+		if is_software_package_available "$1"; then
+			echo -ne "$PRE"\ & $_INSTCMD "$1" 1>>$_LOGFILE 2>>$_ERRLOGFILE && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			if [ $? != 0 ];
+			then
+				return 1 & exit 1
+			fi
+		else
+			echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
+		fi
+	else
+		echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
+	fi
+}
+
+
+
+
+
+
+
+
+
+set_install_command ()
+{
+# set_install_command
+# add global install command for portability and convenience. This function
+# allows for scripts to add software across many systems. 
+# Primarily for Linux: this function will look for the common package managers
+# apt (all debina and ubuntu based distributions), dnf (RedHat, Fedora, Mandriva, and others)
+# zypper (SuSE and Open SUSE). If neither of those package manages are available many systems 
+# use package kit; and this will be registered as an sinstall option.
+# 
+# Usage: "set_install_command"
+# 
+# Arguments: none.
+# 
+# Return Codes:
+# set_install_command will return a global variable ${_INSTCMD} 
+# ${_INSTCMD} will expand to teh appropriate install cmmand including options
+# for non interactive install of a package. ${_INSTCMD} package.name will install said pacakge.
+# 
+# A return code of "1" will be returned the function was not able to set the install command. 
+# 
+# 
+# End of documentation
+
+	if [[ 'echo $OSTYPE" |grep "linux"' ]]; then
+
+		if hash dnf 2>/dev/null; then
+			# Try dnf (RedHat, Cent OS, Fedora)
+			write_status "Setting install options for YUM" 
+			export _INSTCMD="dnf -y  install"
+		elif hash zypper 2>/dev/null; then
+			# Try zypper (Open SUSE)
+			write_status  "Setting install options for ZYPPER" 
+			export _INSTCMD="zypper install -y "
+		elif hash apt 2>/dev/null; then
+			# Try apt (Debian, Ubuntu, and all derivatives)
+			write_status  "Setting install options for DEB" 
+			export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
+			export DEBIAN_FRONTEND=noninteractive
+		elif hash pkcon 2>/dev/null; then
+			# If thre is no apt, zypper, dnf
+			write_status  "Setting install options for Package Kit" 
+			export _INSTCMD="pkcon -y  install"
+		else
+			write_error "This system does not seem to have a software managment system" 
+			return 1
+		fi
+
+	elif [[ "$OSTYPE" == "darwin"* ]]; then
+		write_error "Mac OSX is currently not supported..."
+	elif [[ "$OSTYPE" == "cygwin" ]]; then
+		write_error "CYGWIN is currently unsupported..."
+	elif [[ "$OSTYPE" == "msys" ]]; then
+		write_error "Lightweight shell is currently unsupported... "
+	elif [[ "$OSTYPE" == "freebsd"* ]]; then
+		write_error "Free BSD is currently unsupported... "
+	else
+	echo "I have no Idea what this system is"
+		export _INSTCMD="Whatever!"
+		return 1
+	fi
+	return $?
+}
+
+
+
+
+
+
+
+check_dependencies ()
+{
+# check_dependencies:
+# Function to check that a piece of software is installed and if not install it.
+# Works for apt based systems currently. The function will take a parameter that is expected to
+# match the software command line name or rather the name of the package. This should get
+# updated to also check and install from snap and flatpack at some point.
+# 
+# USAGE:
+# 
+# check_dependencies [packagename]
+# 
+# EXAMPLE:
+# 
+# check_dependencies snapd
+#
+# End of documentation
+
+	#---------------------------------------------------------------
+	write_status "Checking for script dependencies and install if not there..."
+	#---------------------------------------------------------------
+	if is_software_package_installed $1 ; then
+		write_information "I found that $1 is present on this system... thankyou for that! "
+	else
+		write_warning "You seem to have no $1... I will try to get it... " 
+		InstallSoftwareFromRepo $1
+		if [ $? != 0 ];
+		then
+			write_error "That install didn't work out so well."
+			write_error "Please manually try to add the software since I couldn't do it." 
+			return 1
+		fi
+		echo "OK Done! Continuing..."
+	fi
+}
+
+
+
+
+
+
+
+
+system_update ()
+{
+# system_update:
+# Function to update the Linux based system. This function is universal for all
+# distributions that have package kit available. It works in the same manner on
+# RedHat/Fedora, Debian/Ubuntu and all their derivatives. When invoked as a
+# part in a script, it is wise to ensure that the package kit is available
+# by using the "check_dependencies" function to ensure that the software is available.
+# 
+# USAGE:
+# 
+# system_update
+# 
+# End of documentation
+
+    if hash pkcon 2>/dev/null; then
+    	pkcon refresh
+	pkcon update -y
+    else
+	echo "You seem to have now Package Kit... I will try to get it... "
+	echo "I will need to become admin to do that..."
+	sudo check_dependencies packagekit
+	    if [ $? != 0 ];
+	    then
+		echo "That install didn't work out so well."
+		echo "Defaulting to the onld Up2Date Function"
+		up2date
+	    fi
+	echo "OK trying again!"
+    	pkcon refresh
+	pkcon update -y
+    fi
+}
+
+
+
+
+
+
+
+
+
+rtd_ppa_checker ()
+{
+# rtd_ppa_checker: 
+# Function to check status of Ubuntu and derivatives' PPA aarchives.
+# This function will take one optional argument to toggle the "delete" option. If the delet option 
+# is requested rtd_ppa_checker will delete any PPA's that are not used (no software is installed from it)
+# 
+# PPA stands for Personal Package Archive. The PPA allows application developers and 
+# Linux users to create their own repositories to distribute software. With PPA, you can 
+# easily get newer software version or software that are not available via the official Ubuntu 
+# repositories.
+#
+# USAGE: 
+# 
+# rtd_ppa_checker [] [--delete]
+# 
+# End of documentation
+	for f in /etc/apt/sources.list.d/*.list; do
+	grep -Po "(?<=^deb\s).*?(?=#|$)" "$f" | while read -r ENTRY ; do
+	echo "ENTRY: $ENTRY"
+	HOST=$(cut -d/ -f3 <<< "$ENTRY")
+
+        if [ "ppa.launchpad.net" = "$HOST" ]; then
+		USER=$(cut -d/ -f4 <<< "$ENTRY")
+		PPA=$(cut -d/ -f5 <<< "$ENTRY")
+		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*"$PPA"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
+		echo "PPA: ppa:$USER/$PPA"
+		echo "FILENAME: $f"
+		echo "$packageCount package(s) installed"
+		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
+			sudo rm "$f" && echo "$f deleted"
+		fi
+		echo
+        else
+		USER=$(cut -d/ -f3 <<< "$ENTRY")
+		PPA=$(cut -d/ -f4 <<< "$ENTRY")
+		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
+		echo "REPOSITORY: $USER/$PPA"
+		echo "FILENAME: $f"
+		echo "$packageCount package(s) installed"
+		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
+			sudo rm "$f" && echo "$f deleted"
+		fi
+		echo
+        fi
+    done
+done
+}
+
+
+
+
+
+
+
+
+
+rtd_oem_release_upgrade ()
+{
+# Function to attempt to perform a release upgade on several Linux distributions. 
+# Supported distributions are: Ubuntu, Pop! OS, Debian, SUSE, and fedora.
+# This function does not require any arguments but will respect "interactive". The "interactive"
+# parameter will force the function to pause if a supported distribution is not found.
+# It will check for a supported distribution and attempt the upgrade if possible. 
+# If a supported distribution is not detected the function will do nothing.
+# 
+# Usage (in a script):
+#  rtd_oem_release_upgrade [ string ]
+#
+# [ string ] : interactive
+#
+# End of Documentation
+
+
+
+	local set interactive=$1
+	unset result
+	TMP_DISC_DIR=$(mktemp -d )
+		if hostnamectl |grep "Ubuntu" 2>/dev/null ; then
+			write_warning "this may take some time, please be patient!" 
+			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
+			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
+			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
+			display_result "Release Upgrade Attempt Result: "
+			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
+		elif hostnamectl |grep "Pop!_OS" 2>/dev/null ; then
+			write_warning "this may take some time, please be patient!" 
+			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
+			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
+			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
+			display_result "Release Upgrade Attempt Result: "
+			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
+		elif hostnamectl |grep "Debian" 2>/dev/null ; then
+			write_error "Debian does not provide an upgrade tool between major releases... Please use the manual upgrade method." 
+			result="Debian does not have an in place upgrade tool. Please edit the /etc/apt/sources.list and use the disd-upgrade option"
+			display_result "Release Upgrade Attempt Result: "
+		elif hostnamectl |grep "SUSE" 2>/dev/null ; then
+			write_warning "This REALLY may take some time, please be patient!" 
+			zypper dup 
+		elif hostnamectl |grep "fedora" 2>/dev/null ; then
+			releasever=$($RTD_GUI --title "Fedora Upgrade Confirmation" --inputbox "Please enter the Fedora version you want to upgrade to. Please make sure that it has been published. You are currently using: $(hosnamectl)  only numbers are valid" 8 78  3>&1 1>&2 2>&3)
+			sudo dnf upgrade --refresh
+			sudo dnf install dnf-plugin-system-upgrade
+			sudo dnf system-upgrade download --refresh --releasever="$releasever"
+			sudo dnf system-upgrade
+		else
+			[[ "$interactive" == "interactive" ]] && read -p "This option requires the program (do-release-upgrade) (Ubuntu) or OpenSUSE (zypper) on your system. Press [Enter] key to return to menu."
+		fi
+		return 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+rtd_oem_remove_non_western_latin_fonts ()
+{
+# rtd_oem_remove_non_western_latin_fonts: a simple function to remove known
+# non-western (latin) fonts from a distribution. Notably, Ubuntu provides too many fonts
+# of all kinds by default, even if the user will never need the fonts. However, the fonts
+# may cause unexpected font tool behavior and crashes, due to the large number of fonts 
+# and their features. It is there fore a good Idea to remove these fonts if they are not needed.
+# Usage: 
+#	Simply call this function by stating its name:
+# 	rtd_oem_remove_non_western_latin_fonts
+# 	
+# The function will not return any sucess or failure codes. It will do its best and exit.
+# End of documentation
+
+	font_list="fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lklug-sinhala fonts-lohit-guru fonts-guru fonts-nanum fonts-noto-cjk fonts-takao-pgothic fonts-tibetan-machine fonts-guru-extra \
+		fonts-lao fonts-sil-padauk fonts-sil-abyssinica fonts-tlwg-* fonts-beng fonts-beng-extra fonts-deva fonts-deva-extra fonts-gubbi fonts-gujr fonts-gujr-extra fonts-kalapi fonts-knda \
+		fonts-lohit-* fonts-noto-* fonts-orya* fonts-pagul fonts-sahadeva fonts-samyak-* fonts-sarai fonts-smc fonts-smc-* fonts-taml fonts-telu fonts-telu-extra"
+	echo "Attempting to remove non-western fonts..."
+	count=0
+	for i in $font_list ; do 
+		rtd_oem_remove_software $i &>/dev/null && (( count++))
+	done
+	echo "Removed [ $count ] non-western Fonts"
+}
+
+
+
+
+
+
+
+
+
+rtd_oem_remove_software ()
+{
+# rtd_oem_remove_software
+# The OEM remove software function will attempt to remove whatever package name given
+# as an argument using whatever package system found on the system. This is provided 
+# for portability and convenience. Currently, this functions will attempt to use
+# pkcon (prefferred as it run on many distributions), apt, yum, dnf, and zypper. 
+# Additional package manager may be added as time allows. 
+# Usage: 
+# 	call this function using one argument only for reliability reasons; 
+#	as per the below example. If thre is a need to remove a large number of
+#	packages it is reccommended to use a for loop and call this function, 
+#	still realizing the benefit of mylti-distribution support.
+#
+#	rtd_oem_remove_software packagename
+#
+# If a failure occurs this function will return a non "0" exit code. (1)
+# End of documentation
+
+	if [[ $(echo $OSTYPE |grep "linux") ]]; then
+		echo "Trying to remove package $*"
+		if hash dnf 2>/dev/null; then
+			dnf -y remove $*
+			return $?
+		elif hash yum 2>/dev/null; then
+			yum -y remove $*
+			return $?
+		elif hash zypper 2>/dev/null; then
+			zypper -y remove $*
+			return $?
+		elif hash apt 2>/dev/null; then
+			apt-get -y remove $* && apt -y autoremove
+			return $?
+		elif hash pkcon 2>/dev/null; then
+			pkcon remove $* -y --autoremove
+			return $?
+		else
+			echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+			return 1
+		fi
+	elif [[ "$OSTYPE" == "freebsd"* ]]; then
+		echo "Free BSD is currently unsupported... "
+		return 1
+	else
+		echo "Though you can run bash, I have no Idea how to remove software here!"
+		return 1
+	fi
+}
+
+
+
+
+
+
+
+
+
+
+rtd_update_system ()
+{
+# rtd_update_system
+# System update function. The purpose of this function is to update installed software from
+# distribution reopositories and the newer self contained universal software stores like
+# snap and flatpak. 
+# Function does not expect any argument. However it will respect one argument \"simple\"
+# The simple argument instructs this functions [pkcon] action to display simple output
+# rather than more user friendly output. 
+# Update native software packages; since it is not known what distribution
+# this script is being executed on, it is best to check and see if we are able
+# to perform an update and then do the update...
+# One could choose to check for a supported exact version: e.g. Ubuntu, but we would
+# like to be nice and add value for as many as we can. Specially if it is this easy! :)
+# End of documentation
+
+	PUBLICATION="$BRANDING Update Manager for Linux"
+	VERSION="1.14 (built in)"
+
+	LOGFILE="${LOGFILE:-$0.log}"
+
+	write_status "${PUBLICATION}: Version ${VERSION}" 
+	write_status "------------------------------------------------------------------" 
+
+	write_host --blue "I am updating software from all channels I can find on the system."
+	write_host --purple "I will update via the native package manager as well as newer formats"
+	write_host --cyan "like snap and flatpak ..."
+	echo -e " \n"
+
+
+	log_item ()
+	{
+		DATE=$(date '+%d/%m/%Y %H:%M:%S');
+		echo "$DATE --- : $*" >> "$LOGFILE"
+	}
+
+
+	rtd_software_task ()
+	{
+		log_item "running rtd_software_task with parameters $*"
+		# make some decent display terminal graphics...
+		PAD="------------------------------------------"
+		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+		echo -ne "--- Executing $LINE:"\ & "$@" >>"$LOGFILE" 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+	}
+
+
+	if hash dnf 2>/dev/null; then
+		rtd_software_task dnf -y upgrade 2>> $LOGFILE
+	elif hash apt 2>/dev/null; then
+		rtd_software_task apt-get update
+		UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
+		if [ "$UPGRADABLE" -eq 0 ]; then
+			write_information "--- $UPGRADABLE packages that need updates; Skipping update task... " 
+		else
+			write_information "There are $UPGRADABLE packages that need updates..." 
+			deb_software_task apt-get upgrade -y
+			deb_software_task apt-get autoremove -y
+			deb_software_task apt-get clean
+		fi
+	elif hash zypper 2>/dev/null; then
+		rtd_software_task zypper up -y 2>> $LOGFILE
+	elif hash pkcon 2>/dev/null; then
+		if [[ $1 == simple ]]; then disp_option="--plain" ; fi
+		pkcon -y refresh $disp_option 2>> $LOGFILE
+		pkcon -y update --autoremove $disp_option 2>> $LOGFILE
+	else
+		echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
+		return 1
+	fi
+
+	write_status "updating snaps if snap is present on the system..."
+	if hash snap 2>/dev/null; then
+		snap refresh 2>> $LOGFILE
+	else
+		write_warning "--- snap software is not present on this system... skipping..."
+	fi
+
+	write_status "updating flatpacks if flatpack is present on system..."
+	if hash flatpak 2>/dev/null; then
+		flatpak update -y 2>> $LOGFILE
+	else
+		write_warning "--- flatpak software is not present on this system... skipping..."
+	fi
+}
+
+
+
+
+
+
+
+
+
+add_software_task ()
+{
+# Display executed task and echo ON/NOK based on sucess
+# This function is created to reduce the terminal output and create a more poliches output of
+# the tasks executed. This function has no idea shat it is doing, it will simply call the function 
+# it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the 
+# return code. 
+# End of documentation
+
+	PAD="------------------------------------------"
+	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
+	echo -ne "Installing "$LINE"":""\ & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+}
+
+
+
+
+
+
+
+
+
+dl ()
+{
+# Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
+# install them. It can install any package that Package Kit can manage (available on most Linux dists)
+# It expects one parameter: the complete URL to download from.
+# End of documentation
+
+	download_url="$1"
+	fetch_file () { wget -P /opt/rtd/cache "$download_url" 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
+
+	echo  "    - getting package $download_url ..."
+	if hash wget >/dev/null ; then
+		fetch_file
+	else
+		check_dependencies wget
+		fetch_file
+	fi
+
+	echo "    - Installing package $(basename "$download_url") ..."
+	if hash pkcon >/dev/null ; then
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	else
+		check_dependencies packagekit-tools
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
+	fi
+}
+
+
+
+
+
+
+
+
+
+SofwareManagmentAvailabilityCHK ()
+{
+# Function to check and see if the system software managment is available. In some cases
+# the sofware managment system may be in use. Should this be the case, this function will
+# wait undill the system is free for use.
+# TODO: Add support for fedora, Centos, SuSE.
+# End of documentation
+	echo ""
+	echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
+	i=0
+	tput sc
+	while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
+		case $(($i % 4)) in
+			0 ) j="-" ;;
+			1 ) j="\\" ;;
+			2 ) j="|" ;;
+			3 ) j="/" ;;
+		esac    
+		tput rc
+		echo -en "\r[$j] Waiting for other software managers to finish..."\
+
+
+		sleep 5
+		((i=i+1))
+	done
+}
+
+
+
+
+
+
+
+
+
+rtd_setup_choices_term_fallback ()
+{
+# Function to display legacy installation options. This will install software that is usefull
+# on a really old system, or a remote system only accessible via SSH. This may be a good
+# usecase if oyu happen to be in an opressed geographic locaiton where your only option is
+# to ssh to a remote server and access email and web that way. Perfomance in these cases
+# may be very poor over the internet (as for example with the great firewall of China). In
+# Such a case it would be usefull to have the good old CLI software! :)
+# End of documentation
+
+	# List Options to be available for choice in the RTD System Configurator...
+	cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --title "Terminal Software Options Menu" --separate-output --checklist "We did not find a graphical interface. No matter, you can be productive in the cli environment. Please Select Software and Configuration below:" 22 85 16 )
+	options=(1 "Base RTD OEM Software" on
+		 2 "Alpine email client" on
+		 3 "Vim text editor" on
+		 4 "Finch multi protocol chat" on
+		 5 "Word Grinder word precessor" on
+		 6 "Spreadsheet Calculator" on
+		 7 "TPP Presentation Program" on
+		 8 "Midnight Commander file manager (Norton Commander)" on
+		 9 "Cmus Music Player" on
+		 10 "Byobu Terminal Window Manger" on
+		 11 "W3M web Browser" on
+		 12 "LYNX Web Browser" on
+		 13 "Mega.nz command line tools (Mega-CMD)" on
+		 14 "Rtorrent torrent download software" off
+		 15 "Install the OpenVpn client Software" on
+		 16 "Games: Freesweep mine sweep game" on
+		 17 "Games: Bastet Tetris Game" on
+		 18 "OEM Customizatons" on
+		)
+
+			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+			clear
+			for choice in $choices
+			do
+			    case $choice in
+				1) for i in netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done ;;
+				2)  InstallSoftwareFromRepo alpine ;;
+				3)  InstallSoftwareFromRepo vim ;;
+				4)  InstallSoftwareFromRepo finch ;;
+				5)  InstallSoftwareFromRepo wordgrinder ;;
+				6)  InstallSoftwareFromRepo sc ;;
+				7)  InstallSoftwareFromRepo tpp ;;
+				8)  InstallSoftwareFromRepo mc ;;
+				9)  InstallSoftwareFromRepo cmus ;;
+				10) InstallSoftwareFromRepo byobu ;;
+				11) InstallSoftwareFromRepo w3m ;;
+				12) InstallSoftwareFromRepo lynx ;;
+				13) dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/megacmd-*.deb	;;
+				14) InstallSoftwareFromRepo rtorrent ;;
+				15) InstallSoftwareFromRepo openvpn ;;
+				16) InstallSoftwareFromRepo freesweep ;;
+				17) InstallSoftwareFromRepo bastet ;;
+				18) recipie_OEM_config ;;
+			esac
+		done
+}
+
+
+
+
+
+
+
+
+rtd_setup_choices_preseed () {
+# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
+# some parameters have defaults.
+# Example:
+# functoin_name          location        config          function
+# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
+# End of documentation
+
+	SAVETO=$1
+	CONFIG=$2
+	SRVFUNC=$3
+	: "${SRVFUNC:-Tasks}"
+	: "${PRESEED:=preseed.cfg}"
+	PRESEED_FILE="$SAVETO/$PRESEED"
+	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
+	touch "$1/$PRESEED"
+
+	cmd=("$RTD_GUI" --backtitle "$BRANDING" --title "VM Auto Answer Setup Questions" --separate-output --checklist "Please preconfiguration components below. You will be prompted to manually add information for sections that you de-select:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
+	options=(1 "rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options" on
+		 2 "rtd_oem_preseed_cfg_Unattended_Install" on
+		 3 "rtd_oem_preseed_cfg_Network_Configuration" on
+		 4 "rtd_oem_preseed_cfg_Prevent_Install_On_USB" on
+		 5 "rtd_oem_cfg_Account_Setup" on
+		 6 "rtd_oem_preseed_cfg_Localization" on
+		 7 "rtd_oem_preseed_cfg_EFI" on
+		 8 "rtd_oem_preseed_cfg_GRUB_Bootloader_Installation" on
+		 9 "rtd_oem_preseed_cfg_Disk_Layout" on
+		 10 "rtd_oem_preseed_cfg_Package_Selection" on
+		 11 "rtd_oem_preseed_cfg_Addon_${SRVFUNC}" on
+		)
+
+		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+		clear
+		for choice in $choices
+		do
+			case $choice in
+			1) rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO" ;;
+			2) rtd_oem_preseed_cfg_Unattended_Install "$SAVETO" ;;
+			3) rtd_oem_preseed_cfg_Network_Configuration "$SAVETO" ;;
+			4) rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO" ;;
+			5) rtd_oem_cfg_Account_Setup "$SAVETO" ;;
+			6) rtd_oem_preseed_cfg_Localization "$SAVETO" ;;
+			7) rtd_oem_preseed_cfg_EFI "$SAVETO" ;;
+			8) rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO" ;;
+			9) rtd_oem_preseed_cfg_Disk_Layout "$SAVETO" ;;
+			10) rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG" ;;
+			11) rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO" ;;
+			esac
+		done
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::           Function Section               ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# -----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----
+#            . _..::__:  ,-"-"._        |7       ,     _,.__
+#    _.___ _ _<_>`!(._`.`-.    /         _._     `_ ,_/  '  '-._.---.-.__
+# >.{     " " `-==,',._\{  \  / {)      / _ ">_,-' `                mt-2_
+#   \_.:--.       `._ )`^-. "'       , [_/(                       __,/-'
+#  '"'     \         "    _L        oD_,--'                )     /. (|
+#           |           ,'          _)_.\\._<> 6              _,' /  '
+#           `.         /           [_/_'` `"(                <'}  )
+#            \\    .-. )           /   `-'"..' `:.#          _)  '
+#     `        \  (  `(           /         `:\  > \  ,-^.  /' '
+#               `._,   ""         |           \`'   \|   ?_)  {\
+#                  `=.---.        `._._       ,'     "`  |' ,- '.
+#                    |    `-._         |     /          `:`<_|h--._
+#                    (        >        .     | ,          `=.__.`-'\
+#                     `.     /         |     |{|              ,-.,\     .
+#                      |   ,'           \   / `'            ,"     \
+#                      |  /              |_'                |  __  /
+#                      | |                                  '-'  `-'   \.
+#                      |/                                         "    /
+#                      \.                                             '
+
+#                       ,/            ______._.--._ _..---.---------._
+#      ,-----"-..?----_/ )      __,-'"             "                  (
+# -.._(                  `-----'                                       `-
+# -----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----
+
+
+#  ----------------------------------------------------------------
+# __     ___      _               _   __  __            _     _            
+# \ \   / (_)_ __| |_ _   _  __ _| | |  \/  | __ _  ___| |__ (_)_ __   ___ 
+#  \ \ / /| | '__| __| | | |/ _` | | | |\/| |/ _` |/ __| '_ \| | '_ \ / _ \
+#   \ V / | | |  | |_| |_| | (_| | | | |  | | (_| | (__| | | | | | | |  __/
+#    \_/  |_|_|   \__|\__,_|\__,_|_| |_|  |_|\__,_|\___|_| |_|_|_| |_|\___|
+                                                                         
+#  __  __                                              _   
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+# | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
+#                           |___/  
+#  ----------------------------------------------------------------
+
+
+
+
+
+
 
 
 
@@ -1055,1364 +3434,6 @@ make_kvm_virtual_machine_now_from_iso ()
 
 
 
-
-
-
-
-create_iso_image ()
-{
-# Function to generate a bootable ISO file from source folder or an extracted and
-# altered original ISO. The function takes 3 arguments: target file name, folder to use as source
-# and volume title. The first argument is mandatory since it makes not sense unless it is known 
-# what source to use for makeing the ISO file. 
-#
-# create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
-#
-# This function will over write the old iso file if there...
-#
-# End of Documentation
-
-	# Check for required input...
-	TMP_DISC_DIR=$1
-	[[ -z "$TMP_DISC_DIR" ]] || rtd_oem_pause 1 "${FUNCNAME[0]} requires atleast one parameter."
-
-	# Check for other input and create them if not defined...
-	TARGET_ISO=$2
-	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
-	VOLUME_TITLE=$3
-	: "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}"
-
-	check_dependencies isolinux 
-	check_dependencies mlocate && updatedb
-	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"  
-
-	write_status "------ CREATING ISO: $TARGET_ISO    --------"
-	if [ -f "$TARGET_ISO" ]; then
-		rm -f "$TARGET_ISO"
-	fi
-
-	cd "$TMP_DISC_DIR" || echo "failed to enter $TMP_DISC_DIR "
-	rm -r '[BOOT]'
-	"$BIN_XORRISO" -as mkisofs -r -V "$VOLUME_TITLE" \
-			-J -b isolinux.bin \
-			-c boot.cat \
-			-no-emul-boot \
-			-boot-load-size 4 \
-			-boot-info-table \
-			-input-charset utf-8 \
-			-isohybrid-mbr "$ISOHDPFX_BIN" \
-			-eltorito-alt-boot \
-			-e boot/grub/efi.img \
-			-no-emul-boot \
-			-isohybrid-gpt-basdat \
-			-o "$TARGET_ISO" ./ || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-}
-
-
-
-
-
-create_physical_media_from_iso ()
-{
-# create_physical_media_from_iso:
-# Function to automatically write ISO (virtual DVD/CD/BlueRay) to a thumb drive. No argumenst are
-# required, but a source ISO file location can may be provided when calling the function.
-# If information is required, but not provided, the end user will be interactively prompted. 
-# This function requires elevated priviledges to be able to write media to a thumb drive 
-# (boot sector) and other system restrictied activities. If the function is NOT called in a 
-# script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
-# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will 
-# be displayed asking what media to write to. If no media is present, a warning error 
-# message will be displayed. 
-# 
-# USAGE:
-# 
-# "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
-# 
-# NOTE:
-# [Note 1] An ISO file, often called an ISO image, is a single file that's a perfect representation of an 
-# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file. 
-# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image 
-# that contains everything that would be written to an optical disc, disk sector by disc sector, including the 
-# optical disc file system. ISO images are expected to contain the binary image of an optical media file system 
-# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly 
-# as they were stored on the disc. The data inside the ISO image will be structured according to the file system 
-# that was used on the optical disc from which it was created. 
-# 
-# [Note 2] A USB flash drive is a data storage device that includes flash memory with an integrated USB interface. 
-# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz). 
-# Since first appearing on the market in late 2000
-# End of documentation
-
-
-	: ${BackTitle="Physical Installation Media Creator"}  
-	: ${Title="OS Media Manger"}
-	
-	if [ ! "$UID" -eq 0 ]; then
-		# find  a diferent way... tempfile not universal...
-		data=$(tempfile 2>/dev/null)
-		trap "rm -f $data" 0 1 2 5 15
-		dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
-		ret=$? ; clear
-		case $ret in
-			0) cat $data | sudo -S bash "$0" "$*" ;;
-			1) echo "Request cancelled" ;;
-			255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
-			* ) rm $data &>/dev/null ; exit 1
-		esac
-		rm $data &>/dev/null 
-		exit
-	fi
-	
-	if [[ -z "$1" ]]; then
-		[[ -d /home/${SUDO_USER}/Virtual-DVDs ]] && SuggestedFolder="/home/${SUDO_USER}/Virtual-DVDs/" || SuggestedFolder="/home/${SUDO_USER}"
-		TARGET_ISO=$(dialog --stdout --title "${Title}" --backtitle "${BackTitle}" --fselect "${SuggestedFolder}" 15 110 2)
-		UserResponse=$? ; clear
-		case ${UserResponse} in
-			  1) echo "Request cancelled"; return 0 ;;
-			  255) echo "[ESC] key pressed."; return 255 ;;
-		esac
-	else 
-		TARGET_ISO=$1
-	fi
-
-	if [[ -z "${TARGET_ISO}" ]]; then
-		DIALOGRC=~/.dialogrc
-		if [[ -e ${DIALOGRC} ]]; then 
-			mv ${DIALOGRC} ${DIALOGRC}.bak 
-		fi 
-		
-		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
-		dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n You must provide an ISO file as argument! \n Usage: ${0##*/} ~/filename.iso"  14 90
-		clear ; rm ${DIALOGRC} 
-
-		if [[ -e ${DIALOGRC}.bak ]]; then 
-			mv ${DIALOGRC}.bak ${DIALOGRC}
-		fi 
-		return 1
-	else
-		#          List removable dev : not loop dev: not CD    : not nvme HD : filter: header w. name
-		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep -v nvme |grep 1 | cut -f1 -d' ')"
-
-		if [[ -z ${devlist} ]]; then 
-			DIALOGRC=~/.dialogrc
-			echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
-			dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n No removable media could be found! Please insert a thumb drive and try again."  14 90
-			clear ; rm ${DIALOGRC} 
-			return 1
-		else
-			declare -A RemovableMediaList
-			index=1
-			
-			for media in ${devlist}; 
-			do 
-				SuggestedRemovableDevice="${media}"
-				RemovableMediaList[$index]=$(echo -e \'$(fdisk -l /dev/$media |head -1)\')
-				(( index++ ))
-			done
-
-			DiscoveredItems="\n
-			\n Removable media found: ${#RemovableMediaList[@]}
-			\n --------------------------------------------------------
-			
-			$(until [ $i -gt ${#RemovableMediaList[@]} ]
-			do
-				[[ $i -gt 0 ]] && echo -e "Removable Disk $i:   ${RemovableMediaList[$i]} \n" 
-				((i=i+1))
-			done
-			)"
-
-			USBTargetDevice=$( dialog --stdout --no-collapse --title "${Title}" --backtitle "${BackTitle}"  --inputbox "${DiscoveredItems}" 15 110 /dev/${SuggestedRemovableDevice} ) 
-			Response=$?
-			clear
-			case ${Response} in
-				0 )
-					dialog --title "${Title}" --backtitle "${BackTitle}" --yesno "Please Confirm:\n Write the ISO file: \n ${TARGET_ISO} \n To the drive: \n ${USBTargetDevice}" 25 90
-						case $? in
-							0 ) ( dd if=${TARGET_ISO} of=${USBTargetDevice} status=progress 2>&1 |dialog --title "${Title}" --backtitle "${BackTitle}" --programbox "Please wait, writing disk now:" 25 90) ;;
-							1 ) echo "Request cancelled"; create_physical_media_from_iso ;;
-							255 ) echo "[ESC] key pressed."; return 255 ;;
-							* ) echo "An unknown event occurred!" ; return 1 ;;
-						esac
-					clear ; return
-				;;
-				1 ) echo "Request cancelled"; return 0 ;;
-				255 ) echo "[ESC] key pressed."; return 255 ;;
-				* ) echo "An unknown event occurred!" ; return 1 ;;
-			esac
-		fi
-	fi
-}
-
-
-
-
-
-
-
-
-set_gnome_ui_common_tweaks_for_user ()
-{
-# set_gnome_ui_common_tweaks_for_user:
-# Configure Gnome for OEM look and feel. This is completely as desired. 
-# This function takes no arguments. Simply call it to make the changes.
-# Howerver, this function must be called as the user it should apply to.
-# if it is called in a script with "sudo" priviledges, it will make chages to 
-# the look and feel for the "root" user. 
-#
-# To run this function as the user who started a script with sudo script content 
-# could be echoed out ot a temporary file and executed as follows
-# sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus temporary_script.sh > /dev/null 2>&1
-# or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh". 
-#
-# USAGE:
-# 
-# set_gnome_ui_common_tweaks_for_user
-#  
-# End of documentation
-
-	write_status "Seting common OEM tweaks..."
-	# Terminal and Tilix Dark Theme
-		gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
-		gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
-		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
-		gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
-		gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
-		gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
-		gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
-
-	#Better Font Smoothing
-	gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
-
-	#Usability Improvements
-		gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
-		gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-		gsettings set org.gnome.desktop.calendar show-weekdate true
-		gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
-		gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
-		gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
-
-	#This indexer is nice, but can be detrimental for laptop users battery life
-		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
-		gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
-		gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
-
-	#Nautilus (File Manager) Usability
-		gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
-		gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
-		gsettings set org.gtk.Settings.FileChooser sort-directories-first true
-		gsettings set org.gnome.nautilus.list-view use-tree-view true
-		gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
-
-	# Set the GNOME Shell Apps Dashboard sort app in categories based on the FreeDesktop standard.
-		gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
-		gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-}
-
-
-
-
-
-set_gnome_ui_mac_tweaks_for_user ()
-{
-# Function to set UI look to resemble MAC for users accustomed to that.
-# 
-# The function expects no arguments. 
-# Usage: 
-# set_gnome_ui_mac_tweaks_for_user
-#    
-# End of documentation
-	set_gnome_ui_common_tweaks_for_user
-	write_status "Setting MAC like tweaks..."
-	# Gnome Shell Theming
-	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
-	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
-
-	# Set font
-	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
-
-	#Set Extensions for gnome
-	gsettings set org.gnome.shell disable-user-extensions false
-	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
-}
-
-
-
-
-
-set_gnome_ui_win10_tweaks_for_user ()
-{
-# Function to set UI look to resemble MAC for users accustomed to that.
-# 
-# The function expects no arguments. 
-# Usage: 
-# set_gnome_ui_win10_tweaks_for_user
-#    
-# End of documentation
-	set_gnome_ui_common_tweaks_for_user
-	write_status "Setting MAC like tweaks..."
-	# Gnome Shell Theming
-	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
-	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
-
-	# Set font
-	# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
-
-	#Set Extensions for gnome
-	gsettings set org.gnome.shell disable-user-extensions false
-	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
-
-	# Configure dash-to-panel
-	gnome-shell-extension-tool -e dash-to-panel
-	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
-}
-
-
-
-
-
-run_command_in_gnome_user_session () {
-# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
-# This functon expects any number of parameters that would make up the command or commands
-# to be run in the users session. For example:
-# 	run_command_in_gnome_user_session script_name.sh parameter one two etc
-#
-#    
-# End of documentation
-	echo -------------------------- Begin as user: $SUDO_USER ---------------------
-	echo "$*"
-	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* > /dev/null 2>&1
-	echo " "
-	echo -------------------------- End as user: $SUDO_USER   ---------------------
-}
-
-
-
-
-
-ensure_admin ()
-{
-# Function to elevate priviledges of script execution and to ensure administrative privileges 
-# such that system wide settings or configuration may be done. 
-# 
-# The function expects no arguments, but will prompt for system password if required. 
-# Usage: 
-# ensure_admin
-#    
-# End of documentation
-
-	if [ "$UID" -eq 0 ]; then
-		write_warning "This script needs administrative access..." 
-		sudo bash "$0" "$*"
-		exit 
-	else 
-		if xset q &>/dev/null; then xhost local:root ; fi
-	fi
-}
-
-
-
-
-
-
-
-rtd_oem_check_inet_access ()
-{
-# Function to verrify internet availabiltiy. 
-# The funciton will pause for 10 seconds by default, and will accept 
-# an integer to indicate a non-decault time to pause. 
-# Usage:
-# rtd_oem_check_inet_access [ integer ]
-#     
-# Example:
-# rtd_oem_check_inet_access 60
-#   
-# If an argument is omitted rtd_oem_check_inet_access will wait indefinitley
-# for input. 
-# 
-# End of documentation
-	_ARG=$1
-	if ! hash curl &>/dev/null; then 
-		read -t 10 -p "N O T I C E ! --  Could not check for internet connectivity... Please install (curl) web crawler/downloader. Press [ENTER] to continue and [CTRL] + [C] to exit! Continuing in 10 seconds..." 
-	else
-		if [[ -z "$_ARG" ]]; then 
-			curl ipinfo.io &>/dev/null || ( read -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  " )
-		else	
-			curl ipinfo.io &>/dev/null || ( read -t ${1:-10} -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  Continuing in ${1:-10} seconds..." )
-		fi
-	fi
-}
-
-
-
-
-
-
-rtd_oem_kde_set_wallpaper ()
-{
-# rtd_oem_kde_set_wallpaper
-# Function to set KDE Plasma wallpaper from a script. this function expects one variable 
-# indication what file to set as background. You must provide the full path to the file. 
-# rtd_oem_kde_set_wallpaper /opt/oem/wallpaper.png Supported fule types are: 
-# webm, mp4, png, jpeg, gif, webp. 
-# End of documentation
-
-	echo "Setting wallpaper $1" 
-	full_image_path=$(realpath "$1")
-	ext=$(file -b --mime-type "$full_image_path")
-
-	if [ -z "$2" ]; then
-	# Identify filetype and make changes
-	case $(echo $ext | cut -d'/' -f2) in
-		"mp4"|"webm") type='VideoWallpaper' ; write='VideoWallpaperBackgroundVideo';;
-		"png"|"jpeg") type='org.kde.image' ; write='Image' ;;
-		"gif"|"webp") type='GifWallpaper' ; write="GifWallpaperBackgroundGif" ;;
-	esac
-	else
-	type="$2";
-	write="$3";
-	fi
-
-	wallpaper_set_script="var allDesktops = desktops();
-	print (allDesktops);
-	for (i=0;i<allDesktops.length;i++)
-	{
-		d = allDesktops[i];
-		d.wallpaperPlugin = '${type}';
-		d.currentConfigGroup = Array('Wallpaper', '${type}', 'General');
-		d.writeConfig('Image', 'file:///dev/null')
-		d.writeConfig('$write', 'file://${full_image_path}')
-	}"
-
-	qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "${wallpaper_set_script}"
-	kwriteconfig5 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file://$full_image_path"
-}
-
-
-
-
-
-
-
-rtd_oem_remove_non_western_latin_fonts ()
-{
-# rtd_oem_remove_non_western_latin_fonts: a simple function to remove known
-# non-western (latin) fonts from a distribution. Notably, Ubuntu provides too many fonts
-# of all kinds by default, even if the user will never need the fonts. However, the fonts
-# may cause unexpected font tool behavior and crashes, due to the large number of fonts 
-# and their features. It is there fore a good Idea to remove these fonts if they are not needed.
-# Usage: 
-#	Simply call this function by stating its name:
-# 	rtd_oem_remove_non_western_latin_fonts
-# 	
-# The function will not return any sucess or failure codes. It will do its best and exit.
-# End of documentation
-
-	font_list="fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lklug-sinhala fonts-lohit-guru fonts-guru fonts-nanum fonts-noto-cjk fonts-takao-pgothic fonts-tibetan-machine fonts-guru-extra \
-		fonts-lao fonts-sil-padauk fonts-sil-abyssinica fonts-tlwg-* fonts-beng fonts-beng-extra fonts-deva fonts-deva-extra fonts-gubbi fonts-gujr fonts-gujr-extra fonts-kalapi fonts-knda \
-		fonts-lohit-* fonts-noto-* fonts-orya* fonts-pagul fonts-sahadeva fonts-samyak-* fonts-sarai fonts-smc fonts-smc-* fonts-taml fonts-telu fonts-telu-extra"
-	echo "Attempting to remove non-western fonts..."
-	count=0
-	for i in $font_list ; do 
-		rtd_oem_remove_software $i &>/dev/null && (( count++))
-	done
-	echo "Removed [ $count ] non-western Fonts"
-}
-
-
-
-
-
-
-
-rtd_oem_remove_software ()
-{
-# rtd_oem_remove_software
-# The OEM remove software function will attempt to remove whatever package name given
-# as an argument using whatever package system found on the system. This is provided 
-# for portability and convenience. Currently, this functions will attempt to use
-# pkcon (prefferred as it run on many distributions), apt, yum, dnf, and zypper. 
-# Additional package manager may be added as time allows. 
-# Usage: 
-# 	call this function using one argument only for reliability reasons; 
-#	as per the below example. If thre is a need to remove a large number of
-#	packages it is reccommended to use a for loop and call this function, 
-#	still realizing the benefit of mylti-distribution support.
-#
-#	rtd_oem_remove_software packagename
-#
-# If a failure occurs this function will return a non "0" exit code. (1)
-# End of documentation
-
-	if [[ $(echo $OSTYPE |grep "linux") ]]; then
-		echo "Trying to remove package $*"
-		if hash dnf 2>/dev/null; then
-			dnf -y remove $*
-			return $?
-		elif hash yum 2>/dev/null; then
-			yum -y remove $*
-			return $?
-		elif hash zypper 2>/dev/null; then
-			zypper -y remove $*
-			return $?
-		elif hash apt 2>/dev/null; then
-			apt-get -y remove $* && apt -y autoremove
-			return $?
-		elif hash pkcon 2>/dev/null; then
-			pkcon remove $* -y --autoremove
-			return $?
-		else
-			echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
-			return 1
-		fi
-	elif [[ "$OSTYPE" == "freebsd"* ]]; then
-		echo "Free BSD is currently unsupported... "
-		return 1
-	else
-		echo "Though you can run bash, I have no Idea how to remove software here!"
-		return 1
-	fi
-}
-
-
-
-
-
-
-
-set_install_command ()
-{
-# set_install_command
-# add global install command for portability and convenience
-# If you need to use this script in an rpm based system you could modify the install
-# command here to suit dnf, yum, zypper... By default packages of patternd that do not
-# match should be skipped. Use "export option" so child processes also see the variiables.
-# End of documentation
-	if [[ 'echo $OSTYPE" |grep "linux"' ]]; then
-		if hash pkcon 2>/dev/null; then
-			# If package kit is available then prefer this
-			echo -e $YELLOW "Setting install options for Package Kit" $ENDCOLOR
-			export _INSTCMD="pkcon -y  install"
-		elif hash yum 2>/dev/null; then
-			# If package kit is not available try yum (RedHat, Cent OS, Fedora)
-			echo -e $YELLOW "Setting install options for YUM" $ENDCOLOR
-			export _INSTCMD="yum -y  install"
-		elif hash apt 2>/dev/null; then
-			# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
-			echo -e $YELLOW "Setting install options for DEB" $ENDCOLOR
-			export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-			export DEBIAN_FRONTEND=noninteractive
-		elif hash zypper 2>/dev/null; then
-			# If package kit is not available try zypper (Open SUSE)
-			echo -e $YELLOW "Setting install options for ZYPPER" $ENDCOLOR
-			export _INSTCMD="zypper install -y "
-		else
-			echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
-			exit 1
-		fi
-
-	elif [[ "$OSTYPE" == "freebsd"* ]]; then
-		echo "Free BSD is currently unsupported... "
-		export _INSTCMD="echo I dont know how to install suff on FreeBSD!"
-	else
-	echo "I have no Idea what this system is"
-		export _INSTCMD="Whatever!"
-		exit 1
-	fi
-}
-
-
-
-
-
-
-
-check_menu_availability ()
-{
-# First discover what menu system is installed. Some systems use "dialog" and
-# other systems use whiptail for the terminal to show menus and dialogs.
-# If nothing is found, then make sure it is available before continuing.
-# End of documentation
-	if hash dialog 2>/dev/null ; then
-		: "${RTD_GUI:=dialog --clear}"
-		export RTD_GUI
-	elif hash whiptail 2>/dev/null ; then
-		: "${RTD_GUI:="whiptail --fb"}"
-		export RTD_GUI
-		if ( $RTD_GUI --backtitle "$BRANDING" --title "System Information Menu" --no-button "NO: Use whiptail" --yes-button "YES: Install dialog" --yesno "Please NOTE that we are using WHIPTAIL as a terminal menu system, which is missing several features compared to the default: DIALOG menu system. There are a few reasons we may be using WHIPTAIL instead: I was forced to use it or it is the only terminal menu system available... If you continue with the current WHIPTAIL some things might not work. \n \n May I please try to install the dialog system in stead? . \n  " 20 90 ); then
-			RTD_GUI=dialog
-			err_no_menu_system_found
-		else
-			echo "User selected No, exit status was $?."
-		fi
-	else
-		err_no_menu_system_found dialog && return 1 || exit 1
-	fi
-}
-
-
-
-
-
-
-
-err_no_menu_system_found ()
-{
-# Function to handle the error condition if a manu system is not found on the system.
-# On occasion it may be neede to display dialog boxes and selection menus even in a terminal.
-# for these cases; dialog, whiptail (newt), or zenity may be needed. 
-# This function will attempt to install the desired menu system and if it cannot or the user
-# opts out it will error and exit the script. 
-#
-# End of documentation
-
-	echo -e $RED" ______________________________________________________________________ \n There is eiter no way to display menus on this system or you have told me \n to install the default  menu system! \n This is required to display the administrative menus... \n \n     ¯\_( ͡👁️ ͜ʖ ͡👁️)_/¯ \n ______________________________________________________________________ \n"
-	echo -e $YELLOW"May I attepmpt to install this ability to your system? \a $ENDCOLOR"
-	read -p "Add software: (y/n)?" choice
-	case "$choice" in
-	y|Y )
-		: "${RTD_GUI:=$1}"
-		for i in dnf yum zypper apt-get; do
-			if hash $i 2>/dev/null; then
-				$i install $RTD_GUI -y 
-				if $? eq 0 ;  then 
-					echo -e $YELLOW"$RTD_GUI installed... exporting..."
-					RTD_GUI="dialog --clear"
-					export RTD_GUI
-					return 0
-				fi
-			fi
-		done
-	;;
-	n|N ) err_no_menu_system_available ;;
-	* ) read -p  "Invalid Selection" && err_no_menu_system_found || exit 1 ;;
-	esac
-}
-
-
-
-
-
-
-
-enable_firewall ()
-{
-# enable_firewall
-# Function to enable system firewall and add a given rule. This simple function
-# enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to
-# pass. This function expects no arguments. However nothing will be done if
-# no ufw firewall is present on the system. The cunction will not attempt to add 
-# the ufw since this may conflict with any firewall present. To use this funciton 
-# to enable ufw, first any other firewall software must be disabled and ufw added.
-# End of documentation
-	if hash ufw 2>/dev/null; then
-			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
-			ufw enable && ufw allow ssh
-	else
-			echo -e $faded_orange "UFW not present on this system: please turn on the firewall and configure it manually!" $ENDCOLOR
-	fi
-}
-
-
-
-
-
-
-
-make_system_recovery_partition ()
-{
-# make_system_recovery_partition
-# Function to enable system OEM Recovery 
-# End of documentation
-
-	devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
-
-	if [[ -z ${devlist} ]]; then
-		DIALOGRC="/root/.dialogrc"
-		if -e ${DIALOGRC} ; then 
-			mv ${DIALOGRC} ${DIALOGRC}.bak 
-		fi 
-		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
-		dialog --title "Physical Installation Media Creator Error!" --backtitle "OS Media Manger" --msgbox "No removable media could be found!"  14 90
-		rm ${DIALOGRC} 
-		if -e ${DIALOGRC}.bak ; then 
-			mv ${DIALOGRC}.bak ${DIALOGRC} 
-		fi 
-		return 1
-	else
-		declare -A RemovableMediaList
-		key=0
-		for i in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' '); 
-		do 
-			SuggestedRemovableDevice="${i}"
-			element="$(fdisk -l /dev/$i |head -1)"
-			RemovableMediaList[$key]=$(echo -e \'"$element"\')
-			(( key++ ))
-		done
-
-		if [[ 1 -eq ${#RemovableMediaList[@]} ]]; then
-			mkdir /boot/iso
-			dd if=/dev/${SuggestedRemovableDevice} of=/boot/iso/recovery.iso
-			cat >> /etc/grub.d/40_custom <<-'EOF'
-			menuentry "Reset to Factory Defaults" {
-				set isofile="/boot/iso/recovery.iso"
-				loopback loop (hd0,8)$isofile
-				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
-				initrd (loop)/casper/initrd.lz
-			}
-			EOF 
-		else
-
-			ChosenMediaItem="
-			Removable media found: \n
-			------------------------------------------------------------------------------- \n
-			\n
-			$(until [ $i -gt ${#RemovableMediaList[@]} ]
-			do
-				echo -e "Removable Disk $i:   ${RemovableMediaList[$i]}" \n
-				((i=i+1))
-			done
-			)"
-
-			USBTargetDevice=$( dialog --stdout --title "Physical Installation Media Creator" \
-			--backtitle "OS Media Manger" \
-			--inputbox "\n ${DiscoveredItems}" 0 0 /dev/${SuggestedRemovableDevice} ) 
-
-			mkdir /boot/iso
-			dd if=/dev/${ChosenMediaItem} of=/boot/iso/recovery.iso
-			cat >> /etc/grub.d/40_custom <<-'EOF'
-			menuentry "Reset to Factory Defaults" {
-				set isofile="/boot/iso/recovery.iso"
-				loopback loop (hd0,8)$isofile
-				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
-				initrd (loop)/casper/initrd.lz
-			}
-			EOF
-		fi
-	fi
-}
-
-
-
-
-
-
-
-rtd_oem_reseal () {
-# rtd_oem_reseal
-# Function to reseal a newly installed system for delivery to end user.
-# End of documentation
-	if cat /etc/os-release |grep ubuntu ; then
-		InstallSoftwareFromRepo oem-config-gtk
-		oem-config-prepare
-	elif cat /etc/os-release |grep kubuntu ; then
-		InstallSoftwareFromRepo oem-config-kde
-		oem-config-prepare
-	elif cat /etc/os-release |grep suse ; then
-		echo "I dont know of any OEM configuration for SuSE"
-	elif cat /etc/os-release |grep fedora ; then
-		echo "I dont know of any OEM configuration for Fedora"	
-	fi
-}
-
-
-
-
-
-
-
-
-check_if_password_p0wned () {
-	pass_str=$($RTD_GUI --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
-	result=$(
-		sha1=$(echo -n $pass_str | tr -d '\n' | sha1sum); echo "Hash prefix: ${sha1:0:5}"; echo "Hash suffix: ${sha1:5:35}";
-		query_result=$(curl https://api.pwnedpasswords.com/range/${sha1:0:5} 2>/dev/null | grep "$(echo "${sha1:5:35}" | tr '[:lower:]' '[:upper:]')");
-		printf "Your password appeared %d times for sale in the Darknet per the P0wned online database...." "${query_result#*:}" 2>/dev/null ;
-		unset pass_str ;
-		)
-	display_result "Password P0wned Status"
-}
-
-
-
-
-
-
-
-
-rtd_update_system ()
-{
-# rtd_update_system
-# System update function. The purpose of this function is to update installed software from
-# distribution reopositories and the newer self contained universal software stores like
-# snap and flatpak. 
-# Function does not expect any argument. However it will respect one argument \"simple\"
-# The simple argument instructs this functions [pkcon] action to display simple output
-# rather than more user friendly output. 
-# Update native software packages; since it is not known what distribution
-# this script is being executed on, it is best to check and see if we are able
-# to perform an update and then do the update...
-# One could choose to check for a supported exact version: e.g. Ubuntu, but we would
-# like to be nice and add value for as many as we can. Specially if it is this easy! :)
-# End of documentation
-
-	PUBLICATION="$BRANDING Update Manager for Linux"
-	VERSION="1.13 (built in)"
-
-	LOGFILE="${LOGFILE:-$0.log}"
-
-
-	echo -e $GREEN"$PUBLICATION: Version $VERSION" $ENDCOLOR
-	echo -e $GREEN"------------------------------------------------" $ENDCOLOR
-
-	echo I am updating software from all channels i can find on the system.
-	echo I will update via the native package manager as well as newer formats
-	echo -e "like $YELLOW snap $ENDCOLOR and $YELLOW flatpak $ENDCOLOR..."
-	echo " "
-
-
-	log_item ()
-	{
-		DATE=$(date '+%d/%m/%Y %H:%M:%S');
-		echo "$DATE --- : $*" >> "$LOGFILE"
-	}
-
-
-	rtd_software_task ()
-	{
-		log_item "running rtd_software_task with parameters $*"
-		# make some decent display terminal graphics...
-		PAD="------------------------------------------"
-		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-		echo -ne "--- Executing $LINE:"\ & "$@" >>"$LOGFILE" 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-	}
-
-	if hash pkcon 2>/dev/null; then
-		# If package kit is available then prefer this
-		if [[ $1 == simple ]]; then disp_option="--plain" ; fi
-		echo -e $YELLOW "Using: Package Kit" $ENDCOLOR
-		pkcon -y refresh $disp_option 2>> $LOGFILE
-		pkcon -y update --autoremove $disp_option 2>> $LOGFILE
-	elif hash yum 2>/dev/null; then
-		# If package kit is not available try yum (RedHat, Cent OS, Fedora)
-		echo -e $YELLOW "Using: YUM" $ENDCOLOR
-		rtd_software_task yum -y upgrade 2>> $LOGFILE
-	elif hash apt 2>/dev/null; then
-		# If package kit is not available try apt (Debian, Ubuntu, and all derivatives)
-		echo -e $YELLOW "Using: DEB" $ENDCOLOR
-		rtd_software_task apt-get update
-		rtd_software_task apt-get upgrade -y
-		rtd_software_task apt-get autoremove -y
-	elif hash zypper 2>/dev/null; then
-		# If package kit is not available try zypper (Open SUSE)
-		echo -e $YELLOW "Using: ZYPPER" $ENDCOLOR
-		rtd_software_task zypper up -y 2>> $LOGFILE
-	else
-		echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
-		exit 1
-	fi
-
-	# updating snaps if snap is present on the system...
-	if hash snap 2>/dev/null; then
-		snap refresh 2>> $LOGFILE
-	else
-		echo "--- snap software is not present on this system... skipping..."
-	fi
-
-	# updating flatpacks if flatpack is present on system...
-	if hash flatpak 2>/dev/null; then
-		flatpak update -y 2>> $LOGFILE
-	else
-		echo "--- flatpak software is not present on this system... skipping..."
-	fi
-}
-
-
-
-
-add_software_task ()
-{
-# Display executed task and echo ON/NOK based on sucess
-# This function is created to reduce the terminal output and create a more poliches output of
-# the tasks executed. This function has no idea shat it is doing, it will simply call the function 
-# it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the 
-# return code. 
-# End of documentation
-
-	PAD="------------------------------------------"
-	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	echo -ne "Installing "$LINE"":""\ & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-}
-
-
-
-
-
-
-
-dl ()
-{
-# Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
-# install them. It can install any package that Package Kit can manage (available on most Linux dists)
-# It expects one parameter: the complete URL to download from.
-# End of documentation
-
-	download_url="$1"
-	fetch_file () { wget -P /opt/rtd/cache "$download_url" 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
-
-	echo  "    - getting package $download_url ..."
-	if hash wget >/dev/null ; then
-		fetch_file
-	else
-		check_dependencies wget
-		fetch_file
-	fi
-
-	echo "    - Installing package $(basename "$download_url") ..."
-	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else
-		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
-	fi
-}
-
-
-
-
-
-
-
-SofwareManagmentAvailabilityCHK ()
-{
-# Function to check and see if the system software managment is available. In some cases
-# the sofware managment system may be in use. Should this be the case, this function will
-# wait undill the system is free for use.
-# TODO: Add support for fedora, Centos, SuSE.
-# End of documentation
-	echo ""
-	echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
-	i=0
-	tput sc
-	while fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
-		case $(($i % 4)) in
-			0 ) j="-" ;;
-			1 ) j="\\" ;;
-			2 ) j="|" ;;
-			3 ) j="/" ;;
-		esac    
-		tput rc
-		echo -en "\r[$j] Waiting for other software managers to finish..."\
-
-
-		sleep 5
-		((i=i+1))
-	done
-}
-
-
-
-
-rtd_oem_reset_default_environment_config ()
-{
-# Function to reset temporary configurations to their original setings from the
-# distributor. To configure and/or automatically install Linux systems RTD OEM
-# load process must make some changes to the system in question that are not
-# good security practice or that may be disruptive during normal operations.
-# These setings are not limited to bu include "auto login", "auto sudo" and
-# "auto running scripts"...
-# End of documentation
-
-	# Disable the automatically trying to install OEM software
-	[[ -f /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop ]] && mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
-	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
-	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
-	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
-	toggle_oem_auto_login
-}
-
-
-
-
-rtd_wait_for_internet_availability ()
-{
-# Function that, when called, will wait for an active internet connection
-# to be available before before continuing. Most softwrare install activities
-# need an active internet connection to be able to install and update software.
-# Naturally, some in house loads use local mirrors, but if you can see the
-# internet, you would have access to your own ropositories as well...
-# End of documentation
-
-
-
-	write_status "Waiting for internet access..."
-	write_information "NOTE: Free access to the internet is required to continue."
-	while ! ping -c 1 -W 1 8.8.8.8 &>/dev/null ; do
-		write_status "Waiting..."
-		sleep 10
-	done
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-toggle_oem_auto_login()
-{
-# Function to toggle auto login for admin purposes. 
-# Call the functoin onece to set auto login and call it again to 
-# unset auto login. 
-#
-# USAGE:
-#
-# toggle_oem_auto_login
-# End of documentation
-
-
-	if [[ -f /etc/lightdm/lightdm.conf ]]; then
-		if [[ -f /etc/lightdm/lightdm.conf.rtd-bak ]]; then
-			rm /etc/lightdm/lightdm.conf && mv /etc/lightdm/lightdm.conf.rtd-bak /etc/lightdm/lightdm.conf
-		else
-			cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
-			cat > /etc/lightdm/lightdm.conf <<-OEM_LXDM_LOGIN_OPTION
-			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
-			# /etc/lightdm/lightdm.conf.rtd-bak
-			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
-			[SeatDefaults]
-			autologin-user=$SUDO_USER
-			autologin-user-timeout=0
-			OEM_LXDM_LOGIN_OPTION
-		fi
-	fi
-
-	if [[ -f /etc/sddm.conf ]]; then 
-		if [[ -f /etc/sddm.conf.rtd-bak ]]; then
-			rm /etc/sddm.conf && mv /etc/sddm.conf.rtd-bak /etc/sddm.conf
-		else
-			cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
-			cat > /etc/sddm.conf <<-OEM_SDDM_LOGIN_OPTION
-			cat << OEM_SDDM_LOGIN_OPTION > 
-			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
-			# /etc/sddm.conf.rtd-bak
-			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
-			[Autologin]
-			User=$SUDO_USER
-			Session=plasma.desktop
-			OEM_SDDM_LOGIN_OPTION
-		fi
-	fi
-
-	if [[ -f /etc/gdm3/daemon.conf ]]; then
-		if [[ -f /etc/gdm3/daemon.conf.rtd-bak ]]; then
-			rm /etc/gdm3/daemon.conf && mv /etc/gdm3/daemon.conf.rtd-bak /etc/gdm3/daemon.conf
-		else
-			cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
-			cat >  /etc/gdm3/daemon.conf <<-OEM_GDM3_LOGIN_OPTION
-			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
-			# /etc/gdm3/daemon.conf.rtd-bak
-			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
-			[daemon]
-			AutomaticLoginEnable=True
-			AutomaticLogin=$SUDO_USER
-			WaylandEnable=false
-			OEM_GDM3_LOGIN_OPTION
-		fi
-	fi
-}
-
-
-
-
-
-
-set_oem_elevated_priviledge_gui ()
-{
-# Some Debian and other Linux distribution do not allow gui apps to 
-# be run when invoked by "sudo" or in a root (system elevated authority) 
-# environment. To mitigate this some stemp may need to taken. 
-# Will work on Slackware as well as Debian to give root permission to open X programs.
-# End of documentation
-
-	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
-
-	# Allows runing an X program as root
-	touch /root/.bashrc
-	echo "export XAUTHORITY=/home/$_OEM_USER/.Xauthority" >>/root/.bashrc
-}
-
-
-
-
-
-
-set_enable_oem_elevated_priveledge()
-{
-# Set no password elevated priviledges.
-# This will allow apps to be run when invoked by "sudo" without being prompted 
-# for a password. This emulates the "UAC" from Microsoft. Please remember to 
-# turn this off using the function "rtd_oem_reset_default_environment_config"
-# End of documentation
-	# Add instruction to a sudoers include file:
-	# This should be removed when OEM setup is complete as it would represent a back door... 
-	echo "$SUDO_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
-
-	# Check that your sudoers include file passed the visudo syntax checks:
-	sudo visudo -cf /etc/sudoers.d/99_sudo_include_file
-}
-
-
-
-
-
-up2date ()
-{
-# Function to simplify updating system completely. At present this function sets the
-# highest preference to use "pkcon", the command line interface of "Package Kit" since
-# this is the most consistent across different distrbutions. It may even work on BSD.
-# Only if "pkcon" is not available, will the function use the identified distro native
-# software manager: apt, yum, zypper etc. This is to maintain stability since a distro may
-# alias another distributions command (like SuSE does with apt) to be helpfull.
-# This is one of the first update functions written and is kept for compatibility.
-# End of documentation
-
-	write_status "Running up2date function:" 
-
-	if hash pkcon 2>/dev/null; then
-		pkcon update -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
-	elif hash yum 2>/dev/null; then
-		yum update -y 			1>>$_LOGFILE 2>>$_ERRLOGFILE
-	elif hash apt 2>/dev/null; then
-		apt-get update 			1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt-get upgrade -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt-get autoremove -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
-	elif hash zypper 2>/dev/null; then
-		return zypper up -y		1>>$_LOGFILE 2>>$_ERRLOGFILE
-	else
-		return 3
-	fi
-}
-
-
-
-
-
-
-is_software_package_installed ()
-{
-# Function to check if a piece of software is installed. This function will first check
-# if the package manager is deb, zypper or rpm, and then take one parameter passed
-# and evauate if a software package by that name is installed. This function
-# will return a "0" or "1" return based on the package managers return code.
-# Call this function by:
-# is_software_package_installed "package name"
-#                 or
-# is_software_package_installed "$1" if calling this function from a script
-# or another function receiving a parameter.
-#
-# End of documentation
-
-	if hash yum 2>/dev/null; then
-		rpm -q "$1" > /dev/null 2>&1 && return 0 || return 1
-	elif hash apt 2>/dev/null; then
-		dpkg -l "$1" 2>/dev/null |tail -1 |grep "ii  $1" > /dev/null 2>&1 && return 0 || return 1
-	elif hash zypper 2>/dev/null; then
-		zypper se "$1" > /dev/null 2>&1 && return 0 || return 1
-	else
-		return 3
-	fi
-}
-
-
-
-
-
-is_software_package_available ()
-{
-# Function to chek if a package is available in whetever repository, and
-# if there return a "0" and if not return a "1" or a "3" if there is no recognizable
-# package manager found. the function expects the name of the package
-# to be a parameter passed to this fuction. Call this function by:
-# is_software_package_available "package name"
-#                 or
-# is_software_package_available "$1" if calling this function from a script
-# or another function receiving a parameter.
-#
-# Supported base distributions: Fedora . SuSE . Debian
-# End of documentation
-
-	if hash yum 2>/dev/null; then
-		yum list available "$1" &> /dev/null && return 0 || return 1
-	elif hash apt 2>/dev/null; then
-		apt -qq list "$1" 2>/dev/null | grep -q "$1" && return 0 || return 1
-	elif hash zypper 2>/dev/null; then
-		return zypper info "$1" &> /dev/null && return 0 || return 1
-	else
-		return 3
-	fi
-
-}
-
-
-
-
-
-InstallSoftwareFromRepo ()
-{
-# Function to simplify the installation of software by including all display and
-# installation logic for a given software provider. This should be expanded to include flatpack
-# snap for example. It should be the same consistent way no matter flavor of Linux.
-# This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley
-# in the "set_install_command" function (a dependency to this function) and could
-# be an RPM or deb string, or even snap or flatpack. A preference order between package system and
-# snap or flatpack use.
-# End of documentation
-
-	# Ask function how to install software... 
-	set_install_command >>/dev/null 2>&1
-
-	# make some decent display terminal Graphics...
-	PAD="------------------------------------------------"
-	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	PRE=" - Installing $LINE :"
-	# Test if package name is installed, if not then...
-	if ! is_software_package_installed "$1"; then
-		if is_software_package_available "$1"; then
-			echo -ne "$PRE"\ & $_INSTCMD "$1" 1>>$_LOGFILE 2>>$_ERRLOGFILE && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
-			if [ $? != 0 ];
-			then
-				return 1 & exit 1
-			fi
-		else
-			echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW NOT AVAILABLE... $ENDCOLOR \n"
-		fi
-	else
-		echo -ne "$PRE"\ && printf "%b%-6s%b [ \xE2\x9C\x94 ] $YELLOW Allready Installed... $ENDCOLOR \n"
-	fi
-}
-
-
-
-
-
-check_dependencies ()
-{
-# check_dependencies:
-# Function to check that a piece of software is installed and if not install it.
-# Works for apt based systems currently. The function will take a parameter that is expected to
-# match the software command line name or rather the name of the package. This should get
-# updated to also check and install from snap and flatpack at some point.
-# 
-# USAGE:
-# 
-# check_dependencies [packagename]
-# 
-# EXAMPLE:
-# 
-# check_dependencies snapd
-#
-# End of documentation
-
-	#---------------------------------------------------------------
-	echo "Checking for script dependencies and install if not there..."
-	#---------------------------------------------------------------
-	if is_software_package_installed $1 ; then
-		echo -e $GREEN"I found that $1 is present on this system... thankyou for that! " $ENDCOLOR
-	else
-		echo -e $YELLOW"You seem to have no $1... I will try to get it... " $ENDCOLOR
-		InstallSoftwareFromRepo $1
-		if [ $? != 0 ];
-		then
-			echo -e $RED "That install didn't work out so well."
-			echo -e "Please manually try to add the software since I couldn't do it." $ENDCOLOR
-			exit
-		fi
-		echo "OK Done! Continuing..."
-	fi
-}
-
-
-
-
-
-system_update ()
-{
-# system_update:
-# Function to update the Linux based system. This function is universal for all
-# distributions that have package kit available. It works in the same manner on
-# RedHat/Fedora, Debian/Ubuntu and all their derivatives. When invoked as a
-# part in a script, it is wise to ensure that the package kit is available
-# by using the "check_dependencies" function to ensure that the software is available.
-# 
-# USAGE:
-# 
-# system_update
-# 
-# End of documentation
-
-    if hash pkcon 2>/dev/null; then
-    	pkcon refresh
-	pkcon update -y
-    else
-	echo "You seem to have now Package Kit... I will try to get it... "
-	echo "I will need to become admin to do that..."
-	sudo check_dependencies packagekit
-	    if [ $? != 0 ];
-	    then
-		echo "That install didn't work out so well."
-		echo "Defaulting to the onld Up2Date Function"
-		up2date
-	    fi
-	echo "OK trying again!"
-    	pkcon refresh
-	pkcon update -y
-    fi
-}
-
-
-
-
-
-
-
-
 backup_running_vm ()
 {
 # backup_running_vm:
@@ -2524,322 +3545,6 @@ backup_running_vm ()
 }
 
 
-rtd_ppa_checker ()
-{
-# rtd_ppa_checker: 
-# Function to check status of Ubuntu and derivatives' PPA aarchives.
-# This function will take one optional argument to toggle the "delete" option. If the delet option 
-# is requested rtd_ppa_checker will delete any PPA's that are not used (no software is installed from it)
-# 
-# PPA stands for Personal Package Archive. The PPA allows application developers and 
-# Linux users to create their own repositories to distribute software. With PPA, you can 
-# easily get newer software version or software that are not available via the official Ubuntu 
-# repositories.
-#
-# USAGE: 
-# 
-# rtd_ppa_checker [] [--delete]
-# 
-# End of documentation
-	for f in /etc/apt/sources.list.d/*.list; do
-	grep -Po "(?<=^deb\s).*?(?=#|$)" "$f" | while read -r ENTRY ; do
-	echo "ENTRY: $ENTRY"
-	HOST=$(cut -d/ -f3 <<< "$ENTRY")
-
-        if [ "ppa.launchpad.net" = "$HOST" ]; then
-		USER=$(cut -d/ -f4 <<< "$ENTRY")
-		PPA=$(cut -d/ -f5 <<< "$ENTRY")
-		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*"$PPA"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
-		echo "PPA: ppa:$USER/$PPA"
-		echo "FILENAME: $f"
-		echo "$packageCount package(s) installed"
-		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
-			sudo rm "$f" && echo "$f deleted"
-		fi
-		echo
-        else
-		USER=$(cut -d/ -f3 <<< "$ENTRY")
-		PPA=$(cut -d/ -f4 <<< "$ENTRY")
-		packageCount=$(awk '$1=="Package:" {if (a[$2]++ == 0) {system("dpkg -l "$2)}}' /var/lib/apt/lists/*"$USER"*Packages 2>/dev/null | awk '/^ii/' | wc -l)
-		echo "REPOSITORY: $USER/$PPA"
-		echo "FILENAME: $f"
-		echo "$packageCount package(s) installed"
-		if [ "$packageCount" -eq 0 ] && [ "$1" == "--delete" ]; then
-			sudo rm "$f" && echo "$f deleted"
-		fi
-		echo
-        fi
-    done
-done
-}
-
-
-
-
-
-
-
-
-rtd_oem_find_live_release()
-{
-	# This function will return the URL for the version of Debian, Ubuntu server or Destktop requested.
-	# 3 parameters are required for this function to know what to do: distro_version/
-	# It will also try to read the available iso images and grab the latest or requested iso.
-	# Example:
-	# Function name 		: distro_version : distro_flavor : live_or_not : desktop_env
-	# rtd_oem_find_live_release 	      10              debian         live           kde
-	# rtd_oem_find_live_release 	      10              debian         live           cinnamon
-	# rtd_oem_find_live_release 	      10              debian         net            ssh-server
-	# rtd_oem_find_live_release 	      19.04.2         ubuntu         live
-	# End of documentation
-	distro_version="${1:-10}"
-	distro_flavor="${2:-debian}"
-	live_or_not="${3:-live}"
-	desktop_env="${4:-standard}"
-
-	case "$distro_flavor" in
-	Ubuntu | ubuntu )
-		case "$live_or_not" in
-		Live | live | current-live | desktop)
-			echo "http://releases.ubuntu.com/$distro_version/$(curl --silent http://releases.ubuntu.com/$distro_version/SHA256SUMS | \grep -o 'ubuntu-.*-desktop-amd64.iso')"
-		;;
-		server | netinst | net | mini )
-			# 18.04 and later need to use the alternative installer
-			# since the switch to subiquity
-			if [ ${1:0:2} -ge 18 ]; then
-				echo "http://cdimage.ubuntu.com/releases/$distro_version/release/ubuntu-$distro_version-live-server-arm64.iso"
-			else
-				rel=http://releases.ubuntu.com/$1
-				echo "$rel/$(curl --silent $rel/MD5SUMS | \grep -o 'ubuntu-.*-server-amd64.iso')"
-			fi
-		;;
-		* )
-			$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 4th parameter should be either of: Live | live | current-live | server | netinst | net | mini! Not $live_or_not" 10 60
-		;;
-		esac
-	;;
-	Debian | debian)
-		case "$live_or_not" in
-		Live | live | current-live )
-			# Debian renames the current iso images for each release. To get around this when downloading
-			# the vesion number must be ignored and the desired flavor of the iso should be grabed.
-			case "$desktop_env" in
-			kde | gnome | xfce | cinnamon | lxde | lxqt | mate | standard )
-				rel=https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/
-				echo "$rel/$(curl --silent $rel/MD5SUMS | \grep -o "debian-.*$desktop_env*.iso")"
-			;;
-			* )
-				$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 4th parameter should be wither of: kde | gnome | xfce | cinnamon | lxde | lxqt | mate | standard! Not $live_or_not " 10 60
-			;;
-			esac
-		;;
-		netinst | net | mini )
-			# Find and download mini iso...
-		;;
-		* )
-			$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 2nd parameter should be either of: Live | live | current-live | netinst | net | mini ! not $live_or_not" 10 60
-		;;
-		esac
-	;;
-	*)
-		$RTD_GUI --backtitle "$BRANDING" --title "ERROR!" --msgbox "You passed the function ${FUNCNAME[0]} the parameters $*. The 2nd parameter should be either of: Ubuntu | ubuntu Debian | debian! not $distro_flavor" 10 60
-	;;
-	esac
-}
-
-
-
-
-
-
-
-
-rtd_setup_choices_term_fallback ()
-{
-# Function to display legacy installation options. This will install software that is usefull
-# on a really old system, or a remote system only accessible via SSH. This may be a good
-# usecase if oyu happen to be in an opressed geographic locaiton where your only option is
-# to ssh to a remote server and access email and web that way. Perfomance in these cases
-# may be very poor over the internet (as for example with the great firewall of China). In
-# Such a case it would be usefull to have the good old CLI software! :)
-# End of documentation
-
-	# List Options to be available for choice in the RTD System Configurator...
-	cmd=(dialog --backtitle "RTD OEM System Builder Configuraton Menu" --title "Terminal Software Options Menu" --separate-output --checklist "We did not find a graphical interface. No matter, you can be productive in the cli environment. Please Select Software and Configuration below:" 22 85 16 )
-	options=(1 "Base RTD OEM Software" on
-		 2 "Alpine email client" on
-		 3 "Vim text editor" on
-		 4 "Finch multi protocol chat" on
-		 5 "Word Grinder word precessor" on
-		 6 "Spreadsheet Calculator" on
-		 7 "TPP Presentation Program" on
-		 8 "Midnight Commander file manager (Norton Commander)" on
-		 9 "Cmus Music Player" on
-		 10 "Byobu Terminal Window Manger" on
-		 11 "W3M web Browser" on
-		 12 "LYNX Web Browser" on
-		 13 "Mega.nz command line tools (Mega-CMD)" on
-		 14 "Rtorrent torrent download software" off
-		 15 "Install the OpenVpn client Software" on
-		 16 "Games: Freesweep mine sweep game" on
-		 17 "Games: Bastet Tetris Game" on
-		 18 "OEM Customizatons" on
-		)
-
-			choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-			clear
-			for choice in $choices
-			do
-			    case $choice in
-				1) for i in netstat nmcli htop powertop iftop monit nethogs bmon darkstat ss mtr glances nmap iostat multitail ncdu multitail ; do InstallSoftwareFromRepo $i ; done ;;
-				2)  InstallSoftwareFromRepo alpine ;;
-				3)  InstallSoftwareFromRepo vim ;;
-				4)  InstallSoftwareFromRepo finch ;;
-				5)  InstallSoftwareFromRepo wordgrinder ;;
-				6)  InstallSoftwareFromRepo sc ;;
-				7)  InstallSoftwareFromRepo tpp ;;
-				8)  InstallSoftwareFromRepo mc ;;
-				9)  InstallSoftwareFromRepo cmus ;;
-				10) InstallSoftwareFromRepo byobu ;;
-				11) InstallSoftwareFromRepo w3m ;;
-				12) InstallSoftwareFromRepo lynx ;;
-				13) dl https://mega.nz/linux/MEGAsync/xUbuntu_19.04/amd64/megacmd-*.deb	;;
-				14) InstallSoftwareFromRepo rtorrent ;;
-				15) InstallSoftwareFromRepo openvpn ;;
-				16) InstallSoftwareFromRepo freesweep ;;
-				17) InstallSoftwareFromRepo bastet ;;
-				18) recipie_OEM_config ;;
-			esac
-		done
-}
-
-
-
-
-
-cleanup_and_finish ()
-{
-# Function to remove all temporary file locations left over from building
-# the new netinstall ISO etc. and clean  up some variables...
-# go back to initial directory
-# End of documentation
-
-	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
-	# Cleanup folder structure...
-	rm -r "$TMP_DOWNLOAD_DIR"
-	rm -r "$TMP_DISC_DIR"
-	rm -r "$TMP_INITRD_DIR"
-	rm -r "$SCRIPT_DIR/custom"
-
-	if [[  "$1" != "nomessage" ]]; then
-		COMPLETION_MESSAGE="	Your ISO image is ready!
-		It is placed in the folder: $PUT_ISO_FILE_HERE_WHEN_DONE/
-
-		Next steps:
-		- Burn the ISO to a USB (ex: using MULTIBOOT from Pendrive Linux)
-		- If you are using Virtual Machines select the ISO as install media
-		- Boot from the media created: allow it to install the system
-		- login as the temporary user (temporary password: letmein)
-		- Adjust passwords for the encrypted volume and login... "
-
-		$RTD_GUI --backtitle "RTD OEM System Builder" --title "DONE" --msgbox "$COMPLETION_MESSAGE" 15 80
-	else
-		echo "Cleanup..."
-	fi
-
-	unset BIN_7Z
-	unset BIN_XORRISO
-	unset BIN_CPIO
-	unset ISOHDPFX_BIN
-	unset VOLUME_TITLE
-	unset TARGET_ISO_FILE_NAME
-	unset SOURCE_ISO_URL
-	unset SSH_PUBLIC_KEY_FILE
-	unset PRESEED_TEMPLATE
-	unset CONFIG
-	clear
-	return
-}
-
-
-
-
-generate_report_disk_space_used_by_directory ()
-{
-# Function to generate a report for folders' disk space use. 
-# This function requres one argument; what root folder to analyse the directories in. 
-# This functio will return a report contained in the variable $return that may then be used.
-# Example: 
-# generate_report_disk_space_used_by_directory /home
-# 
-# This will generate a report on the disk space per directory in the /home folder.
-#
-# End of documentation
-
-	DIRS=$( ls $1 )
-	store=/$tmp/out.ct
-	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
-		echo "Storage Utilization Report:" >>$store
-		echo "______________________________" >>$store
-		n=$(ls $1 | wc -l ) 
-		i=0
-		for f in $DIRS
-		do
-			du -cksh $1/$f 2>/dev/null | grep -v total >>$store
-			PCT=$(( 100*(++i)/n ))
-			cat <<-EOF
-			XXX
-			$PCT
-			Completed calculation for: "$f"...
-			XXX
-			EOF
-			sleep 1
-		done
-	)
-	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH 
-	result="$(cat $store )" ; rm $store
-}
-
-
-
-
-
-
-make_preseed_cfg ()
-{
-# Function to write out a debina preeseed file to a location requested by the first parameter.
-# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-# some parameters have defaults.
-# Example:
-# functoin_name          location        config          function
-# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
-# End of documentation
-
-	SAVETO=$1
-	CONFIG=$2
-	SRVFUNC=${3:-Tasks}
-	PRESEED=preseed.cfg
-	PRESEED_FILE="$SAVETO/$PRESEED"
-	TASK_FILE="$SAVETO/task.sh"
-	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
-	touch "$SAVETO/$PRESEED"
-
-	rtd_oem_preseed_cfg_Unattended_Install "$SAVETO"
-	rtd_oem_preseed_cfg_Network_Configuration "$SAVETO"
-	rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO"
-	rtd_oem_cfg_Account_Setup "$SAVETO"
-	rtd_oem_preseed_cfg_Localization "$SAVETO"
-	rtd_oem_preseed_cfg_EFI "$SAVETO"
-	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO"
-	rtd_oem_preseed_cfg_Disk_Layout "$SAVETO"
-	rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG"
-	rtd_oem_cfg_post_task_sequence_default "$SAVETO"
-	rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO"
-	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO"
-}
-
-
-
 
 
 
@@ -2891,66 +3596,6 @@ make_preseed_cfg ()
 
 
 
-
-
-
-
-
-
-
-
-
-rtd_setup_choices_preseed () {
-# Function to write out a debina preeseed file to a location requested by the first parameter.
-# Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
-# some parameters have defaults.
-# Example:
-# functoin_name          location        config          function
-# make_preseed_cfg       /path/to/file   ssh-server      Minecraft
-# End of documentation
-
-	SAVETO=$1
-	CONFIG=$2
-	SRVFUNC=$3
-	: "${SRVFUNC:-Tasks}"
-	: "${PRESEED:=preseed.cfg}"
-	PRESEED_FILE="$SAVETO/$PRESEED"
-	echo "Writing installation instructions for [$CONFIG] in $SAVETO/$PRESEED"
-	touch "$1/$PRESEED"
-
-	cmd=("$RTD_GUI" --backtitle "$BRANDING" --title "VM Auto Answer Setup Questions" --separate-output --checklist "Please preconfiguration components below. You will be prompted to manually add information for sections that you de-select:" "$HEIGHT" "$WIDTH" "$LIST_HEIGHT" )
-	options=(1 "rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options" on
-		 2 "rtd_oem_preseed_cfg_Unattended_Install" on
-		 3 "rtd_oem_preseed_cfg_Network_Configuration" on
-		 4 "rtd_oem_preseed_cfg_Prevent_Install_On_USB" on
-		 5 "rtd_oem_cfg_Account_Setup" on
-		 6 "rtd_oem_preseed_cfg_Localization" on
-		 7 "rtd_oem_preseed_cfg_EFI" on
-		 8 "rtd_oem_preseed_cfg_GRUB_Bootloader_Installation" on
-		 9 "rtd_oem_preseed_cfg_Disk_Layout" on
-		 10 "rtd_oem_preseed_cfg_Package_Selection" on
-		 11 "rtd_oem_preseed_cfg_Addon_${SRVFUNC}" on
-		)
-
-		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-		clear
-		for choice in $choices
-		do
-			case $choice in
-			1) rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "$SAVETO" ;;
-			2) rtd_oem_preseed_cfg_Unattended_Install "$SAVETO" ;;
-			3) rtd_oem_preseed_cfg_Network_Configuration "$SAVETO" ;;
-			4) rtd_oem_preseed_cfg_Prevent_Install_On_USB "$SAVETO" ;;
-			5) rtd_oem_cfg_Account_Setup "$SAVETO" ;;
-			6) rtd_oem_preseed_cfg_Localization "$SAVETO" ;;
-			7) rtd_oem_preseed_cfg_EFI "$SAVETO" ;;
-			8) rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "$SAVETO" ;;
-			9) rtd_oem_preseed_cfg_Disk_Layout "$SAVETO" ;;
-			10) rtd_oem_preseed_cfg_Package_Selection "$SAVETO" "$CONFIG" ;;
-			11) rtd_oem_preseed_cfg_Addon_"${SRVFUNC}" "$SAVETO" ;;
-			esac
-		done
-}
 
 
 
@@ -4426,7 +5071,7 @@ set_colors ()
 	darkgreen="${ecode}1;32m"
 	blue="${ecode}1;34m"
 	darkblue="${ecode}0;34m"
-	cyan="${ecode}1;36"
+	cyan="${ecode}0;36"
 	darkcyan="${ecode}0;36"
 	gray="${ecode}0;37"
 	purple="${ecode}1;35"
@@ -4521,40 +5166,56 @@ write_host ()
 {
 # write_host:
 # is a simplified and consistent way to write output to the screen.
-# This function will print a message to the standard out in: 
-# 
+# This function will print a message to the standard out in a color specified.  
+# Specified colors can be colord defined in the function "set_colors"
 # If no color option is specified this cunctio simply works like the echo command.
 # 
 # Usage:
 # 
 # write_host [option] [String]
 # 
-# where [option] can be:
+# where [option] is a supported color:
+# --yellow            Prints message in YELLOW
+# --darkyellow        Prints message in DARK YELLOW
+# --red               Prints message in RED
+# --darkred           Prints message in DARK RED
+# --endcolor          DEFAULT color as in terminal.
+# --green             Prints message in GREEN
+# --darkgreen         Prints message in DARK GREEN
+# --blue              Prints message in BLUE
+# --darkblue          Prints message in BLUE
+# --cyan              Prints message in CYAN
+# --darkcyan          Prints message in DARK CYAN
+# --gray              Prints message in GRAY
+# --purple            Prints message in PURPLE
+# --darkpurple        Prints message in  DARK PURPLE
 # 
-# --black       or  -bk Prints message in BLACK
-# --red         or  -r  Prints message in RED
-# --green       or  -g  Prints message in GREEN
-# --yellow      or  -y  Prints message in YELLOW
-# --blue        or  -b  Prints message in BLUE
-# --purple      or  -p  Prints message in PURPLE
-# --cyan        or  -c  Prints message in CYAN
-# --gray        or  -gr Prints message in GRAY
+# NOTE: this function uses the "tput" mechanisms to set colors, and gice a convenient
+# and simple uman way to access them. The target system must have "tput" aavailable. 
+# 
+# 
 # End of documentation
+	_option=$1
 
-	local echode="\033["
-	case "$1" in
-		--black  | -bk) color="${echode}0;30m";;
-		--red    |  -r) color="${echode}1;31m";;
-		--green  |  -g) color="${echode}1;32m";;
-		--yellow |  -y) color="${echode}1;33m";;
-		--blue   |  -b) color="${echode}1;34m";;
-		--purple |  -p) color="${echode}1;35m";;
-		--cyan   |  -c) color="${echode}1;36m";;
-		--gray   | -gr) color="${echode}0;37m";;
-		*) local text="$1"
+	case ${_option} in 
+		--yellow ) color="$(tput bold; tput setaf 3)" ;;
+		--darkyellow ) color="$(tput dim; tput setaf 3)" ;;
+		--red ) color="$(tput bold; tput setaf 1)" ;;
+		--darkred ) color="$(tput setaf 3)" ;;
+		--endcolor ) color="$(tput sgr0)" ;;
+		--green ) color="$"$(tput bold; tput setaf 2)"" ;;
+		--darkgreen ) color="$(tput dim; tput setaf 2)" ;;
+		--blue ) color="$(tput bold; tput setaf 4)" ;;
+		--darkblue ) color="$(tput dim; tput setaf 4)" ;;
+		--cyan ) color="$(tput bold; tput setaf 6)" ;;
+		--darkcyan ) color="$(tput dim; tput setaf 6)" ;;
+		--gray ) color="$(tput dim; tput setaf 7)" ;;
+		--purple ) color="$(tput bold; tput setaf 5)" ;;
+		--darkpurple ) color="$(tput dim; tput setaf 5)" ;;
+		*) local _text="$1" ;;
 	esac
-	[[ -z "$text" ]] && local text="$color$2${echode}0m"
-	echo "$text"
+	[[ -z "${_text}" ]] && local _text="${color} $2 $(tput sgr0)"
+	echo -e "${_text} "
 }
 
 
@@ -4570,8 +5231,8 @@ write_error ()
 # End of documentation
 
 	local text=$1
-	if [[ -n "$text" ]]; then
-		echo -e "$red$text$endcolor"
+	if [[ -n "${text}" ]]; then
+		echo -e "$(tput bold; tput setaf 1)${text}${endcolor}"
 	fi
 }
 
@@ -4588,7 +5249,7 @@ write_warning ()
 
 
 	local text=$1
-	[ -n "$text" ] && echo -e "$yellow$text$endcolor"
+	[ -n "${text}" ] && echo -e "${yellow}${text}${endcolor}"
 
 }
 
@@ -4605,7 +5266,7 @@ write_status ()
 
 
 	local text=$1
-	[ -n "$text" ] && echo -e "$green$text$endcolor"
+	[ -n "${text}" ] && echo -e "${green}${text}${endcolor}"
 
 }
 
@@ -4622,7 +5283,7 @@ write_information ()
 
 
 	local text=$1
-	[ -z "$text" ] && echo -e "$blue$text$endcolor"
+	[ -n "${text}" ] && echo -e "${blue}${text}${endcolor}"
 
 }
 
