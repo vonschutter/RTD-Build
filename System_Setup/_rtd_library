@@ -2784,9 +2784,9 @@ rtd_update_system ()
 			write_information "--- $UPGRADABLE packages that need updates; Skipping update task... " 
 		else
 			write_information "There are $UPGRADABLE packages that need updates..." 
-			deb_software_task apt-get upgrade -y
-			deb_software_task apt-get autoremove -y
-			deb_software_task apt-get clean
+			rtd_software_task apt-get upgrade -y
+			rtd_software_task apt-get autoremove -y
+			rtd_software_task apt-get clean
 		fi
 	elif hash zypper 2>/dev/null; then
 		rtd_software_task zypper up -y 2>> $LOGFILE
