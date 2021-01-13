@@ -1,98 +1,38 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::             			A D M I N   C O M M A N D  
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
+#:::::::::::::::::::::::::::::::::::::://    Make Swap Tool       //::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS
-#:: Version 	1.00
-#::
-#::	January 1 2015  - SLS
-#::		* File originally created.
+#:: Author:   	SLS  
+#:: Version 	1.02
 #::
 #::
-#::	Purpose: The purpose of the script is to create a swapfile on a linux system and ensure it is mounted 
-#:: 	 	 on each boot.
+#::	Purpose: To compress all files and folders individually found in the current folder. 
+#::		 The current folder refers to the present working directory "PWD". 
 #::		 
-#::
+#::	Usage:	Simply execute this script to accomplish this task. No parameters required.
+#:: 
+#::     
+#::     
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-#
-#
-# This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
-# This OEM and store nolonger exists as its owner has passed away.
 # This script is shared in the hopes that someone will find it useful.
-#
+# For convenience and supportability most actions (work) is stored in a common library used bu multiple scripts.
+# To use these functions in the library, simply load the library using the "source" bash built in command. All 
+# functions will then be available for use. This script demonstrates the simplicity of using these functions.
+# 
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
+# By default this script is placed in /opt/rtd/scrips/
+#
+# 1 - To see options to use this library type: "bash _rtd_library --help"
+# 2 - To see usefull documentation on each function in this library: "bash _rtd_library --devhelp"
+#
 
-
-
-
-###########################################################################
-##                                                                       ##
-##                       Set Environment                                 ##
-##                                                                       ##
-###########################################################################
-source /opt/rtd/scripts/_rtd_library
+source /opt/rtd/scrips/_rtd_library
 ensure_admin
-#clear
-SWAP_SIZE=$1
-SWAP_PATH=$2
-: "${SWAP_SIZE:=4G}"
-: "${SWAP_PATH:="/swapfile-$RANDOM"}"
-
-###########################################################################
-##                                                                       ##
-##                       EXECUTIVE                                       ##
-##                                                                       ##
-###########################################################################
-usage_mesage () {
-	echo "Usage: $0 {size}"
-	echo "Example: $0 4G"
-	echo "(Default path: /swapfile)"
-	echo "Optional path: Usage: $0 {size} {path}"
-}
-
-
-if [[ -z $SWAP_SIZE ]]; then
-	# Fail if we are not five any argument
-	echo -e $RED "Please tell me what size swap file to make!" $ENDCOLOR
-	usage_mesage
-	exit 1
-elif [[ ! "${SWAP_SIZE:0:1}" -ge "1" ]]; then
-	# Fail if the argument is not a numer
-	echo -e $RED "The size for swap file must be a number!" $ENDCOLOR
-	usage_mesage
-	exit 1
-else
-	if [[ -e $SWAP_PATH ]]; then
-		echo -e "$RED ERROR: the file $SWAP_PATH already exists! Please choose a different name."
-		exit 1
-	fi
-	echo -e $BLUE"Welcome to Swap setup script! This script will automatically setup a swap file and enable it."$ENDCOLOR
-	echo
-
-	fallocate -l "$SWAP_SIZE" "$SWAP_PATH"	&& echo "Allocated $SWAP_SIZE swap file: $SWAP_PATH" || (echo -e $RED Error creting actual swapfile using fallocate!$ENDCOLOR ; exit 1)
-	chmod 600 "$SWAP_PATH"			&& echo "Sucessfully modified permissions on $SWAP_PATH" || (echo -e $RED Error changing premissions$ENDCOLOR ; exit 1)
-	mkswap "$SWAP_PATH"			&& (echo "Sucessfully formatted $SWAP_PATH as a swap partition" ; file -s $SWAP_PATH) || (echo -e $RED Error formating $SWAP_PATH as a swapspace!$ENDCOLOR ; exit 1)
-	swapon "$SWAP_PATH" 			# Turn on the swap file...
-	if [ $? = 0 ]; then
-		echo "$SWAP_PATH   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
-		echo -e "$GREEN Done! You now have a $SWAP_SIZE swap file at $SWAP_PATH $ENDCOLOR"
-	else 
-		if df -T $SWAP_PATH |grep btrfs >/dev/null ; then
-			echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
-			This is a BUG and hopefully it will be fixed soon... $ENDCOLOR"
-			exit 1
-		else 
-			echo $RED "An unknown error occurred with starting the swap partition.." $ENDCOLOR
-			exit 1
-		fi
-	fi
-
-fi
-
+create_swapfile $*
 

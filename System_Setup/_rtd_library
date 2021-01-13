@@ -35,7 +35,8 @@ RTD_VERSION=2.0
 	check_if_password_p0wned 			: Allows user to check if an intended password is already in well known dictionaries 
 	check_menu_availability 			: Checks if it is possible to display graphical menus in a terminal
 	cleanup_and_finish 				: Cleans and clears variables and temp files used by the media creations functions
-	create_iso_image 				: Creates aan OS iso image 
+	compress_all_items_here				: Compress all folders and files in 'pwd' using 7z
+	create_iso_image 				: Creates an OS iso image 
 	create_iso_image_debian 			: Creates a Debian iso image
 	create_physical_media_from_iso			: Create physical media (thumb drive) from an ISO file
 	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
@@ -422,7 +423,23 @@ rtd_wait_for_internet_availability ()
 
 
 
+display_spinner ()
+{
+# Simple function
+#
+#
+#
+#
+	i=1
+	sp="/-\|"
+	echo -n ' '
+	while true
+	do
+		printf "\b[${sp:i++%${#sp}:1}]\b\b"
+		sleep 1
+	done
 
+}
 
 
 
@@ -2139,10 +2156,249 @@ create_physical_media_from_iso ()
 
 
 
+compress_all_items_here ()
+{
+# Function to compress the contents of the present working directory. 
+# 
+# Purpose:	To compress all files and folders individually found in the current folder. 
+#		The current folder refers to the present working directory "PWD". 
+#  
+# Usage:	Simply call this function to accomplish this task. 
+# 
+# Arguments:	No parameters required.
+# 
+# Tutorial Text:
+# find ./ -type f -iname "*.rar" -exec unrar e {} \;
+# a                   Add (dir1 to archive.7z)
+# -t7z                Use a 7z archive
+# -m0=lzma2           Use lzma2 method
+# -mx=9               Use the '9' level of compression = Ultra
+# -mfb=64             Use number of fast bytes for LZMA = 64
+# -md=32m             Use a dictionary size = 32 megabytes
+# -ms=on              Solid archive = on
+# -mhe=on             7z format only : enables or disables archive header encryption
+# -p{Password}        Add a password
+# Simple compression logic: 7za a -t7z $line.7z $line
+# To change all filename to have whitespace replaced with _: list=`ls | sed -e 's/ /\\\\ /g'`
+# Alternatively use: IFS=$(echo -en "\n\b") Here IFS is altered to not consider a whitespace as a separator.
+# To see all options type "man 7z"
+# or go to: https://www.mankier.com/1/7z#
+#
+# End of documentation
+
+	# Set colors for prompting on screen.
+	YELLOW="\033[1;33m"
+	RED="\033[0;31m"
+	ENDCOLOR="\033[0m"
+
+	# Ask for encryption phrase and store it temporarily.
+	clear
+	write_host --cyan  Hello $USER ... I am going to compress each file or folder that
+	write_information  I find in this folder. These are:
+	echo -e " \n"
+	ls -I "*.7z" --color=always
+	echo -e " \n"
+	write_information "To cancel this, just close the terminal or press [CRTL] + [C]."
+	echo -e " \n"
+	read -p "Press the [ENTER] key to continue..."
+
+	SAVEIFS=$IFS
+	IFS=$(echo -en "\n\b")
+	for line in $(ls -I "*.7z")
+	do
+		7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on -v24m $line.7z $line
+	done
+	IFS=$SAVEIFS
+	write_information "Created the following archives un-encrypted:"
+	ls *.7z
+}
 
 
 
 
+
+
+create_swapfile ()
+{
+# Function to create a swapfile and enable it automatically.
+#
+# Usage: [function_name] [options]
+# Arguments: 
+# 	[size] : size in MB or GB
+# 	[path] : path to file (Default path: /swapfile)
+#
+# NOTE:
+# The Linux Kernel divides RAM into chunks of memories and the swapping process i
+# s when the Linux Kernel uses a hard disk space (swap space) to store information from RAM 
+# and thus releases some RAM space. That is why when you install a Linux distribution, the 
+# installation wizard usually asks you to assign some space for the system and another for the swap.
+# 
+# Using swap is a very useful way to extend the RAM because it provides the necessary additional 
+# memory when the RAM space has been exhausted and a process has to be continued. It is especially 
+# recommended when you have less than 1Gb of RAM. Although in the end, everything depends on you.
+#
+#
+# End of documentaton
+
+
+	#clear
+	SWAP_SIZE=$1
+	SWAP_PATH=$2
+	: "${SWAP_SIZE:=4G}"
+	: "${SWAP_PATH:="/swapfile-$RANDOM"}"
+
+
+	usage_mesage () {
+		echo "Usage: $0 {size}"
+		echo "Example: $0 4G"
+		echo "(Default path: /swapfile)"
+		echo "Optional path: Usage: $0 {size} {path}"
+	}
+
+
+	if [[ -z $SWAP_SIZE ]]; then
+		# Fail if we are not five any argument
+		echo -e $RED "Please tell me what size swap file to make!" $ENDCOLOR
+		usage_mesage
+		exit 1
+	elif [[ ! "${SWAP_SIZE:0:1}" -ge "1" ]]; then
+		# Fail if the argument is not a numer
+		echo -e $RED "The size for swap file must be a number!" $ENDCOLOR
+		usage_mesage
+		exit 1
+	else
+		if [[ -e $SWAP_PATH ]]; then
+			echo -e "$RED ERROR: the file $SWAP_PATH already exists! Please choose a different name."
+			exit 1
+		fi
+		echo -e $BLUE"Welcome to Swap setup script! This script will automatically setup a swap file and enable it."$ENDCOLOR
+		echo
+
+		fallocate -l "$SWAP_SIZE" "$SWAP_PATH"	&& echo "Allocated $SWAP_SIZE swap file: $SWAP_PATH" || (echo -e $RED Error creting actual swapfile using fallocate!$ENDCOLOR ; exit 1)
+		chmod 600 "$SWAP_PATH"			&& echo "Sucessfully modified permissions on $SWAP_PATH" || (echo -e $RED Error changing premissions$ENDCOLOR ; exit 1)
+		mkswap "$SWAP_PATH"			&& (echo "Sucessfully formatted $SWAP_PATH as a swap partition" ; file -s $SWAP_PATH) || (echo -e $RED Error formating $SWAP_PATH as a swapspace!$ENDCOLOR ; exit 1)
+		swapon "$SWAP_PATH" 			# Turn on the swap file...
+		if [ $? = 0 ]; then
+			echo "$SWAP_PATH   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
+			echo -e "$GREEN Done! You now have a $SWAP_SIZE swap file at $SWAP_PATH $ENDCOLOR"
+		else 
+			if df -T $SWAP_PATH |grep btrfs >/dev/null ; then
+				echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
+				This is a BUG and hopefully it will be fixed soon... $ENDCOLOR"
+				exit 1
+			else 
+				echo $RED "An unknown error occurred with starting the swap partition.." $ENDCOLOR
+				exit 1
+			fi
+		fi
+
+	fi
+}
+
+
+
+
+
+
+
+scan_for_malware ()
+{
+
+	# Set the location of the quarantined files
+	QUARANINE=./VIRUS
+	if [ ! -d "$QUARANINE" ]; then
+		mkdir "$QUARANINE"
+	fi
+
+	# set the location of the log file
+	CLAMSCANLOGFILE=~/clamscan.log
+	SCANDIR=$@
+
+	# First discover what menu system is installed. Some systems use "dialog" and
+	# other systems use whiptail for the terminal to show menus and dialogs. 
+	check_menu_availability
+
+	# If the RTD functions file is present use it, otherwise download a new copy of it and use this. 
+
+	if [[ -f /opt/rtd/scripts/_rtd_functions ]]; then 
+		source /opt/rtd/scripts/_rtd_functions
+	else 
+		if ( $RTD_GUI --title "RTD Nordvpn Starter: Get Parts" --yesno "For this tool to run correctly I need to download some software from the internet. Is this OK?" 8 78); then
+			echo "OK Thank you. Geting the required scrpt lirary file "RTD_FUNCTIONS"" 
+			sudo mkdir -p /opt/rtd/scripts
+			sudo wget -q https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions -P /opt/rtd/scripts/
+			source /opt/rtd/scripts/_rtd_functions
+		else
+			echo "You selected No, exit status was $?."
+			exit
+		fi
+	fi
+
+
+
+	echo "RTDFUNCTIONS = $RTDFUNCTIONS"
+	if [ $RTDFUNCTIONS -eq 1 ]; then
+		echo RTD functions confirmed loaded!
+	else
+		echo RTD functions NOT loaded!
+		echo Please make sure that you are connected to the internet and that sudo and wget are installed.
+		exit 1
+	fi
+
+
+
+
+
+	runifthere() {
+	if hash clamscan 2>/dev/null; then
+		#Check and see if Quarantene zone is there and scan home. 
+		if [ -d "$QUARANINE" ]; then
+		clamscan $SCANDIR -r -a -i -l $CLAMSCANLOGFILE --bytecode=yes --stdout  --phishing-sigs --bell --algorithmic-detection=yes --move="$QUARANINE" 
+		else
+		echo "$QUARANINE" not found! Is this folder writable?
+		fi
+		
+	else
+		echo "You seem to have no clamav... I will try to get it... "
+		echo "I will need to become admin to do that..."
+		sudo apt install clamav
+		if [ $? != 0 ];
+		then
+			echo "That install didn't work out so well."
+			echo "Please manually try to add the software since I couldn't do it."
+			exit
+		fi
+		echo "OK kindly try again!"
+	fi
+	}
+
+
+
+
+
+	###########################################################################
+	##                                                                       ##
+	##                            Execute                                    ##
+	##                                                                       ##
+	###########################################################################
+	#
+	# Display sumary
+	echo " "
+	echo ___________________________________________________
+	echo " "
+	echo "[   Setting    ] [           Value             ]"
+	echo " Logging to:         $CLAMSCANLOGFILE"
+	echo " Quarantine in:      $QUARANINE"
+	echo " "
+	echo ___________________________________________________
+	echo " "
+	echo " Starting scan...."
+	echo " Scanning folder: $@"
+
+	# Run the scan function
+	runifthere
+
+}
 
 
 
@@ -2784,6 +3040,7 @@ rtd_update_system ()
 			write_information "--- $UPGRADABLE packages that need updates; Skipping update task... " 
 		else
 			write_information "There are $UPGRADABLE packages that need updates..." 
+			sudo dpkg --configure -a
 			rtd_software_task apt-get upgrade -y
 			rtd_software_task apt-get autoremove -y
 			rtd_software_task apt-get clean

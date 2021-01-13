@@ -294,20 +294,6 @@ recipie_video_editing () {
 
 
 
-recipie_lamp_software (){
-			echo -e $YELLOW"--- Adding Developer Software: LAMP Stack..." $ENDCOLOR
-			for i in apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql \
-				phpmyadmin nodejs
-			do
-			     InstallSoftwareFromRepo $i
-			done
-			echo "Cofiguring apache to run Phpmyadmin"
-			echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
-			a2enmod rewrite
-			service apache2 restart
-}
-
-
 
 recipie_developer_software (){
 			echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
