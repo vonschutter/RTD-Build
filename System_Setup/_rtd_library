@@ -513,6 +513,19 @@ toggle_oem_auto_login()
 			OEM_GDM3_LOGIN_OPTION
 		fi
 	fi
+
+	if [ ! -f /etc/systemd/system/getty@tty1.service.d/override.conf ]; then
+		write_status "***********  Updating Autologin information... ************ "
+		mkdir -p /etc/systemd/system/getty@tty1.service.d
+		cat >  /etc/systemd/system/getty@tty1.service.d/override.conf <<-OEM_TTY_LOGIN_OPTION
+		"[Service]"  
+		"ExecStart="
+		"ExecStart=-/sbin/agetty --noissue --autologin $SUDO_USER %I $TERM" 
+		"Type=idle" 
+		OEM_TTY_LOGIN_OPTION
+	else
+		echo "/etc/systemd/system/getty@tty1.service.d/override.conf is already present... "
+	fi
 }
 
 

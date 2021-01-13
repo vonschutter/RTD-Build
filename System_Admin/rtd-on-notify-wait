@@ -49,45 +49,45 @@
 #
 #
 
-  if hash inotifywait 2>/dev/null; then
-        echo "I found that inotifywait is present on this system... thankyou for that! "
-    else
-        echo "You seem to have no inotifywait.. I will try to get it... "
-        apt install inotify-tools -y
-            if [ $? != 0 ];
-            then
-                echo "That install didn't work out so well."
-                echo "Please manually try to add the software since I couldn't do it."
-                exit
-            fi
-        echo "OK Done! Continuing..."
-    fi
+if hash inotifywait 2>/dev/null; then
+	echo "I found that inotifywait is present on this system... thankyou for that! "
+else
+	echo "You seem to have no inotifywait.. I will try to get it... "
+	apt install inotify-tools -y
+	if [ $? != 0 ];
+	then
+		echo "That install didn't work out so well."
+		echo "Please manually try to add the software since I couldn't do it."
+		exit
+	fi
+	echo "OK Done! Continuing..."
+fi
 
 
 EVENTS="CREATE,CLOSE_WRITE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 rsync -avt . host:/remote/dir ..."
-    exit -1;
+	echo "Usage: $0 rsync -avt . host:/remote/dir ..."
+	exit -1;
 fi
 
 inotifywait -e "$EVENTS" -m -r --format '%:e %f' . | (
-    WAITING="";
-    while true; do
-        LINE="";
-        read -t 1 LINE;
-        if test -z "$LINE"; then
-            if test ! -z "$WAITING"; then
-                    echo "CHANGE";
-                    WAITING="";
-            fi;
-        else
-            WAITING=1;
-        fi;
-    done) | (
-    while true; do
-        read TMP;
-        echo $@
-        $@
-    done
+	WAITING="";
+	while true; do
+	LINE="";
+	read -t 1 LINE;
+	if test -z "$LINE"; then
+		if test ! -z "$WAITING"; then
+			echo "CHANGE";
+			WAITING="";
+		fi;
+	else
+		WAITING=1;
+	fi;
+	done) | (
+	while true; do
+	read TMP;
+	echo $@
+	$@
+	done
 )
