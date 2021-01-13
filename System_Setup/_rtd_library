@@ -2185,20 +2185,17 @@ compress_all_items_here ()
 
 	# Ask for encryption phrase and store it temporarily.
 	clear
-	write_host --cyan  "Hello $USER ... I am going to compress each file or folder that"
-	write_information  "I find in this folder. These are:"
-	echo -e " \n"
+	write_host --cyan  "Hello $USER ... I am going to compress each file or folder that \n I find in this folder. These are:"
 	ls -I "*.7z" --color=always
 	echo -e " \n"
 	write_information "To cancel this, just close the terminal or press [CRTL] + [C]."
-	echo -e " \n"
 	read -p "Press the [ENTER] key to continue..."
 
 	SAVEIFS=$IFS
 	IFS=$(echo -en "\n\b")
 	for line in $(ls -I "*.7z")
 	do
-		7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on -v24m $line.7z $line
+		7z a -t7z -m0=lzma2 -mx=9 -myx=9 -mfb=64 -md=64m -ms=on -mhe=on $line.7z $line
 	done
 	IFS=$SAVEIFS
 	write_information "Created the following archives un-encrypted:"
