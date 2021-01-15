@@ -260,10 +260,15 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 
 change_disk_pass ()
 {
-# Function to change the passphrase fo an encrypted storage device.
+# Description: Function to change the passphrase fo an encrypted storage device.
 # It will offer to change the first encrypted volume found by blockid.
 # It is unclear how this will work if there are multiple encrypted volumes found.
 # The function does not expect an argument. It will prompt for a password. 
+# 
+# Globals: List of global variables used and modified.
+# Arguments: None
+# Outputs: Interactive
+# Returns: default exit status of the last command run.
 # Usage: 
 # change_disk_pass
 #
@@ -271,10 +276,9 @@ change_disk_pass ()
 # End of Documentation
 
 	clear
-	echo -e "$RED""Changing the disk encryption password for your hard drive:""$ENDCOLOR"
+	write_host --red "Changing the disk encryption password for your hard drive:"
 	cryptsetup luksChangeKey "$(blkid | grep crypto_LUKS|  cut -d : -f 1)"
 	read -p "Press  [ ENTER ] to continue:"
-
 }
 
 
@@ -288,9 +292,19 @@ change_disk_pass ()
 
 check_menu_availability ()
 {
-# First discover what menu system is installed. Some systems use "dialog" and
+# Description: First discover what menu system is installed. Some systems use "dialog" and
 # other systems use whiptail for the terminal to show menus and dialogs.
 # If nothing is found, then make sure it is available before continuing.
+# 
+# Globals: 
+# RTD_GUI respected as default value. If unset it will be set to "dialog" or "whiptail"
+# depending on which is present. IF both are present, the dialog is prefferred. 
+# 
+# Arguments: Arguments taken.
+# Outputs: Output to STDOUT or STDERR.
+# Returns: Default exit status of the last command run.
+# Usage: check_menu_availability
+# 
 # End of documentation
 	if hash dialog 2>/dev/null ; then
 		: "${RTD_GUI:=dialog --clear}"
@@ -659,9 +673,13 @@ rtd_oem_reseal () {
 	if cat /etc/os-release |grep ubuntu ; then
 		InstallSoftwareFromRepo oem-config-gtk
 		oem-config-prepare
+		InstallSoftwareFromRepo spice-vdagent
+		shutdown -h now
 	elif cat /etc/os-release |grep kubuntu ; then
 		InstallSoftwareFromRepo oem-config-kde
 		oem-config-prepare
+		InstallSoftwareFromRepo spice-vdagent
+		shutdown -h now
 	elif cat /etc/os-release |grep suse ; then
 		echo "I dont know of any OEM configuration for SuSE"
 	elif cat /etc/os-release |grep fedora ; then
@@ -1494,106 +1512,6 @@ rtd_oem_setup_brand_splash_screen()
 		rm $image_file_to_brand
 		mv edit-out.png $image_file_to_brand || echo -e $RED "Image [ $image_file_to_brand ] NOT branded!  " $ENDCOLOR
 	fi
-}
-
-
-
-
-
-
-
-
-prepare_environment_for_iso_creation ()
-{
-# Function to check that all dependencies are available for manipulating the
-# net install ISO from Ubuntu. Subsequently, the temporary file locations
-# are setup and templates are downloaded.
-# 
-# Several key software components are required to create ISO files (virtual DVD/CD/BlueRay)
-# as well as a few others needed to download files from the internet, etc.
-#
-# DEPENDENCIES: dos2unix, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, xorriso.
-#
-# This function will find full paths for the binaries needed since if they are recently
-# added, they may not be found in the current $PATH. 
-#
-#	Software PATH insurance:
-#	: "${BIN_7Z:=$(type -P 7z)}"
-#	: "${BIN_XORRISO:=$(type -P xorriso)}"
-#	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
-#	: "${BIN_QEMU_IMG:=$(type -P qemu-img)}"
-#	: "${BIN_KVM:=$(type -P kvm)}"
-#	: "${BIN_QEMU_SYSTEM_X86_64:=$(type -P qemu-system-x86_64 )}"
-#	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
-#	: "${PUT_QCOW_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-HDs"}"
-#	: "${VOLUME_TITLE:="RTD Auto Installer"}"
-#	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
-#	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
-# 
-# The main tool to create ISO files system is "xorriso". 
-# [xorriso] copies file objects from POSIX compliant filesystems into Rock Ridge 
-# enhanced ISO 9660 filesystems and allows session-wise manipulation of such filesystems. 
-# It can load the management information of existing ISO images and it writes the session results 
-# to optical media or to filesystem objects. 
-#
-# At this time this function expects no arguments.
-#
-# End of Documentation
-
-
-	#Include the path to where the isofile will be put...
-	: "${TARGET_ISO="$PUT_ISO_FILE_HERE_WHEN_DONE/$TARGET_ISO_FILE_NAME"}"
-	# Ensure that all needed software, outside of the most rudimantary,
-	# is available to us... If not, the script should exit.
-	: "${_DEPENDENCIES="dos2unix cpio gzip genisoimage whois pwgen wget fakeroot xorriso"}"
-	#set -e
-	for i in $_DEPENDENCIES
-	do
-		check_dependencies $i
-	done
-
-	: "${BIN_7Z:=$(type -P 7z)}"
-	: "${BIN_XORRISO:=$(type -P xorriso)}"
-	: "${BIN_CPIO:=$(type -P gnucpio || type -P cpio)}"
-	: "${BIN_QEMU_IMG:=$(type -P qemu-img)}"
-	: "${BIN_KVM:=$(type -P kvm)}"
-	: "${BIN_QEMU_SYSTEM_X86_64:=$(type -P qemu-system-x86_64 )}"
-	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
-	: "${PUT_QCOW_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-HDs"}"
-	: "${VOLUME_TITLE:="RTD Auto Installer"}"
-	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
-	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
-	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
-		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
-	else
-		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
-		check_dependencies isolinux 
-		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
-		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
-		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
-	fi
-	# Find the location of the public key on this machine...
-	# This should be updated to create a key if not there...
-	if [ ! -f "$SSH_PUBLIC_KEY_FILE" ];
-	then
-		echo "Error: public SSH key $SSH_PUBLIC_KEY_FILE not found!"
-		echo "You will need to setup automatic login using ssh manually each time you build a server with this media."
-		read -p "Press [Enter] to continue..."
-	fi
-
-	# Setup the required folder structure...
-	CURRENT_DIR="$(pwd)"
-	SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-	TMP_DOWNLOAD_DIR=$(mktemp -d )
-	TMP_DISC_DIR=$(mktemp -d )
-	TMP_INITRD_DIR=$(mktemp -d )
-
-	for i in $PUT_QCOW_FILE_HERE_WHEN_DONE\
-		$PUT_ISO_FILE_HERE_WHEN_DONE\
-		$PERMANENT_DOWNLOAD_DIR
-	do
-		mkdir -p "$i" && chown "$SUDO_USER":"$SUDO_USER" "$i"
-	done
 }
 
 
