@@ -157,11 +157,13 @@ recipie_baseapps () {
 					check_dependencies gnome-software-plugin-snap
 				;;
 			esac
-
-
-
 }
 
+
+
+recipie_remove_non_western_latin_fonts () {
+	rtd_oem_remove_non_western_latin_fonts
+}
 
 
 recipie_brave () {
@@ -536,7 +538,7 @@ recipie_media_streamers (){
 
 
 recipie_audio_tools (){
-			check_dependencies snapd
+			check_dependencies snapddebug_list_loaded_software_functions
 			snap install picard  2>>$_ERRLOGFILE
 }
 
