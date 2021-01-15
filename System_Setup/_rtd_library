@@ -283,8 +283,8 @@ change_disk_pass ()
 # It is unclear how this will work if there are multiple encrypted volumes found.
 # The function does not expect an argument. It will prompt for a password. 
 # 
-# Globals: List of global variables used and modified.
-# Arguments: None
+# Globals: 
+# Arguments: None accepted
 # Outputs: Interactive
 # Returns: default exit status of the last command run.
 # Usage: 
@@ -318,8 +318,8 @@ check_menu_availability ()
 # RTD_GUI respected as default value. If unset it will be set to "dialog" or "whiptail"
 # depending on which is present. IF both are present, the dialog is prefferred. 
 # 
-# Arguments: Arguments taken.
-# Outputs: Output to STDOUT or STDERR.
+# Arguments: None accepted
+# Outputs: Interactive
 # Returns: Default exit status of the last command run.
 # Usage: check_menu_availability
 # 
@@ -349,12 +349,18 @@ check_menu_availability ()
 
 err_no_menu_system_found ()
 {
-# Function to handle the error condition if a manu system is not found on the system.
+# Description: Function to handle the error condition if a manu system is not found on the system.
 # On occasion it may be neede to display dialog boxes and selection menus even in a terminal.
 # for these cases; dialog, whiptail (newt), or zenity may be needed. 
 # This function will attempt to install the desired menu system and if it cannot or the user
 # opts out it will error and exit the script. 
 #
+# Globals: RTD_GUI
+# Arguments: None
+# Outputs: Interactive
+# Returns: default exit status of the last command run.
+# Usage: 
+# err_no_menu_system_found
 # End of documentation
 
 	echo -e $RED" ______________________________________________________________________ \n There is eiter no way to display menus on this system or you have told me \n to install the default  menu system! \n This is required to display the administrative menus... \n \n     ¯\_( ͡👁️ ͜ʖ ͡👁️)_/¯ \n ______________________________________________________________________ \n"
@@ -388,13 +394,18 @@ err_no_menu_system_found ()
 
 enable_firewall ()
 {
-# enable_firewall
+# Description:
 # Function to enable system firewall and add a given rule. This simple function
 # enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to
 # pass. This function expects no arguments. However nothing will be done if
 # no ufw firewall is present on the system. The cunction will not attempt to add 
 # the ufw since this may conflict with any firewall present. To use this funciton 
 # to enable ufw, first any other firewall software must be disabled and ufw added.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 	if hash ufw 2>/dev/null; then
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
@@ -412,12 +423,17 @@ enable_firewall ()
 
 rtd_oem_reset_default_environment_config ()
 {
-# Function to reset temporary configurations to their original setings from the
+# Description: Function to reset temporary configurations to their original setings from the
 # distributor. To configure and/or automatically install Linux systems RTD OEM
 # load process must make some changes to the system in question that are not
 # good security practice or that may be disruptive during normal operations.
 # These setings are not limited to bu include "auto login", "auto sudo" and
 # "auto running scripts"...
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	# Disable the automatically trying to install OEM software
@@ -433,11 +449,16 @@ rtd_oem_reset_default_environment_config ()
 
 rtd_wait_for_internet_availability ()
 {
-# Function that, when called, will wait for an active internet connection
+# Description: Function that, when called, will wait for an active internet connection
 # to be available before before continuing. Most softwrare install activities
 # need an active internet connection to be able to install and update software.
 # Naturally, some in house loads use local mirrors, but if you can see the
 # internet, you would have access to your own ropositories as well...
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 
@@ -457,11 +478,16 @@ rtd_wait_for_internet_availability ()
 
 display_spinner ()
 {
-# Simple function
+# Description: Simple function
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 #
 #
 #
-#
+# End of documentation
 	i=1
 	sp="/-\|"
 	echo -n ' '
@@ -480,11 +506,15 @@ display_spinner ()
 
 toggle_oem_auto_login()
 {
-# Function to toggle auto login for admin purposes. 
+# Description: Function to toggle auto login for admin purposes. 
 # Call the functoin onece to set auto login and call it again to 
 # unset auto login. 
 #
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 #
 # toggle_oem_auto_login
 # End of documentation
@@ -567,10 +597,16 @@ toggle_oem_auto_login()
 
 set_oem_elevated_priviledge_gui ()
 {
-# Some Debian and other Linux distribution do not allow gui apps to 
+# Description: Some Debian and other Linux distribution do not allow gui apps to 
 # be run when invoked by "sudo" or in a root (system elevated authority) 
 # environment. To mitigate this some stemp may need to taken. 
 # Will work on Slackware as well as Debian to give root permission to open X programs.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # End of documentation
 
 	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
@@ -587,10 +623,15 @@ set_oem_elevated_priviledge_gui ()
 
 set_enable_oem_elevated_priveledge()
 {
-# Set no password elevated priviledges.
+# Description: Set no password elevated priviledges.
 # This will allow apps to be run when invoked by "sudo" without being prompted 
 # for a password. This emulates the "UAC" from Microsoft. Please remember to 
 # turn this off using the function "rtd_oem_reset_default_environment_config"
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 	# Add instruction to a sudoers include file:
 	# This should be removed when OEM setup is complete as it would represent a back door... 
@@ -607,8 +648,14 @@ set_enable_oem_elevated_priveledge()
 
 make_system_recovery_partition ()
 {
-# make_system_recovery_partition
+# Description: 
 # Function to enable system OEM Recovery 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # End of documentation
 
 	devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ')"
@@ -685,8 +732,14 @@ make_system_recovery_partition ()
 
 
 rtd_oem_reseal () {
-# rtd_oem_reseal
+# Description: 
 # Function to reseal a newly installed system for delivery to end user.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # End of documentation
 	if cat /etc/os-release |grep ubuntu ; then
 		InstallSoftwareFromRepo oem-config-gtk
@@ -713,6 +766,13 @@ rtd_oem_reseal () {
 
 
 check_if_password_p0wned () {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 	pass_str=$($RTD_GUI --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
 	result=$(
 		sha1=$(echo -n $pass_str | tr -d '\n' | sha1sum); echo "Hash prefix: ${sha1:0:5}"; echo "Hash suffix: ${sha1:5:35}";
@@ -732,16 +792,21 @@ check_if_password_p0wned () {
 
 rtd_oem_find_live_release()
 {
-	# This function will return the URL for the version of Debian, Ubuntu server or Destktop requested.
-	# 3 parameters are required for this function to know what to do: distro_version/
-	# It will also try to read the available iso images and grab the latest or requested iso.
-	# Example:
-	# Function name 		: distro_version : distro_flavor : live_or_not : desktop_env
-	# rtd_oem_find_live_release 	      10              debian         live           kde
-	# rtd_oem_find_live_release 	      10              debian         live           cinnamon
-	# rtd_oem_find_live_release 	      10              debian         net            ssh-server
-	# rtd_oem_find_live_release 	      19.04.2         ubuntu         live
-	# End of documentation
+# Description: This function will return the URL for the version of Debian, Ubuntu server or Destktop requested.
+# 3 parameters are required for this function to know what to do: distro_version/
+# It will also try to read the available iso images and grab the latest or requested iso.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# Example:
+# Function name 		: distro_version : distro_flavor : live_or_not : desktop_env
+# rtd_oem_find_live_release 	      10              debian         live           kde
+# rtd_oem_find_live_release 	      10              debian         live           cinnamon
+# rtd_oem_find_live_release 	      10              debian         net            ssh-server
+# rtd_oem_find_live_release 	      19.04.2         ubuntu         live
+# End of documentation
 	distro_version="${1:-10}"
 	distro_flavor="${2:-debian}"
 	live_or_not="${3:-live}"
@@ -804,9 +869,14 @@ rtd_oem_find_live_release()
 
 cleanup_and_finish ()
 {
-# Function to remove all temporary file locations left over from building
+# Description: Function to remove all temporary file locations left over from building
 # the new netinstall ISO etc. and clean  up some variables...
 # go back to initial directory
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
@@ -851,9 +921,14 @@ cleanup_and_finish ()
 
 generate_report_disk_space_used_by_directory ()
 {
-# Function to generate a report for folders' disk space use. 
+# Description: Function to generate a report for folders' disk space use. 
 # This function requres one argument; what root folder to analyse the directories in. 
 # This functio will return a report contained in the variable $return that may then be used.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Example: 
 # generate_report_disk_space_used_by_directory /home
 # 
@@ -892,9 +967,14 @@ generate_report_disk_space_used_by_directory ()
 
 make_preseed_cfg ()
 {
-# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Description: Function to write out a debina preeseed file to a location requested by the first parameter.
 # Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
 # some parameters have defaults.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Example:
 # functoin_name          location        config          function
 # make_preseed_cfg       /path/to/file   ssh-server      Minecraft
@@ -934,7 +1014,7 @@ make_preseed_cfg ()
 
 set_gnome_ui_common_tweaks_for_user ()
 {
-# set_gnome_ui_common_tweaks_for_user:
+# Description: 
 # Configure Gnome for OEM look and feel. This is completely as desired. 
 # This function takes no arguments. Simply call it to make the changes.
 # Howerver, this function must be called as the user it should apply to.
@@ -945,6 +1025,11 @@ set_gnome_ui_common_tweaks_for_user ()
 # could be echoed out ot a temporary file and executed as follows
 # sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus temporary_script.sh > /dev/null 2>&1
 # or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh". 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 #
 # USAGE:
 # 
@@ -1019,12 +1104,17 @@ set_gnome_ui_common_tweaks_for_user ()
 
 set_gnome_ui_mac_tweaks_for_user ()
 {
-# Function to set UI look to resemble MAC for users accustomed to that.
+# Description: Function to set UI look to resemble MAC for users accustomed to that.
 # 
 # The function expects no arguments. 
 # Usage: 
 # set_gnome_ui_mac_tweaks_for_user
-#    
+#
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 	set_gnome_ui_common_tweaks_for_user
 	write_status "Setting MAC like tweaks..."
@@ -1046,8 +1136,13 @@ set_gnome_ui_mac_tweaks_for_user ()
 
 set_gnome_ui_win10_tweaks_for_user ()
 {
-# Function to set UI look to resemble MAC for users accustomed to that.
-# 
+# Description: Function to set UI look to resemble MAC for users accustomed to that.
+#
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # The function expects no arguments. 
 # Usage: 
 # set_gnome_ui_win10_tweaks_for_user
@@ -1076,11 +1171,16 @@ set_gnome_ui_win10_tweaks_for_user ()
 
 
 run_command_in_gnome_user_session () {
-# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
+# Description: Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
 # This functon expects any number of parameters that would make up the command or commands
 # to be run in the users session. For example:
 # 	run_command_in_gnome_user_session script_name.sh parameter one two etc
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 #    
 # End of documentation
 	echo -------------------------- Begin as user: $SUDO_USER ---------------------
@@ -1096,9 +1196,14 @@ run_command_in_gnome_user_session () {
 
 ensure_admin ()
 {
-# Function to elevate priviledges of script execution and to ensure administrative privileges 
+# Description: Function to elevate priviledges of script execution and to ensure administrative privileges 
 # such that system wide settings or configuration may be done. 
 # 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # The function expects no arguments, but will prompt for system password if required. 
 # Usage: 
 # ensure_admin
@@ -1122,10 +1227,14 @@ ensure_admin ()
 
 rtd_oem_check_inet_access ()
 {
-# Function to verrify internet availabiltiy. 
+# Description: Function to verrify internet availabiltiy. 
 # The funciton will pause for 10 seconds by default, and will accept 
 # an integer to indicate a non-decault time to pause. 
-# Usage:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # rtd_oem_check_inet_access [ integer ]
 #     
 # Example:
@@ -1154,11 +1263,16 @@ rtd_oem_check_inet_access ()
 
 rtd_oem_kde_set_wallpaper ()
 {
-# rtd_oem_kde_set_wallpaper
+# Description: 
 # Function to set KDE Plasma wallpaper from a script. this function expects one variable 
 # indication what file to set as background. You must provide the full path to the file. 
 # rtd_oem_kde_set_wallpaper /opt/oem/wallpaper.png Supported fule types are: 
 # webm, mp4, png, jpeg, gif, webp. 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	echo "Setting wallpaper $1" 
@@ -1201,11 +1315,15 @@ rtd_oem_kde_set_wallpaper ()
 
 rtd_oem_setup_brand_splash_screen()
 {
-# Function to brand the installer splash screen for the customized installer
+# Description: Function to brand the installer splash screen for the customized installer
 # downloaded from a ginve vendor. This function expects a few simple peices of information:
 # parameter 1: full path to image file to be branded.
 # parameter 2: quoted text to be incerted.
 #   
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
 # Usage: 
 # rtd_oem_setup_brand_splash_screen [string] [string]
 # 
@@ -1250,13 +1368,18 @@ rtd_oem_setup_brand_splash_screen()
 
 prepare_environment_for_iso_creation ()
 {
-# Function to check that all dependencies are available for manipulating the
+# Description: Function to check that all dependencies are available for manipulating the
 # net install ISO from Ubuntu. Subsequently, the temporary file locations
 # are setup and templates are downloaded.
 # 
 # Several key software components are required to create ISO files (virtual DVD/CD/BlueRay)
 # as well as a few others needed to download files from the internet, etc.
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # DEPENDENCIES: dos2unix, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, xorriso.
 #
 # This function will find full paths for the binaries needed since if they are recently
@@ -1350,11 +1473,16 @@ prepare_environment_for_iso_creation ()
 
 rtd_oem_ubuntu_auto_install_iso_builder()
 {
-# Function to generate an edited ISO file from a folder.
+# Description: Function to generate an edited ISO file from a folder.
 # this function expects a minimum of one parameter: ssh-server, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, lubuntu-desktop etc.
 # By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
 # Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
 # 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # :: function name				:: target		:: iso version to download
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	live	⏭ creates auoinstall iso using the Ubuntu live dvd
@@ -1489,12 +1617,16 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 
 rtd_oem_setup_brand_splash_screen()
 {
-# Function to brand the installer splash screen for the customized installer
+# Description: Function to brand the installer splash screen for the customized installer
 # downloaded from a ginve vendor. This function expects a few simple peices of information:
 # parameter 1: full path to image file to be branded.
 # parameter 2: quoted text to be incerted.
 #   
-# Usage: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 # rtd_oem_setup_brand_splash_screen [string] [string]
 # 
 # [string]: /path/to/imagefile.png, "text to brand image with"
@@ -1543,11 +1675,17 @@ rtd_oem_setup_brand_splash_screen()
 
 rtd_oem_ubuntu_auto_install_iso_builder()
 {
-# Function to generate an edited ISO file from a folder.
+# Description: Function to generate an edited ISO file from a folder.
 # this function expects a minimum of one parameter: ssh-server, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, lubuntu-desktop etc.
 # By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
 # Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
 # 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # :: function name				:: target		:: iso version to download
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	live	⏭ creates auoinstall iso using the Ubuntu live dvd
@@ -1684,12 +1822,17 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 
 download_and_manipulate_iso_debian ()
 {
+# Description: 
 # download_and_manipulate_iso_debian "debian" "openssh-server" "MinecraftTasks"
 # This is a simple command sequence to read the preference of distribution to install
 # and what release to get... then download the network install file from debian
 # and manipulate the iso file to complete the edited instruction in the preseed.cfg...
 #
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # download_and_manipulate_iso_debian [ISO Name] [Environment] [Addon Task] 
 #
@@ -1804,10 +1947,15 @@ SSH_KEY_KEYGEN
 
 create_iso_image_debian ()
 {
-# Function to generate the new ISO file from the extracted and
+# Description: Function to generate the new ISO file from the extracted and
 # altered original ISO.
 # Delete old iso file if there...
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of Documentation
 
 	# Check for other input and create them if not defined...
@@ -1858,10 +2006,15 @@ create_iso_image_debian ()
 
 create_iso_image_debian ()
 {
-# Function to generate the new ISO file from the extracted and
+# Description: Function to generate the new ISO file from the extracted and
 # altered original ISO.
 # Delete old iso file if there...
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of Documentation
 
 	# Check for other input and create them if not defined...
@@ -1915,11 +2068,16 @@ create_iso_image_debian ()
 
 create_iso_image ()
 {
-# Function to generate a bootable ISO file from source folder or an extracted and
+# Description: Function to generate a bootable ISO file from source folder or an extracted and
 # altered original ISO. The function takes 3 arguments: target file name, folder to use as source
 # and volume title. The first argument is mandatory since it makes not sense unless it is known 
 # what source to use for makeing the ISO file. 
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
 #
 # This function will over write the old iso file if there...
@@ -1969,7 +2127,7 @@ create_iso_image ()
 
 create_physical_media_from_iso ()
 {
-# create_physical_media_from_iso:
+# Description: 
 # Function to automatically write ISO (virtual DVD/CD/BlueRay) to a thumb drive. No argumenst are
 # required, but a source ISO file location can may be provided when calling the function.
 # If information is required, but not provided, the end user will be interactively prompted. 
@@ -1980,7 +2138,11 @@ create_physical_media_from_iso ()
 # be displayed asking what media to write to. If no media is present, a warning error 
 # message will be displayed. 
 # 
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
 # 
@@ -2107,12 +2269,17 @@ create_physical_media_from_iso ()
 
 compress_all_items_here ()
 {
-# Function to compress the contents of the present working directory. 
+# Description: Function to compress the contents of the present working directory. 
 # 
 # Purpose:	To compress all files and folders individually found in the current folder. 
 #		The current folder refers to the present working directory "PWD". Compression method
 #		is 7z. This privides a high level of compression.
 #  
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Usage:	Simply call this function to accomplish this task. 
 # 
 # Arguments:	No parameters required.
@@ -2154,8 +2321,13 @@ compress_all_items_here ()
 
 create_swapfile ()
 {
-# Function to create a swapfile and enable it automatically.
+# Description: Function to create a swapfile and enable it automatically.
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Usage: [function_name] [options]
 # Arguments: 
 # 	[size] : size in MB or GB
@@ -2237,6 +2409,13 @@ create_swapfile ()
 
 scan_for_malware ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 
 	# Set the location of the quarantined files
 	QUARANINE=./VIRUS
@@ -2411,13 +2590,18 @@ scan_for_malware ()
 
 up2date ()
 {
-# Function to simplify updating system completely. At present this function sets the
+# Description: Function to simplify updating system completely. At present this function sets the
 # highest preference to use "pkcon", the command line interface of "Package Kit" since
 # this is the most consistent across different distrbutions. It may even work on BSD.
 # Only if "pkcon" is not available, will the function use the identified distro native
 # software manager: apt, yum, zypper etc. This is to maintain stability since a distro may
 # alias another distributions command (like SuSE does with apt) to be helpfull.
 # This is one of the first update functions written and is kept for compatibility.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	write_status "Running up2date function:" 
@@ -2446,10 +2630,15 @@ up2date ()
 
 is_software_package_installed ()
 {
-# Function to check if a piece of software is installed. This function will first check
+# Description: Function to check if a piece of software is installed. This function will first check
 # if the package manager is deb, zypper or rpm, and then take one parameter passed
 # and evauate if a software package by that name is installed. This function
 # will return a "0" or "1" return based on the package managers return code.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Call this function by:
 # is_software_package_installed "package name"
 #                 or
@@ -2478,7 +2667,7 @@ is_software_package_installed ()
 
 is_software_package_available ()
 {
-# Function to chek if a package is available in whetever repository, and
+# Description: Function to chek if a package is available in whetever repository, and
 # if there return a "0" and if not return a "1" or a "3" if there is no recognizable
 # package manager found. the function expects the name of the package
 # to be a parameter passed to this fuction. Call this function by:
@@ -2510,7 +2699,7 @@ is_software_package_available ()
 
 InstallSoftwareFromRepo ()
 {
-# Function to simplify the installation of software by including all display and
+# Description: Function to simplify the installation of software by including all display and
 # installation logic for a given software provider. This should be expanded to include flatpack
 # snap for example. It should be the same consistent way no matter flavor of Linux.
 # This function uses the "$_INSTCMD" to install software. "$_INSTCMD" is defined separatley
@@ -2552,7 +2741,7 @@ InstallSoftwareFromRepo ()
 
 set_install_command ()
 {
-# set_install_command
+# Description: 
 # add global install command for portability and convenience. This function
 # allows for scripts to add software across many systems. 
 # Primarily for Linux: this function will look for the common package managers
@@ -2560,6 +2749,10 @@ set_install_command ()
 # zypper (SuSE and Open SUSE). If neither of those package manages are available many systems 
 # use package kit; and this will be registered as an sinstall option.
 # 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
 # Usage: "set_install_command"
 # 
 # Arguments: none.
@@ -2622,13 +2815,17 @@ set_install_command ()
 
 check_dependencies ()
 {
-# check_dependencies:
+# Description: 
 # Function to check that a piece of software is installed and if not install it.
 # Works for apt based systems currently. The function will take a parameter that is expected to
 # match the software command line name or rather the name of the package. This should get
 # updated to also check and install from snap and flatpack at some point.
 # 
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # check_dependencies [packagename]
 # 
@@ -2665,14 +2862,18 @@ check_dependencies ()
 
 system_update ()
 {
-# system_update:
+# Description: 
 # Function to update the Linux based system. This function is universal for all
 # distributions that have package kit available. It works in the same manner on
 # RedHat/Fedora, Debian/Ubuntu and all their derivatives. When invoked as a
 # part in a script, it is wise to ensure that the package kit is available
 # by using the "check_dependencies" function to ensure that the software is available.
 # 
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # system_update
 # 
@@ -2707,7 +2908,7 @@ system_update ()
 
 rtd_ppa_checker ()
 {
-# rtd_ppa_checker: 
+# Description:  
 # Function to check status of Ubuntu and derivatives' PPA aarchives.
 # This function will take one optional argument to toggle the "delete" option. If the delet option 
 # is requested rtd_ppa_checker will delete any PPA's that are not used (no software is installed from it)
@@ -2717,7 +2918,11 @@ rtd_ppa_checker ()
 # easily get newer software version or software that are not available via the official Ubuntu 
 # repositories.
 #
-# USAGE: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # rtd_ppa_checker [] [--delete]
 # 
@@ -2764,14 +2969,18 @@ done
 
 rtd_oem_release_upgrade ()
 {
-# Function to attempt to perform a release upgade on several Linux distributions. 
+# Description: Function to attempt to perform a release upgade on several Linux distributions. 
 # Supported distributions are: Ubuntu, Pop! OS, Debian, SUSE, and fedora.
 # This function does not require any arguments but will respect "interactive". The "interactive"
 # parameter will force the function to pause if a supported distribution is not found.
 # It will check for a supported distribution and attempt the upgrade if possible. 
 # If a supported distribution is not detected the function will do nothing.
 # 
-# Usage (in a script):
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  (in a script):
 #  rtd_oem_release_upgrade [ string ]
 #
 # [ string ] : interactive
@@ -2829,12 +3038,16 @@ rtd_oem_release_upgrade ()
 
 rtd_oem_remove_non_western_latin_fonts ()
 {
-# rtd_oem_remove_non_western_latin_fonts: a simple function to remove known
+# Description:  a simple function to remove known
 # non-western (latin) fonts from a distribution. Notably, Ubuntu provides too many fonts
 # of all kinds by default, even if the user will never need the fonts. However, the fonts
 # may cause unexpected font tool behavior and crashes, due to the large number of fonts 
 # and their features. It is there fore a good Idea to remove these fonts if they are not needed.
-# Usage: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 #	Simply call this function by stating its name:
 # 	rtd_oem_remove_non_western_latin_fonts
 # 	
@@ -2862,13 +3075,17 @@ rtd_oem_remove_non_western_latin_fonts ()
 
 rtd_oem_remove_software ()
 {
-# rtd_oem_remove_software
+# Description: 
 # The OEM remove software function will attempt to remove whatever package name given
 # as an argument using whatever package system found on the system. This is provided 
 # for portability and convenience. Currently, this functions will attempt to use
 # pkcon (prefferred as it run on many distributions), apt, yum, dnf, and zypper. 
 # Additional package manager may be added as time allows. 
-# Usage: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 # 	call this function using one argument only for reliability reasons; 
 #	as per the below example. If thre is a need to remove a large number of
 #	packages it is reccommended to use a for loop and call this function, 
@@ -2920,7 +3137,7 @@ rtd_oem_remove_software ()
 
 rtd_update_system ()
 {
-# rtd_update_system
+# Description: 
 # System update function. The purpose of this function is to update installed software from
 # distribution reopositories and the newer self contained universal software stores like
 # snap and flatpak. 
@@ -2932,6 +3149,11 @@ rtd_update_system ()
 # to perform an update and then do the update...
 # One could choose to check for a supported exact version: e.g. Ubuntu, but we would
 # like to be nice and add value for as many as we can. Specially if it is this easy! :)
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	PUBLICATION="$BRANDING Update Manager for Linux"
@@ -3015,11 +3237,16 @@ rtd_update_system ()
 
 add_software_task ()
 {
-# Display executed task and echo ON/NOK based on sucess
+# Description: Display executed task and echo ON/NOK based on sucess
 # This function is created to reduce the terminal output and create a more poliches output of
 # the tasks executed. This function has no idea shat it is doing, it will simply call the function 
 # it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the 
-# return code. 
+# return code.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 # End of documentation
 
 	PAD="------------------------------------------"
@@ -3037,9 +3264,14 @@ add_software_task ()
 
 dl ()
 {
-# Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
+# Description: Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
 # install them. It can install any package that Package Kit can manage (available on most Linux dists)
 # It expects one parameter: the complete URL to download from.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	download_url="$1"
@@ -3072,10 +3304,15 @@ dl ()
 
 SofwareManagmentAvailabilityCHK ()
 {
-# Function to check and see if the system software managment is available. In some cases
+# Description: Function to check and see if the system software managment is available. In some cases
 # the sofware managment system may be in use. Should this be the case, this function will
 # wait undill the system is free for use.
 # TODO: Add support for fedora, Centos, SuSE.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 	echo ""
 	echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
@@ -3100,10 +3337,14 @@ SofwareManagmentAvailabilityCHK ()
 
 rtd_server_setup_choices_services ()
 {
-# Function to display server installation options. This will install software that is usefull
+# Description: Function to display server installation options. This will install software that is usefull
 # on a server, or a remote system only accessible via SSH. 
 # 
-# Usage: simply call the function by its name. 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  simply call the function by its name. 
 #
 # Arguments: none
 #
@@ -3136,10 +3377,14 @@ rtd_server_setup_choices_services ()
 
 rtd_server_setup_choices_productivity ()
 {
-# Function to display terminal software installation options. This will install 
+# Description: Function to display terminal software installation options. This will install 
 # software that is usefull on a server, or a remote system only accessible via SSH. 
 # 
-# Usage: simply call the function by its name. 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  simply call the function by its name. 
 #
 # Arguments: none
 #
@@ -3203,12 +3448,17 @@ rtd_server_setup_choices_productivity ()
 
 rtd_setup_choices_term_fallback ()
 {
-# Function to display legacy installation options. This will install software that is usefull
+# Description: Function to display legacy installation options. This will install software that is usefull
 # on a really old system, or a remote system only accessible via SSH. This may be a good
 # usecase if oyu happen to be in an opressed geographic locaiton where your only option is
 # to ssh to a remote server and access email and web that way. Perfomance in these cases
 # may be very poor over the internet (as for example with the great firewall of China). In
 # Such a case it would be usefull to have the good old CLI software! :)
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 
 	# List Options to be available for choice in the RTD System Configurator...
@@ -3268,9 +3518,14 @@ rtd_setup_choices_term_fallback ()
 
 
 rtd_setup_choices_for_preseed () {
-# Function to write out a debina preeseed file to a location requested by the first parameter.
+# Description: Function to write out a debina preeseed file to a location requested by the first parameter.
 # Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
 # some parameters have defaults.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Example:
 # functoin_name          location        config          function
 # make_preseed_cfg       /path/to/file   ssh-server      Minecraft
@@ -3416,7 +3671,7 @@ rtd_setup_choices_for_preseed () {
 
 test_iso_boot_media ()
 {
-# Function to test a created ISO file by booting it in a temporary VM using QEMU.
+# Description: Function to test a created ISO file by booting it in a temporary VM using QEMU.
 # This function requires one argument or one variable (TARGET_ISO) to be set; since it needs 
 # to now what media to test. 
 #
@@ -3426,7 +3681,11 @@ test_iso_boot_media ()
 # hardware and device models for the machine, enabling it to run a variety of 
 # guest operating systems.
 #
-# USAGE: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 #
 # test_iso_boot_media /path/to/media
 # 	OR
@@ -3463,7 +3722,7 @@ test_iso_boot_media ()
 
 make_kvm_virtual_machine_now_from_debian_org ()
 {
-# Function to create a KVM virtual michine disk and define a VM. This function should be
+# Description: Function to create a KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on.
 # NOTE: QCOW2 is a storage format for virtual .
 # machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
@@ -3478,6 +3737,11 @@ make_kvm_virtual_machine_now_from_debian_org ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of Documentation
 
 	for i in qemu-utils qemu-tools qemu-kvm qemu-system-x86
@@ -3515,7 +3779,7 @@ make_kvm_virtual_machine_now_from_debian_org ()
 
 make_kvm_virtual_machine_now_from_ubuntu_com ()
 {
-# Function to create a KVM virtual michine disk and define a VM. This function should be
+# Description: Function to create a KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on.
 # NOTE: QCOW2 is a storage format for virtual .
 # machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
@@ -3529,6 +3793,11 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 # 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # Example: 
 #                                              vmtype    CPU  RAM   DISK
 # make_kvm_virtual_machine_now_from_ubuntu_com debian10  4    2048  40
@@ -3573,12 +3842,17 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 
 make_kvm_virtual_machine_now_from_microsoft ()
 {
-# make_kvm_virtual_machine_now_from_microsoft:
+# Description: 
 # Function to create a KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on. In the future 
 # scripting will be added to allow for acting on remote machines directly... 
 # At this time this functio takes no arguments but will prompt for what it needs if it is not available.
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 #
 #
 # NOTE: QCOW2 is a storage format for virtual .
@@ -3667,7 +3941,7 @@ make_kvm_virtual_machine_now_from_microsoft ()
 
 make_kvm_virtual_machine_now_from_iso ()
 {
-# Function to create a KVM virtual michine disk and define a VM. This function should be
+# Description: Function to create a KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on.
 # NOTE: QCOW2 is a storage format for virtual .
 # machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
@@ -3682,6 +3956,11 @@ make_kvm_virtual_machine_now_from_iso ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 #
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of Documentation
 
 	for i in qemu-utils qemu-kvm qemu-system-x86
@@ -3723,12 +4002,16 @@ make_kvm_virtual_machine_now_from_iso ()
 
 backup_running_vm ()
 {
-# backup_running_vm:
+# Description: 
 # Function to back up all running virtual machines on the host it is being run on.
 # This function should be called from within this script and down not require any
 # arguments passed.
 # 
-# USAGE:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # backup_running_vm
 # 
@@ -3889,12 +4172,17 @@ backup_running_vm ()
 
 rtd_oem_cfg_post_task_sequence_default ()
 {
-# Default opst install script to be inserted in to build media (ISO).
+# Description: Default opst install script to be inserted in to build media (ISO).
 # Script will take care to configure automatic login and execution of 
 # the next post configurations script **"rtd-me.sh.cmd"** a unified bootstrap
 # script that runs on any bash supported system (BE, Apple OS X, Linux, BSD) 
 # as well as Windows Shell script (Winsows NT, XP, 7, 8, 10 etc.) as well 
 # as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME). 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # End of documentation
 	cat >> $1/task.sh <<-'EOF'
 	#!/bin/bash
@@ -4167,13 +4455,17 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 generate_rtd_me_sh_cmd ()
 {
-# generate_rtd_me_sh_cmd: 
+# Description: 
 # Generates an unattended install instruction file for Windows systems. 
 # As documentation at microsoft for CMD shell scripting is limited lease teh below suggestion:
 # Reference https://www.amazon.com/Windows-Shell-Scripting-Timothy-Hill/dp/1578700477
 # for more information.
 # 
-# USAGE: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  
 # 
 # generate_rtd_me_sh_cmd /location/to/place/fiile
 # 
@@ -4462,12 +4754,16 @@ generate_rtd_me_sh_cmd ()
 
 generate_autounattend_xml ()
 {
-# generate_autounattend_xml: 
+# Description: : 
 # Generates an unattended install instruction file for Windows systems. 
 # Reference https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/automate-windows-setup
 # for more information.
 # 
-# USAGE: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # 
 # generate_autounattend_xml /location/to/place/fiile
 # 
@@ -4807,7 +5103,13 @@ generate_autounattend_xml ()
 
 rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 {
-
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 	cat $1/preseed.cfg >$1/ks.cfg 
 		#<<- EOF
 
@@ -4850,6 +5152,13 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 
 rtd_oem_preseed_cfg_Unattended_Install ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -4869,6 +5178,13 @@ rtd_oem_preseed_cfg_Unattended_Install ()
 
 rtd_oem_preseed_cfg_Network_Configuration ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -4907,6 +5223,13 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 
 rtd_oem_cfg_Account_Setup ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -4934,6 +5257,14 @@ rtd_oem_cfg_Account_Setup ()
 
 rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -4960,6 +5291,14 @@ rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 
 rtd_oem_preseed_cfg_EFI ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -4981,6 +5320,14 @@ rtd_oem_preseed_cfg_EFI ()
 
 rtd_oem_preseed_cfg_Localization ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -5029,6 +5376,14 @@ rtd_oem_preseed_cfg_Localization ()
 
 rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -5047,6 +5402,14 @@ rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 
 rtd_oem_preseed_cfg_Disk_Layout ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -5117,6 +5480,14 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 
 rtd_oem_preseed_cfg_Package_Selection ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-EOF
 
 		# --------------------------------------------------- #
@@ -5150,6 +5521,14 @@ rtd_oem_preseed_cfg_Package_Selection ()
 
 rtd_oem_preseed_cfg_Addon_MinecraftServer()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -5187,6 +5566,14 @@ rtd_oem_preseed_cfg_Addon_MinecraftServer()
 
 rtd_oem_preseed_cfg_Addon_Tasks ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
@@ -5240,6 +5627,14 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 
 generate_minecraft_server_launcher ()
 {
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
 	cat >> $1 <<-'MINECRAFT_EOF'
 	#!/bin/bash
 	#::             RTD System System Managment Script (Auto Generated)
@@ -5676,23 +6071,28 @@ generate_minecraft_server_launcher ()
 
 set_colors ()
 {
-# Set colors for prompting on screen in human readable variables. These will be set globally
+# Description: Set colors for prompting on screen in human readable variables. These will be set globally
 # and can be can be used by in echo statements to modify the color of the message.
 # Examples:  $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
 # Usage: 
 #	Simply call this function by stating its name:
 # 	set_colors
-# 	
+#  
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# 
 # "🔴  🔵 "
 # The function will not return any sucess or failure codes. It will do its best and exit.
-# End of documentation
-
+# 
 # Foreground & background colour commands
-
+# 
 # tput setab [1-7] # Set the background colour using ANSI escape
 # tput setaf [1-7] # Set the foreground colour using ANSI escape
-
-
+# 
+#  
 # Black        0;30     Dark Gray     1;30
 # Red          0;31     Light Red     1;31
 # Green        0;32     Light Green   1;32
@@ -5701,7 +6101,7 @@ set_colors ()
 # Purple       0;35     Light Purple  1;35
 # Cyan         0;36     Light Cyan    1;36
 # Light Gray   0;37     White         1;37
-
+# 
 #      Num  Colour    #define         R G B
 # 0    black     COLOR_BLACK     0,0,0
 # 1    red       COLOR_RED       1,0,0
@@ -5711,9 +6111,9 @@ set_colors ()
 # 5    magenta   COLOR_MAGENTA   1,0,1
 # 6    cyan      COLOR_CYAN      0,1,1
 # 7    white     COLOR_WHITE     1,1,1
-
+#
 # Text mode commands
-
+#
 # tput bold    # Select bold mode
 # tput dim     # Select dim (half-bright) mode
 # tput smul    # Enable underline mode
@@ -5721,9 +6121,9 @@ set_colors ()
 # tput rev     # Turn on reverse video mode
 # tput smso    # Enter standout (bold) mode
 # tput rmso    # Exit standout mode
-
+# 
 # Cursor movement commands
-
+# 
 # tput cup Y X # Move cursor to screen postion X,Y (top left is 0,0)
 # tput cuf N   # Move N characters forward (right)
 # tput cub N   # Move N characters back (left)
@@ -5733,9 +6133,9 @@ set_colors ()
 # tput rc      # Restore the cursor position
 # tput lines   # Output the number of lines of the terminal
 # tput cols    # Output the number of columns of the terminal
-
+# 
 # Clear and insert commands
-
+# 
 # tput ech N   # Erase N characters
 # tput clear   # Clear screen and move the cursor to 0,0
 # tput el 1    # Clear to beginning of line
@@ -5743,15 +6143,15 @@ set_colors ()
 # tput ed      # Clear to end of screen
 # tput ich N   # Insert N characters (moves rest of line forward!)
 # tput il N    # Insert N lines
-
+# 
 # Other commands
-
+# 
 # tput sgr0    # Reset text format to the terminal's default
 # tput bel     # Play a bell
-
+# 
 	# # Reset		
 	# Color_Off='\033[0m'       # Text Reset
-
+	#
 	# # Regular Colors
 	# Black='\033[0;30m'        # Black
 	# Red='\033[0;31m'          # Red
@@ -5761,7 +6161,7 @@ set_colors ()
 	# Purple='\033[0;35m'       # Purple
 	# Cyan='\033[0;36m'         # Cyan
 	# White='\033[0;37m'        # White
-
+	#
 	# # Bold
 	# BBlack='\033[1;30m'       # Black
 	# BRed='\033[1;31m'         # Red
@@ -5771,7 +6171,7 @@ set_colors ()
 	# BPurple='\033[1;35m'      # Purple
 	# BCyan='\033[1;36m'        # Cyan
 	# BWhite='\033[1;37m'       # White
-
+	#
 	# # Underline
 	# UBlack='\033[4;30m'       # Black
 	# URed='\033[4;31m'         # Red
@@ -5781,7 +6181,7 @@ set_colors ()
 	# UPurple='\033[4;35m'      # Purple
 	# UCyan='\033[4;36m'        # Cyan
 	# UWhite='\033[4;37m'       # White
-
+	#
 	# # Background
 	# On_Black='\033[40m'       # Black
 	# On_Red='\033[41m'         # Red
@@ -5791,7 +6191,7 @@ set_colors ()
 	# On_Purple='\033[45m'      # Purple
 	# On_Cyan='\033[46m'        # Cyan
 	# On_White='\033[47m'       # White
-
+	# 
 	# # High Intensity
 	# IBlack='\033[0;90m'       # Black
 	# IRed='\033[0;91m'         # Red
@@ -5801,7 +6201,7 @@ set_colors ()
 	# IPurple='\033[0;95m'      # Purple
 	# ICyan='\033[0;96m'        # Cyan
 	# IWhite='\033[0;97m'       # White
-
+	# 
 	# # Bold High Intensity
 	# BIBlack='\033[1;90m'      # Black
 	# BIRed='\033[1;91m'        # Red
@@ -5811,7 +6211,7 @@ set_colors ()
 	# BIPurple='\033[1;95m'     # Purple
 	# BICyan='\033[1;96m'       # Cyan
 	# BIWhite='\033[1;97m'      # White
-
+	# 
 	# # High Intensity backgrounds
 	# On_IBlack='\033[0;100m'   # Black
 	# On_IRed='\033[0;101m'     # Red
@@ -5821,6 +6221,7 @@ set_colors ()
 	# On_IPurple='\033[0;105m'  # Purple
 	# On_ICyan='\033[0;106m'    # Cyan
 	# On_IWhite='\033[0;107m'   # White
+# End of documentation
 
 
 
@@ -5883,9 +6284,15 @@ set_colors ()
 
 display_result ()
 {
-# Function to read a variable "result" and display its contents. The purpose of this function
+# Description: Function to read a variable "result" and display its contents. The purpose of this function
 # is simply to make it easy and convenient to display a mesage to an end user in a terminal 
 # in a nice way. To use this function simply call it after populating the variable result.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # Example: 
 #
 # result=$( command with output)
@@ -5902,12 +6309,16 @@ display_result ()
 
 rtd_oem_pause ()
 {
-# rtd_oem_pause: 
+# Description:  
 # A simple function to pause and wait for end user input. 
 # The function expects a non zero (0) argument to execute the pause 
 # and wait for the end user to press ENTER to continue execution.
 #  
-# Usage suggestion stop on execution error: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:  suggestion stop on execution error: 
 # EXPRESSION  || rtd_oem_pause 1
 # or
 # EXPRESSION ; rtd_oem_pause $?
@@ -5928,13 +6339,18 @@ rtd_oem_pause ()
 
 write_host ()
 {
-# write_host:
+# Description: 
 # is a simplified and consistent way to write output to the screen.
 # This function will print a message to the standard out in a color specified.  
 # Specified colors can be colord defined in the function "set_colors"
 # If no color option is specified this cunctio simply works like the echo command.
 # 
-# Usage:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # 
 # write_host [option] [String]
 # 
@@ -5986,10 +6402,15 @@ write_host ()
 
 write_error ()
 {
-# write_error:
+# Description: 
 # is a simplified and consistent way to write output to the screen.
 # write_error will print a message to the standard out in RED.
-# Usage:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+
 # write_error [String]
 #
 # End of documentation
@@ -6003,10 +6424,14 @@ write_error ()
 
 write_warning ()
 {
-# write_warning:
+# Description: 
 # is a simplified and consistent way to write output to the screen.
 # write_warning will print a message to the standard out in Yellow.
-# Usage:
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
 # write_warning [String]
 #
 # End of documentation
@@ -6020,9 +6445,13 @@ write_warning ()
 
 write_status ()
 {
-# write_status:
+# Description: 
 # is a simplified and consistent way to write output to the screen.
 # write_status will print a message to the standard out in GREEN.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
 # Usage:
 # write_status [String]
 #
@@ -6037,9 +6466,13 @@ write_status ()
 
 write_information ()
 {
-# write_information:
+# Description: 
 # is a simplified and consistent way to write output to the screen.
 # write_information will print a message to the standard out in BLUE.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
 # Usage:
 # write_information [String]
 #
@@ -6057,7 +6490,12 @@ write_information ()
 
 debug_list_loaded_internal_functions ()
 {
-# Function to list all functions loaded... for debugging purposes.
+# Description: Function to list all functions loaded... for debugging purposes.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:
 # End of documentation
 	#|grep -v "write_"*
 	i=1 
@@ -6073,7 +6511,12 @@ debug_list_loaded_internal_functions ()
 
 debug_list_loaded_software_functions ()
 {
-# Function to list all functions loaded... for debugging purposes.
+# Description: Function to list all functions loaded... for debugging purposes.
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage:
 # End of documentation	
 	i=1 
 	for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep "recipie_")
