@@ -6501,11 +6501,10 @@ debug_list_loaded_internal_functions ()
 	i=1 
 	for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep -v "recipie_" |grep -v "debug_list"  )
 	do
-		echo "$index #$i "
+		#echo "$index #$i "
+		echo "$index $i"
 		((i=i+1))
-
 	done
-
 }
 
 
@@ -6522,11 +6521,8 @@ debug_list_loaded_software_functions ()
 	for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep "recipie_")
 	do
 		echo "$index"
-		#echo "$i $index "
 		((i=i+1))
-
 	done
-
 }
 
 
@@ -6587,6 +6583,32 @@ else
 				esac
 			done
 		;;
+		--zdevhelp )
+			while true; do
+				selection=$(zenity --title "RTD Functon: $selection" --column="Script" --column="Description" --list --width=1024 --height=768 $(debug_list_loaded_internal_functions) )
+				exit_status=$?
+
+				case $exit_status in
+					1) clear && echo [Cancel] && exit ;;
+					255) clear && echo [ESC] && exit ;;
+				esac
+
+				case $selection in
+					$selection )
+						result=$(while IFS= read -r 'line'; do
+							[[ "$line" == "$selection ()" ]]		&& printline="yes"
+							[[ "$line" == "# End of documentation"* ]]	&& printline="no" 
+							[[ "$line" == *"# End of documentation"* ]]	&& printline="no" 
+							[[ "$line" == *End*of*Documentation* ]]		&& printline="no" 
+							[[ "$printline" == "yes" ]]			&& echo "$line" |grep "# " |cut -c 2-
+						done < $0 )
+						zenity --info  --title "RTD Functon: $selection" --text="$result" --height=768 --width=1024
+					;;
+					* ) exit ;;
+				esac
+			done
+		;;
+
 		* ) echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments"
 		;;
 	esac
