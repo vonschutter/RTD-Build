@@ -47,6 +47,8 @@ RTD_VERSION=2.0
 	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install + OEM addons 
 	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
 	ensure_admin					: Elevates priveledges to admin "root" for the whole script (asks for password)
+	ensure_flatpack_package_managment		: Ensure that the Flatpack software managemnt is available
+	ensure_snap_package_managment			: Ensure that the snap software managment system is installed
 	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
 	generate_autounattend_xml			: Creates an autounattend.xml for Windows setup
 	generate_minecraft_server_launcher		: Creates a mincraft server launcher, w. auomatic dependeny resolutions 
@@ -2583,6 +2585,63 @@ scan_for_malware ()
 
 
 
+
+
+
+
+
+ensure_flatpack_package_managment ()
+{
+# Description: Function to ensure that flatpack is installed and flathup enabled.
+# Globals: none
+# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet]
+# Arguments: None
+# Outputs: 
+# Returns: Standard return codes 1/0
+# Usage: Call the function with no arguments
+# NOTE: https://www.fosslinux.com/42410/snap-vs-flatpak-vs-appimage-know-the-differences-which-is-better.htm
+# Snap is a distribution independent package format developed by Canonical and first released 
+# in 2014. It was initially developed for Ubuntu but has been adopted by other Linux distributions 
+# like Arch, Linux Mint, CentOS, Gentoo, and Fedora, and also included support for the Snap framework.
+# The main aim behind this package format development was to come up with a single unified format for 
+# software packages to run in a wide range of devices. That includes IoT (IoT), embedded devices 
+# running Ubuntu Core (a minimalistic version of Ubuntu), and computer systems that ran some Ubuntu version.
+# Snap also offers an online app store – Snapcraft, where users can find and install the software packages. 
+# It creates a large pool where users can find all available a snap package. Snapcraft is itself 
+# controlled and maintained by the Canonical team.
+# End of documentation
+	check_dependencies flatpack	
+	remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+}
+
+ensure_snap_package_managment ()
+{
+# Description: Function to ensure that snap is installed.
+# Globals: none
+# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet]
+# Arguments: None
+# Outputs: 
+# Returns: Standard return codes 1/0
+# Usage: Call the function with no arguments
+# NOTE: https://www.fosslinux.com/42410/snap-vs-flatpak-vs-appimage-know-the-differences-which-is-better.htm
+# Like Snap, Flatpak is another distribution independent package format aimed to simplify overall 
+# app distribution and usage in Linux systems. Previously known as xdg-app, the framework was based 
+# on the concept of running applications in a secure virtual sandbox without requiring root privileges 
+# or posing a security threat to the system.
+# Flatpak was officially released in 2015 with a reliable backup from Red Hat, Endless Computers, and 
+# Collabora. It targeted primarily three Desktop Environments. That is FreeDesktop, KDE, and GNOME. The 
+# Linux distributions currently having this framework are arch Linux, Debian, Fedora, Mageia, Solus, and Ubuntu.
+# The Flatpak framework itself is developed in C programming and released under the LGPL license. The lead 
+# developer is Alexander Larsson – a Red Hat employee.
+# Like Snapcraft for Snap, Flatpak also has the Flathub app store where users can find and install all 
+# Flatpak packages. Initially, Flathub only allowed open-source publishing applications on the website but 
+# has recently approved the publishing of proprietary apps.
+# Additionally, unlike Snap, where we have a single repository controlled by Canonical to install and update 
+# software packages, Flatpak supports the use of multiple repos. The one significant disadvantage with this 
+# package is the lack of support for Servers.
+# End of documentation
+	check_dependencies snapd
+}
 
 
 
@@ -5504,10 +5563,10 @@ rtd_oem_preseed_cfg_Package_Selection ()
 		# relevant chice of debian role using "sed" or similar.
 		# End of documentation
 		tasksel tasksel/first multiselect $2
-		d-i pkgsel/include string openssh-server virt-what wget spice-vdagent linux-firmware-nonfree dkms bcmwl-kernel-source
+		d-i pkgsel/include string openssh-server virt-what wget spice-vdagent
 
 		# Valid choices for pkgsel/upgrade are: safe-upgrade full-upgrade none
-		d-i pkgsel/upgrade select none
+		d-i pkgsel/upgrade select safe-upgrade
 		d-i pkgsel/update-policy select unattended-upgrades
 
 		# By default, the system’s locate database will be updated after the
@@ -6602,7 +6661,7 @@ else
 							[[ "$line" == *End*of*Documentation* ]]		&& printline="no" 
 							[[ "$printline" == "yes" ]]			&& echo "$line" |grep "# " |cut -c 2-
 						done < $0 )
-						zenity --info  --title "RTD Functon: $selection" --text="$result" --height=768 --width=1024
+						zenity --info  --title "RTD Functon: $selection" --text="$result" --height=600 --width=800
 					;;
 					* ) exit ;;
 				esac

@@ -124,10 +124,12 @@
 # Add several software items that are almost alwasys used 
 # in one way or another... 
 
+# Set account on GIT Hub to fetch items from. 
+GIT_Profile=${GIT_Profile:-vonschutter}
 
 
 
-recipie_baseapps () {
+recipie_Bundle_Common_Apps () {
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
@@ -161,12 +163,12 @@ recipie_baseapps () {
 
 
 
-recipie_remove_non_western_latin_fonts () {
+recipie_Remove_non_western_latin_fonts () {
 	rtd_oem_remove_non_western_latin_fonts
 }
 
 
-recipie_brave () {
+recipie_Brave_Browser () {
 		# This function will add the vendor maintained repository and install the software
 		# using the distribution speciffic installers.
 		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
@@ -197,7 +199,7 @@ recipie_brave () {
 
 
 
-recipie_vivaldi (){
+recipie_Vivaldi_Browser (){
 		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
 		# # from the vendors website. It will work until the vendor removes the exact file... 
 		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
@@ -225,12 +227,12 @@ recipie_vivaldi (){
 }
 
 
-recipie_wine (){
+recipie_Windows_Subsystem_for_Linux (){
 			InstallSoftwareFromRepo wine
 }
 
 
-recipie_simplenote (){
+recipie_Simplenote (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A simple to use not taking app that auto syncs with the same app on any device.
@@ -240,7 +242,7 @@ recipie_simplenote (){
 
 
 
-recipie_dos (){
+recipie_DOS_VM_for_Classic_Games (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A small app that allows you to use your old DOS software. 
@@ -250,7 +252,7 @@ recipie_dos (){
 
 
 
-recipie_screenshot (){
+recipie_Bundle_Screenshot_Tools (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
@@ -261,14 +263,7 @@ recipie_screenshot (){
 
 
 
-recipie_wps_office () {
-			# Download and install WPS Office (more like Microsoft Office) OSS from China... 
-			flatpak install flathub com.wps.Office
-}
-
-
-
-recipie_oem_restricted_fonts () {
+recipie_Bundle_OEM_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
@@ -279,40 +274,67 @@ recipie_oem_restricted_fonts () {
 
 
 
-recipie_secure_communication () {
-			check_dependencies snapd
-			snap install signal-desktop 2>>$_ERRLOGFILE
-			snap install telegram-desktop 2>>$_ERRLOGFILE
+recipie_Bundle_Secure_Communication () {
+			ensure_snap_package_managment
+			snap install signal-desktop 
+			snap install telegram-desktop 
 }
 
 
 
-recipie_video_editing () {
-			check_dependencies snapd
-			snap install vidcutter 2>>$_ERRLOGFILE 
-			recipie_openshot
-
+recipie_Bundle_Video_Editing () {
+			ensure_snap_package_managment
+			snap install vidcutter 
+			snap install handbrake-jz
+			snap install matroska-tools
+			snap install kdenlive
+			snap install shotcut --classic
+			snap install obs-studio
+				snap connect obs-studio:alsa
+				snap connect obs-studio:audio-record
+				snap connect obs-studio:avahi-control
+				snap connect obs-studio:camera
+				snap connect obs-studio:jack1
+				snap connect obs-studio:kernel-module-observe
+				snap connect obs-studio:avahi-control
+				snap connect obs-studio:kernel-module-observe
+					if check_dependencies v4l2loopback-dkms ; then 
+						if check_dependencies v4l2loopback-utils ; then 
+							echo "options v4l2loopback devices=1 video_nr=13 card_label='OBS Virtual Camera'    exclusive_caps=1" | sudo tee /etc/modprobe.d/v4l2loopback.conf
+							echo "v4l2loopback" | sudo tee /etc/modules-load.d/v4l2loopback.conf
+							sudo modprobe -r v4l2loopback
+							sudo modprobe v4l2loopback devices=1 video_nr=13 card_label='OBS Virtual Camera' exclusive_caps=1
+						fi
+					fi
+				snap connect obs-studio:removable-media
+				snap connect obs-studio:raw-usb
+				snap connect obs-studio:joystick
+				sudo snap install blender --classic
+			
+			ensure_flatpack_package_managment
+			flatpak install flathub org.openshot.OpenShot --noninteractive -y 
+			flatpak install flathub io.github.jliljebl.Flowblade --noninteractive -y 
 }
 
 
 
 
-recipie_developer_software (){
-			echo -e $YELLOW"--- Adding Developer Software Apps: IDE Tools and Compilers..." $ENDCOLOR
+recipie_Developer_Software (){
+			write_status "--- Adding Developer Software Apps: IDE Tools and Compilers..." 
 			for i in build-essential git
 			do
 			     InstallSoftwareFromRepo $i
 			done
 			check_dependencies snapd
-			snap install atom --classic  2>>$_ERRLOGFILE
-			snap install gitkraken --classic 2>>$_ERRLOGFILE
-			sudo snap install code --classic 2>>$_ERRLOGFILE
+			snap install atom --classic  
+			snap install gitkraken --classic 
+			sudo snap install code --classic 
 }
 
 
 
-recipie_compression_tools (){
-			echo -e $YELLOW"--- Adding Comression Toolset (zip, 7zip rar etc.)..." $ENDCOLOR	
+recipie_Bundle_Compression_Tools (){
+			write-status "--- Adding Comression Toolset (zip, 7zip rar etc.)..."
 			for i in p7zip-full p7zip-rar rar zip 
 			do
 			     InstallSoftwareFromRepo $i
@@ -321,9 +343,9 @@ recipie_compression_tools (){
 
 
 
-recipie_games (){
+recipie_Bundle_Curated_Top_Games (){
 			# Install games from native repositories... 
-			echo -e $YELLOW"--- Adding Selection of Quality Games..." $ENDCOLOR
+			write_status "--- Adding Selection of Quality Games..." 
 						
 			# --- Install games available in SNAP repository --- 
 			check_dependencies snapd
@@ -352,11 +374,6 @@ recipie_games (){
 			do
 			     InstallSoftwareFromRepo $i
 			done
-}
-
-
-
-recipie_steam () {
 			# Install Valves Steam Client for gaming. 
 			InstallSoftwareFromRepo steam
 			if [ $? != 0 ]; then 
@@ -377,8 +394,10 @@ recipie_steam () {
 
 
 
-recipie_admin_tools (){
-			echo -e $YELLOW"--- OEM System Administrative Tools..." $ENDCOLOR
+
+
+recipie_Bundle_Admin_Tools (){
+			write_status "--- OEM System Administrative Tools..."
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
 			for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
@@ -393,7 +412,7 @@ recipie_admin_tools (){
 
 
 
-recipie_java (){
+recipie_Java_Runtime (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Java JRE..." $ENDCOLOR
 			# Add the Oracle Java repository and install the software. 
@@ -408,15 +427,15 @@ recipie_java (){
 
 
 
-recipie_bleachbit (){
+recipie_Bleachbit_System_Cleaner (){
 			#Bleachbit
-			echo -e $YELLOW"--- Bleachbit System Cleaning Tool..." $ENDCOLOR
+			write_status "--- Bleachbit System Cleaning Tool..." 
 			InstallSoftwareFromRepo bleachbit 
 }
 
 
 
-recipie_codecs (){
+recipie_Restricted_Fonts_and_Codecs (){
 			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 			# Auto accept microsoft corefonts eula
 			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
@@ -428,7 +447,7 @@ recipie_codecs (){
 
 
 
-recipie_vlc (){
+recipie_VLC_Universal_Videao_Player (){
 			#VLC Media Player
 			echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
 			InstallSoftwareFromRepo vlc
@@ -436,7 +455,7 @@ recipie_vlc (){
 
 
 
-recipie_google_chrome (){
+recipie_Google_Chrome_Browser (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
 			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -444,7 +463,7 @@ recipie_google_chrome (){
 
 
 
-recipie_teamviewer (){
+recipie_Remote_Desktop_by_Team_Viewer (){
 			#Teamviewer
 			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
 			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -452,51 +471,51 @@ recipie_teamviewer (){
 
 
 
-recipie_anydesk () {
+recipie_Remote_Desktop_by_Anydesk () {
 			check_dependencies flatpak
 			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
 }
 
 
 
-recipie_skype (){
+recipie_Skype_Messenger (){
 			#Skype for Linux
-			echo -e $YELLOW"--- Installing Skype For Linux..." $ENDCOLOR
+			write_status "--- Installing Skype For Linux..."
 			check_dependencies snapd
 			snap install skype --classic  2>>$_ERRLOGFILE
 }
 
 
 
-recipie_viber (){
+recipie_Viber_Messenger (){
 			check_dependencies snapd
 			snap install --edge viber-mtd 
 }
 
 
 
-recipie_mega.nz (){
+recipie_MEGA.nz_Encrypted_Cloud_Storage (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
-			echo -e $YELLOW"--- Installing MEGA nz file crypto sync utility..." $ENDCOLOR
+			write_status "--- Installing MEGA nz file crypto sync utility..." 
 			check_dependencies lsb-release
 
 			# Reset & clear variables in case of incomplete cleanup... 
 			FILE2GET=
 			URL=
 			
-                        if lsb_release -si | grep "Debian" ; then
-                                URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
-                        elif lsb_release -si | grep "Ubuntu" ; then
-                                URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-                        elif lsb_release -si | grep "openSUSE" ; then
-                                URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
-                        else
-                                echo -e $RED
-                                echo "I am not sure how to find the Mega sync download for $(lsb_release -sd) "
-                                echo "Please try to download it manually and instrtall it from the website:"
-                                echo "https://mega.nz/sync"
-                                echo -e $ENDCOLOR
-                        fi
+			if lsb_release -si | grep "Debian" ; then
+				URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
+			elif lsb_release -si | grep "Ubuntu" ; then
+				URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
+			elif lsb_release -si | grep "openSUSE" ; then
+				URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
+			else
+				echo -e $RED
+				echo "I am not sure how to find the Mega sync download for $(lsb_release -sd) "
+				echo "Please try to download it manually and instrtall it from the website:"
+				echo "https://mega.nz/sync"
+				echo -e $ENDCOLOR
+			fi
 
 			
 			# If a known distributio was found and URL set, use "dl" function to install app...
@@ -505,29 +524,20 @@ recipie_mega.nz (){
 
 
 
-recipie_dropbox (){
+recipie_Dropbox_Corporate_Cloud_Storage (){
 			# Install Dropbox
-			echo -e $YELLOW"--- Installing Dropbox Cloud Storage Sync..." $ENDCOLOR
+			write_status "--- Installing Dropbox Cloud Storage Sync..." 
 			InstallSoftwareFromRepo nautilus-dropbox
 }
 
 
 
-recipie_openshot (){
-			# Special case for installing Openshot video editor
-			# echo -e $YELLOW"--- Installing Openshot video editor..." $ENDCOLOR
-			# add-apt-repository -y ppa:openshot.developers/ppa 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			# apt-get update 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			# apt-get -y -qq --allow-change-held-packages --ignore-missing install openshot openshot-doc 1>>$_LOGFILE 2>>$_ERRLOGFILE
-			check_dependencies flatpack
-			flatpak install flathub org.openshot.OpenShot --noninteractive -y 
-
-}
 
 
 
-recipie_media_streamers (){
-			echo -e $YELLOW"--- Installing Music Players and Audio Software..." $ENDCOLOR
+
+recipie_Bundle_Media_Streamers:_Spotify_Wins_Google (){
+			write_status "--- Installing Music Players and Audio Software..." 
 			check_dependencies snapd
 			snap install spotify  2>>$_ERRLOGFILE
 			snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
@@ -537,36 +547,57 @@ recipie_media_streamers (){
 
 
 
-recipie_audio_tools (){
-			check_dependencies snapddebug_list_loaded_software_functions
+recipie_Bundle_Audio_Tools (){
+			write_status "--- Installing Audio Tools Bundle..."
+			ensure_snap_package_managment
 			snap install picard  2>>$_ERRLOGFILE
+
 }
 
 
 
-recipie_virtualbox (){
-			# Special case for installing VirtualBox
-			echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
-			echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
-			echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-			# Loop through each item in this list of softwar and perform an install 
-			# using the relevant packaging system. 
-			for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
-			do
-			     InstallSoftwareFromRepo $i
-			done
-			[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
-			# Ensure that the current user can use USB etc... 			
-			if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
-			    echo      $SUDO_USER already belongs to vboxusers group
+recipie_Virtualbox (){
+			# Install Virtual Box from Oracle. However avoid installing it in a VM, as tis usecase may be counterproductive.
+			# NOTE:
+			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as 
+			# home use. Not only is VirtualBox an extremely feature rich, high performance product for enterprise 
+			# customers, it is also the only professional solution that is freely available as Open Source Software 
+			# under the terms of the GNU General Public License (GPL) version 2. See "About VirtualBox" for an introduction.
+			# Presently, VirtualBox runs on Windows, Linux, Macintosh, and Solaris hosts and supports a large number 
+			# of guest operating systems including but not limited to Windows (NT 4.0, 2000, XP, Server 2003, Vista, Windows 7, 
+			# Windows 8, Windows 10), DOS/Windows 3.x, Linux (2.4, 2.6, 3.x and 4.x), Solaris and OpenSolaris, OS/2, and OpenBSD.
+			# VirtualBox is being actively developed with frequent releases and has an ever growing list of features, 
+			# supported guest operating systems and platforms it runs on. VirtualBox is a community effort backed by a 
+			# dedicated company: everyone is encouraged to contribute while Oracle ensures the product always meets professional 
+			# quality criteria. 
+			# 
+			check_dependencies virt-what
+			if virt-what ; then 
+				# Special case for installing VirtualBox
+				echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
+				echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
+				echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
+				# Loop through each item in this list of softwar and perform an install 
+				# using the relevant packaging system. 
+				for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+				do
+				InstallSoftwareFromRepo $i
+				done
+				[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
+				# Ensure that the current user can use USB etc... 			
+				if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
+				echo      $SUDO_USER already belongs to vboxusers group
+				else
+				usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				fi
 			else
-			    usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
+				write_warning "This computer is likely a Virtual Macine (VM) and using Virtualbox inside a VM is not reccommended."
 			fi
 }
 
 
 
-recipie_OEM_config (){
+recipie_RTD_OEM_Configuration_and_Optimizations (){
 			echo "Applying OEM Configuration..."
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			#::::::::::::::                                          ::::::::::::::::::::::
@@ -607,16 +638,199 @@ recipie_OEM_config (){
 
 			# Apply tweaks to the UI based on desktop active
 			if  ps -e |grep "gnome-shell"; then
-				echo "Fonud the gnome UI on this system! Adding some customizations..."
-				# Add wallpapers and set GNOME wallpaper... 
-				recipie_set_gnome_wallpaper
-				recipie_tweak_user_gnome_ui
+				write_information "Fonud the gnome UI on this system! Adding some customizations..."
+				# Configure Gnome for OEM look and feel. This is completely as desired. 
+				# These setings will then be copied to the "/etsc/skel" directory where user templates
+				# are stored. This will allow new users to get the same themes and settings as the 
+				# current user. This should likely only be done right after a PC has been installed
+				# otherwise all user configuration settings will be trasferred to any user 
+				# subsequently created.  
+				# -------------------------------------------------------------------------------------------------------
+				# Install Wallpapers and configure Gnome to see them. ...
+				RTDCP=/opt/rtd/cache
+				echo Downloading Wallpapers:
+				echo ---------------------------------------------
+				mkdir -p $RTDCP && wget -q --show-progress https://github.com/${GIT_Profile}/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
+				rm $RTDCP/master.zip
+				pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
+				echo ---------------------------------------------
+				mkdir -p /usr/local/share/gnome-background-properties
+				DIRECTORY=/opt/rtd/Wallpaper/
+				ls $DIRECTORY > lspictures.txt
+
+				# Make a header
+				echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+				<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
+				<wallpapers>" > mybackgrounds.xml
+				# Registering all pictures in $DIRECTORY
+
+					for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
+					echo "<wallpaper>
+					<name>$i</name>
+					<filename>$i</filename>
+					<options>stretched</options>
+					<pcolor>#8f4a1c</pcolor>
+					<scolor>#8f4a1c</scolor>
+					<shade_type>solid</shade_type>
+					</wallpaper>" >> mybackgrounds.xml
+					done
+
+				# creating the footer
+					echo "</wallpapers>" >> mybackgrounds.xml
+					sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
+					# cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
+					rm mybackgrounds.xml ; rm lspictures.txt
+
+				# Set the default wallpaper... 
+					#run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
+					run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Redmond.png
+				# -------------------------------------------------------------------------------------------------------
 				InstallSoftwareFromRepo gnome-tweak-tool
-				# Pecial case for Fedora: Add the gnome UI tweak tool... 
+				# Special case for Fedora: Add the gnome UI tweak tool... 
 				if cat /etc/os-release |grep "Fedora" &>> $_LOGFILE; then
 					# Enable the extra repositories in fedora to get access to the espected software.
 					InstallSoftwareFromRepo fedora-workstation-repositories 
 				fi
+
+				write_information "--- Optimizig look and feel of the desktop for productivity and aestetics..." 
+
+				# Add Some clean and basic themes and icons...			
+				for i in numix-gtk-theme numix-icon-theme \
+					gnome-shell-extension-appindicator \
+					gnome-shell-extension-suspend-button \
+					gnome-shell-extension-log-out-button  \
+					gnome-shell-extension-multi-monitors \
+					gnome-shell-extension-caffeine \
+					gnome-shell-extension-gsconnect  \
+					gnome-shell-extension-gsconnect-browsers \
+					gnome-shell-extension-dash-to-panel \
+					gnome-shell-extension-dashtodock \
+					arc-theme \
+					adwaita-icon-theme-full adwaita-qt  
+				do 
+					InstallSoftwareFromRepo $i
+				done
+
+				if  cat /etc/os-release |grep "debian" &>/dev/null ; then 
+					InstallSoftwareFromRepo gtk2-engines-murrine
+					InstallSoftwareFromRepo gtk2-engines-pixbuf
+					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
+				elif /etc/os-release |grep "fedora" &>/dev/null; then
+					InstallSoftwareFromRepo gtk-murrine-engine
+					InstallSoftwareFromRepo gtk2-engines
+				else 
+					write_warning "This is not debian or fedora based! Not sure how ot proceed..."
+				fi
+
+				# Get and install the Vimix themes. 
+				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
+				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
+				unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
+				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
+
+				cat >> gtweak.sh <<-'EOF'
+				#!/bin/bash
+				# Terminal and Tilix Dark Theme
+				gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
+				gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
+				gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
+				gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
+				gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
+				gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
+				gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
+
+
+				# Gnome Shell Theming
+				# Add proffessional and crisp looking UI...
+				gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+				gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
+
+				# Set font
+				# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
+
+				#Set Extensions for gnome
+				gsettings set org.gnome.shell disable-user-extensions false
+				gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
+
+				# Configure dash-to-panel
+				gnome-shell-extension-tool -e dash-to-panel
+				gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
+
+
+				#Better Font Smoothing
+				gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+
+				#Usability Improvements
+				gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
+				gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+				gsettings set org.gnome.desktop.calendar show-weekdate true
+				gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
+				gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+				gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
+
+				# Configure Dash to Dock
+				gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+				gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
+				gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-background-color false
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-color '#729fcf'
+				gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+				gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+				gsettings set org.gnome.shell.extensions.dash-to-dock extend-height true
+				gsettings set org.gnome.shell.extensions.dash-to-dock force-straight-corner false
+				gsettings set org.gnome.shell.extensions.dash-to-dock icon-size-fixed true
+				gsettings set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS'
+				gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+				gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
+				gsettings set org.gnome.shell.extensions.dash-to-dock unity-backlit-items false
+				gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
+				gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
+				gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
+				gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
+				#gnome-shell-extension-tool -e dash-to-dock
+
+				#This indexer is nice, but can be detrimental for laptop users battery life
+				gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
+				gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
+				gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
+
+				#Nautilus (File Manager) Usability
+				gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
+				gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
+				gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+				gsettings set org.gnome.nautilus.list-view use-tree-view true
+				gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
+
+				# Set the GNOME Shell Apps Dashboard sort app in categories based on the FreeDesktop standard.
+				gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
+				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
+				EOF
+
+				run_command_in_gnome_user_session /bin/bash gtweak.sh 
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
@@ -625,233 +839,20 @@ recipie_OEM_config (){
 				# Download and Set Wallpaper... 
 				RTDCP="${_RTDCACHE:="/opt/rtd/cache"}"
 				echo Downloading Wallpapers:
-					mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
+					mkdir -p $RTDCP && wget -q --show-progress https://github.com/${GIT_Profile}/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
 					rm $RTDCP/master.zip
 					pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
 				rtd_oem_kde_set_wallpaper "/opt/rtd/Wallpaper/Wayland.jpg" 
 
 				# Download HQ Icons
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.3.7_all.deb 
+				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
 
 				lookandfeeltool -a 'org.kde.breezedark.desktop'
 				wget -q https://github.com/vinceliuice/vimix-kde/archive/master.zip -P /opt/rtd/cache
 				unzip -q -o /opt/rtd/cache/master.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-kde-master && ./install.sh && popd
 
-				wget -q https://github.com/vonschutter/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
+				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
 				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
 			fi
-			cp /home/$SUDO_USER/.config /etc/skel/
 }
-
-
-
-run_command_in_gnome_user_session () {
-			# Function to do a reverse sudo back to teh original Gnome user who called upon sudo.
-			# This functon expects any number of parameters that would make up the command or commands
-			# to be run in the users session. For example:
-			# 	run_command_in_gnome_user_session script_name.sh --parameter --one --two --etc
-			#
-			echo -------------------------- Begin as user: $SUDO_USER ---------------------
-			echo "$@"
-			sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $@ > /dev/null 2>&1
-			echo " "
-			echo -------------------------- End as user: $SUDO_USER   ---------------------
-}
-
-recipie_tweak_user_gnome_ui (){
-			# Configure Gnome for OEM look and feel. This is completely as desired. 
-			# These setings will then be copied to the "/etsc/skel" directory where user templates
-			# are stored. This will allow new users to get the same themes and settings as the 
-			# current user. This should likely only be done right after a PC has been installed
-			# otherwise all user configuration settings will be trasferred to any user 
-			# subsequently created.  
-			# Special case for installing Google Chrome
-			echo -e $YELLOW"--- Optimizig look and feel of the desktop for productivity and aestetics..." $ENDCOLOR
-
-			# Add Some clean and basic themes and icons...			
-			for i in numix-gtk-theme numix-icon-theme \
-				gnome-shell-extension-appindicator \
-				gnome-shell-extension-suspend-button \
-				gnome-shell-extension-log-out-button  \
-				gnome-shell-extension-multi-monitors \
-				gnome-shell-extension-caffeine \
-				gnome-shell-extension-gsconnect  \
-				gnome-shell-extension-gsconnect-browsers \
-				gnome-shell-extension-dash-to-panel \
-				gnome-shell-extension-dashtodock \
-				arc-theme \
-				adwaita-icon-theme-full adwaita-qt  
-			do 
-				InstallSoftwareFromRepo $i
-			done
-
-			if  cat /etc/os-release |grep "debian" &>/dev/null ; then 
-				InstallSoftwareFromRepo gtk2-engines-murrine
-				InstallSoftwareFromRepo gtk2-engines-pixbuf
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
-			elif /etc/os-release |grep "fedora" &>/dev/null; then
-				InstallSoftwareFromRepo gtk-murrine-engine
-				InstallSoftwareFromRepo gtk2-engines
-			else 
-				echo "This is not debian or fedora based! Not sure how ot proceed..."
-			fi
-
-			# Get and install the Vimix themes. 
-			wget -q https://github.com/vonschutter/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
-			wget -q https://github.com/vonschutter/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
-			unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
-			unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
-
-			cat >> gtweak.sh <<-'EOF'
-			#!/bin/bash
-			# Terminal and Tilix Dark Theme
-			 gsettings set com.gexperts.Tilix.Settings theme-variant 'dark'
-			 gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
-			 gsettings set org.gnome.Terminal.Legacy.Profile:/ use-transparent-background true
-			 gsettings set org.gnome.Terminal.Legacy.Profile:/ background-transparency-percent 50
-			 gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
-			 gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
-			 gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
-
-
-			# Gnome Shell Theming
-			# Add proffessional and crisp looking UI...
-			gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
-			gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
-
-			# Set font
-			# gsettings set org.gnome.desktop.interface monospace-font-name 'Source Code Pro Semi-Bold 12'
-
-			#Set Extensions for gnome
-			gsettings set org.gnome.shell disable-user-extensions false
-			gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-panel@jderose9.github.com']"
-
-			# Configure dash-to-panel
-			gnome-shell-extension-tool -e dash-to-panel
-			gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
-
-
-			#Better Font Smoothing
-			gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
-
-			#Usability Improvements
-			 gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'adaptive'
-			 gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-			 gsettings set org.gnome.desktop.calendar show-weekdate true
-			 gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
-			 gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
-			 gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
-
-			# Configure Dash to Dock
-			 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
-			 gsettings set org.gnome.shell.extensions.dash-to-dock custom-background-color false
-			 gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-color '#729fcf'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-			 gsettings set org.gnome.shell.extensions.dash-to-dock extend-height true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock force-straight-corner false
-			 gsettings set org.gnome.shell.extensions.dash-to-dock icon-size-fixed true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
-			 gsettings set org.gnome.shell.extensions.dash-to-dock unity-backlit-items false
-			 gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'SEGMENTED'
-			 gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.70000000000000000
-			 gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
-			 #gnome-shell-extension-tool -e dash-to-dock
-
-			#This indexer is nice, but can be detrimental for laptop users battery life
-			 gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery false
-			 gsettings set org.freedesktop.Tracker.Miner.Files index-on-battery-first-time false
-			 gsettings set org.freedesktop.Tracker.Miner.Files throttle 15
-
-			#Nautilus (File Manager) Usability
-			 gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
-			 gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
-			 gsettings set org.gtk.Settings.FileChooser sort-directories-first true
-			 gsettings set org.gnome.nautilus.list-view use-tree-view true
-			 gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
-
-			# Set the GNOME Shell Apps Dashboard sort app in categories based on the FreeDesktop standard.
-			 gsettings set org.gnome.desktop.app-folders folder-children "['accessories', 'chrome-apps', 'games', 'graphics', 'internet', 'office', 'programming', 'science', 'sound---video', 'system-tools', 'universal-access', 'wine']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ name "Accessories"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/accessories/ categories "['Utility']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ name "Chrome Apps"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/chrome-apps/ categories "['chrome-apps']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ name "Games"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/games/ categories "['Game']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ name "Graphics"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/graphics/ categories "['Graphics']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ name "Internet"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/internet/ categories "['Network', 'WebBrowser', 'Email']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ name "Office"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/office/ categories "['Office']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ name "Programming"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/programming/ categories "['Development']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ name "Science"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/science/ categories "['Science']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ name "Sound & Video"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/sound---video/ categories "['AudioVideo', 'Audio', 'Video']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ name "System Tools"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/system-tools/ categories "['System', 'Settings']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ name "Universal Access"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/universal-access/ categories "['Accessibility']"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ name "Wine"
-			 gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/wine/ categories "['Wine', 'X-Wine', 'Wine-Programs-Accessories']"
-			EOF
-
-	run_command_in_gnome_user_session /bin/bash gtweak.sh 
-}
-
-
-
-recipie_set_gnome_wallpaper (){
-			# Install Wallpapers and configure Gnome to see them. ...
-			RTDCP=/opt/rtd/cache
-			echo Downloading Wallpapers:
-			echo ---------------------------------------------
-			mkdir -p $RTDCP && wget -q --show-progress https://github.com/vonschutter/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
-			rm $RTDCP/master.zip
-			pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
-			echo ---------------------------------------------
-			mkdir -p /usr/local/share/gnome-background-properties
-			DIRECTORY=/opt/rtd/Wallpaper/
-			ls $DIRECTORY > lspictures.txt
-
-			# Make a header
-			echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-			<!DOCTYPE wallpapers SYSTEM \"gnome-wp-list.dtd\">
-			<wallpapers>" > mybackgrounds.xml
-			# Registering all pictures in $DIRECTORY
-
-				for i in $DIRECTORY*.jpg $DIRECTORY*.png; do
-				echo "<wallpaper>
-				<name>$i</name>
-				<filename>$i</filename>
-				  <options>stretched</options>
-				    <pcolor>#8f4a1c</pcolor>
-				    <scolor>#8f4a1c</scolor>
-				    <shade_type>solid</shade_type>
-				  </wallpaper>" >> mybackgrounds.xml
-				done
-
-			# creating the footer
-				echo "</wallpapers>" >> mybackgrounds.xml
-				sed 's/<name>\/usr\/share\/backgrounds\//<name>/g' mybackgrounds.xml > /usr/local/share/gnome-background-properties/mybackgrounds.xml
-				# cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
-				rm mybackgrounds.xml
-				rm lspictures.txt
-			# Set the default wallpaper... 
-				#run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
-				run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Redmond.png
-}
-
-
-
-
-
 
