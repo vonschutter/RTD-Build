@@ -5565,7 +5565,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				use_filesystem{ } filesystem{ ext4 }    \
 				mountpoint{ /boot }                     \
 			.                                               \
-			200% 5000 200% linux-swap                        \
+			200% 10000 200% linux-swap                      \
 				\$lvmok{ }                              \
 				\$reusemethod{ }                        \
 				method{ swap }                          \
