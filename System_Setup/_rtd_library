@@ -106,7 +106,6 @@ RTD_VERSION=2.0
 	set_install_command				: Determines what install command should be used to install packages from repositories
 	set_oem_elevated_priviledge_gui			: Set x-authority toallow root GUI
 	SofwareManagmentAvailabilityCHK			: Checks to see that the software managment system is not busy
-	system_update					: Newer more universal software update function
 	toggle_oem_auto_login				: Toggel the auto login option for the user
 	test_iso_boot_media				: Test bootable media using QEMU
 	up2date						: Older universal software update function
@@ -2918,48 +2917,6 @@ check_dependencies ()
 
 
 
-system_update ()
-{
-# Description: 
-# Function to update the Linux based system. This function is universal for all
-# distributions that have package kit available. It works in the same manner on
-# RedHat/Fedora, Debian/Ubuntu and all their derivatives. When invoked as a
-# part in a script, it is wise to ensure that the package kit is available
-# by using the "check_dependencies" function to ensure that the software is available.
-# 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# 
-# system_update
-# 
-# End of documentation
-
-    if hash pkcon 2>/dev/null; then
-    	pkcon refresh
-	pkcon update -y
-    else
-	echo "You seem to have now Package Kit... I will try to get it... "
-	echo "I will need to become admin to do that..."
-	sudo check_dependencies packagekit
-	    if [ $? != 0 ];
-	    then
-		echo "That install didn't work out so well."
-		echo "Defaulting to the onld Up2Date Function"
-		up2date
-	    fi
-	echo "OK trying again!"
-    	pkcon refresh
-	pkcon update -y
-    fi
-}
-
-
-
-
-
 
 
 
@@ -3309,7 +3266,7 @@ add_software_task ()
 
 	PAD="------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	echo -ne "Installing "$LINE"":""\ & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+	echo -ne "Installing "$LINE"":""\ display_spinner & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
 }
 
 
