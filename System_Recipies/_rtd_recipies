@@ -9,7 +9,7 @@
 #::	Purpose: To define how software is added in one place. 
 #::		 Software may be downloaded and installed manually, or via package manager or snaps. 
 #::		 Configuration items are also defined here. 
-#::	Usage: call this file using the "source" statment in bash. Then simply invoke the relevan recipie (funclion)
+#::	Usage: call this file using the "source" statment in bash. Then simply invoke the relevant recipe (funclion)
 #::
 #::	This script is shared in the hopes that
 #::	someone will find it usefull.
@@ -146,7 +146,7 @@
 #
 # TEMPLATE: For adding a new manu entry for a singel package or bundle of software:
 #
-# recipie_Bundle_descriptive_name () {
+# recipe_Bundle_descriptive_name () {
 # 			# function documentaton... 
 # 			# Echo to terminal:
 # 			write_error		: Prints an error message to terminal in RED
@@ -175,12 +175,40 @@
 # Add several software items that are almost alwasys used 
 # in one way or another... 
 
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#:::::::::::::: 	 ____       _   _   _                                ::::::::::::::::::::::
+#:::::::::::::: 	/ ___|  ___| |_| |_(_)_ __   __ _ ___                ::::::::::::::::::::::
+#:::::::::::::: 	\___ \ / _ \ __| __| | '_ \ / _` / __|               ::::::::::::::::::::::
+#:::::::::::::: 	 ___) |  __/ |_| |_| | | | | (_| \__ \               ::::::::::::::::::::::
+#:::::::::::::: 	|____/ \___|\__|\__|_|_| |_|\__, |___/               ::::::::::::::::::::::
+#::::::::::::::                            |___/                             ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
 # Set account on GIT Hub to fetch items from. 
 GIT_Profile=${GIT_Profile:-vonschutter}
 
 
 
-recipie_Bundle_Common_Apps () {
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::         _____                  _   _                         ::::::::::::::::::::::
+#::::::::::::::		|  ___|   _ _ __   ___| |_(_) ___  _ __  ___         ::::::::::::::::::::::
+#::::::::::::::		| |_ | | | | '_ \ / __| __| |/ _ \| '_ \/ __|        ::::::::::::::::::::::
+#::::::::::::::		|  _|| |_| | | | | (__| |_| | (_) | | | \__ \        ::::::::::::::::::::::
+#::::::::::::::		|_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/        ::::::::::::::::::::::
+#::::::::::::::                                                              ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+recipe_Bundle_Common_Apps () {
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
@@ -213,12 +241,12 @@ recipie_Bundle_Common_Apps () {
 
 
 
-recipie_Remove_non_western_latin_fonts () {
+recipe_Remove_non_western_latin_fonts () {
 	rtd_oem_remove_non_western_latin_fonts
 }
 
 
-recipie_Brave_Browser () {
+recipe_Brave_Browser () {
 		# This function will add the vendor maintained repository and install the software
 		# using the distribution speciffic installers.
 		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
@@ -249,7 +277,7 @@ recipie_Brave_Browser () {
 
 
 
-recipie_Vivaldi_Browser (){
+recipe_Vivaldi_Browser (){
 		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
 		# # from the vendors website. It will work until the vendor removes the exact file... 
 		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
@@ -277,12 +305,12 @@ recipie_Vivaldi_Browser (){
 }
 
 
-recipie_Windows_Subsystem_for_Linux (){
+recipe_Windows_Subsystem_for_Linux (){
 			InstallSoftwareFromRepo wine
 }
 
 
-recipie_Simplenote (){
+recipe_Simplenote (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A simple to use not taking app that auto syncs with the same app on any device.
@@ -292,7 +320,7 @@ recipie_Simplenote (){
 
 
 
-recipie_DOS_VM_for_Classic_Games (){
+recipe_DOS_VM_for_Classic_Games (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A small app that allows you to use your old DOS software. 
@@ -302,7 +330,7 @@ recipie_DOS_VM_for_Classic_Games (){
 
 
 
-recipie_Bundle_Screenshot_Tools (){
+recipe_Bundle_Screenshot_Tools (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
@@ -313,18 +341,17 @@ recipie_Bundle_Screenshot_Tools (){
 
 
 
-recipie_Bundle_OEM_restricted_fonts () {
+recipe_Bundle_OEM_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
 			check_dependencies p7zip-full
 			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
-
 }
 
 
 
-recipie_Bundle_Secure_Communication () {
+recipe_Bundle_Secure_Communication () {
 			ensure_snap_package_managment
 			snap install signal-desktop 
 			snap install telegram-desktop 
@@ -332,7 +359,7 @@ recipie_Bundle_Secure_Communication () {
 
 
 
-recipie_Bundle_Video_Editing () {
+recipe_Bundle_Video_Editing () {
 			ensure_snap_package_managment
 			snap install vidcutter 
 			snap install handbrake-jz
@@ -369,7 +396,7 @@ recipie_Bundle_Video_Editing () {
 
 
 
-recipie_Developer_Software (){
+recipe_Developer_Software (){
 			write_status "--- Adding Developer Software Apps: IDE Tools and Compilers..." 
 			for i in build-essential git
 			do
@@ -383,7 +410,7 @@ recipie_Developer_Software (){
 
 
 
-recipie_Bundle_Compression_Tools (){
+recipe_Bundle_Compression_Tools (){
 			write-status "--- Adding Comression Toolset (zip, 7zip rar etc.)..."
 			for i in p7zip-full p7zip-rar rar zip 
 			do
@@ -393,7 +420,7 @@ recipie_Bundle_Compression_Tools (){
 
 
 
-recipie_Bundle_Curated_Top_Games (){
+recipe_Bundle_Curated_Top_Games (){
 			# Install games from native repositories... 
 			write_status "--- Adding Selection of Quality Games..." 
 						
@@ -446,7 +473,7 @@ recipie_Bundle_Curated_Top_Games (){
 
 
 
-recipie_Bundle_Admin_Tools (){
+recipe_Bundle_Admin_Tools (){
 			write_status "--- OEM System Administrative Tools..."
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
@@ -462,7 +489,7 @@ recipie_Bundle_Admin_Tools (){
 
 
 
-recipie_Java_Runtime (){
+recipe_Java_Runtime (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Java JRE..." $ENDCOLOR
 			# Add the Oracle Java repository and install the software. 
@@ -477,7 +504,7 @@ recipie_Java_Runtime (){
 
 
 
-recipie_Bleachbit_System_Cleaner (){
+recipe_Bleachbit_System_Cleaner (){
 			#Bleachbit
 			write_status "--- Bleachbit System Cleaning Tool..." 
 			InstallSoftwareFromRepo bleachbit 
@@ -485,7 +512,7 @@ recipie_Bleachbit_System_Cleaner (){
 
 
 
-recipie_Restricted_Fonts_and_Codecs (){
+recipe_Restricted_Fonts_and_Codecs (){
 			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 			# Auto accept microsoft corefonts eula
 			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
@@ -497,7 +524,7 @@ recipie_Restricted_Fonts_and_Codecs (){
 
 
 
-recipie_VLC_Universal_Videao_Player (){
+recipe_VLC_Universal_Videao_Player (){
 			#VLC Media Player
 			echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
 			InstallSoftwareFromRepo vlc
@@ -505,7 +532,7 @@ recipie_VLC_Universal_Videao_Player (){
 
 
 
-recipie_Google_Chrome_Browser (){
+recipe_Google_Chrome_Browser (){
 			# Special case for installing Google Chrome
 			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
 			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -513,7 +540,7 @@ recipie_Google_Chrome_Browser (){
 
 
 
-recipie_Remote_Desktop_by_Team_Viewer (){
+recipe_Remote_Desktop_by_Team_Viewer (){
 			#Teamviewer
 			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
 			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
@@ -521,14 +548,14 @@ recipie_Remote_Desktop_by_Team_Viewer (){
 
 
 
-recipie_Remote_Desktop_by_Anydesk () {
+recipe_Remote_Desktop_by_Anydesk () {
 			check_dependencies flatpak
 			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
 }
 
 
 
-recipie_Skype_Messenger (){
+recipe_Skype_Messenger (){
 			#Skype for Linux
 			write_status "--- Installing Skype For Linux..."
 			check_dependencies snapd
@@ -537,14 +564,14 @@ recipie_Skype_Messenger (){
 
 
 
-recipie_Viber_Messenger (){
+recipe_Viber_Messenger (){
 			check_dependencies snapd
 			snap install --edge viber-mtd 
 }
 
 
 
-recipie_MEGA.nz_Encrypted_Cloud_Storage (){
+recipe_MEGA.nz_Encrypted_Cloud_Storage (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 			write_status "--- Installing MEGA nz file crypto sync utility..." 
 			check_dependencies lsb-release
@@ -574,7 +601,7 @@ recipie_MEGA.nz_Encrypted_Cloud_Storage (){
 
 
 
-recipie_Dropbox_Corporate_Cloud_Storage (){
+recipe_Dropbox_Corporate_Cloud_Storage (){
 			# Install Dropbox
 			write_status "--- Installing Dropbox Cloud Storage Sync..." 
 			InstallSoftwareFromRepo nautilus-dropbox
@@ -586,7 +613,7 @@ recipie_Dropbox_Corporate_Cloud_Storage (){
 
 
 
-recipie_Bundle_Media_Streamers:_Spotify_Wins_Google (){
+recipe_Bundle_Media_Streamers:_Spotify_Wins_Google (){
 			write_status "--- Installing Music Players and Audio Software..." 
 			check_dependencies snapd
 			snap install spotify  2>>$_ERRLOGFILE
@@ -597,7 +624,7 @@ recipie_Bundle_Media_Streamers:_Spotify_Wins_Google (){
 
 
 
-recipie_Bundle_Audio_Tools (){
+recipe_Bundle_Audio_Tools (){
 			write_status "--- Installing Audio Tools Bundle..."
 			ensure_snap_package_managment
 			snap install picard  2>>$_ERRLOGFILE
@@ -606,7 +633,7 @@ recipie_Bundle_Audio_Tools (){
 
 
 
-recipie_Virtualbox (){
+recipe_Virtualbox (){
 			# Install Virtual Box from Oracle. However avoid installing it in a VM, as tis usecase may be counterproductive.
 			# NOTE:
 			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as 
@@ -647,7 +674,7 @@ recipie_Virtualbox (){
 
 
 
-recipie_RTD_OEM_Configuration_and_Optimizations (){
+recipe_RTD_OEM_Configuration_and_Optimizations (){
 			echo "Applying OEM Configuration..."
 			#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			#::::::::::::::                                          ::::::::::::::::::::::
@@ -659,7 +686,6 @@ recipie_RTD_OEM_Configuration_and_Optimizations (){
 			check_dependencies tuned
 			systemctl enable --now tuned
 			tuned-adm profile balanced
-			recipie_baseapps
 
 			rtd_oem_check_splash () {
 				if -f $1 ; then 

@@ -23,11 +23,6 @@
 #::	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
 #::	  _rtd_recipies  -- contain software installation and configuration "recipies".
 #::
-#:: 	This system configuration and installation script was originally developed
-#:: 	for RuntimeData, a small OEM in Buffalo Center, IA. The purpose of the script
-#:: 	was to install and configure Ubuntu and Zorin OS PC's. This OEM and store nolonger
-#:: 	exists as its owner has passed away. This script is shared in the hopes that
-#:: 	someone will find it usefull.
 #::
 #::
 #::
@@ -95,43 +90,12 @@ export zstatus="$1"
 : "${_BACK_TITLE:-"RTD OEM Simple System Setup"}"
 
 
-function choices_graphical () 
-{
-# Function to display the  otions. This is all done in a bit of a 
-# round about way... but the idea is to prepare this setup to be flexible
-# for the future so that you only have one place to list the option while
-# more than one gui toolkit (dialog, zenity, whiptail) depending on your environment.
 
-	cmd=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
-	zstatus="${zstatus:=false}"
-	sw_list=$(debug_list_loaded_software_functions)
-
-	loaded_software_recipies ()
-	{
-		echo "case $choice in" 
-		echo ${sw_list[@]} | while read line; do
-			echo "$line ) add_software_task $line ;;" 
-		done
-		echo "esac"
-
-	}
-	MenuOptions=($(for i in $sw_list ; do echo -e "\"false\" \"$i\"" ; done ))
-
-	declare -A choices
-	choices=$("${cmd[@]}" "${MenuOptions[@]}" )
-
-	IFS_SAV=$IFS
-        IFS=$','
-	for choice in ${choices}
-		do
-		IFS=$' '
-		loaded_software_recipies >start
-		source ./start
-		rm start
-	done
-	IFS=$IFS_SAV
-}
-
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 complete_setup () {
@@ -193,7 +157,7 @@ else
 		rtd_setup_choices_term_fallback
 	else
 		check_dependencies zenity
-		choices_graphical
+		display_software_installation_choices_gtk
 		complete_setup
 	fi
 fi
