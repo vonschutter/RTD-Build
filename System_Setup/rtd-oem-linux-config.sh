@@ -127,6 +127,7 @@ function choices_graphical ()
 		IFS=$' '
 		loaded_software_recipies >start
 		source ./start
+		rm start
 	done
 	IFS=$IFS_SAV
 }

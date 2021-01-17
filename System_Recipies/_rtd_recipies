@@ -1,5 +1,5 @@
 #
-#::            S O F T W A R E    R E C I P I E S 
+#::                     S O F T W A R E    R E C I P I E S 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
@@ -72,7 +72,7 @@
 #
 #	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
 #	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
-#	contains all the actual logic and control of the script. 
+#	contains all the actual logic and flow control of the script. 
 #
 #
 #
@@ -116,10 +116,61 @@
 # 
 # For more information on package managers see: https://en.wikipedia.org/wiki/Package_manager
 #
-# THE Preferred way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software 
+#	*	---       PREFFERRED Software install (Security + Control)           ----		*
+# 
+#  CAPABILITY TABLE:
+# +-----------------------------------------------------+-----------------------------------+-----------------------------------+----------------------+
+# | Features                                            | Snap                              | Flatpak                           | AppImage             |
+# +-----------------------------------------------------+-----------------------------------+-----------------------------------+----------------------+
+# | Permission Controls Toggles                         | Yes                               | Yes                               | No                   |
+# | Sandboxing Support                                  | Yes                               | Yes                               | Yes                  |
+# | Sandboxing Mandatory                                | Yes                               | Yes                               | No                   |
+# | App Portability                                     | Yes                               | Yes                               | No                   |
+# | Native Theme Support                                | Yes (with caveats)                | Yes (with caveats)                | Yes (with caveats)   |
+# | Support for Bundled Libraries                       | Yes                               | Yes                               | Yes                  |
+# | Fully Contained Single Executable Support           | No                                | No                                | Yes                  |
+# | Online App Store                                    | Yes                               | Yes                               | Yes                  |
+# | Multi-version Parallel Apps Support                 | Yes                               | Yes                               | Yes                  |
+# | Automatic Updates                                   | Yes                               | Yes                               | Yes(with caveats)    |
+# | Support for Chrome OS (through Crostini containers) | Yes                               | Yes                               | Yes                  |
+# | App Size                                            | Can vary but higher than AppImage | Can vary but higher than AppImage | Lowest               |
+# | Number of Applications Available in the App Store   | Highest                           | Lowest                            | Somewhere in between |
+# | Plugins for Desktop App Store Software              | Yes                               | Yes                               | No                   |
+# +-----------------------------------------------------+-----------------------------------+-----------------------------------+----------------------+
+#
+# 
+#
+# A new way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software 
 # applications designed to provide a consistent and high-level front end for a number of different package management systems.
 # PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors. 
-
+#
+# TEMPLATE: For adding a new manu entry for a singel package or bundle of software:
+#
+# recipie_Bundle_descriptive_name () {
+# 			# function documentaton... 
+# 			# Echo to terminal:
+# 			write_error		: Prints an error message to terminal in RED
+# 			write_host 		: Prints a message to the terminal w. a choice of color
+# 			write_information 	: Prints a message to the terminal in BLUE
+# 			write_status		: Prints a message to the terminal in GREEN
+# 			write_warning 		: Prints a message to the terminal in YELLOW
+#
+# 			# Install software with distribution package manager (Agnostic)
+# 			for i in package1 package2 package3 ; do
+# 			     InstallSoftwareFromRepo $i
+# 			done
+#
+# 			# Install faltpacks:
+# 			ensure_flatpack_package_managment
+# 			snap install package-name
+#
+# 			# Install snap packages:
+# 			ensure_snap_package_managment
+# 			flatpack install 
+#
+# 			# Check a dependency:
+# 			check_dependencies package-name
+# }
 
 # Add several software items that are almost alwasys used 
 # in one way or another... 
@@ -140,11 +191,9 @@ recipie_Bundle_Common_Apps () {
 
 			# Ensure Flatpack support
 			check_dependencies flatpak
-			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 			# Ensure Snap support
 			check_dependencies snapd
-			snap install core
-			snap install snap-store
 
 			# Configure Desktop software managers depending on desktop used
 			case "$DESKTOP_SESSION" in
@@ -154,6 +203,7 @@ recipie_Bundle_Common_Apps () {
 					check_dependencies plasma-discover-backend-snap
 				;;
 				* )
+					snap install snap-store
 					check_dependencies gnome-software
 					check_dependencies gnome-software-plugin-flatpak
 					check_dependencies gnome-software-plugin-snap
@@ -265,7 +315,7 @@ recipie_Bundle_Screenshot_Tools (){
 
 recipie_Bundle_OEM_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
-			wget -q --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
+			wget --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
 			check_dependencies p7zip-full
 			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
