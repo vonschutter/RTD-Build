@@ -2481,7 +2481,7 @@ scan_for_malware ()
 # End of documentation
 
 	# Set the location of the quarantined files
-	QUARANINE=./VIRUS
+	QUARANINE=~/VIRUS
 	if [ ! -d "$QUARANINE" ]; then
 		mkdir "$QUARANINE"
 	fi
@@ -2493,87 +2493,26 @@ scan_for_malware ()
 	# First discover what menu system is installed. Some systems use "dialog" and
 	# other systems use whiptail for the terminal to show menus and dialogs. 
 	check_menu_availability
+	for i in clamav clamav-freshclam clamscan clamtk clamtk-gnome ; do
+		check_dependencies $i
+	done
 
-	# If the RTD functions file is present use it, otherwise download a new copy of it and use this. 
+	
 
-	if [[ -f /opt/rtd/scripts/_rtd_functions ]]; then 
-		source /opt/rtd/scripts/_rtd_functions
-	else 
-		if ( $RTD_GUI --title "RTD Nordvpn Starter: Get Parts" --yesno "For this tool to run correctly I need to download some software from the internet. Is this OK?" 8 78); then
-			echo "OK Thank you. Geting the required scrpt lirary file "RTD_FUNCTIONS"" 
-			sudo mkdir -p /opt/rtd/scripts
-			sudo wget -q https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions -P /opt/rtd/scripts/
-			source /opt/rtd/scripts/_rtd_functions
-		else
-			echo "You selected No, exit status was $?."
-			exit
-		fi
-	fi
-
-
-
-	echo "RTDFUNCTIONS = $RTDFUNCTIONS"
-	if [ $RTDFUNCTIONS -eq 1 ]; then
-		echo RTD functions confirmed loaded!
-	else
-		echo RTD functions NOT loaded!
-		echo Please make sure that you are connected to the internet and that sudo and wget are installed.
-		exit 1
-	fi
-
-
-
-
-
-	runifthere() {
-	if hash clamscan 2>/dev/null; then
-		#Check and see if Quarantene zone is there and scan home. 
-		if [ -d "$QUARANINE" ]; then
-		clamscan $SCANDIR -r -a -i -l $CLAMSCANLOGFILE --bytecode=yes --stdout  --phishing-sigs --bell --algorithmic-detection=yes --move="$QUARANINE" 
-		else
-		echo "$QUARANINE" not found! Is this folder writable?
-		fi
-		
-	else
-		echo "You seem to have no clamav... I will try to get it... "
-		echo "I will need to become admin to do that..."
-		sudo apt install clamav
-		if [ $? != 0 ];
-		then
-			echo "That install didn't work out so well."
-			echo "Please manually try to add the software since I couldn't do it."
-			exit
-		fi
-		echo "OK kindly try again!"
-	fi
-	}
-
-
-
-
-
-	###########################################################################
-	##                                                                       ##
-	##                            Execute                                    ##
-	##                                                                       ##
-	###########################################################################
-	#
-	# Display sumary
-	echo " "
-	echo ___________________________________________________
-	echo " "
-	echo "[   Setting    ] [           Value             ]"
-	echo " Logging to:         $CLAMSCANLOGFILE"
-	echo " Quarantine in:      $QUARANINE"
-	echo " "
-	echo ___________________________________________________
-	echo " "
-	echo " Starting scan...."
-	echo " Scanning folder: $@"
+	write_host --purple "
+	___________________________________________________
+	
+	[   Setting    ] [           Value             ]
+	Logging to:         $CLAMSCANLOGFILE
+	Quarantine in:      $QUARANINE
+	
+	___________________________________________________
+	Starting scan....
+	Scanning folder: $@"
 
 	# Run the scan function
-	runifthere
-
+	clamscan $SCANDIR -r -a -i -l $CLAMSCANLOGFILE --bytecode=yes --stdout  --phishing-sigs --bell --algorithmic-detection=yes --move="$QUARANINE" 
+	return $?
 }
 
 
@@ -3422,17 +3361,7 @@ display_software_installation_choices_gtk ()
 
 	DisplayMenu=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
 	SoftwareList=$(list_loaded_software_functions --nonum)
-
-	loaded_software_recipies ()
-	{
-		echo "case $choice in" 
-		echo ${SoftwareList[@]} | while read line; do
-			echo "$line ) add_software_task recipe_$line ;;" 
-		done
-		echo "esac"
-
-	}
-	MenuOptions=($(for i in $SoftwareList ; do echo -e "\"${zstatus:=false}\" \"$i\"" ; done ))
+	MenuOptions=($(for i in $SoftwareList ; do echo -e "${zstatus:=false} ${i}" ; done ))
 
 	declare -A choices
 	choices=$("${DisplayMenu[@]}" "${MenuOptions[@]}" )
@@ -3441,10 +3370,8 @@ display_software_installation_choices_gtk ()
         IFS=$','
 	for choice in ${choices}
 		do
-		IFS=$' '
-		loaded_software_recipies >start
-		source ./start
-		rm start
+		# call each chosen software install (by function) & add recepie (removed for display purposes)
+		add_software_task recipe_${choice}
 	done
 	IFS=$IFS_SAV
 }
