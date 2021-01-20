@@ -88,14 +88,6 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
@@ -118,7 +110,7 @@ export LIST_HEIGHT=12
 # an external storage or san mount point. If you do non need to backup VMs you can set
 # this to blank or ignore it. If you do not have QEMU/KVM installed selecting this
 # option to back up Virtual Machines in the menu will do nothing.
-VM_BACKUP_TARGET="/mnt/vmdsk/VM_BACKUP"
+: "${VM_BACKUP_TARGET:-"/mnt/vmdsk/VM_BACKUP"}"
 
 # Terminal Color Setup definitions. These settings allow the simlified use of
 # text colors in the teminal. You may want to echo RED for error or GREEN for OK.
@@ -135,31 +127,22 @@ BLUE="\033[1;34m"
 # You may select a front end to the rtd tool below by seting the RTD_GUI= option. This will
 # override what is detected and preferred! 
 # Valid choices are: "dialog", "whiptail".
-RTD_GUI=
+# RTD_GUI=dialog
 export NEWT_COLORS='root=,gray '
-# DIALOG_COLORS=WHITE,BLUE,ON
 
-# Details for the ISO image creator. To change from one Ubuntu release to another you
-# may change the "RELEASE" option. If you wold like to use the ISO maker to build a custom
-# Debian installer you may change the "SOURCE_ISO_URL" option to poit to the Debian location.
-# Finally, should you desire using your own preseed template (answers to the install questions)
-# you should change the "PRESEED_TEMPLATE" option to point to the location of you own template.
-TARGET_ISO_FILE_NAME=
-SOURCE_ISO_URL=
-SSH_PUBLIC_KEY_FILE=
-PUT_ISO_FILE_HERE_WHEN_DONE=
-PUT_QCOW_FILE_HERE_WHEN_DONE=
-VOLUME_TITLE=
+# Override default values here:
+# SSH_PUBLIC_KEY_FILE=
+# PUT_ISO_FILE_HERE_WHEN_DONE=
+# PUT_QCOW_FILE_HERE_WHEN_DONE=
+# VOLUME_TITLE=
 
 
 # Set location to where to log information:
 # in the system log directory in a file named the same as this script.
-LOGFILE="/var/log/${0##*/}.log"
-#DBG=#
-
-# Determine log file directory
-_ERRLOGFILE="/var/log/${0##*/}-error.log"
-_LOGFILE="/var/log/${0##*/}.log"
+: ${LOGDIR:-"/var/log/rtd"}
+: "${LOGDIR}/${0##*/}.log"
+_ERRLOGFILE="${LOGFILE}"
+_LOGFILE="${LOGFILE}"
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -202,7 +185,7 @@ rtd_oem_ensure_rtd_library_available ()
 		fi
 	else
 		get_rtd_oem_library && echo -e $GREEN "RunTime Data Library download seems sucessful!" $ENDCOLOR || echo -e $RED "RunTime Data Library download seems FAILED!" $ENDCOLOR
-		rtd_oem_pause $?
+		read -p ....
 	fi
 
 	echo "RTDFUNCTIONS = $RTDFUNCTIONS"
@@ -675,23 +658,19 @@ show_deploy_VDI_VM_now_menu ()
 		1 )
 			echo "***   Deploying a Ubuntu VDI with Gnome Desktop from ubuntu.com"
 			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop
-			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04 
-			cleanup_and_finish nomessage
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04.1
 		;;
 		2 )
 			make_preseed_cfg "$( mktemp -d )" kubuntu-desktop
-			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04 
-			cleanup_and_finish nomessage
+			make_kvm_virtual_machine_now_from_iso ubuntu20.04
 		;;
 		3 )
 			make_preseed_cfg "$( mktemp -d )" ubuntu-gnome-desktop 
 			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
-			cleanup_and_finish nomessage
 		;;
                 4 )
 			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop-minimal 
 			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
-			cleanup_and_finish nomessage
 		;;
 		5 )
 			make_preseed_cfg "$( mktemp -d )" gnome-desktop
@@ -715,9 +694,9 @@ show_deploy_VDI_VM_now_menu ()
 		;;
 		9 )
 			make_kvm_virtual_machine_now_from_microsoft
-			cleanup_and_finish nomessage
 		;;
 		esac
+
 	done
 }
 
