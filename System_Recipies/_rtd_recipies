@@ -787,22 +787,45 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					InstallSoftwareFromRepo $i
 				done
 
-				if  cat /etc/os-release |grep "debian" &>/dev/null ; then 
-					InstallSoftwareFromRepo gtk2-engines-murrine
-					InstallSoftwareFromRepo gtk2-engines-pixbuf
-					dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
-				elif /etc/os-release |grep "fedora" &>/dev/null; then
-					InstallSoftwareFromRepo gtk-murrine-engine
-					InstallSoftwareFromRepo gtk2-engines
-				else 
-					write_warning "This is not debian or fedora based! Not sure how ot proceed..."
+				# Installing dependencies for themes. If the package name was the same there would not  
+				# need for this extra checking, but different distributions have different 
+				# names for the same software. Therefore there is a need to check based on what 
+				# distro package managemnt is installed. This is easier and likely accurate in most cases.
+				# Pop, Ubuntu, Kubuntu, and Debian all use deb packages and name the packages consistently for ex.
+				# This will ensure that the sofware is installed so the themes look good...
+				if hash apt-get 2>/dev/null ; then
+					for i in sassc libcanberra-gtk-module libglib2.0-dev gtk2-engines-murrine gtk2-engines-pixbuf libxml2-utils ; do
+						check_dependencies  $i
+					done
+				elif hash zypper 2>/dev/null ; then
+					for i in check_dependencies gtk-murrine-engine gtk2-engines sassc glib2-devel ; do
+						check_dependencies  $i 
+					done
+				elif hash dnf 2>/dev/null ; then
+					for i in check_dependencies gtk-murrine-engine gtk2-engines sassc glib2-devel ; do
+						check_dependencies  $i 
+					done
+				elif hash pacman 2>/dev/null ; then
+					for i in check_dependencies gtk-engine-murrine gtk-engines sassc; do
+						check_dependencies  $i 
+					done
+				else
+					write_error "This option requires a supported package manager on your system (deb, zypper, dnf, pacman). Neiter was found!"
 				fi
-
-				# Get and install the Vimix themes. 
-				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
-				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
-				unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
-				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
+				
+				check_dependencies snapd
+				snap install vimix-themes
+					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
+					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
+					unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
+					unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
+					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i vimix-themes:gtk-3-themes; done
+				snap install mojave-themes
+					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Mojave-gtk-theme.zip -P /opt/rtd/cache
+					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/McMojave-circle.zip -P /opt/rtd/cache
+					unzip -q -o /opt/rtd/cache/Mojave-gtk-theme.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/Mojave-gtk-theme-master && ./install.sh && popd
+					unzip -q -o /opt/rtd/cache/McMojave-circle.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/McMojave-circle-master && ./install.sh && popd
+					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i mojave-themes:gtk-3-themes ; done
 
 				cat >> /opt/rtd/scripts/rtd.desktop <<-'EOF'
 				[Desktop Entry]
