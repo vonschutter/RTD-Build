@@ -658,11 +658,11 @@ show_deploy_VDI_VM_now_menu ()
 		1 )
 			echo "***   Deploying a Ubuntu VDI with Gnome Desktop from ubuntu.com"
 			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop
-			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04.1
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
 		;;
 		2 )
 			make_preseed_cfg "$( mktemp -d )" kubuntu-desktop
-			make_kvm_virtual_machine_now_from_iso ubuntu20.04
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
 		;;
 		3 )
 			make_preseed_cfg "$( mktemp -d )" ubuntu-gnome-desktop 
