@@ -444,9 +444,31 @@ rtd_oem_reset_default_environment_config ()
 	[[ -f /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop ]] && mv /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop /opt/rtd/scripts
 	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
 	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
-	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
+	# Keep ability for root to open dialog boxes for a user.
+	#sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
 	toggle_oem_auto_login
 }
+
+
+
+
+
+
+set_oem_user_gnome_ui_preference_on_login ()
+{
+# Description: Function that displays Gnome UI preference choice on login.
+# Choices are Default, Distro default, MAC like, Windows Like.
+# Globals: 
+# Arguments: None
+# Outputs: Use interactive.
+# Returns: 
+# Usage: 
+# End of documentation
+	write_information "starting ui choice once"
+}
+
+
+
 
 
 
@@ -811,12 +833,10 @@ rtd_oem_reseal () {
 	if cat /etc/os-release |grep ubuntu ; then
 		InstallSoftwareFromRepo oem-config-gtk
 		oem-config-prepare
-		InstallSoftwareFromRepo spice-vdagent
 		shutdown -h now
 	elif cat /etc/os-release |grep kubuntu ; then
 		InstallSoftwareFromRepo oem-config-kde
 		oem-config-prepare
-		InstallSoftwareFromRepo spice-vdagent
 		shutdown -h now
 	elif cat /etc/os-release |grep suse ; then
 		echo "I dont know of any OEM configuration for SuSE"
@@ -1256,6 +1276,8 @@ add_gnome3_favorite_app ()
 # Outputs: stdout
 # Returns: 0/1
 # Usage: add_gnome3_favorite_app [appname.desktop]
+#
+# NOTE: This function must be run in the user context. 
 # End of documentation
 	NewApp="$1"
 	CurrentFavoriteApps="$(dconf read /org/gnome/shell/favorite-apps)" 
@@ -2803,7 +2825,7 @@ InstallSoftwareFromRepo ()
 # be an RPM or deb string, or even snap or flatpack. A preference order between package system and
 # snap or flatpack use.
 # End of documentation
-
+	: ${_LOGFILE:="/var/log/rtd/$( basename "$0".log )"}
 	# Ask function how to install software... 
 	set_install_command >>/dev/null 2>&1
 
@@ -2814,7 +2836,7 @@ InstallSoftwareFromRepo ()
 	# Test if package name is installed, if not then...
 	if ! is_software_package_installed "$1"; then
 		if is_software_package_available "$1"; then
-			echo -ne "$PRE"\ & $_INSTCMD "$1" 1>>$_LOGFILE 2>>$_ERRLOGFILE && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
+			echo -ne "${PRE}"& $_INSTCMD "$1" &>>${_LOGFILE}  && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR \n"
 			if [ $? != 0 ];
 			then
 				return 1 & exit 1
@@ -3408,9 +3430,9 @@ display_software_installation_choices_gtk ()
 #
 # End of documentation
 
-	DisplayMenu=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator " " )
+	DisplayMenu=( zenity  --list  --timeout 120 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator " " )
 	SoftwareList=$(list_loaded_software_functions --nonum)
-	MenuOptions=($(for i in $SoftwareList ; do echo -e "${zstatus:=false} ${i}" ; done ))
+	MenuOptions=($(for i in $SoftwareList ; do echo -e "${zstatus:=true} ${i}" ; done ))
 
 	declare -A choices
 	choices=$("${DisplayMenu[@]}" "${MenuOptions[@]}" )
