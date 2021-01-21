@@ -3361,7 +3361,7 @@ display_software_installation_choices_gtk ()
 # the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.   
 
 
-	DisplayMenu=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator "," )
+	DisplayMenu=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator " " )
 	SoftwareList=$(list_loaded_software_functions --nonum)
 	MenuOptions=($(for i in $SoftwareList ; do echo -e "${zstatus:=false} ${i}" ; done ))
 
