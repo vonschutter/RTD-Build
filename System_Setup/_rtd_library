@@ -20,8 +20,8 @@ export RTD_VERSION=2.0
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ---  To see options to use this library type "bash _rtd_library --help"
----  To see usefull documentation on each function in this library: "bash _rtd_library --devhelp"
-
+---  To see usefull documentation on each function in this library in a Terminal or remote ssh: "bash _rtd_library --devhelp"
+---  To see usefull documentation on each function in this library in GTK (local desktop): "bash _rtd_library --devhelp-gtk"
 
 
 	Functions defined in this library:
@@ -129,7 +129,9 @@ All function comments should describe the intended API behaviour using:
 4	Outputs: Output to STDOUT or STDERR.
 5	Returns: Returned values other than the default exit status of the last command run.
 
-
+Advice: As a "best practice" working with this file, given the size and complexities, it is better to write a new function in an external script and 
+use the "source" statement to include this library in said script, so that all the other functions here are available to use in the new
+function. 
 
 Library_Documentation
 
@@ -1184,7 +1186,7 @@ set_gnome_ui_mac_tweaks_for_user ()
 	set_gnome_ui_common_tweaks_for_user
 	write_status "Setting MAC like tweaks..."
 	# Gnome Shell Theming
-	gsettings set org.gnome.desktop.interface gtk-theme 'Arc'
+	gsettings set org.gnome.desktop.interface gtk-theme 'Mojave-dark'
 	gsettings set org.gnome.desktop.interface icon-theme 'Mint-Y-Aqua'
 
 	# Set font
@@ -1193,6 +1195,13 @@ set_gnome_ui_mac_tweaks_for_user ()
 	#Set Extensions for gnome
 	gsettings set org.gnome.shell disable-user-extensions false
 	gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'caffeine@patapon.info', 'TopIcons@phocean.net', 'dash-to-dock@micxgx.gmail.com']"
+
+	#Nautilus (File Manager) Usability
+	gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
+	gsettings set org.gnome.nautilus.preferences executable-text-activation 'ask'
+	gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+	gsettings set org.gnome.nautilus.list-view use-tree-view false
+	gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
 }
 
 
@@ -1230,6 +1239,32 @@ set_gnome_ui_win10_tweaks_for_user ()
 	gnome-shell-extension-tool -e dash-to-panel
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 'true'
 }
+
+
+
+
+
+
+
+
+
+add_gnome3_favorite_app ()
+{
+# Description: Function to add a new favorite app to the gnome favorites bar. 
+# Globals: none
+# Arguments: name of the shortcut to create (appname.desktop)
+# Outputs: stdout
+# Returns: 0/1
+# Usage: add_gnome3_favorite_app [appname.desktop]
+# End of documentation
+	NewApp="$1"
+	CurrentFavoriteApps="$(dconf read /org/gnome/shell/favorite-apps)" 
+	NewFavoriteApps="[ '$NewApp', ${CurrentFavoriteApps/[/}"
+	dconf write /org/gnome/shell/favorite-apps "${NewFavoriteApps}"
+}
+
+
+
 
 
 
@@ -3355,11 +3390,23 @@ SofwareManagmentAvailabilityCHK ()
 
 
 
-display_software_installation_choices_gtk () 
+display_software_installation_choices_gtk ()
 {
-# Function to display the software otions. All software option are listed in 
+# Function to display the software install otions. All software option are listed in 
 # the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.   
-
+# NOTE: adding a function in _rtd_recipes named "recipes_* ()" will automaticall populete
+# the menu displayed to the user.  
+# 
+# Globals: ${_BACKTITLE} ${zstatus} 
+# Dependencies: _rtd_recipes
+# Arguments: None
+# Outputs: interactive screen
+# Returns: 0/1 last command executed. 
+# Usage:  simply call the function by its name. 
+# Arguments: none
+#
+#
+# End of documentation
 
 	DisplayMenu=( zenity  --list  --timeout 60 --width=800 --height=600 --text "$_BACKTITLE" --checklist  --column "ON/OFF" --column "Select Software to add:" --separator " " )
 	SoftwareList=$(list_loaded_software_functions --nonum)
@@ -3368,14 +3415,11 @@ display_software_installation_choices_gtk ()
 	declare -A choices
 	choices=$("${DisplayMenu[@]}" "${MenuOptions[@]}" )
 
-	# IFS_SAV=$IFS
-        # IFS=$','
 	for choice in ${choices}
 		do
 		# call each chosen software install (by function) & add recepie (removed for display purposes)
 		add_software_task recipe_${choice}
 	done
-	# IFS=$IFS_SAV
 }
 
 

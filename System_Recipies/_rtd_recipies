@@ -27,7 +27,7 @@
 #
 #		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
 #		and facilitates several users working on the same scripts over time.
-#
+# 
 #
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
 #	functions in _rtd_functions and _rtd_recipies. 
@@ -803,6 +803,22 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
 				unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
 				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
+
+				cat >> /opt/rtd/scripts/rtd.desktop <<-'EOF'
+				[Desktop Entry]
+				Version=2.0
+				Name=RTD
+				Comment=RTD Simple System Support Tool
+				Exec=/opt/rtd/scripts/rtd-simple-supprot-tool
+				Path=/opt/rtd/scripts/
+				Icon=/opt/rtd/scripts/sys2.png
+				Terminal=true
+				Type=Application
+				Categories=OEM;
+				EOF
+
+				add_gnome3_favorite_app "/opt/rtd/scripts/rtd.desktop"
+
 
 				cat >> gtweak.sh <<-'EOF'
 				#!/bin/bash
