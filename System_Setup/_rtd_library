@@ -1,5 +1,5 @@
 #!/bin/bash
-RTD_VERSION=2.0
+export RTD_VERSION=2.0
 <<Library_Documentation
 ::				R T D   F u n c t i o n   L i b r a r y
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -8,12 +8,12 @@ RTD_VERSION=2.0
 :: 	Version:	2.0
 ::
 ::
-::	Purpose:	To collect and enable the use of code snipplets in other scripts.
-::			To document these thuroughly so that they may be usefull for learning BASH.
-::	Usage: 		call this file using the "source" statment in bash.
+::	Purpose:	To collect and enable the use of code snippets in other scripts.
+::			To document these thoroughly so that they may be useful for learning BASH.
+::	Usage: 		call this file using the "source" statement in bash.
 ::
 ::	This script is shared in the hopes that
-::	someone will find it usefull.
+::	someone will find it useful.
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -42,25 +42,25 @@ RTD_VERSION=2.0
 	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
 	create_swapfile					: Create a new swapfile
 	display_result 					: Displays command results in a pretty terminal box 
-	display_spinner					: Diplays a spinner in the rerminal 
+	display_spinner					: Display a spinner in the terminal 
 	dl						: Downloads and installs a package from the internet
 	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install OEM addons 
 	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
-	ensure_admin					: Elevates priveledges to admin root for the whole script asks for password
-	ensure_flatpack_package_managment		: Ensure that the Flatpack software managemnt is available
-	ensure_snap_package_managment			: Ensure that the snap software managment system is installed
+	ensure_admin					: Elevates privileges to admin root for the whole script asks for password
+	ensure_flatpack_package_managment		: Ensure that the Flatpack software management is available
+	ensure_snap_package_managment			: Ensure that the snap software management system is installed
 	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
 	generate_autounattend_xml			: Creates an autounattend.xml for Windows setup
-	generate_minecraft_server_launcher		: Creates a mincraft server launcher, w. auomatic dependeny resolutions 
+	generate_minecraft_server_launcher		: Creates a minecraft server launcher, w. automatic dependeny resolutions 
 	generate_report_disk_space_used_by_directory 	: Generate a disk usage report 
 	generate_rtd_me_sh_cmd				: Creates a rtd bootstrap script for system/software install for Windows, Linux, MAC OS, BSD etc.
 	InstallSoftwareFromRepo				: Installs a package from a repository supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.
-	is_software_package_available			: Checks to see if a software package is availabel in a repository 
-	is_software_package_installed			: Checks to see if a software package allready is installed
-	make_kvm_virtual_machine_now_from_debian_org 	: Immediatley create a virtual machine directly from debian.org 
+	is_software_package_available			: Checks to see if a software package is available in a repository 
+	is_software_package_installed			: Checks to see if a software package already is installed
+	make_kvm_virtual_machine_now_from_debian_org 	: Immediately create a virtual machine directly from debian.org 
 	make_kvm_virtual_machine_now_from_iso 		: Make a virtual machine from a generated ISO image
-	make_kvm_virtual_machine_now_from_microsoft	: Make a virtual machine runnig Windows
-	make_kvm_virtual_machine_now_from_ubuntu_com 	: Immediatley create a virtual macine from ubuntu.com
+	make_kvm_virtual_machine_now_from_microsoft	: Make a virtual machine running Windows
+	make_kvm_virtual_machine_now_from_ubuntu_com 	: Immediately create a virtual machine from ubuntu.com
 	make_preseed_cfg 				: Generate a debian + derivatives preseed file for fully automated installs 
 	notice_rtd_loaded				: Notifies a script that RTD functions are loaded
 	make_system_recovery_partition			: Build a system recovery partition
@@ -96,15 +96,15 @@ RTD_VERSION=2.0
 	rtd_setup_choices_term_fallback			: For server setup, displays a menu where you may chose CLI productivity software 
 	rtd_update_system 				: Performs a software update/refresh on supported distributions 
 	rtd_wait_for_internet_availability 		: Checks that the internet is reachable and waits until it is...
-	run_command_in_gnome_user_session 		: Running with elevated priviledges; will allow to switch back to user who started process to execute script in that environment
+	run_command_in_gnome_user_session 		: Running with elevated privileges; will allow to switch back to user who started process to execute script in that environment
 	scan_for_malware				: Scan location for malware
 	set_colors					: Set colors for prompting on screen in human usable variables: $RED, $GEEN etc.
-	set_enable_oem_elevated_priveledge		: Set automatic priviledge escalation for scripts
+	set_enable_oem_elevated_privelege		: Set automatic privilege escalation for scripts
 	set_gnome_ui_common_tweaks_for_user		: Set common UI usability tweaks
 	set_gnome_ui_mac_tweaks_for_user		: Set MAC UI usability tweaks
 	set_gnome_ui_win10_tweaks_for_user		: Set Windows 10 UI usability tweaks
 	set_install_command				: Determines what install command should be used to install packages from repositories
-	set_oem_elevated_priviledge_gui			: Set x-authority toallow root GUI
+	set_oem_elevated_privilege_gui			: Set x-authority toallow root GUI
 	SofwareManagmentAvailabilityCHK			: Checks to see that the software managment system is not busy
 	toggle_oem_auto_login				: Toggel the auto login option for the user
 	test_iso_boot_media				: Test bootable media using QEMU
@@ -128,6 +128,8 @@ All function comments should describe the intended API behaviour using:
 3	Arguments: Arguments taken.
 4	Outputs: Output to STDOUT or STDERR.
 5	Returns: Returned values other than the default exit status of the last command run.
+
+
 
 Library_Documentation
 
@@ -658,7 +660,7 @@ toggle_oem_auto_login()
 
 
 
-set_oem_elevated_priviledge_gui ()
+set_oem_elevated_privilege_gui ()
 {
 # Description: Some Debian and other Linux distribution do not allow gui apps to 
 # be run when invoked by "sudo" or in a root (system elevated authority) 
@@ -684,7 +686,7 @@ set_oem_elevated_priviledge_gui ()
 
 
 
-set_enable_oem_elevated_priveledge()
+set_enable_oem_elevated_privelege()
 {
 # Description: Set no password elevated priviledges.
 # This will allow apps to be run when invoked by "sudo" without being prompted 
