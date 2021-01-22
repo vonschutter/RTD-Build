@@ -249,7 +249,7 @@ recipe_Remove_non_western_latin_fonts () {
 recipe_Brave_Browser () {
 		# This function will add the vendor maintained repository and install the software
 		# using the distribution speciffic installers.
-		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
+		write_information "--- Installing Brave Browser directly from vendor repo..." 
 		if cat "/etc/os-release" | grep "debian" ; then
 			apt install -y apt-transport-https curl gnupg
 			curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
@@ -269,9 +269,19 @@ recipe_Brave_Browser () {
 			zypper addrepo https://brave-browser-rpm-release.s3.brave.com/x86_64/ brave-browser
 			zypper install brave-browser -y
 			return $?
-		else 
-			echo "${FUNCNAME[0]}: Neither debian, fedora, or suse base distros could be found; NOT installing brave."
-			return 1
+		else
+			# Try for any distro using apt... SUSE has a shortcut for a simple apt, wich will mess this up if checked first... 
+			if hash apt-get ; then
+				apt install -y apt-transport-https curl gnupg
+				curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
+				echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+				apt update
+				apt install brave-browser -y
+				return $?
+			else
+				echo "${FUNCNAME[0]}: Neither debian, fedora, or suse base distros could be found; NOT installing brave."
+				return 1
+			fi
 		fi
 }
 
@@ -281,7 +291,7 @@ recipe_Vivaldi_Browser (){
 		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
 		# # from the vendors website. It will work until the vendor removes the exact file... 
 		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
-		echo -e $YELLOW"--- Installing Brave Browser directly from vendor repo..." $ENDCOLOR
+		write_information "--- Installing Brave Browser directly from vendor repo..." 
 		if cat "/etc/os-release" | grep "debian" ; then
 			apt -y install wget gnupg2 software-properties-common
 			wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
@@ -812,7 +822,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				else
 					write_error "This option requires a supported package manager on your system (deb, zypper, dnf, pacman). Neiter was found!"
 				fi
-				
+
 				check_dependencies snapd
 				snap install vimix-themes
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
