@@ -51,6 +51,7 @@ export RTD_VERSION=2.0
 	ensure_snap_package_managment			: Ensure that the snap software management system is installed
 	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
 	generate_autounattend_xml			: Creates an autounattend.xml for Windows setup
+	generate_fedora_ks_cfg_file			: Creates a kickstart file for fedora 
 	generate_minecraft_server_launcher		: Creates a minecraft server launcher, w. automatic dependeny resolutions 
 	generate_report_disk_space_used_by_directory 	: Generate a disk usage report 
 	generate_rtd_me_sh_cmd				: Creates a rtd bootstrap script for system/software install for Windows, Linux, MAC OS, BSD etc.
@@ -2117,66 +2118,16 @@ create_iso_image_debian ()
 	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
 
 	test_iso_boot_media ${TARGET_ISO}
+	if ${RTD_GUI} --yesno "Would you like to make a bootable thumbdrive from this ISO media?" ${HEIGHT} ${WIDTH} ; then 
+		create_physical_media_from_iso ${TARGET_ISO} || create_physical_media_from_iso
+	else 
+		return
+	fi 
 }
 
 
 
 
-
-
-
-
-create_iso_image_debian ()
-{
-# Description: Function to generate the new ISO file from the extracted and
-# altered original ISO.
-# Delete old iso file if there...
-#
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# End of Documentation
-
-	# Check for other input and create them if not defined...
-	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
-	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
-
-	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
-		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
-	else
-		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
-		check_dependencies isolinux 
-		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
-		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
-		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
-	fi
-
-	write_status "------ CREATING ISO: $TARGET_ISO    --------"
-	if [ -f "$TARGET_ISO" ]; then
-		rm -f "$TARGET_ISO"
-	fi
-
-	cd "$TMP_DISC_DIR" || echo "Failed to enter $TMP_DISC_DIR"
-	rm -r '[BOOT]'
-	"$BIN_XORRISO" -as mkisofs -r \
-		-V "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}" \
-		-J -b "isolinux/isolinux.bin" \
-		-c boot.cat \
-		-no-emul-boot \
-		-boot-load-size 4 \
-		-boot-info-table \
-		-input-charset utf-8 \
-		-isohybrid-mbr "${ISOHDPFX_BIN}" \
-		-eltorito-alt-boot \
-		-e boot/grub/efi.img \
-		-no-emul-boot \
-		-isohybrid-gpt-basdat -o "$TARGET_ISO" ./ || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-
-	test_iso_boot_media ${TARGET_ISO}
-}
 
 
 
@@ -2379,8 +2330,10 @@ create_physical_media_from_iso ()
 				255 ) echo "[ESC] key pressed."; return 255 ;;
 				* ) echo "An unknown event occurred!" ; return 1 ;;
 			esac
+			return
 		fi
 	fi
+	return
 }
 
 
@@ -6148,6 +6101,106 @@ generate_minecraft_server_launcher ()
 
 	MINECRAFT_EOF
 }
+
+
+
+
+
+
+
+generate_fedora_ks_cfg_file ()
+{
+# Description: 
+# Globals: 
+# Arguments: None
+# Outputs: 
+# Returns: 
+# Usage: 
+# End of documentation
+
+	cat >> $1 <<-'KS_EOF'
+
+	# Choosing mode (graphical|text|cmdline [--non-interactive])
+	graphical
+
+	# Configure installation method
+	install
+	url --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-33&arch=x86_64"
+	repo --name=fedora-updates --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f33&arch=x86_64" --cost=0
+	repo --name=rpmfusion-free --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=free-fedora-33&arch=x86_64" --includepkgs=rpmfusion-free-release
+	repo --name=rpmfusion-free-updates --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=free-fedora-updates-released-33&arch=x86_64" --cost=0
+	repo --name=rpmfusion-nonfree --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=nonfree-fedora-33&arch=x86_64" --includepkgs=rpmfusion-nonfree-release
+	repo --name=rpmfusion-nonfree-updates --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=nonfree-fedora-updates-released-33&arch=x86_64" --cost=0
+	repo --name=google-chrome --install --baseurl="https://dl.google.com/linux/chrome/rpm/stable/x86_64" --cost=0
+
+	# Run the Setup Agent on first boot
+	firstboot --enable
+
+	# Keyboard layouts
+	keyboard --vckeymap=us --xlayouts='us'
+	# System language
+	lang en_US.UTF-8
+	# System timezone
+	timezone Europe/London --isUtc --ntpservers=0.pool.ntp.org
+
+	# Network information
+	network --bootproto=dhcp --device=eth0 --onboot=on --ipv6=off
+	network --hostname=localhost.localdomain
+
+	# Root password
+	rootpw --lock
+	# User password
+	user --groups=wheel --name=admin --password=password
+
+	# Partition clearing information
+	zerombr
+	clearpart --all
+
+	# Disk partitioning information
+	autopart --nohome
+
+	# Reboot the system after installation.
+	reboot
+
+	%packages --retries 5 --timeout 20
+	@core
+	@standard
+	@hardware-support
+	@base-x
+	@firefox
+	@fonts
+	@libreoffice
+	@multimedia
+	@networkmanager-submodules
+	@printing
+	@xfce-desktop
+	-openssh-server
+
+	# Post-installation Script
+	%post
+	# Disable IPv6
+	cat <<EOF >> /etc/sysctl.conf
+	net.ipv6.conf.all.disable_ipv6 = 1
+	net.ipv6.conf.default.disable_ipv6 = 1
+	net.ipv6.conf.lo.disable_ipv6 = 1
+	EOF
+
+	#Enable GPG keys for installed repos
+	cat <<EOF >> /etc/yum.repos.d/google-chrome.repo
+	gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+	EOF
+
+	%end
+	KS_EOF
+
+}
+
+
+
+
+
+
+
 
 
 
