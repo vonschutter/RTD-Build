@@ -63,13 +63,13 @@ fi
 
 # Enable RTD Functions...
 echo "Checking for RTD Functions..."
-FILE=/opt/rtd/scripts/_rtd_functions     
+FILE=/opt/rtd/scripts/_rtd_library
 if [ -f $FILE ]; then
    echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
    source $FILE
 else
    echo "Cannot find RTD Functions... Attempting to get them online... "
-   wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$FILE" -P /opt/rtd/scripts
+   wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"${FILE##*/}" -P /opt/rtd/scripts
    if [ -f $FILE ]; then
    	echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
    	source $FILE
@@ -90,15 +90,6 @@ fi
 ###########################################################################
 #
 
-deb_software_task ()
-{
-	log_item "running deb_software_task with parameters $@"
-        # make some decent display terminal graphics...
-        PAD="--------------------------------------------------"
-	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-	echo -ne "--- Executing "$LINE"":""\ & $@ >>$0.log 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
-
-}
 
 
 
@@ -112,24 +103,23 @@ echo "$DATE --- : $@" >> $0.log
 
 update_me ()
 {
-	# Documentation: Paths and the such... 
-	# "# arguments called with ---->  ${@}     "
-	# "# \$1 ---------------------->  $1       "
-	# "# \$2 ---------------------->  $2       "
-	# "# path to me --------------->  ${0}     "
-	# "# parent path -------------->  ${0%/*}  "
-	# "# my name ------------------>  ${0##*/} "
-        	rm $0.bak
-		mv $0 $0.bak
-                wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/System_Update/${0##*/} -P ${0%/*} 
-                chmod +x $0
+	rm $0.bak
+	mv $0 $0.bak
+        wget  --show-progress https://github.com/vonschutter/RTD-Build/raw/master/System_Update/${0##*/} -P ${0%/*} 
+        chmod +x $0
+        if [[ -e $0 ]]; then 
+        	return  0 
+        else
+        	cp $0.bak $0
+        	return 1 
+        fi 
 }
 
 
 
 config_me ()
 {
- echo "::There is nothing to configure at this time!::"
+	write_error "::There is nothing to configure at this time!::"
 }
 
 
@@ -138,7 +128,7 @@ setup_me ()
 {
 	check_dependencies flatpak
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-	check_dependencies  snap
+	check_dependencies  snapd
 }
 
 ###########################################################################
@@ -158,48 +148,14 @@ else
 	log_item No instructions passed to $0... Continuing with default behavior. 
 fi
 
-echo -e $YELLOW"Updating installed software..." $ENDCOLOR
+write_status "Updating installed software..." 
+
 # Updating software managed by distribution speciffic software manager...
 # Unless the RTD Functions are loaded, then use that. 
-	if [[ $RTDFUNCTOINS -eq 1 ]]; then
-		deb_software_task system_update
-	else
-		
-		deb_software_task apt-get update
-		UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
-		if [ "$UPGRADABLE" -eq 0 ]; then
-			echo "--- $UPGRADABLE packages that need updates; Skipping update task... " 
-		else
-			echo $UPGRADABLE packages that need updates 
-			deb_software_task apt-get upgrade -y
-			deb_software_task apt-get autoremove -y
-			deb_software_task apt-get clean
-		fi
-	fi
-# updating snaps if snap is present on the system... 
-if hash snap 2>/dev/null; then
-	  deb_software_task snap refresh
-	else 
-	  echo "--- snap software is not present on this system... skipping..."
-	fi
 
-# updating flatpacks if flatpack is present on system... 	
-if hash flatpak 2>/dev/null; then
-	  deb_software_task flatpak update --user --noninteractive -y
-	  deb_software_task flatpak update --system --noninteractive -y
-	else 
-	  echo "--- flatpak software is not present on this system... skipping..."
-	fi
-
-
-###########################################################################
-##                                                                       ##
-##                          Versions                                     ##
-##                                                                       ##
-###########################################################################
-#
+rtd_update_system
 
 
 
 
-#END
+

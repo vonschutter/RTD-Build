@@ -1281,13 +1281,15 @@ add_gnome3_favorite_app ()
 # NOTE: This function must be run in the user context. 
 # End of documentation
 	NewApp="$1"
-	CurrentFavoriteApps="$(dconf read /org/gnome/shell/favorite-apps)" 
-	NewFavoriteApps="[ '$NewApp', ${CurrentFavoriteApps/[/}"
-	dconf write /org/gnome/shell/favorite-apps "${NewFavoriteApps}"
+	if TMP_FIL=$(mktemp -p "$(mktemp -d )") ; then
+		chown -R $SUDO_USER ${TMP_FIL}	
+		sudo -iu  $SUDO_USER  echo "gsettings set org.gnome.shell favorite-apps \"\$(gsettings get org.gnome.shell favorite-apps | sed s/.\$//), '${NewApp}']\"" >${TMP_FIL}
+		sudo -iu  $SUDO_USER /bin/bash ${TMP_FIL}
+		rm ${TMP_FIL}
+	else
+		return 1
+	fi
 }
-
-
-
 
 
 
@@ -1308,7 +1310,7 @@ run_command_in_gnome_user_session () {
 # End of documentation
 	echo -------------------------- Begin as user: $SUDO_USER ---------------------
 	echo "$*"
-	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* > /dev/null 2>&1
+	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* 
 	echo " "
 	echo -------------------------- End as user: $SUDO_USER   ---------------------
 }
@@ -3182,7 +3184,7 @@ rtd_update_system ()
 # Arguments: None
 # Outputs: 
 # Returns: 
-# Usage: 
+# Usage: z
 # End of documentation
 
 	PUBLICATION="$BRANDING Update Manager for Linux"
@@ -3304,7 +3306,7 @@ dl ()
 # End of documentation
 
 	download_url="$1"
-	fetch_file () { wget -P /opt/rtd/cache "$download_url" 1>>$_LOGFILE 2>>$_ERRLOGFILE ; }
+	fetch_file () { wget -P /opt/rtd/cache "$download_url"  ; }
 
 	echo  "    - getting package $download_url ..."
 	if hash wget >/dev/null ; then
@@ -3316,10 +3318,10 @@ dl ()
 
 	echo "    - Installing package $(basename "$download_url") ..."
 	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 
 	else
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 
 	fi
 }
 
