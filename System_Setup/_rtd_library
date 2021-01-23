@@ -3096,7 +3096,7 @@ rtd_oem_remove_non_western_latin_fonts ()
 	echo "Attempting to remove non-western fonts..."
 	count=0
 	for i in $font_list ; do 
-		rtd_oem_remove_software $i &>/dev/null && (( count++))
+		rtd_oem_remove_software $i && (( count++))
 	done
 	echo "Removed [ $count ] non-western Fonts"
 }
