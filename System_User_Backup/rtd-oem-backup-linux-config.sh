@@ -44,22 +44,8 @@ VERSION="1.00"
 _FILE=_rtd_functions
 _RTD_S_HOME=/opt/rtd/scripts
 unset rtd_oem_user_backup_destination
+source $_RTD_S_HOME/$_FILE
 
-if [ -f $_RTD_S_HOME/$_FILE ]; then
-	echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
-	source $_RTD_S_HOME/$_FILE
-else
-	echo "Cannot find RTD Functions... Attempting to get them online... "
-	sudo mkdir -p $_RTD_S_HOME
-	sudo wget -q --show-progress https://github.com/vonschutter/RTD-Build/raw/master/"$_FILE" -P $_RTD_S_HOME
-	if [ -f $_RTD_S_HOME/$_FILE ]; then
-		echo -e $GREEN"RTD Functions are available: Loading them for use... " $ENDCOLOR
-		source $_RTD_S_HOME/$_FILE
-	else
-		echo -e $RED"RTD Functions could NOT be loaded; You must use the native options to instal software... "$ENDCOLOR
-		exit 
-	fi
-fi
 
 # Set the background tilte:
 BACKTITLE="$PUBLICATION"

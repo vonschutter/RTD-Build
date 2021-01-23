@@ -837,6 +837,8 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					unzip -q -o /opt/rtd/cache/Mojave-gtk-theme.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/Mojave-gtk-theme-master && ./install.sh && popd
 					unzip -q -o /opt/rtd/cache/McMojave-circle.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/McMojave-circle-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i mojave-themes:gtk-3-themes ; done
+				
+				# Add a default Icon theme "Arc" fo a clean and crisp proffessional default look. 
 				wget https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Arc-icon-theme.zip -P /opt/rtd/cache 
 				unzip -q -o /opt/rtd/cache/Arc-icon-theme.zip -d /opt/rtd/cache && mv /opt/rtd/cache/Arc-icon-theme /usr/share/icons/Arc
 
@@ -954,7 +956,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				Comment=RTD Simple System Support Tool
 				Exec=/opt/rtd/scripts/rtd-simple-support-tool
 				Path=/opt/rtd/scripts/
-				Icon=/opt/rtd/scripts/sys2.png
+				Icon=/opt/rtd/scripts/sys2.ico
 				Terminal=true
 				Type=Application
 				Categories=OEM;
@@ -967,7 +969,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				Comment=RTD User home Backup Tool
 				Exec=/opt/rtd/scripts/rtd-oem-backup-linux-config.sh
 				Path=/opt/rtd/scripts
-				Icon=/opt/rtd/scripts/sys0.png
+				Icon=/opt/rtd/scripts/sys0.ico
 				Terminal=true
 				Type=Application
 				Categories=OEM;
@@ -985,15 +987,15 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
 				rtd_oem_kde_set_wallpaper "/opt/rtd/Wallpaper/Wayland.jpg" 
 
-				# Download HQ Icons
-				dl http://packages.linuxmint.com/pool/main/m/mint-y-icons/mint-y-icons_1.5.0_all.deb 
-
 				lookandfeeltool -a 'org.kde.breezedark.desktop'
-				wget -q https://github.com/vinceliuice/vimix-kde/archive/master.zip -P /opt/rtd/cache
-				unzip -q -o /opt/rtd/cache/master.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-kde-master && ./install.sh && popd
+				rm /opt/rtd/cache/master.zip
+				wget https://github.com/vinceliuice/vimix-kde/archive/master.zip  -P /opt/rtd/cache
+				unzip -o /opt/rtd/cache/master.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-kde-master && ./install.sh && popd && rm /opt/rtd/cache/master.zip
 
-				wget -q https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
-				unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
+				wget https://github.com/${GIT_Profile}/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
+				unzip -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd && popd && rm /opt/rtd/cache/master.zip
+				lookandfeeltool -a  'com.github.vinceliuice.Vimix-Dark-Doder'
+
 			fi
 }
 
