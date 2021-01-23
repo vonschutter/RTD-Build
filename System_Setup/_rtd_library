@@ -1274,22 +1274,27 @@ add_gnome3_favorite_app ()
 # Description: Function to add a new favorite app to the gnome favorites bar. 
 # Globals: none
 # Arguments: name of the shortcut to create (appname.desktop)
-# Outputs: stdout
+# Outputs: 
 # Returns: 0/1
 # Usage: add_gnome3_favorite_app [appname.desktop]
 #
 # NOTE: This function must be run in the user context. 
 # End of documentation
+# A potentioal simplification if the escapes cn be figured out: 
+# sudo -iu $SUDO_USER /bin/bash -c \" "gsettings set org.gnome.shell favorite-apps \\\"\$(gsettings get org.gnome.shell favorite-apps | sed s/.\\$//), '${Newapp}']\\\"" \"
 	NewApp="$1"
 	if TMP_FIL=$(mktemp -p "$(mktemp -d )") ; then
-		chown -R $SUDO_USER ${TMP_FIL}	
+		chown -R $SUDO_USER ${TMP_FIL%/*}
 		sudo -iu  $SUDO_USER  echo "gsettings set org.gnome.shell favorite-apps \"\$(gsettings get org.gnome.shell favorite-apps | sed s/.\$//), '${NewApp}']\"" >${TMP_FIL}
-		sudo -iu  $SUDO_USER /bin/bash ${TMP_FIL}
+		sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus /bin/bash ${TMP_FIL}
 		rm ${TMP_FIL}
 	else
 		return 1
 	fi
 }
+
+
+
 
 
 
