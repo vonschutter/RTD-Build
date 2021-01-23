@@ -837,22 +837,6 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					unzip -q -o /opt/rtd/cache/McMojave-circle.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/McMojave-circle-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i mojave-themes:gtk-3-themes ; done
 
-				cat >> /usr/share/applications/rtd.desktop <<-'EOF'
-				[Desktop Entry]
-				Version=2.0
-				Name=RTD
-				Comment=RTD Simple System Support Tool
-				Exec=/opt/rtd/scripts/rtd-simple-supprot-tool
-				Path=/opt/rtd/scripts/
-				Icon=/opt/rtd/scripts/sys2.png
-				Terminal=true
-				Type=Application
-				Categories=OEM;
-				EOF
-
-				add_gnome3_favorite_app "/usr/share/applications/rtd.desktop" 
-
-
 				cat >> gtweak.sh <<-'EOF'
 				#!/bin/bash
 				# Terminal and Tilix Dark Theme
@@ -958,6 +942,33 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				EOF
 
 				run_command_in_gnome_user_session /bin/bash gtweak.sh 
+
+				# Add launchers for some OEM apps. 
+				cat > /usr/share/applications/rtd.desktop <<-EOF
+				[Desktop Entry]
+				Version=2.0
+				Name=RTD
+				Comment=RTD Simple System Support Tool
+				Exec=/opt/rtd/scripts/rtd-simple-support-tool
+				Path=/opt/rtd/scripts/
+				Icon=/opt/rtd/scripts/sys2.png
+				Terminal=true
+				Type=Application
+				Categories=OEM;
+				EOF
+
+				cat > /usr/share/applications/rtd-user-bakup.desktop <<-EOF 
+				[Desktop Entry]
+				Version=2.0
+				Name=RTD-Backup
+				Comment=RTD User home Backup Tool
+				Exec=/opt/rtd/scripts/rtd-oem-backup-linux-config.sh
+				Path=/opt/rtd/scripts
+				Icon=/opt/rtd/scripts/sys0.png
+				Terminal=true
+				Type=Application
+				Categories=OEM;
+				EOF
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
