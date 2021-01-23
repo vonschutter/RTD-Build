@@ -175,7 +175,7 @@ rtd_oem_ensure_rtd_library_available ()
 		fi
 	}
 
-	if [ -f $rtd_library ]; then
+	if [ -e $rtd_library ]; then
 		if [[ "$(head $rtd_library |grep Version: | cut -f 3)" > 2 ]]; then 
 			source $rtd_library
 			rtd_oem_pause $?
