@@ -155,47 +155,7 @@ _LOGFILE="${LOGFILE}"
 # that actually do the work requested.
 #
 #
-
-rtd_oem_ensure_rtd_library_available ()
-{
-	rtd_library="/opt/rtd/scripts/_rtd_library"
-	get_rtd_oem_library ()
-	{
-		if ( $RTD_GUI --keep-window --title "RTD: Get Parts" --yesno "For this tool to run correctly I need to download the RunTime Data Library file from the internet. Is this OK?" 10 90 ); then
-			mkdir -p /opt/rtd/scripts
-			wget -q https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library -P /opt/rtd/scripts/
-			source $rtd_library || $RTD_GUI --colors --title "\Zb\Z1 ERROR!" --pause  "Failed to download Library! PLEASE check that you are connected to the internet." 10 90 10
-			rtd_oem_pause $?
-		else
-			if ( $RTD_GUI --title "RTD: Get Parts" --no-label "EXIT" --yes-label "Go back" --yesno "Since you have dissalowed me to get the RunTime Data Library, I cannot continue. \n Press [ENTER] to quit" 10 90 ); then
-				get_rtd_oem_library 
-			else
-				exit 1
-			fi
-		fi
-	}
-
-	if [ -e $rtd_library ]; then
-		if [[ "$(head $rtd_library |grep Version: | cut -f 3)" > 2 ]]; then 
-			source $rtd_library
-			rtd_oem_pause $?
-		else 
-			get_rtd_oem_library && echo -e $GREEN "RunTime Data Library download seems sucessful!" $ENDCOLOR || echo -e $RED "RunTime Data Library download seems FAILED!" $ENDCOLOR
-			rtd_oem_pause $?
-		fi
-	else
-		get_rtd_oem_library && echo -e $GREEN "RunTime Data Library download seems sucessful!" $ENDCOLOR || echo -e $RED "RunTime Data Library download seems FAILED!" $ENDCOLOR
-		read -p ....
-	fi
-
-	echo "RTDFUNCTIONS = $RTDFUNCTIONS"
-	if [[ $RTDFUNCTIONS -eq 1 ]]; then
-		echo -e $GREEN "RTD Library confirmed that it has loaded!" $ENDCOLOR
-	else
-		$RTD_GUI --colors --title "\Zb\Z1 ERROR!" --pause "RunTime Data Library did not load scucessfully!! \n Please make sure that you are connected to the internet and that sudo and wget are installed." 10 90 10
-		exit 1
-	fi
-}
+source /opt/rtd/scripts/_rtd_library
 
 
 
