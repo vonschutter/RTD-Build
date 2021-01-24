@@ -421,11 +421,11 @@ show_make_media_gui_desktop () {
 			cleanup_and_finish
 		;;
 		2 )
-			rtd_oem_ubuntu_auto_install_iso_builder kubuntu-desktop server
+			rtd_oem_ubuntu_auto_install_iso_builder kubuntu-desktop desktop
 			cleanup_and_finish
 		;;
 		3 )
-			rtd_oem_ubuntu_auto_install_iso_builder ubuntu-gnome-desktop server
+			rtd_oem_ubuntu_auto_install_iso_builder ubuntu-gnome-desktop desktop
 			cleanup_and_finish
 		;;
                 4 )
@@ -557,14 +557,14 @@ show_deploy_server_VM_now_menu ()
 			echo "Program terminated by user..."
 		;;
 		1 )
-			rtd_oem_ubuntu_auto_install_iso_builder ssh-server server
-			make_kvm_virtual_machine_now_from_iso ubuntu19.10
-			cleanup_and_finish
+			make_preseed_cfg "$( mktemp -d )" ssh-server
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
+			cleanup_and_finish nomessage
 		;;
 		2 )
-			rtd_oem_ubuntu_auto_install_iso_builder xubuntu-core server
-			make_kvm_virtual_machine_now_from_iso ubuntu19.10
-			cleanup_and_finish
+			make_preseed_cfg "$( mktemp -d )" xubuntu-core
+			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
+			cleanup_and_finish nomessage
 		;;
 		3 )
 			make_preseed_cfg "$( mktemp -d )" lxde-desktop
