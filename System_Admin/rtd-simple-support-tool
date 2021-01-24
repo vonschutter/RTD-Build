@@ -210,9 +210,11 @@ check_menu_availability ()
 		export RTD_GUI
 		if ( $RTD_GUI --backtitle "$BRANDING" --title "System Information Menu" --no-button "NO: Use whiptail" --yes-button "YES: Install dialog" --yesno "Please NOTE that we are using WHIPTAIL as a terminal menu system, which is missing several features compared to the default: DIALOG menu system. There are a few reasons we may be using WHIPTAIL instead: I was forced to use it or it is the only terminal menu system available... If you continue with the current WHIPTAIL some things might not work. \n \n May I please try to install the dialog system in stead? . \n  " 20 90 ); then
 			RTD_GUI=dialog
-			err_no_menu_system_found
+			InstallSoftwareFromRepo dialog
+			return
 		else
 			echo "User selected No, exit status was $?."
+			return
 		fi
 	else
 		err_no_menu_system_found dialog && return 1 || exit 1
@@ -245,15 +247,15 @@ display_notice () {
 	$RTD_GUI --backtitle "$BRANDING" \
 	--title "About" \
 	--msgbox "
-This tool is part of the RTD System Support Tools. The purpose of this tool is to generate an unattended installation ISO file that can be used directly by a virtual machine in KVM, Oracle Virtual Box, or VMware. Alternatively, this Image may be appled to a thumb drive using "dd" or "etcher", or burned to optical media using "K3B" or another favorite CD/DVD burining software.
+	This tool is part of the RTD System Support Tools. The purpose of this tool is to simplify management remote an local. 
 
-This script will:
-  - Download the latest installation image
-  - Patch the installation media with the instructions to auto-install.
-  - The instructios will encrypt the hard drive and install, automatically.
-  - The default disk encryption password is: 'letmein1234'
-  - The default system login and admin temporary password is: 'letmein'
-  - The defaults will be used if you make no other active choices"  $HEIGHT $WIDTH $LIST_HEIGHT
+	This script will:
+	- Simple Virtual Machine management
+	- Auto Create and deploy VMs (Linux and Windows)
+	- Change password, and encryption phrases of boot media
+	- Perform distribution upgrades (supported distributions)
+	- Remove unused PPA's (where relevant)
+	- Display system information and resource usage"  $HEIGHT $WIDTH $LIST_HEIGHT
 }
 
 
@@ -264,7 +266,8 @@ show_notice_on_fist_run () {
 		show_notice_on_fist_run_TEXT="
 This looks like the first time you run this vesion of the RTD tools. Please note that these tools are provided as-is and for modification.
 
-The RTD tools run in a separate terminal that you can re connect to if you should get disconnected. This can be done by:
+The RTD tools run in a separate terminal that you can re connect to if you should get disconnected; for example if you are
+remotely connecting through SSH. This can be done by:
 - re-connecting to the server with ssh
 - then running command "byobu" if a session is already running on the server"
 
@@ -600,7 +603,8 @@ show_deploy_VDI_VM_now_menu ()
 		"6" "Debian Cinnamon Desktop" \
 		"7" "Debian Plasma Desktop" \
 		"8" "Debian Light Weight Desktop (LXDE)" \
-		"9" "Windows 10 VDI" \
+		"9" "Fedora Workstation VDI" \
+		"10" "Windows 10 VDI" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
@@ -616,7 +620,6 @@ show_deploy_VDI_VM_now_menu ()
 			echo "Program terminated by user..."
 		;;
 		1 )
-			echo "***   Deploying a Ubuntu VDI with Gnome Desktop from ubuntu.com"
 			make_preseed_cfg "$( mktemp -d )" ubuntu-desktop
 			make_kvm_virtual_machine_now_from_ubuntu_com ubuntu20.04
 		;;
@@ -653,6 +656,12 @@ show_deploy_VDI_VM_now_menu ()
 			cleanup_and_finish nomessage
 		;;
 		9 )
+			PRESEED_FILE=/tmp/ks.cfg
+			generate_fedora_ks_cfg_file "${PRESEED_FILE}"
+			make_kvm_virtual_machine_now_from_fedora_org fedora30
+			cleanup_and_finish nomessage
+		;;
+		10 )
 			make_kvm_virtual_machine_now_from_microsoft
 		;;
 		esac

@@ -707,7 +707,8 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 			}
 			# If this system was built using the RTD process and is debian based, use instructions in said file.
 			rtd_oem_check_splash /opt/rtd/log/preseed.cfg
-
+			rtd_oem_check_splash /root/original-ks.cfg
+			
 			#Tune to virtual machine guest or tune according to hardware type::
 			check_dependencies virt-what
 			check_dependencies laptop-detect
@@ -773,11 +774,12 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				# -------------------------------------------------------------------------------------------------------
 				
 				# Special case for Fedora: Add the gnome UI tweak tool... 
-				if cat /etc/os-release |grep "Fedora" &>> $_LOGFILE; then
+				if cat /etc/os-release |grep "Fedora" ; then
 					# Enable the extra repositories in fedora to get access to the espected software.
-					InstallSoftwareFromRepo fedora-workstation-repositories 
+					InstallSoftwareFromRepo fedora-workstation-repositories
+					InstallSoftwareFromRepo gnome-tweaks
 				fi
-				InstallSoftwareFromRepo gnome-tweak-tool
+				InstallSoftwareFromRepo gnome-tweak
 				
 				write_information "--- Optimizig look and feel of the desktop for productivity and aestetics..." 
 
@@ -791,6 +793,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					gnome-shell-extension-gsconnect  \
 					gnome-shell-extension-gsconnect-browsers \
 					gnome-shell-extension-dash-to-panel \
+					gnome-shell-extension-dash-to-dock \
 					gnome-shell-extension-dashtodock 
 				do 
 					InstallSoftwareFromRepo $i
