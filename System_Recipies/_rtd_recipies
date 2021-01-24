@@ -212,7 +212,7 @@ recipe_Bundle_Common_Apps () {
 		# Add several software items that are almost alwasys used 
 		# in one way or another... 
 			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
-			for i in diodon polari filezilla
+			for i in diodon polari filezilla tilix
 			do
 			     InstallSoftwareFromRepo $i
 			done
@@ -781,8 +781,8 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				
 				write_information "--- Optimizig look and feel of the desktop for productivity and aestetics..." 
 
-				# Add Some clean and basic themes and icons...			
-				for i in numix-gtk-theme numix-icon-theme \
+				# Add Some basic extensions...			
+				for i in gnome-shell-extensions \
 					gnome-shell-extension-appindicator \
 					gnome-shell-extension-suspend-button \
 					gnome-shell-extension-log-out-button  \
@@ -791,9 +791,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					gnome-shell-extension-gsconnect  \
 					gnome-shell-extension-gsconnect-browsers \
 					gnome-shell-extension-dash-to-panel \
-					gnome-shell-extension-dashtodock \
-					arc-theme \
-					adwaita-icon-theme-full adwaita-qt
+					gnome-shell-extension-dashtodock 
 				do 
 					InstallSoftwareFromRepo $i
 				done
@@ -823,14 +821,19 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				else
 					write_error "This option requires a supported package manager on your system (deb, zypper, dnf, pacman). Neiter was found!"
 				fi
-
+				
+				# Allow themes to be used in snapps...
 				check_dependencies snapd
+
+				# Install theme for a smooth mocka experience in UI...
 				snap install vimix-themes
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/vimix-gtk-themes.zip -P /opt/rtd/cache
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/vimix-icon-themes.zip -P /opt/rtd/cache
 					unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
 					unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i vimix-themes:gtk-3-themes; done
+				
+				# Install theme for previous Apple users... 
 				snap install mojave-themes
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Mojave-gtk-theme.zip -P /opt/rtd/cache
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/McMojave-circle.zip -P /opt/rtd/cache
@@ -838,6 +841,15 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					unzip -q -o /opt/rtd/cache/McMojave-circle.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/McMojave-circle-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i mojave-themes:gtk-3-themes ; done
 				
+				# Install basic professional Arc and gnome defaiult theme...
+				for i in numix-gtk-theme numix-icon-theme \
+					arc-theme \
+					adwaita-icon-theme-full\
+					adwaita-qt
+				do 
+					InstallSoftwareFromRepo $i
+				done
+
 				# Add a default Icon theme "Arc" fo a clean and crisp proffessional default look. 
 				wget https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Arc-icon-theme.zip -P /opt/rtd/cache 
 				unzip -q -o /opt/rtd/cache/Arc-icon-theme.zip -d /opt/rtd/cache && mv /opt/rtd/cache/Arc-icon-theme /usr/share/icons/Arc
@@ -852,6 +864,121 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				gsettings set org.gnome.Terminal.Legacy.Profile:/ default-size-columns 100
 				gsettings set org.gnome.Terminal.Legacy.Profile:/ use-theme-transparency false
 				gsettings set org.gnome.Terminal.Legacy.Profile:/ scrollback-lines 10000
+
+				mkdir -p ~/.config/rtd
+				cat >> ~/.config/rtd/gconf-term-settings.ini <<-'EOF_TERM'
+				[org/gnome/terminal/legacy/profiles:]
+				default='233cd435-58ea-47cf-bcfa-a16a9ecedb16'
+				list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '233cd435-58ea-47cf-bcfa-a16a9ecedb16']
+
+				[org/gnome/terminal/legacy/profiles:/:233cd435-58ea-47cf-bcfa-a16a9ecedb16]
+				background-color='rgb(0,0,0)'
+				background-transparency-percent=0
+				bold-color-same-as-fg=true
+				bold-is-bright=true
+				cursor-colors-set=false
+				foreground-color='rgb(170,170,170)'
+				highlight-colors-set=false
+				palette=['rgb(0,0,0)', 'rgb(170,0,0)', 'rgb(0,170,0)', 'rgb(170,85,0)', 'rgb(0,0,170)', 'rgb(170,0,170)', 'rgb(0,170,170)', 'rgb(170,170,170)', 'rgb(85,85,85)', 'rgb(255,85,85)', 'rgb(85,255,85)', 'rgb(255,255,85)', 'rgb(85,85,255)', 'rgb(255,85,255)', 'rgb(85,255,255)', 'rgb(255,255,255)']
+				use-theme-colors=false
+				use-theme-transparency=false
+				use-transparent-background=true
+				visible-name='Linux'
+
+				[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+				background-color='rgb(0,0,0)'
+				background-transparency-percent=15
+				default-size-columns=140
+				default-size-rows=40
+				foreground-color='rgb(170,170,170)'
+				use-theme-colors=false
+				use-theme-transparency=false
+				use-transparent-background=true
+				EOF_TERM
+				
+				# Load terminal default settings...
+				dconf load / < ~/.config/rtd/gconf-term-settings.ini
+
+				cat >> ~/.config/rtd/gconf-tilix-settings.ini <<-'EOF_TLX'
+				[com/gexperts/Tilix]
+				quake-specific-monitor=0
+				quake-width-percent=90
+				terminal-title-style='small'
+				theme-variant='dark'
+				warn-vte-config-issue=false
+
+				[com/gexperts/Tilix/profiles]
+				list=['2b7c4080-0ddd-46c5-8f23-563fd3ba789d', 'd6401d4b-4b26-42ec-918a-2e7dc977118d', '8000e9d6-6f21-4a4e-a122-ac45607b56f5', '5283b4cf-faa5-4aef-afcd-a29fd5e0335a', '75b21a4c-150c-4f7a-a093-9faaa19626e2', '1824e1f9-3b7e-48d2-b06a-709239d1d6d9']
+
+				[com/gexperts/Tilix/profiles/1824e1f9-3b7e-48d2-b06a-709239d1d6d9]
+				background-color='#272822'
+				badge-color-set=false
+				bold-color-set=false
+				cursor-colors-set=false
+				foreground-color='#F8F8F2'
+				highlight-colors-set=false
+				palette=['#272822', '#F92672', '#A6E22E', '#F4BF75', '#66D9EF', '#AE81FF', '#A1EFE4', '#F8F8F2', '#75715E', '#F92672', '#A6E22E', '#F4BF75', '#66D9EF', '#AE81FF', '#A1EFE4', '#F9F8F5']
+				use-theme-colors=false
+				visible-name='Monokai'
+
+				[com/gexperts/Tilix/profiles/2b7c4080-0ddd-46c5-8f23-563fd3ba789d]
+				background-color='#000000000000'
+				background-transparency-percent=10
+				badge-color='#AC7EA8'
+				badge-color-set=true
+				bold-color-set=false
+				cursor-colors-set=false
+				default-size-columns=180
+				default-size-rows=40
+				dim-transparency-percent=0
+				font='Ubuntu Mono 10'
+				foreground-color='#EFEFEF'
+				highlight-colors-set=false
+				palette=['#000000', '#AA0000', '#00AA00', '#AA5400', '#0000AA', '#AA00AA', '#00AAAA', '#AAAAAA', '#545454', '#FF5454', '#54FF54', '#FFFF54', '#5454FF', '#FF54FF', '#54FFFF', '#FFFFFF']
+				terminal-title='${id}: ${title}${process}'
+				use-system-font=false
+				use-theme-colors=false
+				visible-name='Linux'
+
+				[com/gexperts/Tilix/profiles/5283b4cf-faa5-4aef-afcd-a29fd5e0335a]
+				background-color='#FDF6E3'
+				badge-color-set=false
+				bold-color-set=false
+				cursor-colors-set=false
+				foreground-color='#657B83'
+				highlight-colors-set=false
+				palette=['#073642', '#DC322F', '#859900', '#B58900', '#268BD2', '#D33682', '#2AA198', '#EEE8D5', '#002B36', '#CB4B16', '#586E75', '#657B83', '#839496', '#6C71C4', '#93A1A1', '#FDF6E3']
+				use-theme-colors=false
+				visible-name='Sun Microsystems'
+
+				[com/gexperts/Tilix/profiles/75b21a4c-150c-4f7a-a093-9faaa19626e2]
+				background-color='#002B36'
+				badge-color-set=false
+				bold-color-set=false
+				cursor-colors-set=false
+				foreground-color='#839496'
+				highlight-colors-set=false
+				palette=['#073642', '#DC322F', '#859900', '#B58900', '#268BD2', '#D33682', '#2AA198', '#EEE8D5', '#002B36', '#CB4B16', '#586E75', '#657B83', '#839496', '#6C71C4', '#93A1A1', '#FDF6E3']
+				use-theme-colors=false
+				visible-name='Solarized'
+
+				[com/gexperts/Tilix/profiles/8000e9d6-6f21-4a4e-a122-ac45607b56f5]
+				background-color='#1E1E1E'
+				badge-color-set=false
+				bold-color-set=false
+				cursor-colors-set=false
+				foreground-color='#A7A7A7'
+				highlight-colors-set=false
+				palette=['#1E1E1E', '#CF6A4C', '#8F9D6A', '#F9EE98', '#7587A6', '#9B859D', '#AFC4DB', '#A7A7A7', '#5F5A60', '#CF6A4C', '#8F9D6A', '#F9EE98', '#7587A6', '#9B859D', '#AFC4DB', '#FFFFFF']
+				use-theme-colors=false
+				visible-name='Twilight'
+
+				[com/gexperts/Tilix/profiles/d6401d4b-4b26-42ec-918a-2e7dc977118d]
+				palette=['#000000', '#CC0000', '#4D9A05', '#C3A000', '#3464A3', '#754F7B', '#05979A', '#D3D6CF', '#545652', '#EF2828', '#89E234', '#FBE84F', '#729ECF', '#AC7EA8', '#34E2E2', '#EDEDEB']
+				use-theme-colors=true
+				visible-name='Tango'
+				EOF_TLX
+				dconf load / < ~/.config/rtd/gconf-tilix-settings.ini
 
 
 				# Gnome Shell Theming
