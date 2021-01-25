@@ -112,7 +112,7 @@ complete_setup () {
 				--list \
 				--title "System Setup Complete" \
 				--text "Please select if you witsh to reseal the sysetm, restart and use the system, or just exit" \
-				--column "Options" --width=1024 --height=768 )
+				--column "Options" --width=1024 --height=768  2>/dev/null )
 	case "$completion" in 
 		"Restart system and start using it now" ) write_information "Restarting system..." ; reboot ;;
 		"${ConditionalResealOption:-"Ignore"}" ) write_information "Resealing system..." ; rtd_oem_reseal ;;

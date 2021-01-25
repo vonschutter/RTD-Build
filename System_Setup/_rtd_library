@@ -3319,7 +3319,7 @@ add_software_task ()
 # Usage:  
 # End of documentation
 
-	PAD="---------------------------------------------------"
+	PAD="-----------------------------------------------------"
 	LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
 	echo -ne "Task: ${LINE/recipe_/}:"  & $@ &>/dev/null && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
 }
@@ -3442,6 +3442,47 @@ display_software_installation_choices_gtk ()
 
 
 
+
+
+display_software_installation_choices_term ()
+{
+# Function to display the software install otions. All software option are listed in 
+# the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.   
+# NOTE: adding a function in _rtd_recipes named "recipes_* ()" will automaticall populete
+# the menu displayed to the user.  
+# 
+# Globals: ${_BACKTITLE} ${zstatus} 
+# Dependencies: _rtd_recipes
+# Arguments: None
+# Outputs: interactive screen
+# Returns: 0/1 last command executed. 
+# Usage:  simply call the function by its name. 
+# Arguments: none
+#
+#
+# End of documentation
+
+	# DisplayMenu=( dialog --menu --text "$_BACKTITLE" $WIDTH $HEIGHT )
+	# SoftwareList=$(list_loaded_software_functions --nonum)
+	# count=1
+	# MenuOptions=($(for i in $SoftwareList ; do echo -e "${count} ${i}" ;  count=$((count + 1)); done ))
+
+	# declare -A choices
+	# choices=$("${DisplayMenu[@]}" "${MenuOptions[@]}" )
+
+	# for choice in ${choices}
+	# 	do
+	# 	# call each chosen software install (by function) & add recepie (removed for display purposes)
+	# 	add_software_task recipe_${choice}
+	# done
+}
+
+
+
+
+
+
+
 rtd_server_setup_choices_services ()
 {
 # Description: Function to display server installation options. This will install software that is usefull
@@ -3550,6 +3591,9 @@ rtd_server_setup_choices_productivity ()
 			esac
 		done
 }
+
+
+
 
 
 
