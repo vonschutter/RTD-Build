@@ -31,5 +31,6 @@
 
 
 source /opt/rtd/scripts/_rtd_library
-get_Windows_Product_Key
+get_Windows_Product_Key &>/dev/null
+echo ${WinKey}
 
