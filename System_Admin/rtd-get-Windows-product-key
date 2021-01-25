@@ -1,20 +1,20 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::              			A D M I N   C O M M A N D L E T
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Compression Tool //::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.00
 #::
 #::
 #::	Purpose: To retrieve a Windows product key from the BIOS.
-#::		  
-#::		 
+#::
+#::
 #::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
-#:: 
-#::     
-#::     
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -30,7 +30,7 @@
 
 
 
-source /opt/rtd/scripts/_rtd_library
-get_Windows_Product_Key 
+source /opt/rtd/scripts/_rtd_library &>/dev/null
+get_Windows_Product_Key
 
 
