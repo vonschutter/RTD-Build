@@ -351,6 +351,27 @@ check_menu_availability ()
 
 
 
+get_Windows_Product_Key ()
+{
+# Description: Function to retrieve a Windows product key from the BIOS.
+# 
+#
+# Globals: RTD_GUI
+# Arguments: None
+# Outputs: A variable named: "${WinKey}" and echoing its contents to standard out.
+# Returns: default exit status of the last command run.
+# Usage: get_Windows_Product_Key
+# End of documentation
+	WinKey=$(sudo cat /sys/firmware/acpi/tables/MSDM | cut -f5 -d' ')
+	echo "${WinKey}"
+}
+
+
+
+
+
+
+
 
 err_no_menu_system_found ()
 {
