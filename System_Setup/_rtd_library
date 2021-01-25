@@ -362,7 +362,7 @@ get_Windows_Product_Key ()
 # Returns: default exit status of the last command run.
 # Usage: get_Windows_Product_Key
 # End of documentation
-	WinKey=$(sudo cat /sys/firmware/acpi/tables/MSDM | cut -f5 -d' ')
+	WinKey=$(sudo strings /sys/firmware/acpi/tables/MSDM | tail -1)
 	echo "${WinKey}"
 }
 
