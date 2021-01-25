@@ -353,9 +353,11 @@ recipe_Bundle_Screenshot_Tools (){
 
 recipe_Bundle_OEM_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
-			wget --show-progress "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
+			wget "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
-			check_dependencies p7zip-full
+			for i in p7zip-full p7zip-gui p7zip-doc p7zip-plugins ; do
+				check_dependencies $i
+			done
 			7z e -y /opt/rtd/cache/True_Type_Font_Pack.7z -o/usr/share/fonts/truetype/oem/
 }
 
@@ -590,23 +592,30 @@ recipe_MEGA.nz_Encrypted_Cloud_Storage (){
 			FILE2GET=
 			URL=
 			
-			if lsb_release -si | grep "Debian" ; then
-				URL="https://mega.nz/linux/MEGAsync/$(lsb_release -si)_$(lsb_release -sr).0/amd64/megasync-$(lsb_release -si)_$(lsb_release -sr).0_amd64.deb"
-			elif lsb_release -si | grep "Ubuntu" ; then
-				URL="https://mega.nz/linux/MEGAsync/xUbuntu_`lsb_release -sr`/amd64/megasync-xUbuntu_`lsb_release -sr`_amd64.deb"
-			elif lsb_release -si | grep "openSUSE" ; then
-				URL="https://mega.nz/linux/MEGAsync/openSUSE_Leap_15.0/x86_64/megasync-openSUSE_Leap_15.0.x86_64.rpm"
+			if hostnamectl | grep -i "Debian" ; then
+				# Grab the debian name and version and format it like Mega does their download URL...
+				URL="https://mega.nz/linux/MEGAsync/Debian_$(hostnamectl |grep -i Debian |cut -f7 -d' ').0/amd64/megasync-Debian_$(hostnamectl |grep -i Debian |cut -f7 -d' ').0_amd64.deb"
+			elif hostnamectl | grep -i "Ubuntu" ; then
+				# Grab the Ubuntu name and version and format it like Mega does their download URL...
+				URL="https://mega.nz/linux/MEGAsync/xUbuntu_$(hostnamectl |grep -i Ubuntu |cut -f6 -d' ')/amd64/megasync-xUbuntu_$(hostnamectl |grep -i Ubuntu |cut -f6 -d' ')_amd64.deb"
+			elif hostnamectl | grep -i "openSUSE" ; then
+				# Grab the SUSE name and version and format it like Mega does their download URL...
+				TGT="$(hostnamectl |grep -i suse |head -n 1|cut -f5,6,7 -d' ')" ; TGT=${TGT// /_}
+				URL="https://mega.nz/linux/MEGAsync/${TGT}/x86_64/megasync-${TGT}.x86_64.rpm"
+			elif hostnamectl | grep -i "Fedora" ; then
+				# Grab the Fedora name and version and format it like Mega does their download URL...
+				TGT="$(hostnamectl |grep -i fedora |tail -n 2|cut -f5,6 -d' ')" ; TGT=${TGT// /_}
+				URL="https://mega.nz/linux/MEGAsync/${TGT::-2}/x86_64/megasync-${TGT::-2}.x86_64.rpm"
 			else
 				echo -e $RED
-				echo "I am not sure how to find the Mega sync download for $(lsb_release -sd) "
+				echo "I am not sure how to find the Mega sync download for $( hostnamectl |grep "Operating") "
 				echo "Please try to download it manually and instrtall it from the website:"
 				echo "https://mega.nz/sync"
 				echo -e $ENDCOLOR
 			fi
-
 			
 			# If a known distributio was found and URL set, use "dl" function to install app...
-			[[ ! -z "$URL" ]] && dl $URL 1>>$_LOGFILE 2>>$_ERRLOGFILE
+			[[ ! -z "${URL}" ]] && dl ${URL} 
 }
 
 
@@ -626,24 +635,23 @@ recipe_Dropbox_Corporate_Cloud_Storage (){
 recipe_Bundle_Media_Streamers:_Spotify_Wins_Google (){
 			write_status "--- Installing Music Players and Audio Software..." 
 			check_dependencies snapd
-			snap install spotify  2>>$_ERRLOGFILE
-			snap install google-play-music-desktop-player  2>>$_ERRLOGFILE
-			snap install winds 2>>$_ERRLOGFILE
-
+			snap install spotify  
+			snap install google-play-music-desktop-player 
+			snap install winds 
 }
 
 
 
 recipe_Bundle_Audio_Tools (){
 			write_status "--- Installing Audio Tools Bundle..."
-			ensure_snap_package_managment
-			snap install picard  2>>$_ERRLOGFILE
+			check_dependencies snapd
+			snap install picard  
 
 }
 
 
 
-recipe_Virtualbox (){
+recipe_VirtualBox (){
 			# Install Virtual Box from Oracle. However avoid installing it in a VM, as tis usecase may be counterproductive.
 			# NOTE:
 			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as 
@@ -659,26 +667,51 @@ recipe_Virtualbox (){
 			# quality criteria. 
 			# 
 			check_dependencies virt-what
+
+			# Special case for installing VirtualBox since distributions name the package and install in different ways...
 			if virt-what ; then 
-				# Special case for installing VirtualBox
-				echo -e $YELLOW"--- Installing VirtualBox if available..." $ENDCOLOR
-				echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
-				echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
-				# Loop through each item in this list of softwar and perform an install 
-				# using the relevant packaging system. 
-				for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
-				do
-				InstallSoftwareFromRepo $i
-				done
-				[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
-				# Ensure that the current user can use USB etc... 			
-				if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
-				echo      $SUDO_USER already belongs to vboxusers group
-				else
-				usermod -G vboxusers -a $SUDO_USER 1>>$_LOGFILE 2>>$_ERRLOGFILE
-				fi
+				write_warning "This computer is likely a Virtual Macine ( $(virt-what) ) and using Virtualbox inside a VM is not reccommended."
 			else
-				write_warning "This computer is likely a Virtual Macine (VM) and using Virtualbox inside a VM is not reccommended."
+				if hash apt ; then 
+					write_information "--- Installing VirtualBox in Debian based system if available..." 
+					# Unlike RPM based systems DEB's are allowed to ask questions in the middle of an install:
+					echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
+					echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
+
+					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+					do
+						InstallSoftwareFromRepo $i
+					done
+
+					[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
+
+					# Ensure that the current user can use USB etc... 			
+					if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
+						write_information "$SUDO_USER already belongs to vboxusers group"
+					else
+						usermod -G vboxusers -a $SUDO_USER 
+					fi
+				elif hash dnf ; then
+					write_information "--- Installing VirtualBox in a Red Hat based system if available..."
+					InstallSoftwareFromRepo VirtualBox
+				elif hash zypper  ; then 
+					write_information "--- Installing virtualbox in a SUSE based system..."
+					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+					do
+						InstallSoftwareFromRepo $i
+					done
+
+					[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
+
+					# Ensure that the current user can use USB etc... 			
+					if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
+						write_information "$SUDO_USER already belongs to vboxusers group"
+					else
+						usermod -G vboxusers -a $SUDO_USER 
+					fi
+				else
+					write_error "No supported packaging system detected for special case of installing Virtual Box! "
+				fi
 			fi
 }
 

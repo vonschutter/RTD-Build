@@ -2629,8 +2629,10 @@ ensure_flatpack_package_managment ()
 # It creates a large pool where users can find all available a snap package. Snapcraft is itself 
 # controlled and maintained by the Canonical team.
 # End of documentation
-	check_dependencies flatpack	
-	remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	write_information "${FUNCNAME[0]}: Ensuring Flatpack software distribution system is available..."
+	check_dependencies flatpak || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy flatpak!"	
+	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || write_error "${FUNCNAME[0]}: Failed to add flatpak repo!"
+	return $?
 }
 
 ensure_snap_package_managment ()
@@ -2659,7 +2661,9 @@ ensure_snap_package_managment ()
 # software packages, Flatpak supports the use of multiple repos. The one significant disadvantage with this 
 # package is the lack of support for Servers.
 # End of documentation
-	check_dependencies snapd
+	write_information "${FUNCNAME[0]}: Ensuring SNAP software distribution system is available..."
+	check_dependencies snapd || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy SNAP!"
+	return $?
 }
 
 
