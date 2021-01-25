@@ -4075,6 +4075,8 @@ make_kvm_virtual_machine_now_from_microsoft ()
 # Omitting any of the arguments will us the default instead.
 #
 # End of Documentation
+	CONFIG="Workstation"
+	: ${CONFIG:-"Workstation"}
 
 	# Provide Windows setup media:
 	WindowsMedia=/var/lib/libvirt/boot/Win10_English_x64.iso 
@@ -4125,10 +4127,10 @@ make_kvm_virtual_machine_now_from_microsoft ()
 	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
 
 	write_status "Creating and starting Virtual machine... "
-	"${BIN_VIRT_INSTALL}" --connect qemu:///system --name VDI_Windows10_"$CONFIG"_"$RANDOM" \
+	"${BIN_VIRT_INSTALL}" --connect qemu:///system --name VDI_Windows10_"${CONFIG}"_"${RANDOM}" \
 		--vcpus "${2:-2}" \
 		--memory "${3:-2048}" \
-		--network "$VIRT_NET" \
+		--network "${VIRT_NET}" \
 		--video qxl \
 		--disk size="${4:-40}" \
 		--os-type windows \

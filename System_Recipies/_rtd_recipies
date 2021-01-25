@@ -227,8 +227,7 @@ recipe_Bundle:_Common_Apps () {
 		# Add several software items that are almost alwasys used 
 		# in one way or another... These may be a dependency to others as well. 
 			write_status "--- Adding some minor congiguration items for productivity..." 
-			for i in diodon polari filezilla tilix
-			do
+			for i in diodon polari filezilla tilix dialog p7zip byobu; do
 			     InstallSoftwareFromRepo $i
 			done
 
