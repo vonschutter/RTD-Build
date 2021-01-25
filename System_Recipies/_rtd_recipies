@@ -539,11 +539,9 @@ recipe_Install_Bleachbit_System_Cleaner (){
 
 
 
-recipe_Install_Restricted_Fonts_and_Codecs (){
-			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
-			# Auto accept microsoft corefonts eula
-			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
-			for i in libdvdcss2 ffmpeg ubuntu-restricted-extras
+recipe_Install_Restricted_Codecs (){
+			write_status "--- Install all the required multimedia codecs..." 
+			for i in libdvdcss2 ubuntu-restricted-extras ffmpeg 
 			do
 			     InstallSoftwareFromRepo $i
 			done		
@@ -553,7 +551,7 @@ recipe_Install_Restricted_Fonts_and_Codecs (){
 
 recipe_Install_VLC_Universal_Videao_Player (){
 			#VLC Media Player
-			wtite_status "--- Installing VLC Media Player..." $ENDCOLOR
+			wtite_status "--- Installing VLC Media Player..." 
 			InstallSoftwareFromRepo vlc
 }
 
@@ -651,7 +649,7 @@ recipe_Install_MEGA.nz_Encrypted_Cloud_Storage (){
 			fi
 			
 			# If a known distributio was found and URL set, use "dl" function to install app...
-			[[ ! -z "${URL}" ]] && dl ${URL} 
+			[[ -n "${URL}" ]] && dl ${URL} 
 }
 
 

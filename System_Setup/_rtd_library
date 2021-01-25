@@ -3348,15 +3348,15 @@ dl ()
 	fetch_file () { wget -P /opt/rtd/cache "${download_url}"  ; }
 
 	echo  "${FUNCNAME[0]}: getting package ${download_url}..."
-	if hash wget >/dev/null ; then
+	if hash wget ; then
 		fetch_file
 	else
 		check_dependencies wget
 		fetch_file
 	fi
 
-	echo "    - Installing package $(basename ${download_url}) ..."
-	if hash pkcon >/dev/null ; then
+	echo "${FUNCNAME[0]}: Installing package $(basename ${download_url}) ..."
+	if hash pkcon ; then
 		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")" 
 		return $?
 	else
