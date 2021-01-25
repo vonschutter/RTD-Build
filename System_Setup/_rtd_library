@@ -3234,8 +3234,8 @@ rtd_update_system ()
 	write_status "${PUBLICATION}: Version ${VERSION}" 
 	write_status "------------------------------------------------------------------" 
 
-	write_host --blue "I am updating software from all channels I can find on the system."
-	write_host --purple "I will update via the native package manager as well as newer formats"
+	write_host --cyan "I am updating software from all channels I can find on the system."
+	write_host --cyan "I will update via the native package manager as well as newer formats"
 	write_host --cyan "like snap and flatpak ..."
 	echo -e " \n"
 
@@ -3251,32 +3251,31 @@ rtd_update_system ()
 	{
 		log_item "running rtd_software_task with parameters $*"
 		# make some decent display terminal graphics...
-		PAD="------------------------------------------"
+		PAD="----------------------------------------------"
 		LINE=$(printf "%s %s" "$@" "$PAD" | cut -c 1-${#PAD})
-		echo -ne "--- Executing $LINE:"\ & "$@" >>"$LOGFILE" 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
+		echo -ne "Executing $LINE:"\ & "$@" >>"$LOGFILE" 2>&1 && printf "%b%-6s%b [ \xE2\x9C\x94 ] $GREEN OK!$ENDCOLOR   \n" ||printf "%b%-6s%b [ ! ] $RED FAILED $ENDCOLOR  \n"
 	}
 
-
 	if hash dnf 2>/dev/null; then
-		rtd_software_task dnf -y upgrade 2>> $LOGFILE
+		rtd_software_task dnf -y upgrade 
+	elif hash zypper 2>/dev/null; then
+		rtd_software_task zypper up -y 
 	elif hash apt 2>/dev/null; then
 		rtd_software_task apt-get update
 		UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
 		if [ "$UPGRADABLE" -eq 0 ]; then
-			write_information "--- $UPGRADABLE packages that need updates; Skipping update task... " 
+			write_information "$UPGRADABLE packages that need updates; Skipping update task... " 
 		else
 			write_information "There are $UPGRADABLE packages that need updates..." 
-			sudo dpkg --configure -a
+			rtd_software_task dpkg --configure -a
 			rtd_software_task apt-get upgrade -y
 			rtd_software_task apt-get autoremove -y
 			rtd_software_task apt-get clean
 		fi
-	elif hash zypper 2>/dev/null; then
-		rtd_software_task zypper up -y 2>> $LOGFILE
 	elif hash pkcon 2>/dev/null; then
 		if [[ $1 == simple ]]; then disp_option="--plain" ; fi
-		pkcon -y refresh $disp_option 2>> $LOGFILE
-		pkcon -y update --autoremove $disp_option 2>> $LOGFILE
+		pkcon -y refresh $disp_option 
+		pkcon -y update --autoremove $disp_option 
 	else
 		echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
 		return 1
@@ -3284,14 +3283,14 @@ rtd_update_system ()
 
 	write_status "updating snaps if snap is present on the system..."
 	if hash snap 2>/dev/null; then
-		snap refresh 2>> $LOGFILE
+		snap refresh 
 	else
 		write_warning "--- snap software is not present on this system... skipping..."
 	fi
 
 	write_status "updating flatpacks if flatpack is present on system..."
 	if hash flatpak 2>/dev/null; then
-		flatpak update -y 2>> $LOGFILE
+		flatpak update -y 
 	else
 		write_warning "--- flatpak software is not present on this system... skipping..."
 	fi
