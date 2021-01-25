@@ -2656,6 +2656,10 @@ ensure_flatpack_package_managment ()
 	return $?
 }
 
+
+
+
+
 ensure_snap_package_managment ()
 {
 # Description: Function to ensure that snap is installed.
@@ -2684,6 +2688,11 @@ ensure_snap_package_managment ()
 # End of documentation
 	write_information "${FUNCNAME[0]}: Ensuring SNAP software distribution system is available..."
 	check_dependencies snapd || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy SNAP!"
+	if [[ -e /snap ]]; then 
+		write_information "SNAP classic support present... "
+	else 
+		ln -s /var/lib/snapd/snap /snap
+	fi
 	return $?
 }
 
