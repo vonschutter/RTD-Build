@@ -47,7 +47,7 @@ export RTD_VERSION=2.0
 	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install OEM addons 
 	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
 	ensure_admin					: Elevates privileges to admin root for the whole script asks for password
-	ensure_flatpack_package_managment		: Ensure that the Flatpack software management is available
+	ensure_flatpak_package_managment		: Ensure that the Flatpack software management is available
 	ensure_snap_package_managment			: Ensure that the snap software management system is installed
 	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
 	generate_autounattend_xml			: Creates an autounattend.xml for Windows setup
@@ -2630,11 +2630,11 @@ scan_for_malware ()
 
 
 
-ensure_flatpack_package_managment ()
+ensure_flatpak_package_managment ()
 {
 # Description: Function to ensure that flatpack is installed and flathup enabled.
 # Globals: none
-# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet]
+# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet access]
 # Arguments: None
 # Outputs: 
 # Returns: Standard return codes 1/0
@@ -2664,7 +2664,7 @@ ensure_snap_package_managment ()
 {
 # Description: Function to ensure that snap is installed.
 # Globals: none
-# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet]
+# Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet access]
 # Arguments: None
 # Outputs: 
 # Returns: Standard return codes 1/0
@@ -2719,15 +2719,15 @@ up2date ()
 	write_status "Running up2date function:" 
 
 	if hash pkcon 2>/dev/null; then
-		pkcon update -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
+		pkcon update -y 		
 	elif hash yum 2>/dev/null; then
-		yum update -y 			1>>$_LOGFILE 2>>$_ERRLOGFILE
+		yum update -y 			
 	elif hash apt 2>/dev/null; then
-		apt-get update 			1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt-get upgrade -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
-		apt-get autoremove -y 		1>>$_LOGFILE 2>>$_ERRLOGFILE
+		apt-get update 			
+		apt-get upgrade -y 		
+		apt-get autoremove -y 		
 	elif hash zypper 2>/dev/null; then
-		return zypper up -y		1>>$_LOGFILE 2>>$_ERRLOGFILE
+		return zypper up -y		
 	else
 		return 3
 	fi
@@ -3340,14 +3340,14 @@ dl ()
 # Globals: 
 # Arguments: None
 # Outputs: 
-# Returns: 
+# Returns: 0/1
 # Usage: 
 # End of documentation
 
 	download_url="$1"
-	fetch_file () { wget -P /opt/rtd/cache "$download_url"  ; }
+	fetch_file () { wget -P /opt/rtd/cache "${download_url}"  ; }
 
-	echo  "    - getting package $download_url ..."
+	echo  "${FUNCNAME[0]}: getting package ${download_url}..."
 	if hash wget >/dev/null ; then
 		fetch_file
 	else
@@ -3355,12 +3355,14 @@ dl ()
 		fetch_file
 	fi
 
-	echo "    - Installing package $(basename "$download_url") ..."
+	echo "    - Installing package $(basename ${download_url}) ..."
 	if hash pkcon >/dev/null ; then
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 
+		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")" 
+		return $?
 	else
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/"$(basename "$download_url")" 
+		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")" 
+		return $?
 	fi
 }
 

@@ -30,9 +30,18 @@
 # 
 #
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
-#	functions in _rtd_functions and _rtd_recipies. 
-#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
+#	functions in _rtd_library and _rtd_recipies. 
+#	  _rtd_library   -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
 #	  _rtd_recipies  -- contain software installation and configuration "recipies". 
+#	
+#	Use InstallSoftwareFromRepo, check_dependencies, ensure_snap_package_managment, ensure_flatpak_package_managment
+#	to install software as a general rule. These functions will make it simple to add software no matter what the underlying
+#	distribution package managment is. 
+#
+#	Only make special cases for packages that are not distributed in the distributions own repositories os as snaps or
+#	flatpaks; for example fi you must download from a vendors web site (like for example Google Chrome). In such a case
+#	you may use the dl function. It will automatically install the package at the url provided. 
+#
 #	Scripts may also be stand-alone if there is a reason for this. 
 #
 #	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
@@ -69,6 +78,10 @@
 #	          ||          |          ||          |          ||
 #	|& tee    ||   yes    |   yes    ||   yes    |   yes    || overwrite
 #	|& tee -a ||   yes    |   yes    ||   yes    |   yes    ||  append
+#
+#	The best solution is to redirect at the "wrapper" layer; a.k.a. the script that loads these functions
+#	and executes them. Simply use the "source" statement to pull in the "_rtd_library" and it will do the rest:
+#	you can now simply name each dunction herein that you wish to have installed on a wide range of distributions.
 #
 #	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
 #	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
@@ -113,6 +126,8 @@
 # Each repository is a collection of software hosted on a remote server and intended to be used for installing and updating 
 # software packages on Linux systems. When you run commands such as “sudo apt update” or “sudo apt upgrade”, you may be pulling 
 # package information and package updates from a number of repositories. 
+#
+#    ***Issues with native repositories are that distribusion may name packages differently making install difficult***
 # 
 # For more information on package managers see: https://en.wikipedia.org/wiki/Package_manager
 #
@@ -127,7 +142,7 @@
 # | Sandboxing Mandatory                                | Yes                               | Yes                               | No                   |
 # | App Portability                                     | Yes                               | Yes                               | No                   |
 # | Native Theme Support                                | Yes (with caveats)                | Yes (with caveats)                | Yes (with caveats)   |
-# | Support for Bundled Libraries                       | Yes                               | Yes                               | Yes                  |
+# | Support for Bundle:d Libraries                       | Yes                               | Yes                               | Yes                  |
 # | Fully Contained Single Executable Support           | No                                | No                                | Yes                  |
 # | Online App Store                                    | Yes                               | Yes                               | Yes                  |
 # | Multi-version Parallel Apps Support                 | Yes                               | Yes                               | Yes                  |
@@ -143,10 +158,11 @@
 # A new way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software 
 # applications designed to provide a consistent and high-level front end for a number of different package management systems.
 # PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors. 
+# The "dl" function uses package kit because it can istall both rpms and debs.
 #
 # TEMPLATE: For adding a new manu entry for a singel package or bundle of software:
 #
-# recipe_Bundle_descriptive_name () {
+# recipe_Bundle:_descriptive_name () {
 # 			# function documentaton... 
 # 			# Echo to terminal:
 # 			write_error		: Prints an error message to terminal in RED
@@ -161,19 +177,18 @@
 # 			done
 #
 # 			# Install faltpacks:
-# 			ensure_flatpack_package_managment
+# 			ensure_flatpak_package_managment
 # 			snap install package-name
 #
 # 			# Install snap packages:
 # 			ensure_snap_package_managment
-# 			flatpack install 
+# 			flatpak install 
 #
 # 			# Check a dependency:
 # 			check_dependencies package-name
 # }
 
-# Add several software items that are almost alwasys used 
-# in one way or another... 
+
 
 
 
@@ -208,20 +223,20 @@ GIT_Profile=${GIT_Profile:-vonschutter}
 
 
 
-recipe_Bundle_Common_Apps () {
+recipe_Bundle:_Common_Apps () {
 		# Add several software items that are almost alwasys used 
-		# in one way or another... 
-			echo -e $YELLOW"--- Adding some minor congiguration items for productivity..." $ENDCOLOR
+		# in one way or another... These may be a dependency to others as well. 
+			write_status "--- Adding some minor congiguration items for productivity..." 
 			for i in diodon polari filezilla tilix
 			do
 			     InstallSoftwareFromRepo $i
 			done
 
-			# Ensure Flatpack support
-			check_dependencies flatpak
+			# Ensure Flatpak support
+			ensure_flatpak_pakage_managment
 
 			# Ensure Snap support
-			check_dependencies snapd
+			ensure_snap_package_managment
 
 			# Configure Desktop software managers depending on desktop used
 			case "$DESKTOP_SESSION" in
@@ -246,7 +261,7 @@ recipe_Remove_non_western_latin_fonts () {
 }
 
 
-recipe_Brave_Browser () {
+recipe_Install_Brave_Browser () {
 		# This function will add the vendor maintained repository and install the software
 		# using the distribution speciffic installers.
 		write_information "--- Installing Brave Browser directly from vendor repo..." 
@@ -287,7 +302,7 @@ recipe_Brave_Browser () {
 
 
 
-recipe_Vivaldi_Browser (){
+recipe_Install_Vivaldi_Browser (){
 		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
 		# # from the vendors website. It will work until the vendor removes the exact file... 
 		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
@@ -315,12 +330,12 @@ recipe_Vivaldi_Browser (){
 }
 
 
-recipe_Windows_Subsystem_for_Linux (){
+recipe_Install_Windows_Subsystem_for_Linux (){
 			InstallSoftwareFromRepo wine
 }
 
 
-recipe_Simplenote (){
+recipe_Install_Simplenote (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A simple to use not taking app that auto syncs with the same app on any device.
@@ -330,7 +345,7 @@ recipe_Simplenote (){
 
 
 
-recipe_DOS_VM_for_Classic_Games (){
+recipe_Install_DOS_VM_for_Classic_Games (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# A small app that allows you to use your old DOS software. 
@@ -340,7 +355,7 @@ recipe_DOS_VM_for_Classic_Games (){
 
 
 
-recipe_Bundle_Screenshot_Tools (){
+recipe_Bundle:_Screenshot_Tools (){
 			# some small simple apps you will like... 
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
@@ -351,7 +366,7 @@ recipe_Bundle_Screenshot_Tools (){
 
 
 
-recipe_Bundle_OEM_restricted_fonts () {
+recipe_Bundle:_OEM_restricted_fonts () {
 			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
 			wget "https://www.dropbox.com/s/7n5dgltnddtrs9j/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
@@ -363,7 +378,7 @@ recipe_Bundle_OEM_restricted_fonts () {
 
 
 
-recipe_Bundle_Secure_Communication () {
+recipe_Bundle:_Secure_Communication () {
 			ensure_snap_package_managment
 			snap install signal-desktop 
 			snap install telegram-desktop 
@@ -371,7 +386,7 @@ recipe_Bundle_Secure_Communication () {
 
 
 
-recipe_Bundle_Video_Editing () {
+recipe_Bundle:_Video_Editing () {
 			ensure_snap_package_managment
 			snap install vidcutter 
 			snap install handbrake-jz
@@ -400,7 +415,7 @@ recipe_Bundle_Video_Editing () {
 				snap connect obs-studio:joystick
 				sudo snap install blender --classic
 			
-			ensure_flatpack_package_managment
+			ensure_flatpak_package_managment
 			flatpak install flathub org.openshot.OpenShot --noninteractive -y 
 			flatpak install flathub io.github.jliljebl.Flowblade --noninteractive -y 
 }
@@ -408,21 +423,21 @@ recipe_Bundle_Video_Editing () {
 
 
 
-recipe_Developer_Software (){
+recipe_Bundle:_Developer_Software (){
 			write_status "--- Adding Developer Software Apps: IDE Tools and Compilers..." 
-			for i in build-essential git
-			do
+			for i in build-essential git ; do
 			     InstallSoftwareFromRepo $i
 			done
+
 			check_dependencies snapd
-			snap install atom --classic  
-			snap install gitkraken --classic 
-			sudo snap install code --classic 
+			snap install atom --classic
+			snap install gitkraken --classic
+			sudo snap install code --classic
 }
 
 
 
-recipe_Bundle_Compression_Tools (){
+recipe_Bundle:_Compression_Tools (){
 			write-status "--- Adding Comression Toolset (zip, 7zip rar etc.)..."
 			for i in p7zip-full p7zip-rar rar zip 
 			do
@@ -432,7 +447,7 @@ recipe_Bundle_Compression_Tools (){
 
 
 
-recipe_Bundle_Curated_Top_Games (){
+recipe_Bundle:_Curated_Top_Games (){
 			# Install games from native repositories... 
 			write_status "--- Adding Selection of Quality Games..." 
 						
@@ -446,7 +461,7 @@ recipe_Bundle_Curated_Top_Games (){
 			# --- Install games available in Flathub repository and not at Snapcrafters --- 
 			check_dependencies flatpak
 			
-			# Add the flatpack repository if it down not already exist:
+			# Add the flatpak repository if it down not already exist:
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 			
 			# Add requested games:
@@ -485,7 +500,7 @@ recipe_Bundle_Curated_Top_Games (){
 
 
 
-recipe_Bundle_Admin_Tools (){
+recipe_Bundle:_Admin_Tools (){
 			write_status "--- OEM System Administrative Tools..."
 			# Loop through each item in this list of software and perform an install 
 			# using the relevant packaging system. 
@@ -501,7 +516,7 @@ recipe_Bundle_Admin_Tools (){
 
 
 
-recipe_Java_Runtime (){
+recipe_Install_Java_Runtime (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Java JRE..." $ENDCOLOR
 			# Add the Oracle Java repository and install the software. 
@@ -516,7 +531,7 @@ recipe_Java_Runtime (){
 
 
 
-recipe_Bleachbit_System_Cleaner (){
+recipe_Install_Bleachbit_System_Cleaner (){
 			#Bleachbit
 			write_status "--- Bleachbit System Cleaning Tool..." 
 			InstallSoftwareFromRepo bleachbit 
@@ -524,7 +539,7 @@ recipe_Bleachbit_System_Cleaner (){
 
 
 
-recipe_Restricted_Fonts_and_Codecs (){
+recipe_Install_Restricted_Fonts_and_Codecs (){
 			echo -e $YELLOW"--- Install all the required multimedia codecs..." $ENDCOLOR
 			# Auto accept microsoft corefonts eula
 			echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | /usr/bin/debconf-set-selections
@@ -536,54 +551,75 @@ recipe_Restricted_Fonts_and_Codecs (){
 
 
 
-recipe_VLC_Universal_Videao_Player (){
+recipe_Install_VLC_Universal_Videao_Player (){
 			#VLC Media Player
-			echo -e $YELLOW"--- Installing VLC Media Player..." $ENDCOLOR
+			wtite_status "--- Installing VLC Media Player..." $ENDCOLOR
 			InstallSoftwareFromRepo vlc
 }
 
 
 
-recipe_Google_Chrome_Browser (){
+recipe_Install_Google_Chrome_Browser (){
 			# Special case for installing Google Chrome
-			echo -e $YELLOW"--- Installing Google Chrome Browser from google directly..." $ENDCOLOR
-			dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			write_status "--- Installing Google Chrome Browser from google directly..." 
+
+			# Download either a deb or an rpm depending on what package format this system supports.
+			if hash deb ; then 
+				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 
+			elif hash rpm ; then
+				dl https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+			else
+				write_error "No RPM or DEB package managment service was found! ..."
+			fi
 }
 
 
 
-recipe_Remote_Desktop_by_Team_Viewer (){
+recipe_Install_Remote_Desktop_by_Team_Viewer (){
 			#Teamviewer
-			echo -e $YELLOW"--- Installing Teamviewer..." $ENDCOLOR
-			dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  1>>$_LOGFILE 2>>$_ERRLOGFILE
+			write_status  "--- Installing Teamviewer..." 
+
+			# Download either a deb or an rpm depending on what package format this system supports.
+			# Team Viewer has a special package for SUSE; thus we check if OS is suse or not as well.
+			if hash deb ; then 
+				dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  
+			elif hash rpm ; then
+				if hostnamectl | grep -i suse ; then 
+					dl https://download.teamviewer.com/download/linux/teamviewer-suse.x86_64.rpm
+				else
+					dl https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
+				fi
+			else
+				write_error "No RPM or DEB package managment service was found! ..."
+			fi
 }
 
 
 
-recipe_Remote_Desktop_by_Anydesk () {
-			check_dependencies flatpak
+recipe_Install_Remote_Desktop_by_Anydesk () {
+			ensure_flatpak_package_managment
 			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
 }
 
 
 
-recipe_Skype_Messenger (){
+recipe_Install_Skype_Messenger (){
 			#Skype for Linux
 			write_status "--- Installing Skype For Linux..."
-			check_dependencies snapd
-			snap install skype --classic  2>>$_ERRLOGFILE
+			ensure_snap_package_managment
+			snap install skype --classic  
 }
 
 
 
-recipe_Viber_Messenger (){
+recipe_Install_Viber_Messenger (){
 			check_dependencies snapd
 			snap install --edge viber-mtd 
 }
 
 
 
-recipe_MEGA.nz_Encrypted_Cloud_Storage (){
+recipe_Install_MEGA.nz_Encrypted_Cloud_Storage (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
 			write_status "--- Installing MEGA nz file crypto sync utility..." 
 			check_dependencies lsb-release
@@ -620,7 +656,7 @@ recipe_MEGA.nz_Encrypted_Cloud_Storage (){
 
 
 
-recipe_Dropbox_Corporate_Cloud_Storage (){
+recipe_Install_Dropbox_Corporate_Cloud_Storage (){
 			# Install Dropbox
 			write_status "--- Installing Dropbox Cloud Storage Sync..." 
 			InstallSoftwareFromRepo nautilus-dropbox
@@ -632,7 +668,7 @@ recipe_Dropbox_Corporate_Cloud_Storage (){
 
 
 
-recipe_Bundle_Media_Streamers:_Spotify_Wins_Google (){
+recipe_Bundle:_Media_Streamers:_Spotify_Wins_Google (){
 			write_status "--- Installing Music Players and Audio Software..." 
 			check_dependencies snapd
 			snap install spotify  
@@ -642,7 +678,7 @@ recipe_Bundle_Media_Streamers:_Spotify_Wins_Google (){
 
 
 
-recipe_Bundle_Audio_Tools (){
+recipe_Bundle:_Audio_Tools (){
 			write_status "--- Installing Audio Tools Bundle..."
 			check_dependencies snapd
 			snap install picard  
@@ -651,7 +687,7 @@ recipe_Bundle_Audio_Tools (){
 
 
 
-recipe_VirtualBox (){
+recipe_Install_VirtualBox (){
 			# Install Virtual Box from Oracle. However avoid installing it in a VM, as tis usecase may be counterproductive.
 			# NOTE:
 			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as 
