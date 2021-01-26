@@ -2388,6 +2388,13 @@ compress_all_items_here ()
 # Arguments:	No parameters required.
 # 
 # End of documentation
+	count=1
+	for i in 7z p7zip p7zip-full 
+	do
+		write_status "${count}	- Verifying dependencies..."
+		check_dependencies $i &>/dev/null
+		count=$((count + 1))
+	done
 
 	if hash dialog 2>/dev/null ; then
 		if ( dialog --backtitle "${BRANDING:-"${FUNCNAME[0]}"}" --title "Compress Content Here" --colors --cr-wrap --no-collapse --no-button "NO: Quit" --yes-button "YES: Compress" --yesno "Hello ${USER}... I am going to compress each file or folder that I find here: $(pwd) These are: \Z5 \n$(ls -h1 -F -I "*.7z")" 20 90 ); then
