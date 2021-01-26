@@ -404,7 +404,7 @@ rtd_oem_make_launchers ()
 		Comment=RTD Minecraft Server
 		Exec=/opt/rtd/scripts/rtd-minecraft-server
 		Path=/opt/rtd/scripts
-		Icon=/opt/rtd/scripts/sys3.ico
+		Icon=/opt/rtd/scripts/sys5.ico
 		Terminal=true
 		Type=Application
 		Categories=OEM;
