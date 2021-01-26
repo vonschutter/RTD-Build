@@ -2393,7 +2393,10 @@ compress_all_items_here ()
 	else
 		for i in p7zip-full 7za
 		do
-			check_dependencies $i 
+			ensure_admin
+			check_dependencies $i
+			write_information "OK, now try again... "
+			exit 0
 		done
 	fi
 
