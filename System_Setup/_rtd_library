@@ -2389,7 +2389,7 @@ compress_all_items_here ()
 # 
 # End of documentation
 	count=1
-	for i in 7z p7zip p7zip-full 
+	for i in p7zip-full 
 	do
 		write_status "${count}	- Verifying dependencies..."
 		check_dependencies $i &>/dev/null
@@ -2891,20 +2891,19 @@ set_install_command ()
 		if hash dnf 2>/dev/null; then
 			# Try dnf (RedHat, Cent OS, Fedora)
 			write_status "Setting install options for YUM" 
-			export _INSTCMD="dnf -y  install"
+			export _INSTCMD="sudo dnf -y  install"
 		elif hash zypper 2>/dev/null; then
 			# Try zypper (Open SUSE)
 			write_status  "Setting install options for ZYPPER" 
-			export _INSTCMD="zypper install -y "
+			export _INSTCMD="sudo zypper install -y "
 		elif hash apt 2>/dev/null; then
 			# Try apt (Debian, Ubuntu, and all derivatives)
 			write_status  "Setting install options for DEB" 
-			export _INSTCMD="apt-get -y -qq --allow-change-held-packages --ignore-missing install"
-			export DEBIAN_FRONTEND=noninteractive
+			export _INSTCMD="sudo apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 		elif hash pkcon 2>/dev/null; then
 			# If thre is no apt, zypper, dnf
 			write_status  "Setting install options for Package Kit" 
-			export _INSTCMD="pkcon -y  install"
+			export _INSTCMD="sudo pkcon -y  install"
 		else
 			write_error "This system does not seem to have a software managment system" 
 			return 1
