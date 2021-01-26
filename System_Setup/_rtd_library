@@ -2391,11 +2391,14 @@ compress_all_items_here ()
 	if hash 7z ; then
 		write_information "7z is present, good..."
 	else
+		write_error "the 7z (7 zip) program was not found"
 		for i in p7zip-full 7za
 		do
-			ensure_admin
-			check_dependencies $i
-			write_information "OK, now try again... "
+			for i in dnf zypper apt-get ; do 
+				write_warning "Installing software requires elevated priviladges!"
+				write_status "Peare enter password beloow (if not cached):"
+				sudo $i install -y p7zip-full
+			done
 			exit 0
 		done
 	fi
