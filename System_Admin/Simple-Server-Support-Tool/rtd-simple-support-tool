@@ -544,6 +544,8 @@ show_deploy_server_VM_now_menu ()
 		"3" "Debian Graphical Server" \
 		"4" "Debian Minimal Server" \
                 "5" "Minecraft Server" \
+                "6" "Fedora Minimal Server" \
+                "7" "Ansible Server" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
@@ -582,6 +584,18 @@ show_deploy_server_VM_now_menu ()
 		5 )
 			make_preseed_cfg "$( mktemp -d )" openssh-server MinecraftServer
 			make_kvm_virtual_machine_now_from_debian_org debian10
+			cleanup_and_finish nomessage
+		;;
+		6 )
+			PRESEED_FILE="$(mktemp)"
+			generate_fedora_ks_cfg_file "${PRESEED_FILE}" ssh-server
+			make_kvm_virtual_machine_now_from_fedora_org fedora30 
+			cleanup_and_finish nomessage
+		;;
+		7 )
+			PRESEED_FILE="$(mktemp)"
+			generate_fedora_ks_cfg_file "${PRESEED_FILE}" ansible-server
+			make_kvm_virtual_machine_now_from_fedora_org fedora30 
 			cleanup_and_finish nomessage
 		;;
 		esac
@@ -656,9 +670,9 @@ show_deploy_VDI_VM_now_menu ()
 			cleanup_and_finish nomessage
 		;;
 		9 )
-			PRESEED_FILE=/tmp/ks.cfg
-			generate_fedora_ks_cfg_file "${PRESEED_FILE}"
-			make_kvm_virtual_machine_now_from_fedora_org fedora30
+			PRESEED_FILE="$(mktemp)"
+			generate_fedora_ks_cfg_file "${PRESEED_FILE}" workstation
+			make_kvm_virtual_machine_now_from_fedora_org fedora30 
 			cleanup_and_finish nomessage
 		;;
 		10 )
