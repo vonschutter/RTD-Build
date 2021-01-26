@@ -134,6 +134,8 @@ ensure_admin
 set_color                         
 tell_info                               
 rtd_wait_for_internet_availability      
-task_setup_rtd_basics                   
+task_setup_rtd_basics
+source /opt/rtd/scripts/_rtd_library
+rtd_oem_make_launchers                 
 #| tee $_STATUSLOG
 

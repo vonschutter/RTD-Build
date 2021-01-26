@@ -351,6 +351,75 @@ check_menu_availability ()
 
 
 
+rtd_oem_make_launchers ()
+ {
+	if [[ ! $UID -eq 0 ]]; then
+		write_error "This function requires elevated privileges. Please elevate privileges prior to calling this function." 
+		return 1
+	else
+		# Add launchers for some OEM apps. 
+		cat > /usr/share/applications/rtd.desktop <<-EOF
+		[Desktop Entry]
+		Version=2.0
+		Name=RTD
+		Comment=RTD Simple System Support Tool
+		Exec=/opt/rtd/scripts/rtd-simple-support-tool
+		Path=/opt/rtd/scripts/
+		Icon=/opt/rtd/scripts/sys2.ico
+		Terminal=true
+		Type=Application
+		Categories=OEM;
+		EOF
+
+		cat > /usr/share/applications/rtd-user-bakup.desktop <<-EOF 
+		[Desktop Entry]
+		Version=2.0
+		Name=RTD-Backup
+		Comment=RTD User home Backup Tool
+		Exec=/opt/rtd/scripts/rtd-oem-backup-linux-config.sh
+		Path=/opt/rtd/scripts
+		Icon=/opt/rtd/scripts/sys0.ico
+		Terminal=true
+		Type=Application
+		Categories=OEM;
+		EOF
+
+		cat > /usr/share/applications/rtd-nordvpn.desktop <<-EOF 
+		[Desktop Entry]
+		Version=2.0
+		Name=RTD-NordVPN
+		Comment=Nord VPN Termnal GUI
+		Exec=/opt/rtd/scripts/rtd-nordvpn
+		Path=/opt/rtd/scripts
+		Icon=/opt/rtd/scripts/sys3.ico
+		Terminal=true
+		Type=Application
+		Categories=OEM;
+		EOF
+
+		cat > /usr/share/applications/rtd-minercraft-server.desktop <<-EOF 
+		[Desktop Entry]
+		Version=2.0
+		Name=Minecraft-Server
+		Comment=RTD Minecraft Server
+		Exec=/opt/rtd/scripts/rtd-minecraft-server
+		Path=/opt/rtd/scripts
+		Icon=/opt/rtd/scripts/sys3.ico
+		Terminal=true
+		Type=Application
+		Categories=OEM;
+		EOF
+	fi
+ }
+
+
+
+
+
+
+
+
+
 get_Windows_Product_Key ()
 {
 # Description: Function to retrieve a Windows product key from the BIOS.

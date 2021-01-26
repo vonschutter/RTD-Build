@@ -251,6 +251,9 @@ recipe_Bundle:_Common_Apps () {
 					check_dependencies gnome-software-plugin-snap
 				;;
 			esac
+
+			# Add launchers for some OEM apps (Internal function). 
+			rtd_oem_make_launchers
 }
 
 
@@ -1145,32 +1148,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 
 				run_command_in_gnome_user_session /bin/bash gtweak.sh 
 
-				# Add launchers for some OEM apps. 
-				cat > /usr/share/applications/rtd.desktop <<-EOF
-				[Desktop Entry]
-				Version=2.0
-				Name=RTD
-				Comment=RTD Simple System Support Tool
-				Exec=/opt/rtd/scripts/rtd-simple-support-tool
-				Path=/opt/rtd/scripts/
-				Icon=/opt/rtd/scripts/sys2.ico
-				Terminal=true
-				Type=Application
-				Categories=OEM;
-				EOF
 
-				cat > /usr/share/applications/rtd-user-bakup.desktop <<-EOF 
-				[Desktop Entry]
-				Version=2.0
-				Name=RTD-Backup
-				Comment=RTD User home Backup Tool
-				Exec=/opt/rtd/scripts/rtd-oem-backup-linux-config.sh
-				Path=/opt/rtd/scripts
-				Icon=/opt/rtd/scripts/sys0.ico
-				Terminal=true
-				Type=Application
-				Categories=OEM;
-				EOF
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
