@@ -33,6 +33,11 @@
 #
 
 source /opt/rtd/scripts/_rtd_library
-ensure_admin
-create_swapfile $*
 
+if [ ! "$UID" -eq 0 ]; then
+	write_warning "This script needs administrative access..." 
+	sudo bash "$0" "$*"
+	exit 
+else 
+	create_swapfile $@
+fi
