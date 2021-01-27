@@ -7240,8 +7240,6 @@ list_loaded_software_functions ()
 	fi
 }
 
-Load_library ()
-{
 set_colors
 export RTDFUNCTIONS=1
 
@@ -7332,9 +7330,7 @@ else
 				esac
 			done
 		;;
-		* ) echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments"
+		* ) echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments" >${LOGFILE:-"/var/log/$(basename $0)"}
 		;;
 	esac
 fi
-}
-Load_library
