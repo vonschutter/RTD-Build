@@ -1430,7 +1430,7 @@ ensure_admin ()
 #    
 # End of documentation
 
-	if [ "$UID" -eq 0 ]; then
+	if [ ! "$UID" -eq 0 ]; then
 		write_warning "This script needs administrative access..." 
 		sudo bash "$0" "$*"
 		exit 
@@ -2537,7 +2537,7 @@ create_swapfile ()
 	SWAP_SIZE=$1
 	SWAP_PATH=$2
 	: "${SWAP_SIZE:=4G}"
-	: "${SWAP_PATH:="/swapfile-$RANDOM"}"
+	: "${SWAP_PATH:="/swapfile-${RANDOM}"}"
 
 
 	usage_mesage () {
@@ -2548,8 +2548,8 @@ create_swapfile ()
 	}
 
 
-	if [[ -z $SWAP_SIZE ]]; then
-		# Fail if we are not five any argument
+	if [[ -z "${SWAP_SIZE}" ]]; then
+		# If we are not given any size to make the swaptfile... well...
 		echo -e $RED "Please tell me what size swap file to make!" $ENDCOLOR
 		usage_mesage
 		exit 1
@@ -2559,27 +2559,26 @@ create_swapfile ()
 		usage_mesage
 		exit 1
 	else
-		if [[ -e $SWAP_PATH ]]; then
-			echo -e "$RED ERROR: the file $SWAP_PATH already exists! Please choose a different name."
+		if [[ -e ${SWAP_PATH} ]]; then
+			write_error "ERROR: the file $SWAP_PATH already exists! Please choose a different name."
 			exit 1
 		fi
-		echo -e $BLUE"Welcome to Swap setup script! This script will automatically setup a swap file and enable it."$ENDCOLOR
-		echo
+		write_host --cyan "Welcome to Swap setup script! This script will automatically setup a swap file and enable it."
 
-		fallocate -l "$SWAP_SIZE" "$SWAP_PATH"	&& echo "Allocated $SWAP_SIZE swap file: $SWAP_PATH" || (echo -e $RED Error creting actual swapfile using fallocate!$ENDCOLOR ; exit 1)
-		chmod 600 "$SWAP_PATH"			&& echo "Sucessfully modified permissions on $SWAP_PATH" || (echo -e $RED Error changing premissions$ENDCOLOR ; exit 1)
-		mkswap "$SWAP_PATH"			&& (echo "Sucessfully formatted $SWAP_PATH as a swap partition" ; file -s $SWAP_PATH) || (echo -e $RED Error formating $SWAP_PATH as a swapspace!$ENDCOLOR ; exit 1)
-		swapon "$SWAP_PATH" 			# Turn on the swap file...
+		fallocate -l "${SWAP_SIZE}" "${SWAP_PATH}"	&& echo "Allocated ${SWAP_SIZE} swap file: ${SWAP_PATH}" || (write_error "Error creting actual swapfile using fallocate! "; exit 1)
+		chmod 600 "${SWAP_PATH}"			&& echo "Sucessfully modified permissions on $SWAP_PATH" || (write_error "Error changing premissions" ; exit 1)
+		mkswap "${SWAP_PATH}"			&& (echo "Sucessfully formatted ${SWAP_PATH} as a swap partition" ; file -s ${SWAP_PATH}) || (write_error "Error formating ${SWAP_PATH} as a swapspace!" ; exit 1)
+		swapon "${SWAP_PATH}" 			# Turn on the swap file...
 		if [ $? = 0 ]; then
-			echo "$SWAP_PATH   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
-			echo -e "$GREEN Done! You now have a $SWAP_SIZE swap file at $SWAP_PATH $ENDCOLOR"
+			write_status "${SWAP_PATH}   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
+			write_status "Done! You now have a ${SWAP_SIZE} swap file at ${SWAP_PATH}"
 		else 
-			if df -T $SWAP_PATH |grep btrfs >/dev/null ; then
-				echo -e "$RED ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
-				This is a BUG and hopefully it will be fixed soon... $ENDCOLOR"
+			if df -T ${SWAP_PATH} |grep btrfs >/dev/null ; then
+				write_error "ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
+				This is a BUG and hopefully it will be fixed soon... "
 				exit 1
 			else 
-				echo $RED "An unknown error occurred with starting the swap partition.." $ENDCOLOR
+				write_error "An unknown error occurred with starting the swap partition.." 
 				exit 1
 			fi
 		fi

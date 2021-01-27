@@ -32,7 +32,7 @@
 # 2 - To see usefull documentation on each function in this library: "bash _rtd_library --devhelp"
 #
 
-source /opt/rtd/scrips/_rtd_library
+source /opt/rtd/scripts/_rtd_library
 ensure_admin
 create_swapfile $*
 
