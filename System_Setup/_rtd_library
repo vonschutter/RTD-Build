@@ -353,7 +353,7 @@ check_menu_availability ()
 
 
 rtd_oem_make_launchers ()
- {
+{
 	if [[ ! $UID -eq 0 ]]; then
 		write_error "This function requires elevated privileges. Please elevate privileges prior to calling this function." 
 		return 1
