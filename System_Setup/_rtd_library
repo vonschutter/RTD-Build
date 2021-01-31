@@ -5736,7 +5736,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 		d-i partman-lvm/confirm boolean true
 		d-i partman-lvm/confirm_nooverwrite boolean true
 		d-i partman-auto-lvm/guided_size string max
-		d-i partman-auto-lvm/new_vg_name string crypt_volume
+		d-i partman-auto-lvm/new_vg_name string crypt
 		#d-i partman-auto/choose_recipe select root-encrypted
 		d-i partman-auto/expert_recipe string                   \
 		multi-cnx ::                                            \
@@ -5752,13 +5752,13 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				use_filesystem{ } filesystem{ ext4 }    \
 				mountpoint{ /boot }                     \
 			.                                               \
-			200% 10000 200% linux-swap                      \
-				\$lvmok{ }                              \
-				\$reusemethod{ }                        \
-				method{ swap }                          \
-				format{ }                               \
+			4000 15000 200% linux-swap                      \
+			 	$lvmok{ } lv_name{ swap }               \
+			 	in_vg { crypt }                         \
+			 	$primary{ }                             \
+			 	method{ swap } format{ }                \
 			.                                               \
-			500 1000 1000000000 ext4                       \
+			500 1000 1000000000 ext4                        \
 				$lvmok{ } lv_name{ root }               \
 				in_vg { crypt }                         \
 				$primary{ }                             \
@@ -5778,12 +5778,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 		# --------------------------------------------------- #
 
 	EOF
-			# 200% 5000 200% linux-swap                       \
-			# 	$lvmok{ } lv_name{ swap }               \
-			# 	in_vg { crypt }                         \
-			# 	$primary{ }                             \
-			# 	method{ swap } format{ }                \
-			# .                                               \
+
 
 
 }
