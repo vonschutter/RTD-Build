@@ -31,6 +31,6 @@ bash _rtd_library --devhelp-gtk would display a help screen:
 
 NOTE: software titles may be named slightly differently in some versions of Linux and may 
 therefore not install since they are not found. For this reason, more emphasis is placed on 
-"snap" apps where possible to allow universal installs. 
+"snap" apps and "flatpaks" where possible to allow universal installs. Snapps and Flatpaks allow for applications to be sandboxed for security as well.  
 
 The bootstrap (rtd-me.sh.cmd) script will identify the running OS versions and execute the relevant scripts to install software and/or configuration changes. 
