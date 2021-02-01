@@ -21,18 +21,15 @@ All the tools rely on the _rtd_library bash function library. To see what these 
 ```
 bash _rtd_library --devhelp would display a help screen: 
 
-![RTD Builder Screenshot](Media_files/Scr-lib.png "Executing the Script")
+![Library Help Screenshot](Media_files/Scr-lib.png "Executing the Script")
 
 bash _rtd_library --devhelp-gtk would display a help screen: 
-![RTD Builder Screenshot](Media_files/Scr-lib-gtk.png "Executing the Script")
+![Library Help Screenshot](Media_files/Scr-lib-gtk.png "Executing the Script")
 
 
 
-
-```
 NOTE: software titles may be named slightly differently in some versions of Linux and may 
 therefore not install since they are not found. For this reason, more emphasis is placed on 
 "snap" apps where possible to allow universal installs. 
 
-```
-The bootstrap (rtd-me.sh.cmd) script will identify the running OS versions and execute teh relevant scripts to install software and/or configuration changes. 
+The bootstrap (rtd-me.sh.cmd) script will identify the running OS versions and execute the relevant scripts to install software and/or configuration changes. 
