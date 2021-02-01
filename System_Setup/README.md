@@ -19,11 +19,11 @@ All the tools rely on the _rtd_library bash function library. To see what these 
 ---  To see usefull documentation on each function in this library in a Terminal or remote ssh: "bash _rtd_library --devhelp"
 ---  To see usefull documentation on each function in this library in GTK (local desktop): "bash _rtd_library --devhelp-gtk"
 ```
-"bash _rtd_library --devhelp" would display a help screen: 
+bash _rtd_library --devhelp would display a help screen: 
 
 ![RTD Builder Screenshot](Media_files/Scr-lib.png "Executing the Script")
 
-"bash _rtd_library --devhelp-gtk": would display a help screen: 
+bash _rtd_library --devhelp-gtk would display a help screen: 
 ![RTD Builder Screenshot](Media_files/Scr-lib-gtk.png "Executing the Script")
 
 
