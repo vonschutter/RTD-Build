@@ -219,8 +219,12 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 ##                                                                       ##
 ###########################################################################
 
-
-
+# All library functions are listed below in a few sections:
+# - System Managment
+# - Software Management
+# - Virtual Machine Management
+# - Internal Configuration Repository
+# - Script Internal Functions
 
 
 
@@ -293,10 +297,9 @@ change_disk_pass ()
 # Arguments: None accepted
 # Outputs: Interactive
 # Returns: default exit status of the last command run.
-# Usage: 
-# change_disk_pass
-#
-#
+# Usage: change_disk_pass
+# 
+# 
 # End of Documentation
 
 	clear
@@ -354,6 +357,19 @@ check_menu_availability ()
 
 rtd_oem_make_launchers ()
 {
+# Description: Function that creates a default set of launchers for the Linux GUI menu system. 
+# 
+# Globals: 
+# The tools (scripts) located in /opt/rtd/scripts/ are expected as launchers are created for these.
+#  
+# 
+# Arguments: None accepted
+# Outputs: Launcherc created in /usr/share/applications/
+# Returns: Default exit status of the last command run.
+# Usage: rtd_oem_make_launchers
+#  
+# End of documentation
+
 	if [[ ! $UID -eq 0 ]]; then
 		write_error "This function requires elevated privileges. Please elevate privileges prior to calling this function." 
 		return 1
@@ -423,8 +439,11 @@ rtd_oem_make_launchers ()
 
 get_Windows_Product_Key ()
 {
-# Description: Function to retrieve a Windows product key from the BIOS.
-# 
+# Description: Function to retrieve a Windows product key from the BIOS. This assumes that the OEM 
+# has indeed stored the windows key in the BIOS... Doing so is a common practice. It is useful to 
+# retrieve the key if it is desired to run Windows in a Virtual Machine and Presumably would prefer to 
+# not run the evaluation version of Windows. This function could also be used to take advantage of the 
+# ${WinKey} variable and echo it in to the autoinattend.xml file for unattended builds. 
 #
 # Globals: RTD_GUI
 # Arguments: None
@@ -527,7 +546,7 @@ rtd_oem_reset_default_environment_config ()
 # "auto running scripts"...
 # Globals: 
 # Arguments: None
-# Outputs: 
+# Outputs: removes autostart files and configurations from an OEM state to a default state.
 # Returns: 
 # Usage: 
 # End of documentation
@@ -537,7 +556,7 @@ rtd_oem_reset_default_environment_config ()
 	[[ -f /etc/sudoers.d/99_sudo_include_file ]] && mv /etc/sudoers.d/99_sudo_include_file /opt/rtd/scripts
 	cp /home/$SUDO_USER/.bashrc /opt/rtd/scripts/bashrc
 	# Keep ability for root to open dialog boxes for a user.
-	#sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
+	sed -i '/xhost\ local:root/d' /home/$SUDO_USER/.bashrc
 	toggle_oem_auto_login
 }
 
@@ -554,7 +573,7 @@ set_oem_user_gnome_ui_preference_on_login ()
 # Arguments: None
 # Outputs: Use interactive.
 # Returns: 
-# Usage: 
+# Usage: At present function is inactive and incomplete.
 # End of documentation
 	write_information "starting ui choice once"
 }
@@ -576,7 +595,7 @@ rtd_wait_for_internet_availability ()
 # Arguments: None
 # Outputs: 
 # Returns: 
-# Usage: 
+# Usage: rtd_wait_for_internet_availability
 # End of documentation
 
 
@@ -596,9 +615,9 @@ rtd_wait_for_internet_availability ()
 
 display_spinner ()
 {
-# Description: Simple function
+# Description: Simple function to display a spinner in the terminal.
 # Globals: 
-# Arguments: None
+# Arguments: start/stop
 # Outputs: 
 # Returns: 
 # Usage: 
@@ -688,7 +707,7 @@ display_spinner ()
 toggle_oem_auto_login()
 {
 # Description: Function to toggle auto login for admin purposes. 
-# Call the functoin onece to set auto login and call it again to 
+# Call the function once to set auto login and call it again to 
 # unset auto login. 
 #
 # Globals: 
@@ -829,7 +848,7 @@ set_enable_oem_elevated_privelege()
 
 make_system_recovery_partition ()
 {
-# Description: 
+# Description: Incomplete function to build an OEM rescue partition...
 # Function to enable system OEM Recovery 
 # Globals: 
 # Arguments: None
@@ -915,7 +934,7 @@ make_system_recovery_partition ()
 rtd_oem_reseal () {
 # Description: 
 # Function to reseal a newly installed system for delivery to end user.
-# Globals: 
+# Globals: The distribution must have an OEM reseal function or software available. 
 # Arguments: None
 # Outputs: 
 # Returns: 
@@ -945,8 +964,8 @@ rtd_oem_reseal () {
 
 
 check_if_password_p0wned () {
-# Description: 
-# Globals: 
+# Description: Function to query a user for a password suggestion and check it against P0wned data base online.
+# Globals: $RTD_GUI
 # Arguments: None
 # Outputs: 
 # Returns: 
@@ -1398,10 +1417,10 @@ run_command_in_gnome_user_session () {
 # 	run_command_in_gnome_user_session script_name.sh parameter one two etc
 #
 # Globals: 
-# Arguments: None
+# Arguments: [path/script.sh] [bash command]
 # Outputs: 
 # Returns: 
-# Usage: 
+# Usage: run_command_in_gnome_user_session script_name.sh 
 #    
 # End of documentation
 	echo -------------------------- Begin as user: $SUDO_USER ---------------------
