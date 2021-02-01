@@ -23,7 +23,8 @@ bash _rtd_library --devhelp would display a help screen:
 
 ![Library Help Screenshot](Media_files/Scr-lib.png "Executing the Script")
 
-bash _rtd_library --devhelp-gtk would display a help screen: 
+bash _rtd_library --devhelp-gtk would display a help screen:
+
 ![Library Help Screenshot](Media_files/Scr-lib-gtk.png "Executing the Script")
 
 
