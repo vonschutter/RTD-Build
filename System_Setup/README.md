@@ -10,8 +10,8 @@ wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd ; bash ./
 ```
 This is simply a convenient way to download and run the script **rtd-me.sh.cmd**. It will download all the tools needed for you to setup an automated thumbdrive or DVD install of fedora, Ubuntu, Kubuntu, Debian and more. Please note that you do not need to install any software bundles at this time. After running the script above, you will have all that you need to create the needed boot media to install teh above distributions. You may accomplish these tasks by running the included tools: 
 
-1- rtd-simple-support-tool
-2- rtd-make-usb-boot-media
+1. rtd-simple-support-tool
+2. rtd-make-usb-boot-media
 
 All the tools rely on the _rtd_library bash function library. To see what these functions are and write scripts that use them you may call the library like so: 
 ```
