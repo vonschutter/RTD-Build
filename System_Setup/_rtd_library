@@ -4325,12 +4325,12 @@ backup_running_vm ()
 {
 # Description: 
 # Function to back up all running virtual machines on the host it is being run on.
-# This function should be called from within this script and down not require any
+# This function should be called from within this script and does not require any
 # arguments passed.
 # 
-# Globals: 
+# Globals: ${VM_BACKUP_TARGET} (defaults to /mnt/vmdsk/VM_BACKUP)
 # Arguments: None
-# Outputs: 
+# Outputs: Backups of running vm's. 
 # Returns: 
 # Usage: 
 # 
@@ -4493,17 +4493,17 @@ backup_running_vm ()
 
 rtd_oem_cfg_post_task_sequence_default ()
 {
-# Description: Default opst install script to be inserted in to build media (ISO).
+# Description: Default post install script to be inserted in to build media (ISO) for Linux.
 # Script will take care to configure automatic login and execution of 
 # the next post configurations script **"rtd-me.sh.cmd"** a unified bootstrap
 # script that runs on any bash supported system (BE, Apple OS X, Linux, BSD) 
 # as well as Windows Shell script (Winsows NT, XP, 7, 8, 10 etc.) as well 
 # as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME). 
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: [directory path]
+# Outputs: task.sh (run during setup)
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_cfg_post_task_sequence_default /where/to/put/file/
 # End of documentation
 	cat >> $1/task.sh <<-'EOF'
 	#!/bin/bash
@@ -4778,18 +4778,20 @@ generate_rtd_me_sh_cmd ()
 {
 # Description: 
 # Generates an unattended install instruction file for Windows systems. 
-# As documentation at microsoft for CMD shell scripting is limited lease teh below suggestion:
+# As documentation at microsoft for CMD shell scripting is limited see the below suggestion:
 # Reference https://www.amazon.com/Windows-Shell-Scripting-Timothy-Hill/dp/1578700477
 # for more information.
 # 
 # Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
+# Arguments: [directory path]
+# Outputs: one rtd-me.cmd.sh flobal bootsrap script
+# Returns: na
 # Usage:  
 # 
 # generate_rtd_me_sh_cmd /location/to/place/fiile
 # 
+# 
+# NOTE: This file is generated from this library to limit the dependecies on external downloads. 
 # End of documentation
 
 	cat >> $1/rtd-me.sh.cmd <<-'EOF'
@@ -5075,15 +5077,15 @@ generate_rtd_me_sh_cmd ()
 
 generate_autounattend_xml ()
 {
-# Description: : 
+# Description: 
 # Generates an unattended install instruction file for Windows systems. 
 # Reference https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/automate-windows-setup
 # for more information.
 # 
 # Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
+# Arguments: [directory path]
+# Outputs: one autounattend.cfg file
+# Returns: na
 # Usage: 
 # 
 # generate_autounattend_xml /location/to/place/fiile
@@ -5424,12 +5426,12 @@ generate_autounattend_xml ()
 
 rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Ubuntu only] (ks.cfg)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: instruction for Ubuntu's convoluted support for both preseed and kickstart files. 
+# Usage: rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "directory"
 # End of documentation
 	cat $1/preseed.cfg >$1/ks.cfg 
 		#<<- EOF
@@ -5473,12 +5475,12 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 
 rtd_oem_preseed_cfg_Unattended_Install ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Unattended Installation] (d-i debconf string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: suppress any questions. 
+# Usage: rtd_oem_preseed_cfg_Unattended_Install "directory"
 # End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
@@ -5499,12 +5501,12 @@ rtd_oem_preseed_cfg_Unattended_Install ()
 
 rtd_oem_preseed_cfg_Network_Configuration ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Network configuration] (d-i netcfg string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: wired + wireless configuration
+# Usage: rtd_oem_preseed_cfg_Network_Configuration "directory"
 # End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
@@ -5544,12 +5546,12 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 
 rtd_oem_cfg_Account_Setup ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Account setup] (d-i passwd string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: user accounts
+# Usage: rtd_oem_cfg_Account_Setup "directory"
 # End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
 
@@ -5578,12 +5580,12 @@ rtd_oem_cfg_Account_Setup ()
 
 rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Avoid USB install] (d-i early_command string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: EFI + Legacy ability to boot
+# Usage: rtd_oem_preseed_cfg_Prevent_Install_On_USB "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5612,12 +5614,12 @@ rtd_oem_preseed_cfg_Prevent_Install_On_USB ()
 
 rtd_oem_preseed_cfg_EFI ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [EFI] (d-i partman-efi string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: EFI + Legacy ability to boot
+# Usage: rtd_oem_preseed_cfg_EFI "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5641,12 +5643,12 @@ rtd_oem_preseed_cfg_EFI ()
 
 rtd_oem_preseed_cfg_Localization ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Description: generates a preseed section [Localization] (d-i localechooser string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
+# Returns: time-zone, keyboard-layout, locale
+# Usage: rtd_oem_preseed_cfg_Localization "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5697,12 +5699,12 @@ rtd_oem_preseed_cfg_Localization ()
 
 rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
+# Description: generates a preseed section [Grub] (d-i grub-installer string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5723,12 +5725,12 @@ rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 
 rtd_oem_preseed_cfg_Disk_Layout ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
+# Description: generates a preseed section [Partitioning] (d-i partman string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_preseed_cfg_Disk_Layout "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5771,7 +5773,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 				use_filesystem{ } filesystem{ ext4 }    \
 				mountpoint{ /boot }                     \
 			.                                               \
-			4000 15000 200% linux-swap                      \
+			4000 25000 200% linux-swap                      \
 			 	$lvmok{ } lv_name{ swap }               \
 			 	in_vg { crypt }                         \
 			 	$primary{ }                             \
@@ -5804,12 +5806,12 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 
 rtd_oem_preseed_cfg_Package_Selection ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
+# Description: generates a preseed section [Package selection] (d-i pkgsel string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_preseed_cfg_Package_Selection "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-EOF
@@ -5845,12 +5847,12 @@ rtd_oem_preseed_cfg_Package_Selection ()
 
 rtd_oem_preseed_cfg_Addon_MinecraftServer()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
+# Description: generates a preseed section [Addon Tasks] (late command string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_preseed_cfg_Addon_MinecraftServer "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5890,12 +5892,12 @@ rtd_oem_preseed_cfg_Addon_MinecraftServer()
 
 rtd_oem_preseed_cfg_Addon_Tasks ()
 {
-# Description: 
-# Globals: 
-# Arguments: None
-# Outputs: 
+# Description: generates a preseed section [Addon Tasks] (late command string)
+# Globals: $PRESEED (filename)
+# Arguments: Where to place file (directory)
+# Outputs: one preseed file section
 # Returns: 
-# Usage: 
+# Usage: rtd_oem_preseed_cfg_Addon_Tasks "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5951,12 +5953,12 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 
 generate_minecraft_server_launcher ()
 {
-# Description: 
+# Description: Generates preseed file to build a minecraft server. 
 # Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Arguments: [file location]
+# Outputs: one preseed file
+# Returns: error level of last command
+# Usage: generate_minecraft_server_launcher /tmp/preseed.cfg
 # End of documentation
 
 	cat >> $1 <<-'MINECRAFT_EOF'
@@ -6792,13 +6794,16 @@ set_colors ()
 #  
 # Globals: 
 # Arguments: None
-# Outputs: 
+# Outputs: Sets usable variables: $picachu $music $chess $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
+# as well as: $[yellow, darkyellow, red, darkred, endcolor, green, darkgreen, blue, darkblue, cyan, darkcyan, gray, purple, darkpurple]
 # Returns: 
-# Usage: 
+# Usage: echo -e $yellow "text to display" or echo -e $picachu
 # 
 # "🔴  🔵 "
 # The function will not return any sucess or failure codes. It will do its best and exit.
 # 
+# End of documentation
+
 # Foreground & background colour commands
 # 
 # tput setab [1-7] # Set the background colour using ANSI escape
@@ -6933,7 +6938,7 @@ set_colors ()
 # On_IPurple='\033[0;105m'  # Purple
 # On_ICyan='\033[0;106m'    # Cyan
 # On_IWhite='\033[0;107m'   # White
-# End of documentation
+
 
 
 
@@ -6999,17 +7004,15 @@ display_result ()
 # Description: Function to read a variable "result" and display its contents. The purpose of this function
 # is simply to make it easy and convenient to display a mesage to an end user in a terminal 
 # in a nice way. To use this function simply call it after populating the variable result.
-# Globals: 
-# Arguments: None
-# Outputs: 
-# Returns: 
+# Globals: ${result}, ${BRANDING}
+# Arguments: ["Title to display"]
+# Outputs: Message in dialog box
+# Returns: 0 or ESC
 # Usage: 
-
-# Example: 
-#
+# 
 # result=$( command with output)
-# display result "title of the mesage" 
-#
+# display_result "title of the mesage" 
+# 
 # End of Documentation
 
 	$RTD_GUI --backtitle "$BRANDING" --title "$1" --msgbox "$result" $HEIGHT $WIDTH 
@@ -7027,15 +7030,15 @@ rtd_oem_pause ()
 # and wait for the end user to press ENTER to continue execution.
 #  
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: 0 - !0 "[optional error message]"
+# Outputs: Standard out
 # Returns: 
 # Usage:  suggestion stop on execution error: 
 # EXPRESSION  || rtd_oem_pause 1
 # or
 # EXPRESSION ; rtd_oem_pause $?
 #
-# in both of these cases script executoi will halt and wait for confirmation
+# In both of these cases script execution will halt and wait for confirmation
 # before continuing. 
 # End of documentation
 	ERRMSG=$@
@@ -7052,19 +7055,16 @@ rtd_oem_pause ()
 write_host ()
 {
 # Description: 
-# is a simplified and consistent way to write output to the screen.
+# This is a simplified and consistent way to write output to the screen.
 # This function will print a message to the standard out in a color specified.  
 # Specified colors can be colord defined in the function "set_colors"
 # If no color option is specified this cunctio simply works like the echo command.
 # 
 # Globals: 
-# Arguments: None
+# Arguments: [color option]
 # Outputs: 
 # Returns: 
-# Usage: 
-
-# 
-# write_host [option] [String]
+# Usage: write_host [option] [String]
 # 
 # where [option] is a supported color:
 # --yellow            Prints message in YELLOW
@@ -7118,12 +7118,10 @@ write_error ()
 # is a simplified and consistent way to write output to the screen.
 # write_error will print a message to the standard out in RED.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: "text to be printed to standard out"
+# Outputs: standard out in color
 # Returns: 
-# Usage: 
-
-# write_error [String]
+# Usage: write_error "[String]"
 #
 # End of documentation
 
@@ -7137,14 +7135,13 @@ write_error ()
 write_warning ()
 {
 # Description: 
-# is a simplified and consistent way to write output to the screen.
+# This is a simplified and consistent way to write output to the screen.
 # write_warning will print a message to the standard out in Yellow.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: "text to be printed to standard out"
+# Outputs: standard out in color
 # Returns: 
-# Usage: 
-# write_warning [String]
+# Usage: write_warning "[String]"
 #
 # End of documentation
 
@@ -7158,14 +7155,13 @@ write_warning ()
 write_status ()
 {
 # Description: 
-# is a simplified and consistent way to write output to the screen.
+# This is a simplified and consistent way to write output to the screen.
 # write_status will print a message to the standard out in GREEN.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: "text to be printed to standard out"
+# Outputs: standard out in color
 # Returns: 
-# Usage:
-# write_status [String]
+# Usage: write_status "[String]"
 #
 # End of documentation
 
@@ -7178,15 +7174,14 @@ write_status ()
 
 write_information ()
 {
-# Description: 
-# is a simplified and consistent way to write output to the screen.
+# Description: 	
+# This is a simplified and consistent way to write output to the screen. 
 # write_information will print a message to the standard out in BLUE.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: "text to be printed to standard out"
+# Outputs: standard out in color
 # Returns: 
-# Usage:
-# write_information [String]
+# Usage: write_information "[String]"
 #
 # End of documentation
 
@@ -7202,12 +7197,12 @@ write_information ()
 
 list_loaded_internal_functions ()
 {
-# Description: Function to list all functions loaded... for debugging purposes.
+# Description: Function to list all internal library functions loaded... for debugging/support purposes.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: none or [--zformat] 
+# Outputs: Standard out, list of functions either formatted for zenity or not. Output may be used to populate a zenity menu or dialog.
 # Returns: 
-# Usage:
+# Usage: list_loaded_software_functions [] [--zformat]
 # End of documentation
 
 	if [[ "$1" == "--zformat" ]]; then
@@ -7231,12 +7226,12 @@ list_loaded_internal_functions ()
 
 list_loaded_software_functions ()
 {
-# Description: Function to list all functions loaded... for debugging purposes.
+# Description: Function to list all software (_rtd_recipes) functions loaded... for debugging/support purposes.
 # Globals: 
-# Arguments: None
-# Outputs: 
+# Arguments: none or [--nonum] 
+# Outputs: Standard out, list of functions either numerated or not.
 # Returns: 
-# Usage:
+# Usage: list_loaded_software_functions [] [--nonum]
 # End of documentation
 
 	if [[ "$1" == "--nonum" ]]; then
@@ -7253,6 +7248,23 @@ list_loaded_software_functions ()
 		done
 	fi
 }
+
+
+
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# The following section launches the internal functions if given arguments 
+# request this. If no arguments are provided, then all the functions in this 
+# library will simply be loaded in to memory. 
+
+
+
 
 set_colors
 export RTDFUNCTIONS=1
@@ -7344,7 +7356,9 @@ else
 				esac
 			done
 		;;
-		* ) echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments" >${LOGFILE:-"/var/log/$(basename $0)"}
+		* ) 
+			echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments" 
+			echo "$0 launched with unknown parameters" >${LOGFILE:-"/var/log/$(basename $0)"} 
 		;;
 	esac
 fi
