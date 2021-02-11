@@ -558,7 +558,7 @@ recipe_Install_Bleachbit_System_Cleaner (){
 
 recipe_Install_Restricted_Codecs (){
 			write_status "--- Install all the required multimedia codecs..." 
-			for i in libdvdcss2 ubuntu-restricted-extras ffmpeg ; do
+			for i in libdvdcss2 ffmpeg ; do
 			     InstallSoftwareFromRepo $i
 			done		
 }
