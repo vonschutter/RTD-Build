@@ -39,7 +39,7 @@
 #	distribution package managment is. 
 #
 #	Only make special cases for packages that are not distributed in the distributions own repositories os as snaps or
-#	flatpaks; for example fi you must download from a vendors web site (like for example Google Chrome). In such a case
+#	flatpaks; for example if you must download from a vendors web site (like for example Google Chrome). In such a case
 #	you may use the dl function. It will automatically install the package at the url provided. 
 #
 #	Scripts may also be stand-alone if there is a reason for this. 
@@ -81,7 +81,7 @@
 #
 #	The best solution is to redirect at the "wrapper" layer; a.k.a. the script that loads these functions
 #	and executes them. Simply use the "source" statement to pull in the "_rtd_library" and it will do the rest:
-#	you can now simply name each dunction herein that you wish to have installed on a wide range of distributions.
+#	you can now simply name each function herein that you wish to have installed on a wide range of distributions.
 #
 #	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
 #	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
@@ -102,7 +102,7 @@
 # Arch Linux, CentOS, Debian, Fedora, Solus, Manjaro Linux, Linux Mint, OpenEmbedded, Raspbian, OpenWrt and openSUSE. 
 #
 # Security:
-# Snaps are also contained from a security point of view and only have the access relly needed on a system. The user may
+# Snaps are also contained from a security point of view and only have the access really needed on a system. The user may
 # add additional access descressionally. 
 # 
 # 	*	--- Installing software from the flathub repository is a secondary preferrence ---      *
@@ -111,11 +111,10 @@
 # as offering a sandbox environment in which users can run application software in isolation from the rest of the system.
 # Applications using Flatpak need permissions to have access to Bluetooth, sound (with PulseAudio), network, files, etc., 
 # permissions that are defined by the maintainer of the Flatpak and can be controlled (added or removed) by users on their 
-# system.Flatpak was developed as part of the freedesktop.org project (formerly known as X Desktop Group or XDG) and was 
-# originally called xdg-app.
+# system.
 #
 # Flathub, a repository (or remote source in the Flatpak terminology) that is located at flathub.org, has become the de facto 
-# standard for getting applications packaged with Flatpak.[9] Packages are added to it by both the Flathub administrators and 
+# standard for getting applications packaged with Flatpak. Packages are added to it by both the Flathub administrators and 
 # the developers of the programs themselves (though the admins have stated their preference for developer-submitted apps).
 # Although Flathub is the de facto source for applications packaged with Flatpak, Flatpak can work independently of Flathub;
 # it is possible to host a remote and access to remotes that are totally independent of Flathub.
@@ -142,7 +141,7 @@
 # | Sandboxing Mandatory                                | Yes                               | Yes                               | No                   |
 # | App Portability                                     | Yes                               | Yes                               | No                   |
 # | Native Theme Support                                | Yes (with caveats)                | Yes (with caveats)                | Yes (with caveats)   |
-# | Support for Bundle:d Libraries                       | Yes                               | Yes                               | Yes                  |
+# | Support for Bundled Libraries                       | Yes                               | Yes                               | Yes                  |
 # | Fully Contained Single Executable Support           | No                                | No                                | Yes                  |
 # | Online App Store                                    | Yes                               | Yes                               | Yes                  |
 # | Multi-version Parallel Apps Support                 | Yes                               | Yes                               | Yes                  |
@@ -160,7 +159,7 @@
 # PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors. 
 # The "dl" function uses package kit because it can istall both rpms and debs.
 #
-# TEMPLATE: For adding a new manu entry for a singel package or bundle of software:
+# TEMPLATE: For adding a new menu entry for a single package or bundle of software:
 #
 # recipe_Bundle:_descriptive_name () {
 # 			# function documentaton... 
@@ -178,11 +177,11 @@
 #
 # 			# Install faltpacks:
 # 			ensure_flatpak_package_managment
-# 			snap install package-name
+# 			flatpak install package-name
 #
 # 			# Install snap packages:
 # 			ensure_snap_package_managment
-# 			flatpak install 
+# 			snap install package-name
 #
 # 			# Check a dependency:
 # 			check_dependencies package-name
