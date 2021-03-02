@@ -1,14 +1,14 @@
 #
-#::                     S O F T W A R E    R E C I P I E S 
+#::                     S O F T W A R E    R E C I P I E S
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:: Author(s):   	SLS, KLS, NB.  Buffalo Center, IA & Avarua, Cook Islands
 #:: Version 1.01
 #::
 #::
-#::	Purpose: To define how software is added in one place. 
-#::		 Software may be downloaded and installed manually, or via package manager or snaps. 
-#::		 Configuration items are also defined here. 
+#::	Purpose: To define how software is added in one place.
+#::		 Software may be downloaded and installed manually, or via package manager or snaps.
+#::		 Configuration items are also defined here.
 #::	Usage: call this file using the "source" statment in bash. Then simply invoke the relevant recipe (funclion)
 #::
 #::	This script is shared in the hopes that
@@ -19,47 +19,47 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
 #	NOTE:	This terminal program is written and documented to a very high degree. The reason for doing this is that
-#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
-#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
+#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how
+#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to
 #		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
 #		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
-#		for any organization after some years and people turnover. 
+#		for any organization after some years and people turnover.
 #
 #		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
 #		and facilitates several users working on the same scripts over time.
-# 
+#
 #
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
-#	functions in _rtd_library and _rtd_recipies. 
-#	  _rtd_library   -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
-#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
-#	
+#	functions in _rtd_library and _rtd_recipies.
+#	  _rtd_library   -- contain usefull admin functions for scripts, such as "how to install software" on different systems.
+#	  _rtd_recipies  -- contain software installation and configuration "recipies".
+#
 #	Use InstallSoftwareFromRepo, check_dependencies, ensure_snap_package_managment, ensure_flatpak_package_managment
 #	to install software as a general rule. These functions will make it simple to add software no matter what the underlying
-#	distribution package managment is. 
+#	distribution package managment is.
 #
 #	Only make special cases for packages that are not distributed in the distributions own repositories os as snaps or
 #	flatpaks; for example if you must download from a vendors web site (like for example Google Chrome). In such a case
-#	you may use the dl function. It will automatically install the package at the url provided. 
+#	you may use the dl function. It will automatically install the package at the url provided.
 #
-#	Scripts may also be stand-alone if there is a reason for this. 
+#	Scripts may also be stand-alone if there is a reason for this.
 #
 #	Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
 #	to make the script more readable. Each function shall also be documented to the point of the obvious.
 #	Suggested function structure per google guidelines:
 #
 #	function_name () {
-#		# Documentation and comments... 
+#		# Documentation and comments...
 #		...code...
 #	}
 #
 #	We also like to log all activity, and to echo status output to the screen in a frienly way. To accomplish this,
-#	the table below may be used as appropriate: 
+#	the table below may be used as appropriate:
 #
 #				OUTPUT REDIRECTION TABLE
 #
 #		  || visible in terminal ||   visible in file   || existing
-#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file   
+#	  Syntax  ||  StdOut  |  StdErr  ||  StdOut  |  StdErr  ||   file
 #	==========++==========+==========++==========+==========++===========
 #	    >     ||    no    |   yes    ||   yes    |    no    || overwrite
 #	    >>    ||    no    |   yes    ||   yes    |    no    ||  append
@@ -83,55 +83,55 @@
 #	and executes them. Simply use the "source" statement to pull in the "_rtd_library" and it will do the rest:
 #	you can now simply name each function herein that you wish to have installed on a wide range of distributions.
 #
-#	Our scripts are also structured in to three major sections: "settings", "functions", and "execute". 
-#	Settings, contain configurable options for the script. Functions, contain all functions. Execute, 
-#	contains all the actual logic and flow control of the script. 
+#	Our scripts are also structured in to three major sections: "settings", "functions", and "execute".
+#	Settings, contain configurable options for the script. Functions, contain all functions. Execute,
+#	contains all the actual logic and flow control of the script.
 #
 #
 #
 # 	*		--- Installing software from the snap repository is prefferred --- 		*
 #
-# Snap is a software deployment and package management system developed by Canonical for the Linux operating system. 
-# The packages, called snaps, and the tool for using them, snapd, work across a range of Linux distributions 
-# allowing distribution-agnostic upstream software packaging. Snap application packages of software are self-contained 
-# and work across a range of Linux distributions. This is unlike traditional Linux package  management approaches, 
-# like APT or YUM, which require specifically adapted packages for each Linux distribution therefore adding delay between 
-# application development and its deployment for end-users. 
+# Snap is a software deployment and package management system developed by Canonical for the Linux operating system.
+# The packages, called snaps, and the tool for using them, snapd, work across a range of Linux distributions
+# allowing distribution-agnostic upstream software packaging. Snap application packages of software are self-contained
+# and work across a range of Linux distributions. This is unlike traditional Linux package  management approaches,
+# like APT or YUM, which require specifically adapted packages for each Linux distribution therefore adding delay between
+# application development and its deployment for end-users.
 #
-# Supported distributions: 
-# Arch Linux, CentOS, Debian, Fedora, Solus, Manjaro Linux, Linux Mint, OpenEmbedded, Raspbian, OpenWrt and openSUSE. 
+# Supported distributions:
+# Arch Linux, CentOS, Debian, Fedora, Solus, Manjaro Linux, Linux Mint, OpenEmbedded, Raspbian, OpenWrt and openSUSE.
 #
 # Security:
 # Snaps are also contained from a security point of view and only have the access really needed on a system. The user may
-# add additional access descressionally. 
-# 
+# add additional access descressionally.
+#
 # 	*	--- Installing software from the flathub repository is a secondary preferrence ---      *
 #
-# Flatpak (formerly xdg-app) is a software utility for software deployment and package management for Linux. It is advertised 
+# Flatpak (formerly xdg-app) is a software utility for software deployment and package management for Linux. It is advertised
 # as offering a sandbox environment in which users can run application software in isolation from the rest of the system.
-# Applications using Flatpak need permissions to have access to Bluetooth, sound (with PulseAudio), network, files, etc., 
-# permissions that are defined by the maintainer of the Flatpak and can be controlled (added or removed) by users on their 
+# Applications using Flatpak need permissions to have access to Bluetooth, sound (with PulseAudio), network, files, etc.,
+# permissions that are defined by the maintainer of the Flatpak and can be controlled (added or removed) by users on their
 # system.
 #
-# Flathub, a repository (or remote source in the Flatpak terminology) that is located at flathub.org, has become the de facto 
-# standard for getting applications packaged with Flatpak. Packages are added to it by both the Flathub administrators and 
+# Flathub, a repository (or remote source in the Flatpak terminology) that is located at flathub.org, has become the de facto
+# standard for getting applications packaged with Flatpak. Packages are added to it by both the Flathub administrators and
 # the developers of the programs themselves (though the admins have stated their preference for developer-submitted apps).
 # Although Flathub is the de facto source for applications packaged with Flatpak, Flatpak can work independently of Flathub;
 # it is possible to host a remote and access to remotes that are totally independent of Flathub.
 #
 #	*	---       Installing software from native distribution repositories  ----		*
 #
-# A Linux repository is a storage location from which your system retrieves and installs OS updates and applications. 
-# Each repository is a collection of software hosted on a remote server and intended to be used for installing and updating 
-# software packages on Linux systems. When you run commands such as “sudo apt update” or “sudo apt upgrade”, you may be pulling 
-# package information and package updates from a number of repositories. 
+# A Linux repository is a storage location from which your system retrieves and installs OS updates and applications.
+# Each repository is a collection of software hosted on a remote server and intended to be used for installing and updating
+# software packages on Linux systems. When you run commands such as “sudo apt update” or “sudo apt upgrade”, you may be pulling
+# package information and package updates from a number of repositories.
 #
 #    ***Issues with native repositories are that distribusion may name packages differently making install difficult***
-# 
+#
 # For more information on package managers see: https://en.wikipedia.org/wiki/Package_manager
 #
 #	*	---       PREFFERRED Software install (Security + Control)           ----		*
-# 
+#
 #  CAPABILITY TABLE:
 # +-----------------------------------------------------+-----------------------------------+-----------------------------------+----------------------+
 # | Features                                            | Snap                              | Flatpak                           | AppImage             |
@@ -152,17 +152,17 @@
 # | Plugins for Desktop App Store Software              | Yes                               | Yes                               | No                   |
 # +-----------------------------------------------------+-----------------------------------+-----------------------------------+----------------------+
 #
-# 
 #
-# A new way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software 
+#
+# A new way to manage native packages on Linux PackageKit. PackageKit is a free and open-source suite of software
 # applications designed to provide a consistent and high-level front end for a number of different package management systems.
-# PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors. 
+# PackageKit simplifies how to manage software on several different linux distribution and may even be available on BSD flavors.
 # The "dl" function uses package kit because it can istall both rpms and debs.
 #
 # TEMPLATE: For adding a new menu entry for a single package or bundle of software:
 #
 # recipe_Bundle:_descriptive_name () {
-# 			# function documentaton... 
+# 			# function documentaton...
 # 			# Echo to terminal:
 # 			write_error		: Prints an error message to terminal in RED
 # 			write_host 		: Prints a message to the terminal w. a choice of color
@@ -202,7 +202,7 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-# Set account on GIT Hub to fetch items from. 
+# Set account on GIT Hub to fetch items from.
 GIT_Profile=${GIT_Profile:-vonschutter}
 
 
@@ -223,9 +223,9 @@ GIT_Profile=${GIT_Profile:-vonschutter}
 
 
 recipe_Bundle:_Common_Apps () {
-		# Add several software items that are almost alwasys used 
-		# in one way or another... These may be a dependency to others as well. 
-			write_status "--- Adding some minor congiguration items for productivity..." 
+		# Add several software items that are almost alwasys used
+		# in one way or another... These may be a dependency to others as well.
+			write_status "--- Adding some minor congiguration items for productivity..."
 			for i in diodon polari filezilla tilix dialog p7zip byobu; do
 			     InstallSoftwareFromRepo $i
 			done
@@ -251,7 +251,7 @@ recipe_Bundle:_Common_Apps () {
 				;;
 			esac
 
-			# Add launchers for some OEM apps (Internal function). 
+			# Add launchers for some OEM apps (Internal function).
 			rtd_oem_make_launchers
 }
 
@@ -265,7 +265,7 @@ recipe_Remove_non_western_latin_fonts () {
 recipe_Install_Brave_Browser () {
 		# This function will add the vendor maintained repository and install the software
 		# using the distribution speciffic installers.
-		write_information "--- Installing Brave Browser directly from vendor repo..." 
+		write_information "--- Installing Brave Browser directly from vendor repo..."
 		if cat "/etc/os-release" | grep "debian" ; then
 			apt install -y apt-transport-https curl gnupg
 			curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
@@ -286,7 +286,7 @@ recipe_Install_Brave_Browser () {
 			zypper install brave-browser -y
 			return $?
 		else
-			# Try for any distro using apt... SUSE has a shortcut for a simple apt, wich will mess this up if checked first... 
+			# Try for any distro using apt... SUSE has a shortcut for a simple apt, wich will mess this up if checked first...
 			if hash apt-get ; then
 				apt install -y apt-transport-https curl gnupg
 				curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
@@ -305,9 +305,9 @@ recipe_Install_Brave_Browser () {
 
 recipe_Install_Vivaldi_Browser (){
 		# # This function uses the RTD function "dl" to download a distribution speciffic package directly
-		# # from the vendors website. It will work until the vendor removes the exact file... 
+		# # from the vendors website. It will work until the vendor removes the exact file...
 		# echo -e $YELLOW"--- Installing Vivaldi directly from vivaldi.com..." $ENDCOLOR
-		write_information "--- Installing Brave Browser directly from vendor repo..." 
+		write_information "--- Installing Brave Browser directly from vendor repo..."
 		if cat "/etc/os-release" | grep "debian" ; then
 			apt -y install wget gnupg2 software-properties-common
 			wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
@@ -322,9 +322,9 @@ recipe_Install_Vivaldi_Browser (){
 			return $?
 		elif  cat "/etc/os-release" | grep "suse" ; then
 			zypper install curl
-			dl https://downloads.vivaldi.com/stable/vivaldi-stable-3.5.2115.81-1.x86_64.rpm 2>>$_ERRLOGFILE
+			dl https://downloads.vivaldi.com/stable/vivaldi-stable-3.5.2115.81-1.x86_64.rpm
 			return $?
-		else 
+		else
 			echo "${FUNCNAME[0]}: Neither debian, fedora, or suse base distros could be found; NOT installing vivaldi."
 			return 1
 		fi
@@ -337,7 +337,7 @@ recipe_Install_Windows_Subsystem_for_Linux (){
 
 
 recipe_Install_Simplenote (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
 			# A simple to use not taking app that auto syncs with the same app on any device.
 			snap install simplenote 2>>$_ERRLOGFILE
@@ -347,9 +347,9 @@ recipe_Install_Simplenote (){
 
 
 recipe_Install_DOS_VM_for_Classic_Games (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
-			# A small app that allows you to use your old DOS software. 
+			# A small app that allows you to use your old DOS software.
 			snap install dosbox-x  2>>$_ERRLOGFILE
 
 }
@@ -357,10 +357,10 @@ recipe_Install_DOS_VM_for_Classic_Games (){
 
 
 recipe_Bundle:_Screenshot_Tools (){
-			# some small simple apps you will like... 
+			# some small simple apps you will like...
 			check_dependencies snapd
 			# Feature rich screenshot tool and screenshot annotation tool. Great for support.
-			snap install screencloud 
+			snap install screencloud
 			snap install flameshot
 
 }
@@ -368,7 +368,7 @@ recipe_Bundle:_Screenshot_Tools (){
 
 
 recipe_Bundle:_OEM_restricted_fonts () {
-			# Download and install Trutype font pack... these are propietary and require passphrase to unlock. 
+			# Download and install Trutype font pack... these are propietary and require passphrase to unlock.
 			wget "https://www.dropbox.com/s/y16d8wpb45yebv8/True_Type_Font_Pack.7z" -P /opt/rtd/cache/
 			mkdir -p /usr/share/fonts/truetype/oem
 			for i in p7zip-full p7zip-gui p7zip-doc p7zip-plugins ; do
@@ -381,8 +381,8 @@ recipe_Bundle:_OEM_restricted_fonts () {
 
 recipe_Bundle:_Secure_Communication () {
 			ensure_snap_package_managment
-			snap install signal-desktop 
-			snap install telegram-desktop 
+			snap install signal-desktop
+			snap install telegram-desktop
 }
 
 
@@ -405,8 +405,8 @@ recipe_Bundle:_Video_Editing () {
 				snap connect obs-studio:kernel-module-observe
 				snap connect obs-studio:avahi-control
 				snap connect obs-studio:kernel-module-observe
-					if check_dependencies v4l2loopback-dkms ; then 
-						if check_dependencies v4l2loopback-utils ; then 
+					if check_dependencies v4l2loopback-dkms ; then
+						if check_dependencies v4l2loopback-utils ; then
 							echo "options v4l2loopback devices=1 video_nr=13 card_label='OBS Virtual Camera'    exclusive_caps=1" | sudo tee /etc/modprobe.d/v4l2loopback.conf
 							echo "v4l2loopback" | sudo tee /etc/modules-load.d/v4l2loopback.conf
 							sudo modprobe -r v4l2loopback
@@ -417,14 +417,14 @@ recipe_Bundle:_Video_Editing () {
 				snap connect obs-studio:raw-usb
 				snap connect obs-studio:joystick
 				sudo snap install blender --classic
-			
+
 			# Add other popular video tools not in the snap repo.
 			ensure_flatpak_package_managment
-			flatpak install flathub org.openshot.OpenShot --noninteractive -y 
+			flatpak install flathub org.openshot.OpenShot --noninteractive -y
 			flatpak install flathub io.github.jliljebl.Flowblade --noninteractive -y
 
 			# Download and install Light Works Proffessional Video Editor.
-			if hash zypper  ; then 
+			if hash zypper  ; then
 				dl https://cdn.lwks.com/releases/2021.1/lightworks_2021.1_r126716.rpm
 			elif hash apt-get ; then
 				dl https://cdn.lwks.com/releases/2021.1/lightworks_2021.1_r126716.deb
@@ -440,7 +440,7 @@ recipe_Bundle:_Video_Editing () {
 
 
 recipe_Bundle:_Developer_Software (){
-			write_status "--- Adding Developer Software Apps: IDE Tools and Compilers..." 
+			write_status "--- Adding Developer Software Apps: IDE Tools and Compilers..."
 			for i in build-essential git ; do
 			     InstallSoftwareFromRepo $i
 			done
@@ -455,7 +455,7 @@ recipe_Bundle:_Developer_Software (){
 
 recipe_Bundle:_Compression_Tools (){
 			write-status "--- Adding Comression Toolset (zip, 7zip rar etc.)..."
-			for i in p7zip-full p7zip-rar rar zip 
+			for i in p7zip-full p7zip-rar rar zip
 			do
 			     InstallSoftwareFromRepo $i
 			done
@@ -464,22 +464,22 @@ recipe_Bundle:_Compression_Tools (){
 
 
 recipe_Bundle:_Curated_Top_Games (){
-			# Install games from native repositories... 
-			write_status "--- Adding Selection of Quality Games..." 
-						
-			# --- Install games available in SNAP repository --- 
+			# Install games from native repositories...
+			write_status "--- Adding Selection of Quality Games..."
+
+			# --- Install games available in SNAP repository ---
 			check_dependencies snapd
 			for i in supertuxkart 0ad warzone2100 supertuxkart marsshooter mc-installer
 			do
 			     snap install $i
 			done
-			
-			# --- Install games available in Flathub repository and not at Snapcrafters --- 
+
+			# --- Install games available in Flathub repository and not at Snapcrafters ---
 			check_dependencies flatpak
-			
+
 			# Add the flatpak repository if it down not already exist:
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-			
+
 			# Add requested games:
 			flatpak install flathub com.moddb.TotalChaos -y	--noninteractive
 			flatpak install flathub com.viewizard.AstroMenace -y --noninteractive
@@ -488,20 +488,20 @@ recipe_Bundle:_Curated_Top_Games (){
 			flatpak install flathub com.endlessnetwork.aqueducts -y --noninteractive
 			flatpak install flathub de.billardgl.Billardgl -y --noninteractive
 			flatpak install flathub org.naev.Naev -y --noninteractive
-			
-			# --- Install games available in repository only --- 
+
+			# --- Install games available in repository only ---
 			for i in dreamchess armagetronad mesa-utils assaultcube openarena
 			do
 			     InstallSoftwareFromRepo $i
 			done
-			# Install Valves Steam Client for gaming. 
+			# Install Valves Steam Client for gaming.
 			InstallSoftwareFromRepo steam
-			if [ $? != 0 ]; then 
+			if [ $? != 0 ]; then
 				if hash rpm &>/dev/null; then
 					dl https://steamcdn-a.akamaihd.net/client/installer/steam.rpm
 				elif hash apt &>/dev/null; then
-				
-					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb 
+
+					dl https://steamcdn-a.akamaihd.net/client/installer/steam.deb
 				else
 					echo -e $RED
 					echo "I am not sure how to find the Steam download for $(lsb_release -sd) "
@@ -518,11 +518,11 @@ recipe_Bundle:_Curated_Top_Games (){
 
 recipe_Bundle:_Admin_Tools (){
 			write_status "--- OEM System Administrative Tools..."
-			# Loop through each item in this list of software and perform an install 
-			# using the relevant packaging system. 
+			# Loop through each item in this list of software and perform an install
+			# using the relevant packaging system.
 			for i in terminix nmap synaptic ssh gparted sshfs htop iftop nethogs vnstat ifstat dstat nload glances bmon \
 				vim vim-scripts gufw variety remmina remmina-plugin-exec remmina-plugin-secret remmina-plugin-vnc remmina-plugin-nx  \
-				remmina-plugin-spice remmina-plugin-xdmcp remmina-plugin-rdp remmina-plugin-telepathy  
+				remmina-plugin-spice remmina-plugin-xdmcp remmina-plugin-rdp remmina-plugin-telepathy
 
 			do
 			     InstallSoftwareFromRepo $i
@@ -535,7 +535,7 @@ recipe_Bundle:_Admin_Tools (){
 recipe_Install_Java_Runtime (){
 			# Special case for installing Oracle Java...
 			echo -e $YELLOW"--- Adding Java JRE..." $ENDCOLOR
-			# Add the Oracle Java repository and install the software. 
+			# Add the Oracle Java repository and install the software.
 			# add-apt-repository ppa:linuxuprising/java -y  1>>$_LOGFILE 2>>$_ERRLOGFILE
 			# apt-get update  1>>$_LOGFILE 2>>$_ERRLOGFILE
 			# echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections && \
@@ -549,24 +549,24 @@ recipe_Install_Java_Runtime (){
 
 recipe_Install_Bleachbit_System_Cleaner (){
 			#Bleachbit
-			write_status "--- Bleachbit System Cleaning Tool..." 
-			InstallSoftwareFromRepo bleachbit 
+			write_status "--- Bleachbit System Cleaning Tool..."
+			InstallSoftwareFromRepo bleachbit
 }
 
 
 
 recipe_Install_Restricted_Codecs (){
-			write_status "--- Install all the required multimedia codecs..." 
+			write_status "--- Install all the required multimedia codecs..."
 			for i in libdvdcss2 ffmpeg ; do
 			     InstallSoftwareFromRepo $i
-			done		
+			done
 }
 
 
 
 recipe_Install_VLC_Universal_Videao_Player (){
 			#VLC Media Player
-			wtite_status "--- Installing VLC Media Player..." 
+			wtite_status "--- Installing VLC Media Player..."
 			InstallSoftwareFromRepo vlc
 }
 
@@ -574,11 +574,11 @@ recipe_Install_VLC_Universal_Videao_Player (){
 
 recipe_Install_Google_Chrome_Browser (){
 			# Special case for installing Google Chrome
-			write_status "--- Installing Google Chrome Browser from google directly..." 
+			write_status "--- Installing Google Chrome Browser from google directly..."
 
 			# Download either a deb or an rpm depending on what package format this system supports.
-			if hash deb ; then 
-				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 
+			if hash deb ; then
+				dl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 			elif hash rpm ; then
 				dl https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 			else
@@ -590,14 +590,14 @@ recipe_Install_Google_Chrome_Browser (){
 
 recipe_Install_Remote_Desktop_by_Team_Viewer (){
 			#Teamviewer
-			write_status  "--- Installing Teamviewer..." 
+			write_status  "--- Installing Teamviewer..."
 
 			# Download either a deb or an rpm depending on what package format this system supports.
 			# Team Viewer has a special package for SUSE; thus we check if OS is suse or not as well.
-			if hash deb ; then 
-				dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb  
+			if hash deb ; then
+				dl https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
 			elif hash rpm ; then
-				if hostnamectl | grep -i suse ; then 
+				if hostnamectl | grep -i suse ; then
 					dl https://download.teamviewer.com/download/linux/teamviewer-suse.x86_64.rpm
 				else
 					dl https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
@@ -611,7 +611,7 @@ recipe_Install_Remote_Desktop_by_Team_Viewer (){
 
 recipe_Install_Remote_Desktop_by_Anydesk () {
 			ensure_flatpak_package_managment
-			flatpak install flathub com.anydesk.Anydesk --noninteractive -y 
+			flatpak install flathub com.anydesk.Anydesk --noninteractive -y
 }
 
 
@@ -620,27 +620,27 @@ recipe_Install_Skype_Messenger (){
 			#Skype for Linux
 			write_status "--- Installing Skype For Linux..."
 			ensure_snap_package_managment
-			snap install skype --classic  
+			snap install skype --classic
 }
 
 
 
 recipe_Install_Viber_Messenger (){
 			check_dependencies snapd
-			snap install --edge viber-mtd 
+			snap install --edge viber-mtd
 }
 
 
 
 recipe_Install_MEGA.nz_Encrypted_Cloud_Storage (){
 			# Special case for installing MEGA nz file sync utility (better than Drop Box)...
-			write_status "--- Installing MEGA nz file crypto sync utility..." 
+			write_status "--- Installing MEGA nz file crypto sync utility..."
 			check_dependencies lsb-release
 
-			# Reset & clear variables in case of incomplete cleanup... 
+			# Reset & clear variables in case of incomplete cleanup...
 			FILE2GET=
 			URL=
-			
+
 			if hostnamectl | grep -i "Debian" ; then
 				# Grab the debian name and version and format it like Mega does their download URL...
 				URL="https://mega.nz/linux/MEGAsync/Debian_$(hostnamectl |grep -i Debian |cut -f7 -d' ').0/amd64/megasync-Debian_$(hostnamectl |grep -i Debian |cut -f7 -d' ').0_amd64.deb"
@@ -662,16 +662,16 @@ recipe_Install_MEGA.nz_Encrypted_Cloud_Storage (){
 				echo "https://mega.nz/sync"
 				echo -e $ENDCOLOR
 			fi
-			
+
 			# If a known distributio was found and URL set, use "dl" function to install app...
-			[[ -n "${URL}" ]] && dl ${URL} 
+			[[ -n "${URL}" ]] && dl ${URL}
 }
 
 
 
 recipe_Install_Dropbox_Corporate_Cloud_Storage (){
 			# Install Dropbox
-			write_status "--- Installing Dropbox Cloud Storage Sync..." 
+			write_status "--- Installing Dropbox Cloud Storage Sync..."
 			InstallSoftwareFromRepo nautilus-dropbox
 }
 
@@ -682,11 +682,11 @@ recipe_Install_Dropbox_Corporate_Cloud_Storage (){
 
 
 recipe_Bundle:_Media_Streamers:_Spotify_Wins_Google (){
-			write_status "--- Installing Music Players and Audio Software..." 
+			write_status "--- Installing Music Players and Audio Software..."
 			check_dependencies snapd
-			snap install spotify  
-			snap install google-play-music-desktop-player 
-			snap install winds 
+			snap install spotify
+			snap install google-play-music-desktop-player
+			snap install winds
 }
 
 
@@ -694,7 +694,7 @@ recipe_Bundle:_Media_Streamers:_Spotify_Wins_Google (){
 recipe_Bundle:_Audio_Tools (){
 			write_status "--- Installing Audio Tools Bundle..."
 			check_dependencies snapd
-			snap install picard  
+			snap install picard
 
 }
 
@@ -703,60 +703,60 @@ recipe_Bundle:_Audio_Tools (){
 recipe_Install_VirtualBox (){
 			# Install Virtual Box from Oracle. However avoid installing it in a VM, as tis usecase may be counterproductive.
 			# NOTE:
-			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as 
-			# home use. Not only is VirtualBox an extremely feature rich, high performance product for enterprise 
-			# customers, it is also the only professional solution that is freely available as Open Source Software 
+			# VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as
+			# home use. Not only is VirtualBox an extremely feature rich, high performance product for enterprise
+			# customers, it is also the only professional solution that is freely available as Open Source Software
 			# under the terms of the GNU General Public License (GPL) version 2. See "About VirtualBox" for an introduction.
-			# Presently, VirtualBox runs on Windows, Linux, Macintosh, and Solaris hosts and supports a large number 
-			# of guest operating systems including but not limited to Windows (NT 4.0, 2000, XP, Server 2003, Vista, Windows 7, 
+			# Presently, VirtualBox runs on Windows, Linux, Macintosh, and Solaris hosts and supports a large number
+			# of guest operating systems including but not limited to Windows (NT 4.0, 2000, XP, Server 2003, Vista, Windows 7,
 			# Windows 8, Windows 10), DOS/Windows 3.x, Linux (2.4, 2.6, 3.x and 4.x), Solaris and OpenSolaris, OS/2, and OpenBSD.
-			# VirtualBox is being actively developed with frequent releases and has an ever growing list of features, 
-			# supported guest operating systems and platforms it runs on. VirtualBox is a community effort backed by a 
-			# dedicated company: everyone is encouraged to contribute while Oracle ensures the product always meets professional 
-			# quality criteria. 
-			# 
+			# VirtualBox is being actively developed with frequent releases and has an ever growing list of features,
+			# supported guest operating systems and platforms it runs on. VirtualBox is a community effort backed by a
+			# dedicated company: everyone is encouraged to contribute while Oracle ensures the product always meets professional
+			# quality criteria.
+			#
 			check_dependencies virt-what
 
 			# Special case for installing VirtualBox since distributions name the package and install in different ways...
-			if virt-what ; then 
+			if virt-what ; then
 				write_warning "This computer is likely a Virtual Macine ( $(virt-what) ) and using Virtualbox inside a VM is not reccommended."
 			else
-				if hash apt ; then 
-					write_information "--- Installing VirtualBox in Debian based system if available..." 
+				if hash apt ; then
+					write_information "--- Installing VirtualBox in Debian based system if available..."
 					# Unlike RPM based systems DEB's are allowed to ask questions in the middle of an install:
 					echo virtualbox virtualbox/module-compilation-allowed boolean true | /usr/bin/debconf-set-selections
 					echo virtualbox virtualbox/delete-old-modules boolean true | /usr/bin/debconf-set-selections
 
-					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 					do
 						InstallSoftwareFromRepo $i
 					done
 
 					[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
 
-					# Ensure that the current user can use USB etc... 			
+					# Ensure that the current user can use USB etc...
 					if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 						write_information "$SUDO_USER already belongs to vboxusers group"
 					else
-						usermod -G vboxusers -a $SUDO_USER 
+						usermod -G vboxusers -a $SUDO_USER
 					fi
 				elif hash dnf ; then
 					write_information "--- Installing VirtualBox in a Red Hat based system if available..."
 					InstallSoftwareFromRepo VirtualBox
-				elif hash zypper  ; then 
+				elif hash zypper  ; then
 					write_information "--- Installing virtualbox in a SUSE based system..."
-					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso 
+					for i in virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso
 					do
 						InstallSoftwareFromRepo $i
 					done
 
 					[[ "$DESKTOP_SESSION" == "plasma" ]] || InstallSoftwareFromRepo virtualbox-qt
 
-					# Ensure that the current user can use USB etc... 			
+					# Ensure that the current user can use USB etc...
 					if id -nG "$SUDO_USER" | grep -qw "vboxusers"; then
 						write_information "$SUDO_USER already belongs to vboxusers group"
 					else
-						usermod -G vboxusers -a $SUDO_USER 
+						usermod -G vboxusers -a $SUDO_USER
 					fi
 				else
 					write_error "No supported packaging system detected for special case of installing Virtual Box! "
@@ -780,7 +780,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 			tuned-adm profile balanced
 
 			rtd_oem_check_splash () {
-				if -f $1 ; then 
+				if -f $1 ; then
 					if cat $1 |grep "-desktop" ; then
 						InstallSoftwareFromRepo splash && echo 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'>> /etc/default/grub
 						update-grub
@@ -790,30 +790,30 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 			# If this system was built using the RTD process and is debian based, use instructions in said file.
 			rtd_oem_check_splash /opt/rtd/log/preseed.cfg
 			rtd_oem_check_splash /root/original-ks.cfg
-			
+
 			#Tune to virtual machine guest or tune according to hardware type::
 			check_dependencies virt-what
 			check_dependencies laptop-detect
-			if virt-what ; then 
+			if virt-what ; then
 				echo "This is likely not running in a virtual machine."
-				if laptop-detect ; then 
+				if laptop-detect ; then
 					tuned-adm profile powersave
 				else
 					tuned-adm profile desktop
 				fi
-			else 
-				tuned-adm profile virtual-guest 
+			else
+				tuned-adm profile virtual-guest
 			fi
 
 			# Apply tweaks to the UI based on desktop active
 			if  ps -e |grep "gnome-shell"; then
 				write_information "Fonud the gnome UI on this system! Adding some customizations..."
-				# Configure Gnome for OEM look and feel. This is completely as desired. 
+				# Configure Gnome for OEM look and feel. This is completely as desired.
 				# These setings will then be copied to the "/etsc/skel" directory where user templates
-				# are stored. This will allow new users to get the same themes and settings as the 
+				# are stored. This will allow new users to get the same themes and settings as the
 				# current user. This should likely only be done right after a PC has been installed
-				# otherwise all user configuration settings will be trasferred to any user 
-				# subsequently created.  
+				# otherwise all user configuration settings will be trasferred to any user
+				# subsequently created.
 				# -------------------------------------------------------------------------------------------------------
 				# Install Wallpapers and configure Gnome to see them. ...
 				RTDCP=/opt/rtd/cache
@@ -821,7 +821,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				echo ---------------------------------------------
 				mkdir -p $RTDCP && wget -q --show-progress https://github.com/${GIT_Profile}/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
 				rm $RTDCP/master.zip
-				pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
+				pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound ..
 				echo ---------------------------------------------
 				mkdir -p /usr/local/share/gnome-background-properties
 				DIRECTORY=/opt/rtd/Wallpaper/
@@ -850,22 +850,22 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					# cp /usr/local/share/gnome-background-properties/mybackgrounds.xml /usr/share/gnome-background-properties/mybackgrounds.xml
 					rm mybackgrounds.xml ; rm lspictures.txt
 
-				# Set the default wallpaper... 
+				# Set the default wallpaper...
 					#run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Wayland.jpg
 					run_command_in_gnome_user_session gsettings set org.gnome.desktop.background picture-uri file:///opt/rtd/Wallpaper/Redmond.png
 				# -------------------------------------------------------------------------------------------------------
-				
-				# Special case for Fedora: Add the gnome UI tweak tool... 
+
+				# Special case for Fedora: Add the gnome UI tweak tool...
 				if cat /etc/os-release |grep "Fedora" ; then
 					# Enable the extra repositories in fedora to get access to the espected software.
 					InstallSoftwareFromRepo fedora-workstation-repositories
 					InstallSoftwareFromRepo gnome-tweaks
 				fi
 				InstallSoftwareFromRepo gnome-tweak
-				
-				write_information "--- Optimizig look and feel of the desktop for productivity and aestetics..." 
 
-				# Add Some basic extensions...			
+				write_information "--- Optimizig look and feel of the desktop for productivity and aestetics..."
+
+				# Add Some basic extensions...
 				for i in gnome-shell-extensions \
 					gnome-shell-extension-appindicator \
 					gnome-shell-extension-suspend-button \
@@ -876,14 +876,14 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					gnome-shell-extension-gsconnect-browsers \
 					gnome-shell-extension-dash-to-panel \
 					gnome-shell-extension-dash-to-dock \
-					gnome-shell-extension-dashtodock 
-				do 
+					gnome-shell-extension-dashtodock
+				do
 					InstallSoftwareFromRepo $i
 				done
 
-				# Installing dependencies for themes. If the package name was the same there would not  
-				# need for this extra checking, but different distributions have different 
-				# names for the same software. Therefore there is a need to check based on what 
+				# Installing dependencies for themes. If the package name was the same there would not
+				# need for this extra checking, but different distributions have different
+				# names for the same software. Therefore there is a need to check based on what
 				# distro package managemnt is installed. This is easier and likely accurate in most cases.
 				# Pop, Ubuntu, Kubuntu, and Debian all use deb packages and name the packages consistently for ex.
 				# This will ensure that the sofware is installed so the themes look good...
@@ -893,20 +893,20 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					done
 				elif hash zypper 2>/dev/null ; then
 					for i in check_dependencies gtk-murrine-engine gtk2-engines sassc glib2-devel ; do
-						check_dependencies  $i 
+						check_dependencies  $i
 					done
 				elif hash dnf 2>/dev/null ; then
 					for i in check_dependencies gtk-murrine-engine gtk2-engines sassc glib2-devel ; do
-						check_dependencies  $i 
+						check_dependencies  $i
 					done
 				elif hash pacman 2>/dev/null ; then
 					for i in check_dependencies gtk-engine-murrine gtk-engines sassc; do
-						check_dependencies  $i 
+						check_dependencies  $i
 					done
 				else
 					write_error "This option requires a supported package manager on your system (deb, zypper, dnf, pacman). Neiter was found!"
 				fi
-				
+
 				# Allow themes to be used in snapps...
 				check_dependencies snapd
 
@@ -917,26 +917,26 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 					unzip -q -o /opt/rtd/cache/vimix-gtk-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-gtk-themes-master && ./install.sh && popd
 					unzip -q -o /opt/rtd/cache/vimix-icon-themes.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/vimix-icon-theme-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i vimix-themes:gtk-3-themes; done
-				
-				# Install theme for previous Apple users... 
+
+				# Install theme for previous Apple users...
 				snap install mojave-themes
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Mojave-gtk-theme.zip -P /opt/rtd/cache
 					wget -q https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/McMojave-circle.zip -P /opt/rtd/cache
 					unzip -q -o /opt/rtd/cache/Mojave-gtk-theme.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/Mojave-gtk-theme-master && ./install.sh && popd
 					unzip -q -o /opt/rtd/cache/McMojave-circle.zip -d /opt/rtd/cache && pushd /opt/rtd/cache/McMojave-circle-master && ./install.sh && popd
 					for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i mojave-themes:gtk-3-themes ; done
-				
+
 				# Install basic professional Arc and gnome defaiult theme...
 				for i in numix-gtk-theme numix-icon-theme \
 					arc-theme \
 					adwaita-icon-theme-full\
 					adwaita-qt
-				do 
+				do
 					InstallSoftwareFromRepo $i
 				done
 
-				# Add a default Icon theme "Arc" fo a clean and crisp proffessional default look. 
-				wget https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Arc-icon-theme.zip -P /opt/rtd/cache 
+				# Add a default Icon theme "Arc" fo a clean and crisp proffessional default look.
+				wget https://github.com/"${GIT_Profile}"/RTD-Media/raw/master/Themes/Arc-icon-theme.zip -P /opt/rtd/cache
 				unzip -q -o /opt/rtd/cache/Arc-icon-theme.zip -d /opt/rtd/cache && mv /opt/rtd/cache/Arc-icon-theme /usr/share/icons/Arc
 
 				cat >> gtweak.sh <<-'EOF'
@@ -982,7 +982,7 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				use-theme-transparency=false
 				use-transparent-background=true
 				EOF_TERM
-				
+
 				# Load terminal default settings...
 				dconf load / < ~/.config/rtd/gconf-term-settings.ini
 
@@ -1160,21 +1160,21 @@ recipe_RTD_OEM_Configuration_and_Optimizations (){
 				gsettings set org.gnome.desktop.app-folders.folder:/org/gnome/desktop/app-folders/folders/OEM/ categories "['OEM']"
 				EOF
 
-				run_command_in_gnome_user_session /bin/bash gtweak.sh 
+				run_command_in_gnome_user_session /bin/bash gtweak.sh
 
 
 			fi
 
 			if  ps -e |grep "plasmashell" ; then
-				echo "Detected KDE UI!" 
-				
-				# Download and Set Wallpaper... 
+				echo "Detected KDE UI!"
+
+				# Download and Set Wallpaper...
 				RTDCP="${_RTDCACHE:="/opt/rtd/cache"}"
 				echo Downloading Wallpapers:
 					mkdir -p $RTDCP && wget -q --show-progress https://github.com/${GIT_Profile}/RTD-Media/archive/master.zip -P $RTDCP && unzip -q -o $RTDCP/master.zip -d $RTDCP
 					rm $RTDCP/master.zip
-					pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound .. 
-				rtd_oem_kde_set_wallpaper "/opt/rtd/Wallpaper/Wayland.jpg" 
+					pushd $RTDCP && mv -f RTD-Media-master/Wallpaper .. && mv -f RTD-Media-master/Sound ..
+				rtd_oem_kde_set_wallpaper "/opt/rtd/Wallpaper/Wayland.jpg"
 
 				lookandfeeltool -a 'org.kde.breezedark.desktop'
 				rm /opt/rtd/cache/master.zip

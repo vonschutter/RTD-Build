@@ -10,27 +10,27 @@ RTD_UPDATE_SELF_VERSION=1.0
 #:: Version:	1.00
 #::
 #::
-#:: Purpose: 	The purpose of the task sequence is to configure update the installed admin tools. 
-#::		
+#:: Purpose: 	The purpose of the task sequence is to configure update the installed admin tools.
+#::
 #::
 #::		This task sequence should be executed on a PC with the the RTD OEM installation or configuration
-#::		 
-#::		
+#::
+#::
 #::
 #:: Background: This system configuration and installation script was created to facilitate geting the latest simple
-#::             managment tools on to a computer already using the rtd tools. 
+#::             managment tools on to a computer already using the rtd tools.
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#	
-#		
-# 
+#
+#
+#
 #	RTD admin scrips are placed in /opt/rtd/scripts. Optionally scripts may use the common
-#	functions in _rtd_functions and _rtd_recipies. 
-#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems. 
-#	  _rtd_recipies  -- contain software installation and configuration "recipies". 
-#	Scripts may also be stand-alone if there is a reason for this. 
+#	functions in _rtd_functions and _rtd_recipies.
+#	  _rtd_functions -- contain usefull admin functions for scripts, such as "how to install software" on different systems.
+#	  _rtd_recipies  -- contain software installation and configuration "recipies".
+#	Scripts may also be stand-alone if there is a reason for this.
 
 
 
@@ -39,7 +39,7 @@ RTD_UPDATE_SELF_VERSION=1.0
 #::::::::::::::          Script Settings                 ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Variables that govern the behavior or the script and location of files are 
+# Variables that govern the behavior or the script and location of files are
 
 # Base folder structure for optional administrative commandlets and scripts:
 _RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
@@ -72,33 +72,21 @@ ensure_admin () {
 
 
 task_setup_rtd_basics() {
-	echo "Task: Attempting to get the latest RTD tools..." 
+	echo "Task: Attempting to get the latest RTD tools..."
 	[[ -f $_RTDCACHE/master.zip ]] && rm -f $_RTDCACHE/master.zip || echo "No cashed content found..."
 	wget -q --show-progress $_RTDSRC -P $_RTDCACHE
-	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd 
+	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
 	if [ $? != 0 ]; then
 		echo -e $RED Sorry but I think I FAILED to get the latest updates! $ENDCOLOR
 		exit 1
 	else
-		echo "Task: Instructions sucessfully retrieved..." 
-		chmod +x $_RTDSCR/* 
+		echo "Task: Instructions sucessfully retrieved..."
+		chmod +x $_RTDSCR/*
 		pushd /bin
 		echo "Updating executable links (to simplify running the tools)..."
 		ln -f -s $_RTDSCR/rtd* .
 		popd
 	fi
-}
-
-
-tell_info() {
-	echo -e $YELLOW 
-	echo "RTD Tools Updater Version $RTD_UPDATE_SELF_VERSION"
-	echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
-	echo " "
-	echo "To cancel this, just close the terminal or press "CRTL C"."
-	echo " "
-	read -p "Press [ ENTER ] to continue with update" 
-	echo -e $ENDCOLOR
 }
 
 
@@ -121,6 +109,17 @@ rtd_wait_for_internet_availability () {
 
 
 
+do_update ()
+{
+
+	set_color
+	rtd_wait_for_internet_availability
+	task_setup_rtd_basics
+	source /opt/rtd/scripts/_rtd_library
+	rtd_oem_make_launchers
+}
+
+
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::          Execute tasks                   ::::::::::::::::::::::
@@ -129,13 +128,25 @@ rtd_wait_for_internet_availability () {
 
 
 
+if hash dialog ; then
+	if ( dialog --title "NOTICE!" --yesno "I am the RTD tools updater. May I update the RTD OEM tools on your system now? Press OK to continue or NO to skip doing this." 20 80 ) ; then
+		ensure_admin
+		clear && do_update
+	else
+		clear && exit
+	fi
+else
+	echo -e $YELLOW
+	echo "RTD Tools Updater Version $RTD_UPDATE_SELF_VERSION"
+	echo "Hello $SUDO_USER ... I am going to update the rtd tools on this"
+	echo " "
+	echo "To cancel this, just close the terminal or press "CRTL C"."
+	echo " "
+	read -p "Press [ ENTER ] to continue with update"
+	echo -e $ENDCOLOR
+	ensure_admin
+	do_update
+fi
 
-ensure_admin  
-set_color                         
-tell_info                               
-rtd_wait_for_internet_availability      
-task_setup_rtd_basics
-source /opt/rtd/scripts/_rtd_library
-rtd_oem_make_launchers                 
-#| tee $_STATUSLOG
+
 
