@@ -28,75 +28,75 @@ export RTD_VERSION=2.0
 
 	Function Name: 					Description:
 	----------------------------------------------------------------------------------------------------------------
-	add_software_task 				: Wrapper function to execute a command and display pretty terminal OK or FAIL  
-	backup_running_vm 				: Backs up all running virtual machines on the local computer 
+	add_software_task 				: Wrapper function to execute a command and display pretty terminal OK or FAIL
+	backup_running_vm 				: Backs up all running virtual machines on the local computer
 	change_disk_pass 				: Allows user to change password of the system partition encrypted disk
-	check_dependencies 				: Checks that software requirements are met so scripts do not fail 
-	check_if_password_p0wned 			: Allows user to check if an intended password is already in well known dictionaries 
+	check_dependencies 				: Checks that software requirements are met so scripts do not fail
+	check_if_password_p0wned 			: Allows user to check if an intended password is already in well known dictionaries
 	check_menu_availability 			: Checks if it is possible to display graphical menus in a terminal
 	cleanup_and_finish 				: Cleans and clears variables and temp files used by the media creations functions
 	compress_all_items_here				: Compress all folders and files in pwd using 7z
-	create_iso_image 				: Creates an OS iso image 
+	create_iso_image 				: Creates an OS iso image
 	create_iso_image_debian 			: Creates a Debian iso image
 	create_physical_media_from_iso			: Create physical media thumb drive from an ISO file
 	debug_list_loaded_functions			: Lists all loaded RTD functions in the environment
 	create_swapfile					: Create a new swapfile
-	display_result 					: Displays command results in a pretty terminal box 
-	display_spinner					: Display a spinner in the terminal 
+	display_result 					: Displays command results in a pretty terminal box
+	display_spinner					: Display a spinner in the terminal
 	dl						: Downloads and installs a package from the internet
-	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install OEM addons 
-	enable_firewall					: Will turn on UFW and add the Allow SSH rule 
+	download_and_manipulate_iso_debian 		: Download and modify a debian iso to automatically install OEM addons
+	enable_firewall					: Will turn on UFW and add the Allow SSH rule
 	ensure_admin					: Elevates privileges to admin root for the whole script asks for password
 	ensure_flatpak_package_managment		: Ensure that the Flatpack software management is available
 	ensure_snap_package_managment			: Ensure that the snap software management system is installed
-	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal 
+	err_no_menu_system_found 			: Function to handle what to do if it is not possible to currently display menus in a terminal
 	get_Windows_Product_Key				: Retrieves a Microsoft Windows product key if it is stored in BIOS (common for OEM)
 	generate_autounattend_xml			: Creates an autounattend.xml for Windows setup
-	generate_fedora_ks_cfg_file			: Creates a kickstart file for fedora 
-	generate_minecraft_server_launcher		: Creates a minecraft server launcher, w. automatic dependeny resolutions 
-	generate_report_disk_space_used_by_directory 	: Generate a disk usage report 
+	generate_fedora_ks_cfg_file			: Creates a kickstart file for fedora
+	generate_minecraft_server_launcher		: Creates a minecraft server launcher, w. automatic dependeny resolutions
+	generate_report_disk_space_used_by_directory 	: Generate a disk usage report
 	generate_rtd_me_sh_cmd				: Creates a rtd bootstrap script for system/software install for Windows, Linux, MAC OS, BSD etc.
 	InstallSoftwareFromRepo				: Installs a package from a repository supports SUSE, Fedora, Cent OS, Ubuntu Deian etc.
-	is_software_package_available			: Checks to see if a software package is available in a repository 
+	is_software_package_available			: Checks to see if a software package is available in a repository
 	is_software_package_installed			: Checks to see if a software package already is installed
-	make_kvm_virtual_machine_now_from_debian_org 	: Immediately create a virtual machine directly from debian.org 
+	make_kvm_virtual_machine_now_from_debian_org 	: Immediately create a virtual machine directly from debian.org
 	make_kvm_virtual_machine_now_from_iso 		: Make a virtual machine from a generated ISO image
 	make_kvm_virtual_machine_now_from_microsoft	: Make a virtual machine running Windows
 	make_kvm_virtual_machine_now_from_ubuntu_com 	: Immediately create a virtual machine from ubuntu.com
-	make_preseed_cfg 				: Generate a debian + derivatives preseed file for fully automated installs 
+	make_preseed_cfg 				: Generate a debian + derivatives preseed file for fully automated installs
 	notice_rtd_loaded				: Notifies a script that RTD functions are loaded
 	make_system_recovery_partition			: Build a system recovery partition
-	prepare_environment_for_iso_creation 		: Ensure that all prerequisites are met for downloadeing; extracting; and creating a modified ISO file 
+	prepare_environment_for_iso_creation 		: Ensure that all prerequisites are met for downloadeing; extracting; and creating a modified ISO file
 	rtd_oem_cfg_Account_Setup 			: MODULE: sets default user account and encrypted password for a preseed file
-	rtd_oem_cfg_post_task_sequence_default	 	: MODULE: sets up for default tasks to do after OS install completes and reboots 
+	rtd_oem_cfg_post_task_sequence_default	 	: MODULE: sets up for default tasks to do after OS install completes and reboots
 	rtd_oem_check_inet_access 			: Verifies that the internet is accessible
 	rtd_oem_find_live_release 			: locate and download live media for debian and ubuntu
-	rtd_oem_kde_set_wallpaper 			: Sets wallpaper in the plasma workspace 
+	rtd_oem_kde_set_wallpaper 			: Sets wallpaper in the plasma workspace
 	rtd_oem_pause 					: Pause function; will only pause if a non zero integet is passed
 	rtd_oem_preseed_cfg_Addon_MinecraftServer 	: MODULE  sets minecraft server setup tasks for a preseed file
 	rtd_oem_preseed_cfg_Addon_Tasks 		: MODULE  sets default post OS install tasks for a preseed file
-	rtd_oem_preseed_cfg_Disk_Layout 		: MODULE  sets encrypted disk defaults and partitioning for a preseed file 
-	rtd_oem_preseed_cfg_EFI 			: MODULE  sets EFI boot options for a preseed file 
-	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation: MODULE  sets default GRUP boot configuration for a preseed file 
-	rtd_oem_preseed_cfg_Localization 		: MODULE  sets default default localization for a preseed file 
-	rtd_oem_preseed_cfg_Network_Configuration 	: MODULE  sets default network configuration for a preseed file 
-	rtd_oem_preseed_cfg_Package_Selection 		: MODULE  sets default software selection for a preseed file 
-	rtd_oem_preseed_cfg_Prevent_Install_On_USB 	: MODULE  settings for a preseed file to prevent auto installation on a USB stick 
+	rtd_oem_preseed_cfg_Disk_Layout 		: MODULE  sets encrypted disk defaults and partitioning for a preseed file
+	rtd_oem_preseed_cfg_EFI 			: MODULE  sets EFI boot options for a preseed file
+	rtd_oem_preseed_cfg_GRUB_Bootloader_Installation: MODULE  sets default GRUP boot configuration for a preseed file
+	rtd_oem_preseed_cfg_Localization 		: MODULE  sets default default localization for a preseed file
+	rtd_oem_preseed_cfg_Network_Configuration 	: MODULE  sets default network configuration for a preseed file
+	rtd_oem_preseed_cfg_Package_Selection 		: MODULE  sets default software selection for a preseed file
+	rtd_oem_preseed_cfg_Prevent_Install_On_USB 	: MODULE  settings for a preseed file to prevent auto installation on a USB stick
 	rtd_oem_preseed_cfg_Unattended_Install 		: MODULE  sets fully unattended install for a preseed file
 	rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options 	: MODULE  sets optional elements for a kickstart file normally not needed
-	rtd_oem_release_upgrade 			: Attempt to perform a release upgrade for supported systems 
-	rtd_oem_remove_non_western_latin_fonts 		: Remove all non-latin fonts from a distribution. for the western world these are not needed and slow the system 
+	rtd_oem_release_upgrade 			: Attempt to perform a release upgrade for supported systems
+	rtd_oem_remove_non_western_latin_fonts 		: Remove all non-latin fonts from a distribution. for the western world these are not needed and slow the system
 	rtd_oem_remove_software 			: Removes the software title requested on all supported distributions
-	rtd_oem_reseal 					: Reseals the system for delivery to a new user user will be asked for password and locale etc. 
-	rtd_oem_reset_default_environment_config 	: Removes previously configured auto-login and running of setup scripts 
-	rtd_oem_setup_brand_splash_screen 		: Brands splash screens on a bootable distribution install media 
-	rtd_oem_ubuntu_auto_install_iso_builder 	: Creates automatic install media for Ubuntu 
+	rtd_oem_reseal 					: Reseals the system for delivery to a new user user will be asked for password and locale etc.
+	rtd_oem_reset_default_environment_config 	: Removes previously configured auto-login and running of setup scripts
+	rtd_oem_setup_brand_splash_screen 		: Brands splash screens on a bootable distribution install media
+	rtd_oem_ubuntu_auto_install_iso_builder 	: Creates automatic install media for Ubuntu
 	rtd_ppa_checker 				: Checks PPA archives on supported distributions
 	rtd_server_setup_choices_productivity		: Builtin Server terminal productivity software install options
 	rtd_server_setup_choices_services		: Builtin Server software options
 	rtd_setup_choices_preseed 			: Allows for user specified choices to be added to a preseed file
-	rtd_setup_choices_term_fallback			: For server setup, displays a menu where you may chose CLI productivity software 
-	rtd_update_system 				: Performs a software update/refresh on supported distributions 
+	rtd_setup_choices_term_fallback			: For server setup, displays a menu where you may chose CLI productivity software
+	rtd_update_system 				: Performs a software update/refresh on supported distributions
 	rtd_wait_for_internet_availability 		: Checks that the internet is reachable and waits until it is...
 	run_command_in_gnome_user_session 		: Running with elevated privileges; will allow to switch back to user who started process to execute script in that environment
 	scan_for_malware				: Scan location for malware
@@ -119,8 +119,8 @@ export RTD_VERSION=2.0
 
 
 Use Google Coding standards:
-In general any function that is not both obvious and short must be commented. Any function in a library must be commented regardless of 
-length or complexity. It should be possible for someone else to learn how to use your program or to use a function in your library 
+In general any function that is not both obvious and short must be commented. Any function in a library must be commented regardless of
+length or complexity. It should be possible for someone else to learn how to use your program or to use a function in your library
 by reading the comments (and self-help, if provided) without reading the code.
 
 All function comments should describe the intended API behaviour using:
@@ -131,9 +131,9 @@ All function comments should describe the intended API behaviour using:
 4	Outputs: Output to STDOUT or STDERR.
 5	Returns: Returned values other than the default exit status of the last command run.
 
-Advice: As a "best practice" working with this file, given the size and complexities, it is better to write a new function in an external script and 
+Advice: As a "best practice" working with this file, given the size and complexities, it is better to write a new function in an external script and
 use the "source" statement to include this library in said script, so that all the other functions here are available to use in the new
-function. 
+function.
 
 Library_Documentation
 
@@ -268,18 +268,18 @@ _STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
 # :-------------------------------------------------------------------------:
 # `---._.-------------------------------------------------------------._.---'
 # ----------------------------------------------------------------
-#  ____            _                 
-# / ___| _   _ ___| |_ ___ _ __ ___  
-# \___ \| | | / __| __/ _ \ '_ ` _ \ 
+#  ____            _
+# / ___| _   _ ___| |_ ___ _ __ ___
+# \___ \| | | / __| __/ _ \ '_ ` _ \
 #  ___) | |_| \__ \ ||  __/ | | | | |
 # |____/ \__, |___/\__\___|_| |_| |_|
-#        |___/                       
-#  __  __                                              _   
-# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+#        |___/
+#  __  __                                              _
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_
 # | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
-# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_
 # |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
-#                           |___/ 
+#                           |___/
 # ----------------------------------------------------------------
 
 
@@ -291,15 +291,15 @@ change_disk_pass ()
 # Description: Function to change the passphrase fo an encrypted storage device.
 # It will offer to change the first encrypted volume found by blockid.
 # It is unclear how this will work if there are multiple encrypted volumes found.
-# The function does not expect an argument. It will prompt for a password. 
-# 
-# Globals: 
+# The function does not expect an argument. It will prompt for a password.
+#
+# Globals:
 # Arguments: None accepted
 # Outputs: Interactive
 # Returns: default exit status of the last command run.
 # Usage: change_disk_pass
-# 
-# 
+#
+#
 # End of Documentation
 
 	clear
@@ -322,16 +322,16 @@ check_menu_availability ()
 # Description: First discover what menu system is installed. Some systems use "dialog" and
 # other systems use whiptail for the terminal to show menus and dialogs.
 # If nothing is found, then make sure it is available before continuing.
-# 
-# Globals: 
+#
+# Globals:
 # RTD_GUI respected as default value. If unset it will be set to "dialog" or "whiptail"
-# depending on which is present. IF both are present, the dialog is prefferred. 
-# 
+# depending on which is present. IF both are present, the dialog is prefferred.
+#
 # Arguments: None accepted
 # Outputs: Interactive
 # Returns: Default exit status of the last command run.
 # Usage: check_menu_availability
-# 
+#
 # End of documentation
 	if hash dialog 2>/dev/null ; then
 		: "${RTD_GUI:=dialog --clear}"
@@ -357,24 +357,24 @@ check_menu_availability ()
 
 rtd_oem_make_launchers ()
 {
-# Description: Function that creates a default set of launchers for the Linux GUI menu system. 
-# 
-# Globals: 
+# Description: Function that creates a default set of launchers for the Linux GUI menu system.
+#
+# Globals:
 # The tools (scripts) located in /opt/rtd/scripts/ are expected as launchers are created for these.
-#  
-# 
+#
+#
 # Arguments: None accepted
 # Outputs: Launcherc created in /usr/share/applications/
 # Returns: Default exit status of the last command run.
 # Usage: rtd_oem_make_launchers
-#  
+#
 # End of documentation
 
 	if [[ ! $UID -eq 0 ]]; then
-		write_error "This function requires elevated privileges. Please elevate privileges prior to calling this function." 
+		write_error "This function requires elevated privileges. Please elevate privileges prior to calling this function."
 		return 1
 	else
-		# Add launchers for some OEM apps. 
+		# Add launchers for some OEM apps.
 		cat > /usr/share/applications/rtd.desktop <<-EOF
 		[Desktop Entry]
 		Version=2.0
@@ -388,7 +388,7 @@ rtd_oem_make_launchers ()
 		Categories=OEM;
 		EOF
 
-		cat > /usr/share/applications/rtd-user-bakup.desktop <<-EOF 
+		cat > /usr/share/applications/rtd-user-bakup.desktop <<-EOF
 		[Desktop Entry]
 		Version=2.0
 		Name=RTD-Backup
@@ -401,7 +401,7 @@ rtd_oem_make_launchers ()
 		Categories=OEM;
 		EOF
 
-		cat > /usr/share/applications/rtd-nordvpn.desktop <<-EOF 
+		cat > /usr/share/applications/rtd-nordvpn.desktop <<-EOF
 		[Desktop Entry]
 		Version=2.0
 		Name=RTD-NordVPN
@@ -414,7 +414,7 @@ rtd_oem_make_launchers ()
 		Categories=OEM;
 		EOF
 
-		cat > /usr/share/applications/rtd-minercraft-server.desktop <<-EOF 
+		cat > /usr/share/applications/rtd-minercraft-server.desktop <<-EOF
 		[Desktop Entry]
 		Version=2.0
 		Name=Minecraft-Server
@@ -439,11 +439,11 @@ rtd_oem_make_launchers ()
 
 get_Windows_Product_Key ()
 {
-# Description: Function to retrieve a Windows product key from the BIOS. This assumes that the OEM 
-# has indeed stored the windows key in the BIOS... Doing so is a common practice. It is useful to 
-# retrieve the key if it is desired to run Windows in a Virtual Machine and Presumably would prefer to 
-# not run the evaluation version of Windows. This function could also be used to take advantage of the 
-# ${WinKey} variable and echo it in to the autoinattend.xml file for unattended builds. 
+# Description: Function to retrieve a Windows product key from the BIOS. This assumes that the OEM
+# has indeed stored the windows key in the BIOS... Doing so is a common practice. It is useful to
+# retrieve the key if it is desired to run Windows in a Virtual Machine and Presumably would prefer to
+# not run the evaluation version of Windows. This function could also be used to take advantage of the
+# ${WinKey} variable and echo it in to the autoinattend.xml file for unattended builds.
 #
 # Globals: RTD_GUI
 # Arguments: None
@@ -466,15 +466,15 @@ err_no_menu_system_found ()
 {
 # Description: Function to handle the error condition if a manu system is not found on the system.
 # On occasion it may be neede to display dialog boxes and selection menus even in a terminal.
-# for these cases; dialog, whiptail (newt), or zenity may be needed. 
+# for these cases; dialog, whiptail (newt), or zenity may be needed.
 # This function will attempt to install the desired menu system and if it cannot or the user
-# opts out it will error and exit the script. 
+# opts out it will error and exit the script.
 #
 # Globals: RTD_GUI
 # Arguments: None
 # Outputs: Interactive
 # Returns: default exit status of the last command run.
-# Usage: 
+# Usage:
 # err_no_menu_system_found
 # End of documentation
 
@@ -486,8 +486,8 @@ err_no_menu_system_found ()
 		: "${RTD_GUI:=$1}"
 		for i in dnf yum zypper apt-get; do
 			if hash $i 2>/dev/null; then
-				$i install $RTD_GUI -y 
-				if $? eq 0 ;  then 
+				$i install $RTD_GUI -y
+				if $? eq 0 ;  then
 					echo -e $YELLOW"$RTD_GUI installed... exporting..."
 					RTD_GUI="dialog --clear"
 					export RTD_GUI
@@ -513,14 +513,14 @@ enable_firewall ()
 # Function to enable system firewall and add a given rule. This simple function
 # enables Uncomplicated Fire Wall (UFW) and adds a rule to allow SSH to
 # pass. This function expects no arguments. However nothing will be done if
-# no ufw firewall is present on the system. The cunction will not attempt to add 
-# the ufw since this may conflict with any firewall present. To use this funciton 
+# no ufw firewall is present on the system. The cunction will not attempt to add
+# the ufw since this may conflict with any firewall present. To use this funciton
 # to enable ufw, first any other firewall software must be disabled and ufw added.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 	if hash ufw 2>/dev/null; then
 			echo -e $YELLOW "Configure Firewall:" $ENDCOLOR
@@ -544,11 +544,11 @@ rtd_oem_reset_default_environment_config ()
 # good security practice or that may be disruptive during normal operations.
 # These setings are not limited to bu include "auto login", "auto sudo" and
 # "auto running scripts"...
-# Globals: 
+# Globals:
 # Arguments: None
 # Outputs: removes autostart files and configurations from an OEM state to a default state.
-# Returns: 
-# Usage: 
+# Returns:
+# Usage:
 # End of documentation
 
 	# Disable the automatically trying to install OEM software
@@ -569,10 +569,10 @@ set_oem_user_gnome_ui_preference_on_login ()
 {
 # Description: Function that displays Gnome UI preference choice on login.
 # Choices are Default, Distro default, MAC like, Windows Like.
-# Globals: 
+# Globals:
 # Arguments: None
 # Outputs: Use interactive.
-# Returns: 
+# Returns:
 # Usage: At present function is inactive and incomplete.
 # End of documentation
 	write_information "starting ui choice once"
@@ -591,10 +591,10 @@ rtd_wait_for_internet_availability ()
 # need an active internet connection to be able to install and update software.
 # Naturally, some in house loads use local mirrors, but if you can see the
 # internet, you would have access to your own ropositories as well...
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
+# Outputs:
+# Returns:
 # Usage: rtd_wait_for_internet_availability
 # End of documentation
 
@@ -616,11 +616,11 @@ rtd_wait_for_internet_availability ()
 display_spinner ()
 {
 # Description: Simple function to display a spinner in the terminal.
-# Globals: 
+# Globals:
 # Arguments: start/stop
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 #
 #
 #
@@ -706,15 +706,15 @@ display_spinner ()
 
 toggle_oem_auto_login()
 {
-# Description: Function to toggle auto login for admin purposes. 
-# Call the function once to set auto login and call it again to 
-# unset auto login. 
+# Description: Function to toggle auto login for admin purposes.
+# Call the function once to set auto login and call it again to
+# unset auto login.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 #
 # toggle_oem_auto_login
 # End of documentation
@@ -727,10 +727,10 @@ toggle_oem_auto_login()
 			cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
 			cat > /etc/lightdm/lightdm.conf <<-OEM_LXDM_LOGIN_OPTION
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/lightdm/lightdm.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[SeatDefaults]
 			autologin-user=$SUDO_USER
 			autologin-user-timeout=0
@@ -738,18 +738,18 @@ toggle_oem_auto_login()
 		fi
 	fi
 
-	if [[ -f /etc/sddm.conf ]]; then 
+	if [[ -f /etc/sddm.conf ]]; then
 		if [[ -f /etc/sddm.conf.rtd-bak ]]; then
 			rm /etc/sddm.conf && mv /etc/sddm.conf.rtd-bak /etc/sddm.conf
 		else
 			cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
 			cat > /etc/sddm.conf <<-OEM_SDDM_LOGIN_OPTION
-			cat << OEM_SDDM_LOGIN_OPTION > 
+			cat << OEM_SDDM_LOGIN_OPTION >
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/sddm.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[Autologin]
 			User=$SUDO_USER
 			Session=plasma.desktop
@@ -764,10 +764,10 @@ toggle_oem_auto_login()
 			cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
 			cat >  /etc/gdm3/daemon.conf <<-OEM_GDM3_LOGIN_OPTION
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/gdm3/daemon.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[daemon]
 			AutomaticLoginEnable=True
 			AutomaticLogin=$SUDO_USER
@@ -780,10 +780,10 @@ toggle_oem_auto_login()
 		write_status "***********  Updating Autologin information... ************ "
 		mkdir -p /etc/systemd/system/getty@tty1.service.d
 		cat >  /etc/systemd/system/getty@tty1.service.d/override.conf <<-OEM_TTY_LOGIN_OPTION
-		"[Service]"  
+		"[Service]"
 		"ExecStart="
-		"ExecStart=-/sbin/agetty --noissue --autologin $SUDO_USER %I $TERM" 
-		"Type=idle" 
+		"ExecStart=-/sbin/agetty --noissue --autologin $SUDO_USER %I $TERM"
+		"Type=idle"
 		OEM_TTY_LOGIN_OPTION
 	else
 		echo "/etc/systemd/system/getty@tty1.service.d/override.conf is already present... "
@@ -797,19 +797,19 @@ toggle_oem_auto_login()
 
 set_oem_elevated_privilege_gui ()
 {
-# Description: Some Debian and other Linux distribution do not allow gui apps to 
-# be run when invoked by "sudo" or in a root (system elevated authority) 
-# environment. To mitigate this some stemp may need to taken. 
+# Description: Some Debian and other Linux distribution do not allow gui apps to
+# be run when invoked by "sudo" or in a root (system elevated authority)
+# environment. To mitigate this some stemp may need to taken.
 # Will work on Slackware as well as Debian to give root permission to open X programs.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 
 # End of documentation
 
-	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
+	echo "xhost local:root" >> /home/$_OEM_USER/.bashrc
 
 	# Allows runing an X program as root
 	touch /root/.bashrc
@@ -824,17 +824,17 @@ set_oem_elevated_privilege_gui ()
 set_enable_oem_elevated_privelege()
 {
 # Description: Set no password elevated priviledges.
-# This will allow apps to be run when invoked by "sudo" without being prompted 
-# for a password. This emulates the "UAC" from Microsoft. Please remember to 
+# This will allow apps to be run when invoked by "sudo" without being prompted
+# for a password. This emulates the "UAC" from Microsoft. Please remember to
 # turn this off using the function "rtd_oem_reset_default_environment_config"
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 	# Add instruction to a sudoers include file:
-	# This should be removed when OEM setup is complete as it would represent a back door... 
+	# This should be removed when OEM setup is complete as it would represent a back door...
 	echo "$SUDO_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
 
 	# Check that your sudoers include file passed the visudo syntax checks:
@@ -849,12 +849,12 @@ set_enable_oem_elevated_privelege()
 make_system_recovery_partition ()
 {
 # Description: Incomplete function to build an OEM rescue partition...
-# Function to enable system OEM Recovery 
-# Globals: 
+# Function to enable system OEM Recovery
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 
 # End of documentation
 
@@ -862,21 +862,21 @@ make_system_recovery_partition ()
 
 	if [[ -z ${devlist} ]]; then
 		DIALOGRC="/root/.dialogrc"
-		if -e ${DIALOGRC} ; then 
-			mv ${DIALOGRC} ${DIALOGRC}.bak 
-		fi 
+		if -e ${DIALOGRC} ; then
+			mv ${DIALOGRC} ${DIALOGRC}.bak
+		fi
 		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
 		dialog --title "Physical Installation Media Creator Error!" --backtitle "OS Media Manger" --msgbox "No removable media could be found!"  14 90
-		rm ${DIALOGRC} 
-		if -e ${DIALOGRC}.bak ; then 
-			mv ${DIALOGRC}.bak ${DIALOGRC} 
-		fi 
+		rm ${DIALOGRC}
+		if -e ${DIALOGRC}.bak ; then
+			mv ${DIALOGRC}.bak ${DIALOGRC}
+		fi
 		return 1
 	else
 		declare -A RemovableMediaList
 		key=0
-		for i in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' '); 
-		do 
+		for i in $(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep 1 | cut -f1 -d' ');
+		do
 			SuggestedRemovableDevice="${i}"
 			element="$(fdisk -l /dev/$i |head -1)"
 			RemovableMediaList[$key]=$(echo -e \'"$element"\')
@@ -893,7 +893,7 @@ make_system_recovery_partition ()
 				linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
 				initrd (loop)/casper/initrd.lz
 			}
-			EOF 
+			EOF
 		else
 
 			ChosenMediaItem="
@@ -909,7 +909,7 @@ make_system_recovery_partition ()
 
 			USBTargetDevice=$( dialog --stdout --title "Physical Installation Media Creator" \
 			--backtitle "OS Media Manger" \
-			--inputbox "\n ${DiscoveredItems}" 0 0 /dev/${SuggestedRemovableDevice} ) 
+			--inputbox "\n ${DiscoveredItems}" 0 0 /dev/${SuggestedRemovableDevice} )
 
 			mkdir /boot/iso
 			dd if=/dev/${ChosenMediaItem} of=/boot/iso/recovery.iso
@@ -932,13 +932,13 @@ make_system_recovery_partition ()
 
 
 rtd_oem_reseal () {
-# Description: 
+# Description:
 # Function to reseal a newly installed system for delivery to end user.
-# Globals: The distribution must have an OEM reseal function or software available. 
+# Globals: The distribution must have an OEM reseal function or software available.
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 
 # End of documentation
 	if cat /etc/os-release |grep ubuntu ; then
@@ -952,7 +952,7 @@ rtd_oem_reseal () {
 	elif cat /etc/os-release |grep suse ; then
 		echo "I dont know of any OEM configuration for SuSE"
 	elif cat /etc/os-release |grep fedora ; then
-		echo "I dont know of any OEM configuration for Fedora"	
+		echo "I dont know of any OEM configuration for Fedora"
 	fi
 }
 
@@ -967,9 +967,9 @@ check_if_password_p0wned () {
 # Description: Function to query a user for a password suggestion and check it against P0wned data base online.
 # Globals: $RTD_GUI
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 	pass_str=$($RTD_GUI --passwordbox "Please enter your intended password to validate your new password against P0wned DB" 8 78 --title "" 3>&1 1>&2 2>&3)
 	result=$(
@@ -993,11 +993,11 @@ rtd_oem_find_live_release()
 # Description: This function will return the URL for the version of Debian, Ubuntu server or Destktop requested.
 # 3 parameters are required for this function to know what to do: distro_version/
 # It will also try to read the available iso images and grab the latest or requested iso.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # Example:
 # Function name 		: distro_version : distro_flavor : live_or_not : desktop_env
 # rtd_oem_find_live_release 	      10              debian         live           kde
@@ -1070,11 +1070,11 @@ cleanup_and_finish ()
 # Description: Function to remove all temporary file locations left over from building
 # the new netinstall ISO etc. and clean  up some variables...
 # go back to initial directory
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
 	cd "$CURRENT_DIR" && echo "returned to $CURRENT_DIR" || echo "No directory to return to... never mind."
@@ -1119,17 +1119,17 @@ cleanup_and_finish ()
 
 generate_report_disk_space_used_by_directory ()
 {
-# Description: Function to generate a report for folders' disk space use. 
-# This function requres one argument; what root folder to analyse the directories in. 
+# Description: Function to generate a report for folders' disk space use.
+# This function requres one argument; what root folder to analyse the directories in.
 # This functio will return a report contained in the variable $return that may then be used.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# Example: 
+# Outputs:
+# Returns:
+# Usage:
+# Example:
 # generate_report_disk_space_used_by_directory /home
-# 
+#
 # This will generate a report on the disk space per directory in the /home folder.
 #
 # End of documentation
@@ -1139,7 +1139,7 @@ generate_report_disk_space_used_by_directory ()
 	$RTD_GUI --backtitle "$BRANDING" --title "Generating report for: $1" --gauge "Calculating disk space: this may take some time" $HEIGHT $WIDTH < <(
 		echo "Storage Utilization Report:" >>$store
 		echo "______________________________" >>$store
-		n=$(ls $1 | wc -l ) 
+		n=$(ls $1 | wc -l )
 		i=0
 		for f in $DIRS
 		do
@@ -1154,7 +1154,7 @@ generate_report_disk_space_used_by_directory ()
 			sleep 1
 		done
 	)
-	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH 
+	total=$(echo ----- >>$store && du -cksh $1 2>/dev/null |grep total >>$store) | $RTD_GUI --backtitle "$BRANDING" --title "Completing report..." --progressbox "Working..." $HEIGHT $WIDTH
 	result="$(cat $store )" ; rm $store
 }
 
@@ -1168,11 +1168,11 @@ make_preseed_cfg ()
 # Description: Function to write out a debina preeseed file to a location requested by the first parameter.
 # Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
 # some parameters have defaults.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # Example:
 # functoin_name          location        config          function
 # make_preseed_cfg       /path/to/file   ssh-server      Minecraft
@@ -1212,27 +1212,27 @@ make_preseed_cfg ()
 
 set_gnome_ui_common_tweaks_for_user ()
 {
-# Description: 
-# Configure Gnome for OEM look and feel. This is completely as desired. 
+# Description:
+# Configure Gnome for OEM look and feel. This is completely as desired.
 # This function takes no arguments. Simply call it to make the changes.
 # Howerver, this function must be called as the user it should apply to.
-# if it is called in a script with "sudo" priviledges, it will make chages to 
-# the look and feel for the "root" user. 
+# if it is called in a script with "sudo" priviledges, it will make chages to
+# the look and feel for the "root" user.
 #
-# To run this function as the user who started a script with sudo script content 
+# To run this function as the user who started a script with sudo script content
 # could be echoed out ot a temporary file and executed as follows
 # sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus temporary_script.sh > /dev/null 2>&1
-# or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh". 
-# Globals: 
+# or alternatively by calling the function "run_command_in_gnome_user_session /path/to/temorary_script.sh".
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 #
 # USAGE:
-# 
+#
 # set_gnome_ui_common_tweaks_for_user
-#  
+#
 # End of documentation
 
 	write_status "Seting common OEM tweaks..."
@@ -1306,16 +1306,16 @@ set_gnome_ui_common_tweaks_for_user ()
 set_gnome_ui_mac_tweaks_for_user ()
 {
 # Description: Function to set UI look to resemble MAC for users accustomed to that.
-# 
-# The function expects no arguments. 
-# Usage: 
+#
+# The function expects no arguments.
+# Usage:
 # set_gnome_ui_mac_tweaks_for_user
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 	set_gnome_ui_common_tweaks_for_user
 	write_status "Setting MAC like tweaks..."
@@ -1346,15 +1346,15 @@ set_gnome_ui_win10_tweaks_for_user ()
 {
 # Description: Function to set UI look to resemble MAC for users accustomed to that.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# The function expects no arguments. 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
+# The function expects no arguments.
+# Usage:
 # set_gnome_ui_win10_tweaks_for_user
-#    
+#
 # End of documentation
 	set_gnome_ui_common_tweaks_for_user
 	write_status "Setting MAC like tweaks..."
@@ -1384,16 +1384,16 @@ set_gnome_ui_win10_tweaks_for_user ()
 
 add_gnome3_favorite_app ()
 {
-# Description: Function to add a new favorite app to the gnome favorites bar. 
+# Description: Function to add a new favorite app to the gnome favorites bar.
 # Globals: none
 # Arguments: name of the shortcut to create (appname.desktop)
-# Outputs: 
+# Outputs:
 # Returns: 0/1
 # Usage: add_gnome3_favorite_app [appname.desktop]
 #
-# NOTE: This function must be run in the user context. 
+# NOTE: This function must be run in the user context.
 # End of documentation
-# A potentioal simplification if the escapes cn be figured out: 
+# A potentioal simplification if the escapes cn be figured out:
 # sudo -iu $SUDO_USER /bin/bash -c \" "gsettings set org.gnome.shell favorite-apps \\\"\$(gsettings get org.gnome.shell favorite-apps | sed s/.\\$//), '${Newapp}']\\\"" \"
 	NewApp="$1"
 	if TMP_FIL=$(mktemp -p "$(mktemp -d )") ; then
@@ -1419,16 +1419,16 @@ run_command_in_gnome_user_session () {
 # to be run in the users session. For example:
 # 	run_command_in_gnome_user_session script_name.sh parameter one two etc
 #
-# Globals: 
+# Globals:
 # Arguments: [path/script.sh] [bash command]
-# Outputs: 
-# Returns: 
-# Usage: run_command_in_gnome_user_session script_name.sh 
-#    
+# Outputs:
+# Returns:
+# Usage: run_command_in_gnome_user_session script_name.sh
+#
 # End of documentation
 	echo -------------------------- Begin as user: $SUDO_USER ---------------------
 	echo "$*"
-	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $* 
+	sudo -H -u $SUDO_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u "$SUDO_USER")/bus $*
 	echo " "
 	echo -------------------------- End as user: $SUDO_USER   ---------------------
 }
@@ -1439,25 +1439,25 @@ run_command_in_gnome_user_session () {
 
 ensure_admin ()
 {
-# Description: Function to elevate priviledges of script execution and to ensure administrative privileges 
-# such that system wide settings or configuration may be done. 
-# 
-# Globals: 
+# Description: Function to elevate priviledges of script execution and to ensure administrative privileges
+# such that system wide settings or configuration may be done.
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# The function expects no arguments, but will prompt for system password if required. 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
+# The function expects no arguments, but will prompt for system password if required.
+# Usage:
 # ensure_admin
-#    
+#
 # End of documentation
 
 	if [ ! "$UID" -eq 0 ]; then
-		write_warning "This script needs administrative access..." 
+		write_warning "This script needs administrative access..."
 		sudo bash "$0" "$*"
-		exit 
-	else 
+		exit
+	else
 		if xset q &>/dev/null; then xhost local:root ; fi
 	fi
 }
@@ -1470,30 +1470,30 @@ ensure_admin ()
 
 rtd_oem_check_inet_access ()
 {
-# Description: Function to verrify internet availabiltiy. 
-# The funciton will pause for 10 seconds by default, and will accept 
-# an integer to indicate a non-decault time to pause. 
-# Globals: 
+# Description: Function to verrify internet availabiltiy.
+# The funciton will pause for 10 seconds by default, and will accept
+# an integer to indicate a non-decault time to pause.
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # rtd_oem_check_inet_access [ integer ]
-#     
+#
 # Example:
 # rtd_oem_check_inet_access 60
-#   
+#
 # If an argument is omitted rtd_oem_check_inet_access will wait indefinitley
-# for input. 
-# 
+# for input.
+#
 # End of documentation
 	_ARG=$1
-	if ! hash curl &>/dev/null; then 
-		read -t 10 -p "N O T I C E ! --  Could not check for internet connectivity... Please install (curl) web crawler/downloader. Press [ENTER] to continue and [CTRL] + [C] to exit! Continuing in 10 seconds..." 
+	if ! hash curl &>/dev/null; then
+		read -t 10 -p "N O T I C E ! --  Could not check for internet connectivity... Please install (curl) web crawler/downloader. Press [ENTER] to continue and [CTRL] + [C] to exit! Continuing in 10 seconds..."
 	else
-		if [[ -z "$_ARG" ]]; then 
+		if [[ -z "$_ARG" ]]; then
 			curl ipinfo.io &>/dev/null || ( read -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  " )
-		else	
+		else
 			curl ipinfo.io &>/dev/null || ( read -t ${1:-10} -p "N O T I C E ! -- NO INTERNET ACCESS: This script may require access to the internet to work properly! Press [ENTER] to continue and [CTRL] + [C] to exit!  Continuing in ${1:-10} seconds..." )
 		fi
 	fi
@@ -1506,19 +1506,19 @@ rtd_oem_check_inet_access ()
 
 rtd_oem_kde_set_wallpaper ()
 {
-# Description: 
-# Function to set KDE Plasma wallpaper from a script. this function expects one variable 
-# indication what file to set as background. You must provide the full path to the file. 
-# rtd_oem_kde_set_wallpaper /opt/oem/wallpaper.png Supported fule types are: 
-# webm, mp4, png, jpeg, gif, webp. 
-# Globals: 
+# Description:
+# Function to set KDE Plasma wallpaper from a script. this function expects one variable
+# indication what file to set as background. You must provide the full path to the file.
+# rtd_oem_kde_set_wallpaper /opt/oem/wallpaper.png Supported fule types are:
+# webm, mp4, png, jpeg, gif, webp.
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
-	echo "Setting wallpaper $1" 
+	echo "Setting wallpaper $1"
 	full_image_path=$(realpath "$1")
 	ext=$(file -b --mime-type "$full_image_path")
 
@@ -1562,14 +1562,14 @@ rtd_oem_setup_brand_splash_screen()
 # downloaded from a ginve vendor. This function expects a few simple peices of information:
 # parameter 1: full path to image file to be branded.
 # parameter 2: quoted text to be incerted.
-#   
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # rtd_oem_setup_brand_splash_screen [string] [string]
-# 
+#
 # [string]: /path/to/imagefile.png, "text to brand image with"
 #
 # rtd_oem_setup_brand_splash_screen /tmp/splash.png "Hi! I am a lable!"
@@ -1614,19 +1614,19 @@ prepare_environment_for_iso_creation ()
 # Description: Function to check that all dependencies are available for manipulating the
 # net install ISO from Ubuntu. Subsequently, the temporary file locations
 # are setup and templates are downloaded.
-# 
+#
 # Several key software components are required to create ISO files (virtual DVD/CD/BlueRay)
 # as well as a few others needed to download files from the internet, etc.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # DEPENDENCIES: dos2unix, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, xorriso.
 #
 # This function will find full paths for the binaries needed since if they are recently
-# added, they may not be found in the current $PATH. 
+# added, they may not be found in the current $PATH.
 #
 #	Software PATH insurance:
 #	: "${BIN_7Z:=$(type -P 7z)}"
@@ -1640,12 +1640,12 @@ prepare_environment_for_iso_creation ()
 #	: "${VOLUME_TITLE:="RTD Auto Installer"}"
 #	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
 #	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
-# 
-# The main tool to create ISO files system is "xorriso". 
-# [xorriso] copies file objects from POSIX compliant filesystems into Rock Ridge 
-# enhanced ISO 9660 filesystems and allows session-wise manipulation of such filesystems. 
-# It can load the management information of existing ISO images and it writes the session results 
-# to optical media or to filesystem objects. 
+#
+# The main tool to create ISO files system is "xorriso".
+# [xorriso] copies file objects from POSIX compliant filesystems into Rock Ridge
+# enhanced ISO 9660 filesystems and allows session-wise manipulation of such filesystems.
+# It can load the management information of existing ISO images and it writes the session results
+# to optical media or to filesystem objects.
 #
 # At this time this function expects no arguments.
 #
@@ -1674,11 +1674,11 @@ prepare_environment_for_iso_creation ()
 	: "${VOLUME_TITLE:="RTD Auto Installer"}"
 	: "${SSH_PUBLIC_KEY_FILE:="/home/$SUDO_USER/.ssh/id_rsa.pub"}"
 	: "${PERMANENT_DOWNLOAD_DIR:="/home/$SUDO_USER/Virtual-DVDs/Downloaded"}"
-	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
+	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then
 		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
 	else
 		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
-		check_dependencies isolinux 
+		check_dependencies isolinux
 		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
 		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
 		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
@@ -1720,12 +1720,12 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 # this function expects a minimum of one parameter: ssh-server, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, lubuntu-desktop etc.
 # By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
 # Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # :: function name				:: target		:: iso version to download
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	live	⏭ creates auoinstall iso using the Ubuntu live dvd
@@ -1742,7 +1742,7 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
+	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
 	write_information Find the precice location of the requested ISO image:
@@ -1864,14 +1864,14 @@ rtd_oem_setup_brand_splash_screen()
 # downloaded from a ginve vendor. This function expects a few simple peices of information:
 # parameter 1: full path to image file to be branded.
 # parameter 2: quoted text to be incerted.
-#   
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  
+# Outputs:
+# Returns:
+# Usage:
 # rtd_oem_setup_brand_splash_screen [string] [string]
-# 
+#
 # [string]: /path/to/imagefile.png, "text to brand image with"
 #
 # rtd_oem_setup_brand_splash_screen /tmp/splash.png "Hi! I am a lable!"
@@ -1922,12 +1922,12 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 # this function expects a minimum of one parameter: ssh-server, ubuntu-desktop, kubuntu-desktop, xubuntu-desktop, lubuntu-desktop etc.
 # By default the server ISO image will be downloaded and manipulated. Optionally this function can be told to use the
 # Ubuntu Desktop ISO instead of the server iso by passing a second parameter:
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 
 # :: function name				:: target		:: iso version to download
 # rtd_oem_ubuntu_auto_install_iso_builder 	ubuntu-desktop       	desktop ⏭ creates auoinstall iso using the Ubuntu live dvd
@@ -1945,7 +1945,7 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 	all=($(wget -O- releases.ubuntu.com -q | perl -ne '/Ubuntu (\d+.\d+.\d+)/ && print "$1\n"' | sort -Vu))
 
 	# Ask for desired version to use:
-	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear 
+	UBUNTU_VER=$($RTD_GUI --title "Select Release Version of Ubuntu" --inputbox "Please pick an available ubuntu version by entering it below. Versions to choose from: ${all[*]} If you are not sure just let me choose for you... \n $picachu "  25 110 "${all[-1]}" 3>&1 1>&2 2>&3) ;clear
 	[ "$UBUNTU_VER" ] || UBUNTU_VER=${all[-1]}
 
 	write_information Find the precice location of the requested ISO image:
@@ -2065,29 +2065,29 @@ rtd_oem_ubuntu_auto_install_iso_builder()
 
 download_and_manipulate_iso_debian ()
 {
-# Description: 
+# Description:
 # download_and_manipulate_iso_debian "debian" "openssh-server" "MinecraftTasks"
 # This is a simple command sequence to read the preference of distribution to install
 # and what release to get... then download the network install file from debian
 # and manipulate the iso file to complete the edited instruction in the preseed.cfg...
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# 
-# download_and_manipulate_iso_debian [ISO Name] [Environment] [Addon Task] 
+# Outputs:
+# Returns:
+# Usage:
+#
+# download_and_manipulate_iso_debian [ISO Name] [Environment] [Addon Task]
 #
 # where [ISO Name] may be: any string to starte the file name with
 # where [Environment] may be: any debian supported desktop environment
 # where [Addon Task] may be: additional pre determined configuration
-# 
+#
 # EXAMPLE:
 # download_and_manipulate_iso_debian openssh-server MinecraftTasks
 # download_and_manipulate_iso_debian gnome-desktop
 # download_and_manipulate_iso_debian xfce-desktop
-# 
+#
 # End of Documentation
 
 	: "${TARGET_ISO_FILE_NAME:="$1-$2-mini-netinstall-auto.iso"}"
@@ -2194,22 +2194,22 @@ create_iso_image_debian ()
 # altered original ISO.
 # Delete old iso file if there...
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of Documentation
 
 	# Check for other input and create them if not defined...
 	: "${TARGET_ISO:-"~/${TLA}-${FUNCNAME[0]}.iso"}"
 	: "${PUT_ISO_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-DVDs"}"
 
-	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then 
+	if [[ -e /usr/lib/ISOLINUX/isohdpfx.bin ]]; then
 		: "${ISOHDPFX_BIN:="/usr/lib/ISOLINUX/isohdpfx.bin"}"
 	else
 		write_warning "An important file (isohdpfx.bin) was not found in the expected location. Attepting to workaround the issue..."
-		check_dependencies isolinux 
+		check_dependencies isolinux
 		check_dependencies mlocate && ( write_warning "Updating file location DB, this may take a long time if there are a lot of files on the system..." ; updatedb )
 		locate isohdpfx.bin || ( write_error "The file isohdpfx.bin could not be found or fetched. Please correct manually!" ; rtd_oem_pause 1 )
 		: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
@@ -2238,11 +2238,11 @@ create_iso_image_debian ()
 	chmod 777 "$TARGET_ISO" || rtd_oem_pause 1 "${FUNCNAME[0]}: An error may have occurred (review above outout) then: Press [ENTER] to continue:"
 
 	test_iso_boot_media ${TARGET_ISO}
-	if ${RTD_GUI} --yesno "Would you like to make a bootable thumbdrive from this ISO media?" ${HEIGHT} ${WIDTH} ; then 
+	if ${RTD_GUI} --yesno "Would you like to make a bootable thumbdrive from this ISO media?" ${HEIGHT} ${WIDTH} ; then
 		create_physical_media_from_iso ${TARGET_ISO} || create_physical_media_from_iso
-	else 
+	else
 		return
-	fi 
+	fi
 }
 
 
@@ -2263,14 +2263,14 @@ create_iso_image ()
 {
 # Description: Function to generate a bootable ISO file from source folder or an extracted and
 # altered original ISO. The function takes 3 arguments: target file name, folder to use as source
-# and volume title. The first argument is mandatory since it makes not sense unless it is known 
-# what source to use for makeing the ISO file. 
+# and volume title. The first argument is mandatory since it makes not sense unless it is known
+# what source to use for makeing the ISO file.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # create_iso_image  ~/mybootablecdfolder ~/mybootable.iso "My cool bootable iso title"
 #
 # This function will over write the old iso file if there...
@@ -2287,9 +2287,9 @@ create_iso_image ()
 	VOLUME_TITLE=$3
 	: "${VOLUME_TITLE:-"Made by ${FUNCNAME[0]}"}"
 
-	check_dependencies isolinux 
+	check_dependencies isolinux
 	check_dependencies mlocate && updatedb
-	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"  
+	: "${ISOHDPFX_BIN:=$(locate isohdpfx.bin  | head -n 1)}"
 
 	write_status "------ CREATING ISO: $TARGET_ISO    --------"
 	if [ -f "$TARGET_ISO" ]; then
@@ -2320,44 +2320,44 @@ create_iso_image ()
 
 create_physical_media_from_iso ()
 {
-# Description: 
+# Description:
 # Function to automatically write ISO (virtual DVD/CD/BlueRay) to a thumb drive. No argumenst are
 # required, but a source ISO file location can may be provided when calling the function.
-# If information is required, but not provided, the end user will be interactively prompted. 
-# This function requires elevated priviledges to be able to write media to a thumb drive 
-# (boot sector) and other system restrictied activities. If the function is NOT called in a 
-# script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.  
-# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will 
-# be displayed asking what media to write to. If no media is present, a warning error 
-# message will be displayed. 
-# 
-# Globals: 
+# If information is required, but not provided, the end user will be interactively prompted.
+# This function requires elevated priviledges to be able to write media to a thumb drive
+# (boot sector) and other system restrictied activities. If the function is NOT called in a
+# script with elevated priviledges, it will attempt to elevate priviledges and prompt for a password.
+# Since writing a new bootable thumb drive is inherrently an interactive activity; a prompt will
+# be displayed asking what media to write to. If no media is present, a warning error
+# message will be displayed.
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# 
+# Outputs:
+# Returns:
+# Usage:
+#
 # "create_physical_media_from_iso" or "create_physical_media_from_iso path/to/file.iso"
-# 
+#
 # NOTE:
-# [Note 1] An ISO file, often called an ISO image, is a single file that's a perfect representation of an 
-# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file. 
-# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image 
-# that contains everything that would be written to an optical disc, disk sector by disc sector, including the 
-# optical disc file system. ISO images are expected to contain the binary image of an optical media file system 
-# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly 
-# as they were stored on the disc. The data inside the ISO image will be structured according to the file system 
-# that was used on the optical disc from which it was created. 
-# 
-# [Note 2] A USB flash drive is a data storage device that includes flash memory with an integrated USB interface. 
-# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz). 
+# [Note 1] An ISO file, often called an ISO image, is a single file that's a perfect representation of an
+# entire CD, DVD, or BD. The entire contents of a disc can be precisely duplicated in a single ISO file.
+# An optical disc image (or ISO image, from the ISO 9660 file system used with CD-ROM media) is a disk image
+# that contains everything that would be written to an optical disc, disk sector by disc sector, including the
+# optical disc file system. ISO images are expected to contain the binary image of an optical media file system
+# (usually ISO 9660 and its extensions or UDF), including the data in its files in binary format, copied exactly
+# as they were stored on the disc. The data inside the ISO image will be structured according to the file system
+# that was used on the optical disc from which it was created.
+#
+# [Note 2] A USB flash drive is a data storage device that includes flash memory with an integrated USB interface.
+# It is typically removable, rewritable and much smaller than an optical disc. Most weigh less than 30 g (1 oz).
 # Since first appearing on the market in late 2000
 # End of documentation
 
 
-	: ${BackTitle="Physical Installation Media Creator"}  
+	: ${BackTitle="Physical Installation Media Creator"}
 	: ${Title="OS Media Manger"}
-	
+
 	if [ ! "$UID" -eq 0 ]; then
 		# find  a diferent way... tempfile not universal...
 		data=$(tempfile 2>/dev/null)
@@ -2370,10 +2370,10 @@ create_physical_media_from_iso ()
 			255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
 			* ) rm $data &>/dev/null ; exit 1
 		esac
-		rm $data &>/dev/null 
+		rm $data &>/dev/null
 		exit
 	fi
-	
+
 	if [[ -z "$1" ]]; then
 		[[ -d /home/${SUDO_USER}/Virtual-DVDs ]] && SuggestedFolder="/home/${SUDO_USER}/Virtual-DVDs/" || SuggestedFolder="/home/${SUDO_USER}"
 		TARGET_ISO=$(dialog --stdout --title "${Title}" --backtitle "${BackTitle}" --fselect "${SuggestedFolder}" 15 110 2)
@@ -2382,40 +2382,40 @@ create_physical_media_from_iso ()
 			  1) echo "Request cancelled"; return 0 ;;
 			  255) echo "[ESC] key pressed."; return 255 ;;
 		esac
-	else 
+	else
 		TARGET_ISO=$1
 	fi
 
 	if [[ -z "${TARGET_ISO}" ]]; then
 		DIALOGRC=~/.dialogrc
-		if [[ -e ${DIALOGRC} ]]; then 
-			mv ${DIALOGRC} ${DIALOGRC}.bak 
-		fi 
-		
+		if [[ -e ${DIALOGRC} ]]; then
+			mv ${DIALOGRC} ${DIALOGRC}.bak
+		fi
+
 		echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
 		dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n You must provide an ISO file as argument! \n Usage: ${0##*/} ~/filename.iso"  14 90
-		clear ; rm ${DIALOGRC} 
+		clear ; rm ${DIALOGRC}
 
-		if [[ -e ${DIALOGRC}.bak ]]; then 
+		if [[ -e ${DIALOGRC}.bak ]]; then
 			mv ${DIALOGRC}.bak ${DIALOGRC}
-		fi 
+		fi
 		return 1
 	else
 		#          List removable dev : not loop dev: not CD    : not nvme HD : filter: header w. name
 		devlist="$(lsblk -ndo name,rm |grep -v loop |grep -v sr |grep -v nvme |grep 1 | cut -f1 -d' ')"
 
-		if [[ -z ${devlist} ]]; then 
+		if [[ -z ${devlist} ]]; then
 			DIALOGRC=~/.dialogrc
 			echo 'screen_color = (CYAN,RED,ON)' >${DIALOGRC}
 			dialog --title "${Title}" --backtitle "${BackTitle}" --msgbox "\n No removable media could be found! Please insert a thumb drive and try again."  14 90
-			clear ; rm ${DIALOGRC} 
+			clear ; rm ${DIALOGRC}
 			return 1
 		else
 			declare -A RemovableMediaList
 			index=1
-			
-			for media in ${devlist}; 
-			do 
+
+			for media in ${devlist};
+			do
 				SuggestedRemovableDevice="${media}"
 				RemovableMediaList[$index]=$(echo -e \'$(fdisk -l /dev/$media |head -1)\')
 				(( index++ ))
@@ -2424,15 +2424,15 @@ create_physical_media_from_iso ()
 			DiscoveredItems="\n
 			\n Removable media found: ${#RemovableMediaList[@]}
 			\n --------------------------------------------------------
-			
+
 			$(until [ $i -gt ${#RemovableMediaList[@]} ]
 			do
-				[[ $i -gt 0 ]] && echo -e "Removable Disk $i:   ${RemovableMediaList[$i]} \n" 
+				[[ $i -gt 0 ]] && echo -e "Removable Disk $i:   ${RemovableMediaList[$i]} \n"
 				((i=i+1))
 			done
 			)"
 
-			USBTargetDevice=$( dialog --stdout --no-collapse --title "${Title}" --backtitle "${BackTitle}"  --inputbox "${DiscoveredItems}" 15 110 /dev/${SuggestedRemovableDevice} ) 
+			USBTargetDevice=$( dialog --stdout --no-collapse --title "${Title}" --backtitle "${BackTitle}"  --inputbox "${DiscoveredItems}" 15 110 /dev/${SuggestedRemovableDevice} )
 			Response=$?
 			clear
 			case ${Response} in
@@ -2464,21 +2464,21 @@ create_physical_media_from_iso ()
 
 compress_all_items_here ()
 {
-# Description: Function to compress the contents of the present working directory. 
-# 
-# Purpose:	To compress all files and folders individually found in the current folder. 
+# Description: Function to compress the contents of the present working directory.
+#
+# Purpose:	To compress all files and folders individually found in the current folder.
 #		The current folder refers to the present working directory "PWD". Compression method
 #		is 7z. This privides a high level of compression.
-#  
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# Usage:	Simply call this function to accomplish this task. 
-# 
+# Outputs:
+# Returns:
+# Usage:
+# Usage:	Simply call this function to accomplish this task.
+#
 # Arguments:	No parameters required.
-# 
+#
 # End of documentation
 	if hash 7z ; then
 		write_information "7z is present, good..."
@@ -2486,7 +2486,7 @@ compress_all_items_here ()
 		write_error "the 7z (7 zip) program was not found"
 		for i in p7zip-full 7za
 		do
-			for i in dnf zypper apt-get ; do 
+			for i in dnf zypper apt-get ; do
 				write_warning "Installing software requires elevated priviladges!"
 				write_status "Peare enter password beloow (if not cached):"
 				sudo $i install -y p7zip-full
@@ -2498,7 +2498,7 @@ compress_all_items_here ()
 	if hash dialog 2>/dev/null ; then
 		if ( dialog --backtitle "${BRANDING:-"${FUNCNAME[0]}"}" --title "Compress Content Here" --colors --cr-wrap --no-collapse --no-button "NO: Quit" --yes-button "YES: Compress" --yesno "Hello ${USER}... I am going to compress each file or folder that I find here: $(pwd) These are: \Z5 \n$(ls -h1 -F -I "*.7z")" 20 90 ); then
 			clear
-			continue 
+			continue
 		else
 			clear
 			exit
@@ -2532,24 +2532,24 @@ create_swapfile ()
 {
 # Description: Function to create a swapfile and enable it automatically.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # Usage: [function_name] [options]
-# Arguments: 
+# Arguments:
 # 	[size] : size in MB or GB
 # 	[path] : path to file (Default path: /swapfile)
 #
 # NOTE:
 # The Linux Kernel divides RAM into chunks of memories and the swapping process i
-# s when the Linux Kernel uses a hard disk space (swap space) to store information from RAM 
-# and thus releases some RAM space. That is why when you install a Linux distribution, the 
+# s when the Linux Kernel uses a hard disk space (swap space) to store information from RAM
+# and thus releases some RAM space. That is why when you install a Linux distribution, the
 # installation wizard usually asks you to assign some space for the system and another for the swap.
-# 
-# Using swap is a very useful way to extend the RAM because it provides the necessary additional 
-# memory when the RAM space has been exhausted and a process has to be continued. It is especially 
+#
+# Using swap is a very useful way to extend the RAM because it provides the necessary additional
+# memory when the RAM space has been exhausted and a process has to be continued. It is especially
 # recommended when you have less than 1Gb of RAM. Although in the end, everything depends on you.
 #
 #
@@ -2597,13 +2597,13 @@ create_swapfile ()
 		if [ $? = 0 ]; then
 			echo "${SWAP_PATH}   none    swap    sw    0   0" | sudo tee /etc/fstab -a # Add to fstab
 			write_status "Done! You now have a ${SWAP_SIZE} swap file at ${SWAP_PATH}"
-		else 
+		else
 			if df -T ${SWAP_PATH} |grep btrfs >/dev/null ; then
-				write_error "ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition. 
+				write_error "ERROR: swapfiles cannot be allocated on BTRFS. \n The root filesystem is BTRFS. Please use an ext4 or xfs partition.
 				This is a BUG and hopefully it will be fixed soon... "
 				exit 1
-			else 
-				write_error "An unknown error occurred with starting the swap partition.." 
+			else
+				write_error "An unknown error occurred with starting the swap partition.."
 				exit 1
 			fi
 		fi
@@ -2619,12 +2619,12 @@ create_swapfile ()
 
 scan_for_malware ()
 {
-# Description: 
-# Globals: 
+# Description:
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
 	# Set the location of the quarantined files
@@ -2638,27 +2638,27 @@ scan_for_malware ()
 	SCANDIR=$@
 
 	# First discover what menu system is installed. Some systems use "dialog" and
-	# other systems use whiptail for the terminal to show menus and dialogs. 
+	# other systems use whiptail for the terminal to show menus and dialogs.
 	check_menu_availability
 	for i in clamav clamav-freshclam clamscan clamtk clamtk-gnome ; do
 		check_dependencies $i
 	done
 
-	
+
 
 	write_host --purple "
 	___________________________________________________
-	
+
 	[   Setting    ] [           Value             ]
 	Logging to:         $CLAMSCANLOGFILE
 	Quarantine in:      $QUARANINE
-	
+
 	___________________________________________________
 	Starting scan....
 	Scanning folder: $@"
 
 	# Run the scan function
-	clamscan $SCANDIR -r -a -i -l $CLAMSCANLOGFILE --bytecode=yes --stdout  --phishing-sigs --bell --algorithmic-detection=yes --move="$QUARANINE" 
+	clamscan $SCANDIR -r -a -i -l $CLAMSCANLOGFILE --bytecode=yes --stdout  --phishing-sigs --bell --algorithmic-detection=yes --move="$QUARANINE"
 	return $?
 }
 
@@ -2715,18 +2715,18 @@ scan_for_malware ()
 #   `'.:::::::::::88888888888.88:::::::::'
 #         `':::_:' -- '' -'-' `':_::::'`
 # ----------------------------------------------------------------
-#  ____         __ _                          
-# / ___|  ___  / _| |___      ____ _ _ __ ___ 
+#  ____         __ _
+# / ___|  ___  / _| |___      ____ _ _ __ ___
 # \___ \ / _ \| |_| __\ \ /\ / / _` | '__/ _ \
 #  ___) | (_) |  _| |_ \ V  V / (_| | | |  __/
 # |____/ \___/|_|  \__| \_/\_/ \__,_|_|  \___|
-#                                             
-#  __  __                                              _   
-# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+#
+#  __  __                                              _
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_
 # | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
-# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_
 # |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
-#                           |___/                          
+#                           |___/
 # ----------------------------------------------------------------
 
 
@@ -2743,22 +2743,22 @@ ensure_flatpak_package_managment ()
 # Globals: none
 # Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet access]
 # Arguments: None
-# Outputs: 
+# Outputs:
 # Returns: Standard return codes 1/0
 # Usage: Call the function with no arguments
 # NOTE: https://www.fosslinux.com/42410/snap-vs-flatpak-vs-appimage-know-the-differences-which-is-better.htm
-# Snap is a distribution independent package format developed by Canonical and first released 
-# in 2014. It was initially developed for Ubuntu but has been adopted by other Linux distributions 
+# Snap is a distribution independent package format developed by Canonical and first released
+# in 2014. It was initially developed for Ubuntu but has been adopted by other Linux distributions
 # like Arch, Linux Mint, CentOS, Gentoo, and Fedora, and also included support for the Snap framework.
-# The main aim behind this package format development was to come up with a single unified format for 
-# software packages to run in a wide range of devices. That includes IoT (IoT), embedded devices 
+# The main aim behind this package format development was to come up with a single unified format for
+# software packages to run in a wide range of devices. That includes IoT (IoT), embedded devices
 # running Ubuntu Core (a minimalistic version of Ubuntu), and computer systems that ran some Ubuntu version.
-# Snap also offers an online app store – Snapcraft, where users can find and install the software packages. 
-# It creates a large pool where users can find all available a snap package. Snapcraft is itself 
+# Snap also offers an online app store – Snapcraft, where users can find and install the software packages.
+# It creates a large pool where users can find all available a snap package. Snapcraft is itself
 # controlled and maintained by the Canonical team.
 # End of documentation
 	write_information "${FUNCNAME[0]}: Ensuring Flatpack software distribution system is available..."
-	check_dependencies flatpak || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy flatpak!"	
+	check_dependencies flatpak || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy flatpak!"
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || write_error "${FUNCNAME[0]}: Failed to add flatpak repo!"
 	return $?
 }
@@ -2773,31 +2773,31 @@ ensure_snap_package_managment ()
 # Globals: none
 # Dependencies: [distro pakcage managment] [function: check_dependencies] [Internet access]
 # Arguments: None
-# Outputs: 
+# Outputs:
 # Returns: Standard return codes 1/0
 # Usage: Call the function with no arguments
 # NOTE: https://www.fosslinux.com/42410/snap-vs-flatpak-vs-appimage-know-the-differences-which-is-better.htm
-# Like Snap, Flatpak is another distribution independent package format aimed to simplify overall 
-# app distribution and usage in Linux systems. Previously known as xdg-app, the framework was based 
-# on the concept of running applications in a secure virtual sandbox without requiring root privileges 
+# Like Snap, Flatpak is another distribution independent package format aimed to simplify overall
+# app distribution and usage in Linux systems. Previously known as xdg-app, the framework was based
+# on the concept of running applications in a secure virtual sandbox without requiring root privileges
 # or posing a security threat to the system.
-# Flatpak was officially released in 2015 with a reliable backup from Red Hat, Endless Computers, and 
-# Collabora. It targeted primarily three Desktop Environments. That is FreeDesktop, KDE, and GNOME. The 
+# Flatpak was officially released in 2015 with a reliable backup from Red Hat, Endless Computers, and
+# Collabora. It targeted primarily three Desktop Environments. That is FreeDesktop, KDE, and GNOME. The
 # Linux distributions currently having this framework are arch Linux, Debian, Fedora, Mageia, Solus, and Ubuntu.
-# The Flatpak framework itself is developed in C programming and released under the LGPL license. The lead 
+# The Flatpak framework itself is developed in C programming and released under the LGPL license. The lead
 # developer is Alexander Larsson – a Red Hat employee.
-# Like Snapcraft for Snap, Flatpak also has the Flathub app store where users can find and install all 
-# Flatpak packages. Initially, Flathub only allowed open-source publishing applications on the website but 
+# Like Snapcraft for Snap, Flatpak also has the Flathub app store where users can find and install all
+# Flatpak packages. Initially, Flathub only allowed open-source publishing applications on the website but
 # has recently approved the publishing of proprietary apps.
-# Additionally, unlike Snap, where we have a single repository controlled by Canonical to install and update 
-# software packages, Flatpak supports the use of multiple repos. The one significant disadvantage with this 
+# Additionally, unlike Snap, where we have a single repository controlled by Canonical to install and update
+# software packages, Flatpak supports the use of multiple repos. The one significant disadvantage with this
 # package is the lack of support for Servers.
 # End of documentation
 	write_information "${FUNCNAME[0]}: Ensuring SNAP software distribution system is available..."
 	check_dependencies snapd || write_error "${FUNCNAME[0]}: Failed to satisfy dependecy SNAP!"
-	if [[ -e /snap ]]; then 
+	if [[ -e /snap ]]; then
 		write_information "SNAP classic support present... "
-	else 
+	else
 		ln -s /var/lib/snapd/snap /snap
 	fi
 	return $?
@@ -2816,25 +2816,25 @@ up2date ()
 # software manager: apt, yum, zypper etc. This is to maintain stability since a distro may
 # alias another distributions command (like SuSE does with apt) to be helpfull.
 # This is one of the first update functions written and is kept for compatibility.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
-	write_status "Running up2date function:" 
+	write_status "Running up2date function:"
 
 	if hash pkcon 2>/dev/null; then
-		pkcon update -y 		
+		pkcon update -y
 	elif hash yum 2>/dev/null; then
-		yum update -y 			
+		yum update -y
 	elif hash apt 2>/dev/null; then
-		apt-get update 			
-		apt-get upgrade -y 		
-		apt-get autoremove -y 		
+		apt-get update
+		apt-get upgrade -y
+		apt-get autoremove -y
 	elif hash zypper 2>/dev/null; then
-		return zypper up -y		
+		return zypper up -y
 	else
 		return 3
 	fi
@@ -2853,11 +2853,11 @@ is_software_package_installed ()
 # if the package manager is deb, zypper or rpm, and then take one parameter passed
 # and evauate if a software package by that name is installed. This function
 # will return a "0" or "1" return based on the package managers return code.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # Call this function by:
 # is_software_package_installed "package name"
 #                 or
@@ -2927,7 +2927,7 @@ InstallSoftwareFromRepo ()
 # snap or flatpack use.
 # End of documentation
 	: ${_LOGFILE:="/var/log/rtd/$( basename "$0".log )"}
-	# Ask function how to install software... 
+	# Ask function how to install software...
 	set_install_command >>/dev/null 2>&1
 
 	# make some decent display terminal Graphics...
@@ -2960,52 +2960,52 @@ InstallSoftwareFromRepo ()
 
 set_install_command ()
 {
-# Description: 
+# Description:
 # add global install command for portability and convenience. This function
-# allows for scripts to add software across many systems. 
+# allows for scripts to add software across many systems.
 # Primarily for Linux: this function will look for the common package managers
 # apt (all debina and ubuntu based distributions), dnf (RedHat, Fedora, Mandriva, and others)
-# zypper (SuSE and Open SUSE). If neither of those package manages are available many systems 
+# zypper (SuSE and Open SUSE). If neither of those package manages are available many systems
 # use package kit; and this will be registered as an sinstall option.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
+# Outputs:
+# Returns:
 # Usage: "set_install_command"
-# 
+#
 # Arguments: none.
-# 
+#
 # Return Codes:
-# set_install_command will return a global variable ${_INSTCMD} 
+# set_install_command will return a global variable ${_INSTCMD}
 # ${_INSTCMD} will expand to teh appropriate install cmmand including options
 # for non interactive install of a package. ${_INSTCMD} package.name will install said pacakge.
-# 
-# A return code of "1" will be returned the function was not able to set the install command. 
-# 
-# 
+#
+# A return code of "1" will be returned the function was not able to set the install command.
+#
+#
 # End of documentation
 
 	if [[ 'echo $OSTYPE" |grep "linux"' ]]; then
 
 		if hash dnf 2>/dev/null; then
 			# Try dnf (RedHat, Cent OS, Fedora)
-			write_status "Setting install options for YUM" 
+			write_status "Setting install options for YUM"
 			export _INSTCMD="sudo dnf -y  install"
 		elif hash zypper 2>/dev/null; then
 			# Try zypper (Open SUSE)
-			write_status  "Setting install options for ZYPPER" 
+			write_status  "Setting install options for ZYPPER"
 			export _INSTCMD="sudo zypper install -y "
 		elif hash apt 2>/dev/null; then
 			# Try apt (Debian, Ubuntu, and all derivatives)
-			write_status  "Setting install options for DEB" 
+			write_status  "Setting install options for DEB"
 			export _INSTCMD="sudo apt-get -y -qq --allow-change-held-packages --ignore-missing install"
 		elif hash pkcon 2>/dev/null; then
 			# If thre is no apt, zypper, dnf
-			write_status  "Setting install options for Package Kit" 
+			write_status  "Setting install options for Package Kit"
 			export _INSTCMD="sudo pkcon -y  install"
 		else
-			write_error "This system does not seem to have a software managment system" 
+			write_error "This system does not seem to have a software managment system"
 			return 1
 		fi
 
@@ -3033,22 +3033,22 @@ set_install_command ()
 
 check_dependencies ()
 {
-# Description: 
+# Description:
 # Function to check that a piece of software is installed and if not install it.
 # Works for apt based systems currently. The function will take a parameter that is expected to
 # match the software command line name or rather the name of the package. This should get
 # updated to also check and install from snap and flatpack at some point.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# 
+# Outputs:
+# Returns:
+# Usage:
+#
 # check_dependencies [packagename]
-# 
+#
 # EXAMPLE:
-# 
+#
 # check_dependencies snapd
 #
 # End of documentation
@@ -3059,12 +3059,12 @@ check_dependencies ()
 	if is_software_package_installed $1 ; then
 		write_information "I found that $1 is present on this system... thankyou for that! "
 	else
-		write_warning "You seem to have no $1... I will try to get it... " 
+		write_warning "You seem to have no $1... I will try to get it... "
 		InstallSoftwareFromRepo $1
 		if [ $? != 0 ];
 		then
 			write_error "That install didn't work out so well."
-			write_error "Please manually try to add the software since I couldn't do it." 
+			write_error "Please manually try to add the software since I couldn't do it."
 			return 1
 		fi
 		echo "OK Done! Continuing..."
@@ -3084,24 +3084,24 @@ check_dependencies ()
 
 rtd_ppa_checker ()
 {
-# Description:  
+# Description:
 # Function to check status of Ubuntu and derivatives' PPA aarchives.
-# This function will take one optional argument to toggle the "delete" option. If the delet option 
+# This function will take one optional argument to toggle the "delete" option. If the delet option
 # is requested rtd_ppa_checker will delete any PPA's that are not used (no software is installed from it)
-# 
-# PPA stands for Personal Package Archive. The PPA allows application developers and 
-# Linux users to create their own repositories to distribute software. With PPA, you can 
-# easily get newer software version or software that are not available via the official Ubuntu 
+#
+# PPA stands for Personal Package Archive. The PPA allows application developers and
+# Linux users to create their own repositories to distribute software. With PPA, you can
+# easily get newer software version or software that are not available via the official Ubuntu
 # repositories.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# 
+# Outputs:
+# Returns:
+# Usage:
+#
 # rtd_ppa_checker [] [--delete]
-# 
+#
 # End of documentation
 	for f in /etc/apt/sources.list.d/*.list; do
 	grep -Po "(?<=^deb\s).*?(?=#|$)" "$f" | while read -r ENTRY ; do
@@ -3145,17 +3145,17 @@ done
 
 rtd_oem_release_upgrade ()
 {
-# Description: Function to attempt to perform a release upgade on several Linux distributions. 
+# Description: Function to attempt to perform a release upgade on several Linux distributions.
 # Supported distributions are: Ubuntu, Pop! OS, Debian, SUSE, and fedora.
 # This function does not require any arguments but will respect "interactive". The "interactive"
 # parameter will force the function to pause if a supported distribution is not found.
-# It will check for a supported distribution and attempt the upgrade if possible. 
+# It will check for a supported distribution and attempt the upgrade if possible.
 # If a supported distribution is not detected the function will do nothing.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
+# Outputs:
+# Returns:
 # Usage:  (in a script):
 #  rtd_oem_release_upgrade [ string ]
 #
@@ -3169,26 +3169,26 @@ rtd_oem_release_upgrade ()
 	unset result
 	TMP_DISC_DIR=$(mktemp -d )
 		if hostnamectl |grep "Ubuntu" 2>/dev/null ; then
-			write_warning "this may take some time, please be patient!" 
+			write_warning "this may take some time, please be patient!"
 			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
 			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
 			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
 			display_result "Release Upgrade Attempt Result: "
 			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
 		elif hostnamectl |grep "Pop!_OS" 2>/dev/null ; then
-			write_warning "this may take some time, please be patient!" 
+			write_warning "this may take some time, please be patient!"
 			apt clean && apt update -m ; dpkg --configure -a ; apt install -f ; apt dist-upgrade ; apt autoremove --purge
 			do-release-upgrade 1> >(tee "$TMP_DISC_DIR"/stdout ) 2> >(tee "$TMP_DISC_DIR"/stderr >&2 )
 			result="$( cat "$TMP_DISC_DIR"/stdout; cat "$TMP_DISC_DIR"/stderr)"
 			display_result "Release Upgrade Attempt Result: "
 			rm -r "$TMP_DISC_DIR" ; unset TMP_DISC_DIR
 		elif hostnamectl |grep "Debian" 2>/dev/null ; then
-			write_error "Debian does not provide an upgrade tool between major releases... Please use the manual upgrade method." 
+			write_error "Debian does not provide an upgrade tool between major releases... Please use the manual upgrade method."
 			result="Debian does not have an in place upgrade tool. Please edit the /etc/apt/sources.list and use the disd-upgrade option"
 			display_result "Release Upgrade Attempt Result: "
 		elif hostnamectl |grep "SUSE" 2>/dev/null ; then
-			write_warning "This REALLY may take some time, please be patient!" 
-			zypper dup 
+			write_warning "This REALLY may take some time, please be patient!"
+			zypper dup
 		elif hostnamectl |grep "fedora" 2>/dev/null ; then
 			releasever=$($RTD_GUI --title "Fedora Upgrade Confirmation" --inputbox "Please enter the Fedora version you want to upgrade to. Please make sure that it has been published. You are currently using: $(hosnamectl)  only numbers are valid" 8 78  3>&1 1>&2 2>&3)
 			sudo dnf upgrade --refresh
@@ -3198,7 +3198,7 @@ rtd_oem_release_upgrade ()
 		else
 			[[ "$interactive" == "interactive" ]] && read -p "This option requires the program (do-release-upgrade) (Ubuntu) or OpenSUSE (zypper) on your system. Press [Enter] key to return to menu."
 		fi
-		return 
+		return
 }
 
 
@@ -3217,16 +3217,16 @@ rtd_oem_remove_non_western_latin_fonts ()
 # Description:  a simple function to remove known
 # non-western (latin) fonts from a distribution. Notably, Ubuntu provides too many fonts
 # of all kinds by default, even if the user will never need the fonts. However, the fonts
-# may cause unexpected font tool behavior and crashes, due to the large number of fonts 
+# may cause unexpected font tool behavior and crashes, due to the large number of fonts
 # and their features. It is there fore a good Idea to remove these fonts if they are not needed.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  
+# Outputs:
+# Returns:
+# Usage:
 #	Simply call this function by stating its name:
 # 	rtd_oem_remove_non_western_latin_fonts
-# 	
+#
 # The function will not return any sucess or failure codes. It will do its best and exit.
 # End of documentation
 
@@ -3235,7 +3235,7 @@ rtd_oem_remove_non_western_latin_fonts ()
 		fonts-lohit-* fonts-noto-* fonts-orya* fonts-pagul fonts-sahadeva fonts-samyak-* fonts-sarai fonts-smc fonts-smc-* fonts-taml fonts-telu fonts-telu-extra"
 	echo "Attempting to remove non-western fonts..."
 	count=0
-	for i in $font_list ; do 
+	for i in $font_list ; do
 		rtd_oem_remove_software $i && (( count++))
 	done
 	echo "Removed [ $count ] non-western Fonts"
@@ -3251,20 +3251,20 @@ rtd_oem_remove_non_western_latin_fonts ()
 
 rtd_oem_remove_software ()
 {
-# Description: 
+# Description:
 # The OEM remove software function will attempt to remove whatever package name given
-# as an argument using whatever package system found on the system. This is provided 
+# as an argument using whatever package system found on the system. This is provided
 # for portability and convenience. Currently, this functions will attempt to use
-# pkcon (prefferred as it run on many distributions), apt, yum, dnf, and zypper. 
-# Additional package manager may be added as time allows. 
-# Globals: 
+# pkcon (prefferred as it run on many distributions), apt, yum, dnf, and zypper.
+# Additional package manager may be added as time allows.
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  
-# 	call this function using one argument only for reliability reasons; 
+# Outputs:
+# Returns:
+# Usage:
+# 	call this function using one argument only for reliability reasons;
 #	as per the below example. If thre is a need to remove a large number of
-#	packages it is reccommended to use a for loop and call this function, 
+#	packages it is reccommended to use a for loop and call this function,
 #	still realizing the benefit of mylti-distribution support.
 #
 #	rtd_oem_remove_software packagename
@@ -3313,22 +3313,22 @@ rtd_oem_remove_software ()
 
 rtd_update_system ()
 {
-# Description: 
+# Description:
 # System update function. The purpose of this function is to update installed software from
 # distribution reopositories and the newer self contained universal software stores like
-# snap and flatpak. 
+# snap and flatpak.
 # Function does not expect any argument. However it will respect one argument \"simple\"
 # The simple argument instructs this functions [pkcon] action to display simple output
-# rather than more user friendly output. 
+# rather than more user friendly output.
 # Update native software packages; since it is not known what distribution
 # this script is being executed on, it is best to check and see if we are able
 # to perform an update and then do the update...
 # One could choose to check for a supported exact version: e.g. Ubuntu, but we would
 # like to be nice and add value for as many as we can. Specially if it is this easy! :)
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
+# Outputs:
+# Returns:
 # Usage: z
 # End of documentation
 
@@ -3337,8 +3337,8 @@ rtd_update_system ()
 
 	LOGFILE="${LOGFILE:-$0.log}"
 
-	write_status "${PUBLICATION}: Version ${VERSION}" 
-	write_status "------------------------------------------------------------------" 
+	write_status "${PUBLICATION}: Version ${VERSION}"
+	write_status "------------------------------------------------------------------"
 
 	write_host --cyan "I am updating software from all channels I can find on the system."
 	write_host --cyan "I will update via the native package manager as well as newer formats"
@@ -3363,16 +3363,16 @@ rtd_update_system ()
 	}
 
 	if hash dnf 2>/dev/null; then
-		rtd_software_task dnf -y upgrade 
+		rtd_software_task dnf -y upgrade
 	elif hash zypper 2>/dev/null; then
-		rtd_software_task zypper up -y 
+		rtd_software_task zypper up -y
 	elif hash apt 2>/dev/null; then
 		rtd_software_task apt-get update
 		UPGRADABLE=$(LANG=C apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1)
 		if [ "$UPGRADABLE" -eq 0 ]; then
-			write_information "$UPGRADABLE packages that need updates; Skipping update task... " 
+			write_information "$UPGRADABLE packages that need updates; Skipping update task... "
 		else
-			write_information "There are $UPGRADABLE packages that need updates..." 
+			write_information "There are $UPGRADABLE packages that need updates..."
 			rtd_software_task dpkg --configure -a
 			rtd_software_task apt-get upgrade -y
 			rtd_software_task apt-get autoremove -y
@@ -3380,8 +3380,8 @@ rtd_update_system ()
 		fi
 	elif hash pkcon 2>/dev/null; then
 		if [[ $1 == simple ]]; then disp_option="--plain" ; fi
-		pkcon -y refresh $disp_option 
-		pkcon -y update --autoremove $disp_option 
+		pkcon -y refresh $disp_option
+		pkcon -y update --autoremove $disp_option
 	else
 		echo -e $YELLOW "This system does not seem to have a software managment system" $ENDCOLOR
 		return 1
@@ -3389,14 +3389,14 @@ rtd_update_system ()
 
 	write_status "updating snaps if snap is present on the system..."
 	if hash snap 2>/dev/null; then
-		snap refresh 
+		snap refresh
 	else
 		write_warning "--- snap software is not present on this system... skipping..."
 	fi
 
 	write_status "updating flatpacks if flatpack is present on system..."
 	if hash flatpak 2>/dev/null; then
-		flatpak update -y 
+		flatpak update -y
 	else
 		write_warning "--- flatpak software is not present on this system... skipping..."
 	fi
@@ -3414,14 +3414,14 @@ add_software_task ()
 {
 # Description: Display executed task and echo ON/NOK based on sucess
 # This function is created to reduce the terminal output and create a more poliches output of
-# the tasks executed. This function has no idea shat it is doing, it will simply call the function 
-# it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the 
+# the tasks executed. This function has no idea shat it is doing, it will simply call the function
+# it was asked to call or execute the command ist was asked to, and echo OK or FAIL based on the
 # return code.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
 	PAD="-----------------------------------------------------"
@@ -3442,11 +3442,11 @@ dl ()
 # Description: Function by Nate Beaken to ease and make consistent the downloading of the non repository packages and
 # install them. It can install any package that Package Kit can manage (available on most Linux dists)
 # It expects one parameter: the complete URL to download from.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
+# Outputs:
 # Returns: 0/1
-# Usage: 
+# Usage:
 # End of documentation
 
 	download_url="$1"
@@ -3462,11 +3462,11 @@ dl ()
 
 	echo "${FUNCNAME[0]}: Installing package $(basename ${download_url}) ..."
 	if hash pkcon ; then
-		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")" 
+		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")"
 		return $?
 	else
 		check_dependencies packagekit-tools
-		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")" 
+		pkcon install-local -y /opt/rtd/cache/"$(basename "${download_url}")"
 		return $?
 	fi
 }
@@ -3485,11 +3485,11 @@ SofwareManagmentAvailabilityCHK ()
 # the sofware managment system may be in use. Should this be the case, this function will
 # wait undill the system is free for use.
 # TODO: Add support for fedora, Centos, SuSE.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 	echo ""
 	echo -e $YELLOW"--- Checking if software maintenance system is available:" $ENDCOLOR
@@ -3501,7 +3501,7 @@ SofwareManagmentAvailabilityCHK ()
 			1 ) j="\\" ;;
 			2 ) j="|" ;;
 			3 ) j="/" ;;
-		esac    
+		esac
 		tput rc
 		echo -en "\r[$j] Waiting for other software managers to finish..."\
 
@@ -3515,17 +3515,17 @@ SofwareManagmentAvailabilityCHK ()
 
 display_software_installation_choices_gtk ()
 {
-# Function to display the software install otions. All software option are listed in 
-# the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.   
+# Function to display the software install otions. All software option are listed in
+# the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.
 # NOTE: adding a function in _rtd_recipes named "recipes_* ()" will automaticall populete
-# the menu displayed to the user.  
-# 
-# Globals: ${_BACKTITLE} ${zstatus} 
+# the menu displayed to the user.
+#
+# Globals: ${_BACKTITLE} ${zstatus}
 # Dependencies: _rtd_recipes
 # Arguments: None
 # Outputs: interactive screen
-# Returns: 0/1 last command executed. 
-# Usage:  simply call the function by its name. 
+# Returns: 0/1 last command executed.
+# Usage:  simply call the function by its name.
 # Arguments: none
 #
 #
@@ -3551,17 +3551,17 @@ display_software_installation_choices_gtk ()
 
 display_software_installation_choices_term ()
 {
-# Function to display the software install otions. All software option are listed in 
-# the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.   
+# Function to display the software install otions. All software option are listed in
+# the _rtd_recipes recipe book. Leveraging all the useful function in _rtd_library.
 # NOTE: adding a function in _rtd_recipes named "recipes_* ()" will automaticall populete
-# the menu displayed to the user.  
-# 
-# Globals: ${_BACKTITLE} ${zstatus} 
+# the menu displayed to the user.
+#
+# Globals: ${_BACKTITLE} ${zstatus}
 # Dependencies: _rtd_recipes
 # Arguments: None
 # Outputs: interactive screen
-# Returns: 0/1 last command executed. 
-# Usage:  simply call the function by its name. 
+# Returns: 0/1 last command executed.
+# Usage:  simply call the function by its name.
 # Arguments: none
 #
 #
@@ -3592,13 +3592,13 @@ echo Under construction...
 rtd_server_setup_choices_services ()
 {
 # Description: Function to display server installation options. This will install software that is usefull
-# on a server, or a remote system only accessible via SSH. 
-# 
-# Globals: 
+# on a server, or a remote system only accessible via SSH.
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  simply call the function by its name. 
+# Outputs:
+# Returns:
+# Usage:  simply call the function by its name.
 #
 # Arguments: none
 #
@@ -3631,22 +3631,22 @@ rtd_server_setup_choices_services ()
 
 rtd_server_setup_choices_productivity ()
 {
-# Description: Function to display terminal software installation options. This will install 
-# software that is usefull on a server, or a remote system only accessible via SSH. 
-# 
-# Globals: 
+# Description: Function to display terminal software installation options. This will install
+# software that is usefull on a server, or a remote system only accessible via SSH.
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  simply call the function by its name. 
+# Outputs:
+# Returns:
+# Usage:  simply call the function by its name.
 #
 # Arguments: none
 #
 # NOTE:
-# This may be a good usecase if you happen to be in an opressed geographic locaiton where 
-# your only option is to ssh to a remote server and access email and web that way. 
-# Perfomance in these cases may be very poor over the internet (as for example with 
-# the great firewall of China). In Such a case it would be usefull to have the good 
+# This may be a good usecase if you happen to be in an opressed geographic locaiton where
+# your only option is to ssh to a remote server and access email and web that way.
+# Perfomance in these cases may be very poor over the internet (as for example with
+# the great firewall of China). In Such a case it would be usefull to have the good
 # old CLI software! :)
 # End of documentation
 
@@ -3711,11 +3711,11 @@ rtd_setup_choices_term_fallback ()
 # to ssh to a remote server and access email and web that way. Perfomance in these cases
 # may be very poor over the internet (as for example with the great firewall of China). In
 # Such a case it would be usefull to have the good old CLI software! :)
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of documentation
 
 	# List Options to be available for choice in the RTD System Configurator...
@@ -3778,11 +3778,11 @@ rtd_setup_choices_for_preseed () {
 # Description: Function to write out a debina preeseed file to a location requested by the first parameter.
 # Other parameters accepted are CONFIG (multiselect de), SRVFUNC (task "Minecraft" "Tasks")
 # some parameters have defaults.
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # Example:
 # functoin_name          location        config          function
 # make_preseed_cfg       /path/to/file   ssh-server      Minecraft
@@ -3902,18 +3902,18 @@ rtd_setup_choices_for_preseed () {
 
 
 #  ----------------------------------------------------------------
-# __     ___      _               _   __  __            _     _            
-# \ \   / (_)_ __| |_ _   _  __ _| | |  \/  | __ _  ___| |__ (_)_ __   ___ 
+# __     ___      _               _   __  __            _     _
+# \ \   / (_)_ __| |_ _   _  __ _| | |  \/  | __ _  ___| |__ (_)_ __   ___
 #  \ \ / /| | '__| __| | | |/ _` | | | |\/| |/ _` |/ __| '_ \| | '_ \ / _ \
 #   \ V / | | |  | |_| |_| | (_| | | | |  | | (_| | (__| | | | | | | |  __/
 #    \_/  |_|_|   \__|\__,_|\__,_|_| |_|  |_|\__,_|\___|_| |_|_|_| |_|\___|
-                                                                         
-#  __  __                                              _   
-# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_ 
+
+#  __  __                                              _
+# |  \/  | __ _ _ __   __ _  __ _ _ __ ___   ___ _ __ | |_
 # | |\/| |/ _` | '_ \ / _` |/ _` | '_ ` _ \ / _ \ '_ \| __|
-# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_ 
+# | |  | | (_| | | | | (_| | (_| | | | | | |  __/ | | | |_
 # |_|  |_|\__,_|_| |_|\__,_|\__, |_| |_| |_|\___|_| |_|\__|
-#                           |___/  
+#                           |___/
 #  ----------------------------------------------------------------
 
 
@@ -3929,20 +3929,20 @@ rtd_setup_choices_for_preseed () {
 test_iso_boot_media ()
 {
 # Description: Function to test a created ISO file by booting it in a temporary VM using QEMU.
-# This function requires one argument or one variable (TARGET_ISO) to be set; since it needs 
-# to now what media to test. 
+# This function requires one argument or one variable (TARGET_ISO) to be set; since it needs
+# to now what media to test.
 #
-# QEMU is a free and open-source emulator and virtualizer that 
-# can perform hardware virtualization. QEMU is a hosted virtual machine monitor: it emulates 
-# the machine's processor through dynamic binary translation and provides a set of different 
-# hardware and device models for the machine, enabling it to run a variety of 
+# QEMU is a free and open-source emulator and virtualizer that
+# can perform hardware virtualization. QEMU is a hosted virtual machine monitor: it emulates
+# the machine's processor through dynamic binary translation and provides a set of different
+# hardware and device models for the machine, enabling it to run a variety of
 # guest operating systems.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage:  
+# Outputs:
+# Returns:
+# Usage:
 #
 # test_iso_boot_media /path/to/media
 # 	OR
@@ -3962,7 +3962,7 @@ test_iso_boot_media ()
 			: "${BIN_QEMU_SYSTEM_X86_64:=$(type -P qemu-system-x86_64 )}"
 			: "${PUT_QCOW_FILE_HERE_WHEN_DONE:="/home/$SUDO_USER/Virtual-HDs"}"
 
-			${BIN_QEMU_IMG} create -f qcow2 "$PUT_QCOW_FILE_HERE_WHEN_DONE/$(basename $TARGET_ISO .iso).qcow2" 10G 
+			${BIN_QEMU_IMG} create -f qcow2 "$PUT_QCOW_FILE_HERE_WHEN_DONE/$(basename $TARGET_ISO .iso).qcow2" 10G
 			${BIN_QEMU_SYSTEM_X86_64} -smp 2 -enable-kvm -m 4G --cdrom "$PUT_ISO_FILE_HERE_WHEN_DONE/$(basename $TARGET_ISO .iso).iso" "$PUT_QCOW_FILE_HERE_WHEN_DONE/$(basename $TARGET_ISO .iso).qcow2"
 		else
 			echo "User selected No, exit status was $?."
@@ -3978,7 +3978,7 @@ test_iso_boot_media ()
 
 make_kvm_virtual_machine_now_from_fedora_org ()
 {
-# Description: Function to create a KVM virtual michine disk and define a VM. This function should be
+# Description: Function to create a Fedora KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on.
 # NOTE: QCOW2 is a storage format for virtual .
 # machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
@@ -3993,11 +3993,11 @@ make_kvm_virtual_machine_now_from_fedora_org ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of Documentation
 
 	count=1
@@ -4022,10 +4022,11 @@ make_kvm_virtual_machine_now_from_fedora_org ()
                 --disk size="${4:-40}" \
 		--os-variant="${1:-fedora30}" \
                 --initrd-inject="${PRESEED_FILE}" \
-		--location='http://fedora.inode.at/releases/33/Everything/x86_64/os/' \
+		--location='http://www.nic.funet.fi/pub/Linux/INSTALL/fedora/linux/releases/33/Everything/x86_64/os/' \
 		--extra-args "ks=file:/$(basename $PRESEED_FILE)" \
 		--noautoconsole || read -p "An ERROR has occurred. Please press [ENTER] to continue..."
 	$RTD_GUI --backtitle "$BRANDING" --title "NOTICE!" --msgbox "The virtual machine is currently being built. You may attach to this server and see the progress at IP: $(hostname -I))" 10 60
+
 }
 
 
@@ -4036,9 +4037,9 @@ make_kvm_virtual_machine_now_from_fedora_org ()
 
 
 
-make_kvm_virtual_machine_now_from_debian_org ()
+make_kvm_virtual_machine_now_from_opensuse_com ()
 {
-# Description: Function to create a KVM virtual michine disk and define a VM. This function should be
+# Description: Function to create a SUSE KVM virtual michine disk and define a VM. This function should be
 # used on a Qemu/KVM virtual host that the virtual guest is to be used on.
 # NOTE: QCOW2 is a storage format for virtual .
 # machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
@@ -4053,11 +4054,74 @@ make_kvm_virtual_machine_now_from_debian_org ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
+# End of Documentation
+
+	count=1
+	for i in qemu-utils qemu-tools qemu-kvm qemu-system-x86 virt-install
+	do
+		write_status "${count}	- Verifying dependencies (${i})..."
+		check_dependencies $i &>/dev/null
+		count=$((count + 1))
+	done
+	write_information "Using sintallation control file: ${PRESEED_FILE}"
+
+	# Lookup specific binaries: use full path since they may just have been added and not in $PATH yet.
+	: "${BIN_VIRT_INSTALL:=$(type -p virt-install)}"
+
+	# Discover if the appropriate VM net interface is (default or br'0 - n')
+	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
+
+        # create image and run installer
+        "${BIN_VIRT_INSTALL}" --connect qemu:///system --name VDI_SUSE_"$CONFIG"_"$RANDOM" \
+                --vcpus "${2:-2}" \
+                --memory "${3:-2048}" \
+                --network "$VIRT_NET" \
+                --disk size="${4:-40}" \
+                --os-variant=opensusetumbleweed \
+                --initrd-inject="${PRESEED_FILE}" \
+                --location='https://download.opensuse.org/pub/opensuse/tumbleweed/repo/oss/' \
+                --extra-args "AutoYaST=file:///$(basename $PRESEED_FILE)" \
+                --noautoconsole || read -p "An ERROR has occurred. Please press [ENTER] to continue..."
+
+	$RTD_GUI --backtitle "$BRANDING" --title "NOTICE!" --msgbox "The virtual machine is currently being built. You may attach to this server and see the progress at IP: $(hostname -I))" 10 60
+
+	#  --location='http://download.opensuse.org/pub/opensuse/distribution/leap/15.0/repo/oss' \
+}
+
+
+
+
+
+
+
+
+make_kvm_virtual_machine_now_from_debian_org ()
+{
+# Description: Function to create a Debian KVM virtual michine disk and define a VM. This function should be
+# used on a Qemu/KVM virtual host that the virtual guest is to be used on.
+# NOTE: QCOW2 is a storage format for virtual .
+# machine disk images QCOW stands for QEMU copy on write. The QCOW2 format decouples the physical storage
+# layer from the virtual layer by adding a mapping between logical and physical blocks.
+# NOTE2: Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux®.
+# Specifically, KVM lets you turn Linux into a hypervisor that allows a host machine to run multiple,
+# isolated virtual environments called guests or virtual machines (VMs). KVM is part of Linux.
+# For complete info: https://www.redhat.com/en/topics/virtualization/what-is-KVM
+# set -e
+# Use the check_dependencies function to make sure the needed software is available.
+# Usage: Either simply call this function to use the defaults or:
+# Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
+# Omitting any of the arguments will us the default instead.
+#
+# Globals:
+# Arguments: None
+# Outputs:
+# Returns:
+# Usage:
 # End of Documentation
 
 	count=1
@@ -4073,7 +4137,7 @@ make_kvm_virtual_machine_now_from_debian_org ()
 
 	# Discover if the appropriate VM net interface is (default or br'0 - n')
 	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
-	
+
 	# create image and run installer
 	"${BIN_VIRT_INSTALL}" --name VDI_Debian_"$CONFIG"_"$RANDOM" \
 		--vcpus "${2:-2}" \
@@ -4107,21 +4171,21 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 # Specifically, KVM lets you turn Linux into a hypervisor that allows a host machine to run multiple,
 # isolated virtual environments called guests or virtual machines (VMs). KVM is part of Linux.
 # For complete info: https://www.redhat.com/en/topics/virtualization/what-is-KVM || read -p "An error may have occurred (review above outout) then: Press [ENTER] to continue:"
-# 
+#
 # Usage: Either simply call this function to use the defaults or:
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
-# Example: 
+# Outputs:
+# Returns:
+# Usage:
+# Example:
 #                                              vmtype    CPU  RAM   DISK
 # make_kvm_virtual_machine_now_from_ubuntu_com debian10  4    2048  40
-# 
-# If complete flexibility is needed simply use the virt-install binary and directly write the arguments. 
+#
+# If complete flexibility is needed simply use the virt-install binary and directly write the arguments.
 # Alternatively; edit the function with new defaults that suit the needs.
 # End of Documentation
 
@@ -4138,7 +4202,7 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 
 	# Discover if the appropriate VM net interface is (default or br'0 - n')
 	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
- 
+
 	# create image and run installer
 	"${BIN_VIRT_INSTALL}" --name VDI_Ubuntu_"$CONFIG"_"$RANDOM" \
 		--vcpus "${2:-2}" \
@@ -4164,17 +4228,17 @@ make_kvm_virtual_machine_now_from_ubuntu_com ()
 
 make_kvm_virtual_machine_now_from_microsoft ()
 {
-# Description: 
+# Description:
 # Function to create a KVM virtual michine disk and define a VM. This function should be
-# used on a Qemu/KVM virtual host that the virtual guest is to be used on. In the future 
-# scripting will be added to allow for acting on remote machines directly... 
+# used on a Qemu/KVM virtual host that the virtual guest is to be used on. In the future
+# scripting will be added to allow for acting on remote machines directly...
 # At this time this functio takes no arguments but will prompt for what it needs if it is not available.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 #
 #
 # NOTE: QCOW2 is a storage format for virtual .
@@ -4195,23 +4259,23 @@ make_kvm_virtual_machine_now_from_microsoft ()
 	: ${CONFIG:-"Workstation"}
 
 	# Provide Windows setup media:
-	WindowsMedia=/var/lib/libvirt/boot/Win10_English_x64.iso 
+	WindowsMedia=/var/lib/libvirt/boot/Win10_English_x64.iso
 	write_information "Ensuring that install media is available to build a Windows VM..."
 	if [[ ! -e "${WindowsMedia}" ]]; then
 		if ( $RTD_GUI --backtitle "..$BRANDING" --title "Windows Install Media Needed" \
 			--no-button "NO: Just Cancel" \
 			--yes-button "OK: I am done upploading" \
-			--yesno "Windows install media was not found where expected ${WindowsMedia%/*} \n Please place a copy of it in /home/$SUDO_USER/Downloads/ and press [ OK ] \n Please name it Win**something**.iso" 20 90 ); 
+			--yesno "Windows install media was not found where expected ${WindowsMedia%/*} \n Please place a copy of it in /home/$SUDO_USER/Downloads/ and press [ OK ] \n Please name it Win**something**.iso" 20 90 );
 		then
-			if $(ls /home/$SUDO_USER/Downloads/Win*.iso >/dev/null ) ; then 
+			if $(ls /home/$SUDO_USER/Downloads/Win*.iso >/dev/null ) ; then
 				mv -v /home/$SUDO_USER/Downloads/Win*.iso /var/lib/libvirt/boot/Win10_English_x64.iso
 			else
 				write_error "Could not find the file: /home/$SUDO_USER/Downloads/Win*.iso "
 				rtd_oem_pause 1
 			fi
 		else
-			return 
-		fi 
+			return
+		fi
 	fi
 
 
@@ -4220,13 +4284,13 @@ make_kvm_virtual_machine_now_from_microsoft ()
 	write_information "Ensuring that instructions are available to build a Windows VM..."
 	if [[ ! -e "${WindowsInstructions}" ]]; then
 		mkfs.msdos -C ${WindowsInstructions} 1440
-		TempFileOut=$(mktemp -d ) 
-		generate_autounattend_xml "${TempFileOut}" || rtd_oem_pause 1 
+		TempFileOut=$(mktemp -d )
+		generate_autounattend_xml "${TempFileOut}" || rtd_oem_pause 1
 
 		write_information "Get the latest bootstrap script if possible, otherwise generate one..."
 		if curl ipinfo.io &>/dev/null ; then
 			wget https://github.com/vonschutter/RTD-Build/raw/master/rtd-me.sh.cmd -P "${TempFileOut}" || generate_rtd_me_sh_cmd "${TempFileOut}"
-		else 
+		else
 			generate_rtd_me_sh_cmd "${TempFileOut}"
 		fi
 		mcopy -i ${WindowsInstructions} ${TempFileOut}/rtd-me.sh.cmd ::/ || rtd_oem_pause 1
@@ -4235,7 +4299,7 @@ make_kvm_virtual_machine_now_from_microsoft ()
 
 	write_status "Lookup specific binaries: use full path since they may just have been added and not in PATH yet."
 
-	type -P kvm			>>/dev/null || check_dependencies qemu-kvm 
+	type -P kvm			>>/dev/null || check_dependencies qemu-kvm
 	type -p virt-install		>>/dev/null || check_dependencies virtinst
 	: "${BIN_VIRT_INSTALL:=$(type -p virt-install)}"
 
@@ -4280,11 +4344,11 @@ make_kvm_virtual_machine_now_from_iso ()
 # Call this function with "function" "RAM_SIZE" "DISK_SIZE" "DISK_FORMAT" "DISK_FILE"
 # Omitting any of the arguments will us the default instead.
 #
-# Globals: 
+# Globals:
 # Arguments: None
-# Outputs: 
-# Returns: 
-# Usage: 
+# Outputs:
+# Returns:
+# Usage:
 # End of Documentation
 
 	for i in qemu-utils qemu-kvm qemu-system-x86
@@ -4307,7 +4371,7 @@ make_kvm_virtual_machine_now_from_iso ()
 	VIRT_NET="$(if ls /sys/class/net |grep br |grep -v virbr >/dev/null; then echo "bridge:$(ls /sys/class/net)" |grep br ; else echo default;fi)"
 
 	# create image and run installer
-	virt-install --name VM_Template_"$1"_"$RANDOM" 
+	virt-install --name VM_Template_"$1"_"$RANDOM"
 		--vcpus "${"2"}" \
 		--memory "${"2048"}" \
 		--network "${VIRT_NET}" \
@@ -4326,19 +4390,19 @@ make_kvm_virtual_machine_now_from_iso ()
 
 backup_running_vm ()
 {
-# Description: 
+# Description:
 # Function to back up all running virtual machines on the host it is being run on.
 # This function should be called from within this script and does not require any
 # arguments passed.
-# 
+#
 # Globals: ${VM_BACKUP_TARGET} (defaults to /mnt/vmdsk/VM_BACKUP)
 # Arguments: None
-# Outputs: Backups of running vm's. 
-# Returns: 
-# Usage: 
-# 
+# Outputs: Backups of running vm's.
+# Returns:
+# Usage:
+#
 # backup_running_vm
-# 
+#
 # End of documentation
 
 	do_vm_backup () {
@@ -4449,24 +4513,24 @@ backup_running_vm ()
 
 
 
-#                        ---                                     
-#                     -        --                             
-#                 --( /     \ )XXXXXXXXXXXXX                   
-#             --XXX(   O   O  )XXXXXXXXXXXXXXX-              
-#            /XXX(       U     )        XXXXXXX\               
-#          /XXXXX(              )--   XXXXXXXXXXX\             
+#                        ---
+#                     -        --
+#                 --( /     \ )XXXXXXXXXXXXX
+#             --XXX(   O   O  )XXXXXXXXXXXXXXX-
+#            /XXX(       U     )        XXXXXXX\
+#          /XXXXX(              )--   XXXXXXXXXXX\
 #         /XXXXX/ (      O     )   XXXXXX   \XXXXX\
-#         XXXXX/   /            XXXXXX   \   \XXXXX----        
-#         XXXXXX  /          XXXXXX         \  ----  -         
-# ---     XXX  /          XXXXXX      \           ---        
-#   --  --  /      /\  XXXXXX            /     ---=         
-#     -        /    XXXXXX              '--- XXXXXX         
-#       --\/XXX\ XXXXXX                      /XXXXX         
+#         XXXXX/   /            XXXXXX   \   \XXXXX----
+#         XXXXXX  /          XXXXXX         \  ----  -
+# ---     XXX  /          XXXXXX      \           ---
+#   --  --  /      /\  XXXXXX            /     ---=
+#     -        /    XXXXXX              '--- XXXXXX
+#       --\/XXX\ XXXXXX                      /XXXXX
 #         \XXXXXXXXX                        /XXXXX/
-#          \XXXXXX                         /XXXXX/         
-#            \XXXXX--  /                -- XXXX/       
-#             --XXXXXXX---------------  XXXXX--         
-#                \XXXXXXXXXXXXXXXXXXXXXXXX-            
+#          \XXXXXX                         /XXXXX/
+#            \XXXXX--  /                -- XXXX/
+#             --XXXXXXX---------------  XXXXX--
+#                \XXXXXXXXXXXXXXXXXXXXXXXX-
 #                  --XXXXXXXXXXXXXXXXXX-
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4497,15 +4561,15 @@ backup_running_vm ()
 rtd_oem_cfg_post_task_sequence_default ()
 {
 # Description: Default post install script to be inserted in to build media (ISO) for Linux.
-# Script will take care to configure automatic login and execution of 
+# Script will take care to configure automatic login and execution of
 # the next post configurations script **"rtd-me.sh.cmd"** a unified bootstrap
-# script that runs on any bash supported system (BE, Apple OS X, Linux, BSD) 
-# as well as Windows Shell script (Winsows NT, XP, 7, 8, 10 etc.) as well 
-# as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME). 
-# Globals: 
+# script that runs on any bash supported system (BE, Apple OS X, Linux, BSD)
+# as well as Windows Shell script (Winsows NT, XP, 7, 8, 10 etc.) as well
+# as provisions for BATCH (DOS, Windows 3.11, 95, 98, ME).
+# Globals:
 # Arguments: [directory path]
 # Outputs: task.sh (run during setup)
-# Returns: 
+# Returns:
 # Usage: rtd_oem_cfg_post_task_sequence_default /where/to/put/file/
 # End of documentation
 	cat >> $1/task.sh <<-'EOF'
@@ -4515,7 +4579,7 @@ rtd_oem_cfg_post_task_sequence_default ()
 	#::::::::::::::          Script Settings                 ::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	# Variables that govern the behavior or the script and location of files are 
+	# Variables that govern the behavior or the script and location of files are
 
 	# Base folder structure for optional administrative commandlets and scripts:
 	_RTDSCR=$(if [ -f /opt/rtd/scripts ]; then echo /opt/rtd/scripts ; else ( mkdir -p /opt/rtd/scripts & echo  /opt/rtd/scripts ) ; fi )
@@ -4538,50 +4602,50 @@ rtd_oem_cfg_post_task_sequence_default ()
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	tell_info() {
-		echo "starting post install tasks..." 
-		echo "SYSTEM information:"		
-		echo "File system information: "  	
-		mount 				
-		echo "Block Devices: "  		
-		lsblk   				
-		echo "available space: "  		
-		df -h  					
-		echo "Process information: "  		
-		ps aux 					
-	} 
+		echo "starting post install tasks..."
+		echo "SYSTEM information:"
+		echo "File system information: "
+		mount
+		echo "Block Devices: "
+		lsblk
+		echo "available space: "
+		df -h
+		echo "Process information: "
+		ps aux
+	}
 
 
 
 	task_setup_rtd_basics() {
-		echo "Linux OS Found: Attempting to get instructions for Linux..." 
-		wget -q  $_RTDSRC -P $_RTDCACHE 
+		echo "Linux OS Found: Attempting to get instructions for Linux..."
+		wget -q  $_RTDSRC -P $_RTDCACHE
 		unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
-		echo "Instructions sucessfully retrieved..." 
-		chmod +x $_RTDSCR/* 
+		echo "Instructions sucessfully retrieved..."
+		chmod +x $_RTDSCR/*
 		pushd /bin
-		ln -f -s $_RTDSCR/rtd* . 		
+		ln -f -s $_RTDSCR/rtd* .
 		popd
 	}
 
 
 	task_setup_ssh_keys() {
-		mkdir  -p --mode=0700 /root/.ssh && cat /opt/rtd/custom/userkey.pub > /root/.ssh/authorized_keys 
-		mkdir --mode=0700 /home/tangarora/.ssh && cat /opt/rtd/custom/userkey.pub > /home/tangarora/.ssh/authorized_keys 
-		chown -R tangarora /home/tangarora/.ssh && chmod 0700 -R /home/tangarora/.ssh 
+		mkdir  -p --mode=0700 /root/.ssh && cat /opt/rtd/custom/userkey.pub > /root/.ssh/authorized_keys
+		mkdir --mode=0700 /home/tangarora/.ssh && cat /opt/rtd/custom/userkey.pub > /home/tangarora/.ssh/authorized_keys
+		chown -R tangarora /home/tangarora/.ssh && chmod 0700 -R /home/tangarora/.ssh
 	}
 
 
 
 	task_setup_oem_run_once() {
-		# Task to run the OEM post configuaration on first login. 
+		# Task to run the OEM post configuaration on first login.
 		# the OEM post configuration may allow for interaction if desired and would
-		# best run on several distributions and in a full graphic environment. 
+		# best run on several distributions and in a full graphic environment.
 
 		cat << CREATE_START_LINK > /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop
-		# This will automatically start the RuntTime Data OEM config options on 
+		# This will automatically start the RuntTime Data OEM config options on
 		# the first login. Once run this launcher will be moved to the /opt/rtd folder
 		# so that subsequent logins will not be plagued by the OEM setup.
-		# 
+		#
 		[Desktop Entry]
 		Type=Application
 		Exec=sudo /opt/rtd/scripts/rtd-oem-linux-config.sh
@@ -4598,7 +4662,7 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 	task_enable_oem_elevate_priv() {
 		# Add instruction to a sudoers include file:
-		# This should be removed when OEM setup is complete as it would represent a back door... 
+		# This should be removed when OEM setup is complete as it would represent a back door...
 		echo "tangarora ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
 
 		# Check that your sudoers include file passed the visudo syntax checks:
@@ -4608,22 +4672,22 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 
 	task_ensure_oem_auto_login() {
-		# task to ensure that the temporary OEM user is loged in for 
-		# admin purposes. It is better to install crtail software at this 
-		# time since a full graphic environment is avaliable. Also the 
-		# step 2 inst the OEM load process is optimally able to run 
-		# on several distributions. 
+		# task to ensure that the temporary OEM user is loged in for
+		# admin purposes. It is better to install crtail software at this
+		# time since a full graphic environment is avaliable. Also the
+		# step 2 inst the OEM load process is optimally able to run
+		# on several distributions.
 
 
-		if [[ -f /etc/lightdm/lightdm.conf ]]; then 
+		if [[ -f /etc/lightdm/lightdm.conf ]]; then
 			cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
 
 			cat << OEM_LXDM_LOGIN_OPTION > /etc/lightdm/lightdm.conf
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/lightdm/lightdm.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[SeatDefaults]
 			autologin-user=$_OEM_USER
 			autologin-user-timeout=0
@@ -4632,15 +4696,15 @@ rtd_oem_cfg_post_task_sequence_default ()
 		fi
 
 
-		if [[ -f /etc/sddm.conf ]]; then 
+		if [[ -f /etc/sddm.conf ]]; then
 			cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
 
 			cat << OEM_SDDM_LOGIN_OPTION > /etc/sddm.conf
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/sddm.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[Autologin]
 			User=$_OEM_USER
 			Session=plasma.desktop
@@ -4649,15 +4713,15 @@ rtd_oem_cfg_post_task_sequence_default ()
 		fi
 
 
-		if [[ -f /etc/gdm3/daemon.conf ]]; then 
+		if [[ -f /etc/gdm3/daemon.conf ]]; then
 			cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
 
 			cat << OEM_GDM3_LOGIN_OPTION > /etc/gdm3/daemon.conf
 			# This configuration file was created by RTD Setup.
-			# You may safely replace this file with the original backed up: 
+			# You may safely replace this file with the original backed up:
 			# /etc/gdm3/daemon.conf.rtd-bak
 			# If this file is not there, then it wa not there to begin with
-			# and you can delete this file. 
+			# and you can delete this file.
 			[daemon]
 			AutomaticLoginEnable=True
 			AutomaticLogin=$_OEM_USER
@@ -4670,11 +4734,11 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 
 	task_oem_ensure_elevated_gui () {
-		# Some Debian and other Linux distribution do not allow gui apps to 
-		# be run when invoked by "sudo" or in a root (system elevated authority) 
-		# environment. To mitigate this some stemp may need to taken. 
+		# Some Debian and other Linux distribution do not allow gui apps to
+		# be run when invoked by "sudo" or in a root (system elevated authority)
+		# environment. To mitigate this some stemp may need to taken.
 		# Will work on Slackware as well as Debian to give root permission to open X programs.
-		echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
+		echo "xhost local:root" >> /home/$_OEM_USER/.bashrc
 
 		# Allows runing an X program as root
 		touch /root/.bashrc
@@ -4685,18 +4749,18 @@ rtd_oem_cfg_post_task_sequence_default ()
 	task_oem_autounlock_disk() {
 		# Setup automatic unlocking of the encrypted system disk (encryption is default on RTD systems).
 		# NOTE: This will render the encryption useless since the key to unlock the encrypted
-		# volume will be located on an unencrypted location on the same system as the encrypted volume. 
-		# This is the same as locking your door and leaving the key by the door outside. 
+		# volume will be located on an unencrypted location on the same system as the encrypted volume.
+		# This is the same as locking your door and leaving the key by the door outside.
 		#
 		# The intention behind this is to be able to complete all build activites without manual intervention
-		# of any kind. The intention is to remove the key file after all administrative tasks are complete. 
+		# of any kind. The intention is to remove the key file after all administrative tasks are complete.
 
 		# 1. Back up your initramfs disk
 		cp  /boot/initrd.img-$(uname -r)  /boot/initrd.img-$(uname -r).bak
 
 			cat << OEM_CRYPTLOCK_OPTION > /boot/grub/grub.cfg
 			### BEGIN /etc/grub.d/10_linux ###
-			
+
 			menuentry 'Debian GNU/Linux, with Linux $(uname -r) (crypto safe)' --class debian --class gnu-linux --class gnu --class os {
 			      load_video
 			      insmod gzio
@@ -4725,7 +4789,7 @@ rtd_oem_cfg_post_task_sequence_default ()
 		# 6. Edit /etc/crypttab
 		chmod 0777 /etc/crypttab
 		cp /etc/crypttab /etc/crypttab.temporary
-		sed -i /"$(cat /etc/crypttab | cut -d " " -f 1 )"/d /etc/crypttab.temporary 
+		sed -i /"$(cat /etc/crypttab | cut -d " " -f 1 )"/d /etc/crypttab.temporary
 		echo $(cat /etc/crypttab | cut -d " " -f 1-2)  /$(udevadm info $(blkid | grep crypto_LUKS|  cut -d : -f 1) |grep by-uuid | cut -d : -f 2 | head -1):/keyfile luks,keyscript=/lib/cryptsetup/scripts/pa$  >> /etc/crypttab.temporary
 		mv /etc/crypttab /etc/crypttab.back
 		mv /etc/crypttab.temporary /etc/crypttab
@@ -4748,7 +4812,7 @@ rtd_oem_cfg_post_task_sequence_default ()
 		elif cat /etc/os-release |grep suse ; then
 			echo "I dont know of any OEM configuration for SuSE"
 		elif cat /etc/os-release |grep fedora ; then
-			echo "I dont know of any OEM configuration for Fedora"	
+			echo "I dont know of any OEM configuration for Fedora"
 		fi
 	}
 
@@ -4779,22 +4843,22 @@ rtd_oem_cfg_post_task_sequence_default ()
 
 generate_rtd_me_sh_cmd ()
 {
-# Description: 
-# Generates an unattended install instruction file for Windows systems. 
+# Description:
+# Generates an unattended install instruction file for Windows systems.
 # As documentation at microsoft for CMD shell scripting is limited see the below suggestion:
 # Reference https://www.amazon.com/Windows-Shell-Scripting-Timothy-Hill/dp/1578700477
 # for more information.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: [directory path]
 # Outputs: one rtd-me.cmd.sh flobal bootsrap script
 # Returns: na
-# Usage:  
-# 
+# Usage:
+#
 # generate_rtd_me_sh_cmd /location/to/place/fiile
-# 
-# 
-# NOTE: This file is generated from this library to limit the dependecies on external downloads. 
+#
+#
+# NOTE: This file is generated from this library to limit the dependecies on external downloads.
 # End of documentation
 
 	cat >> $1/rtd-me.sh.cmd <<-'EOF'
@@ -4831,18 +4895,18 @@ generate_rtd_me_sh_cmd ()
 	#::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	#	
+	#
 
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::          Script Settings                 ::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	# Variables that govern the behavior or the script and location of files are 
+	# Variables that govern the behavior or the script and location of files are
 	# set here. There should be no reason to change any of this.
 
 	# Save the UI currently stated in the $XDG_CURRENT_DESKTOP. NOTE that htis is not a reliable
-	# way to detect running desktop environment. It would likely be better to search for a process. 
+	# way to detect running desktop environment. It would likely be better to search for a process.
 	echo "$XDG_CURRENT_DESKTOP">$HOME/.ui
 
 
@@ -4851,7 +4915,7 @@ generate_rtd_me_sh_cmd ()
 	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
-	# Pull in current desktop... 
+	# Pull in current desktop...
 	_UI=$( cat /home/$SUDO_USER/.ui )
 
 	# Base folder structure for optional administrative commandlets and scripts:
@@ -4875,7 +4939,7 @@ generate_rtd_me_sh_cmd ()
 
 	#:: Given that Bash or other Shell environment has been detected and the POSIX chell portion of this script is executed,
 	#:: the second stage script must be downloaded from an online location. Depending on the distribution of OS
-	#:: there are different methods available to get and run remote files. 
+	#:: there are different methods available to get and run remote files.
 	#::
 	#:: Table of evaluating family of OS and executing the appropriate action fiven the OS found.
 	#:: In this case it is easier to manage a straight table than a for loop or array:
@@ -4883,13 +4947,13 @@ generate_rtd_me_sh_cmd ()
 	clear
 	echo "This is now a ${SHELL} environment..."
 	echo "Session found: You seem to be using ${_UI:-"something I can't see"} as your graphical environment."
-	echo "User name: $SUDO_USER started this script." 
+	echo "User name: $SUDO_USER started this script."
 	echo "Attempting to detect version of POSIX based system..."
 
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		echo "Linux OS Found: Attempting to get instructions for Linux..."
-		# Using a dirty way to forcibly ensure that wget and unzip are available on the system. 
+		# Using a dirty way to forcibly ensure that wget and unzip are available on the system.
 		for i in apt yum dnf zypper ; do $i -y install wget &>> $_LOGFILE ; done
 		wget -q  $_RTDSRC -P $_RTDCACHE &>> $_LOGFILE
 		for i in apt yum dnf zypper ; do $i -y install unzip &>> $_LOGFILE ; done
@@ -4901,9 +4965,9 @@ generate_rtd_me_sh_cmd ()
 				pushd /bin
 				ln -f -s $_RTDSCR/rtd* .
 				popd
-				bash $_RTDSCR/rtd-oem-linux-config.sh "$@" | tee $_STATUSLOG 
+				bash $_RTDSCR/rtd-oem-linux-config.sh "$@" | tee $_STATUSLOG
 			else
-				echo "Failed to retrieve instructions correctly! " 
+				echo "Failed to retrieve instructions correctly! "
 				echo "Suggestion: check write permission in "/opt" or internet connectivity."
 				exit 1
 			fi
@@ -5021,7 +5085,7 @@ generate_rtd_me_sh_cmd ()
 		echo Fetching %_STAGE2FILE%...
 		echo Please wait...
 		powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest %_STAGE2LOC%\%_STAGE2FILE% -OutFile %_STAGE2FILE%"
-		powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE% 
+		powershell -ExecutionPolicy UnRestricted -File .\%_STAGE2FILE%
 		goto end
 
 
@@ -5080,19 +5144,19 @@ generate_rtd_me_sh_cmd ()
 
 generate_autounattend_xml ()
 {
-# Description: 
-# Generates an unattended install instruction file for Windows systems. 
+# Description:
+# Generates an unattended install instruction file for Windows systems.
 # Reference https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/automate-windows-setup
 # for more information.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: [directory path]
 # Outputs: one autounattend.cfg file
 # Returns: na
-# Usage: 
-# 
+# Usage:
+#
 # generate_autounattend_xml /location/to/place/fiile
-# 
+#
 # End of documentation
 
 	cat >> $1/autounattend.xml <<-'EOF'
@@ -5398,21 +5462,21 @@ generate_autounattend_xml ()
 		<CommandLine>reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" /v StartupPage /t REG_DWORD /d 1 /f</CommandLine>
 		<RequiresUserInput>true</RequiresUserInput>
 		</SynchronousCommand>
-		
+
 		<SynchronousCommand wcm:action="add">
 		<Order>2</Order>
 		<Description>Control Panel Icon Size</Description>
 		<RequiresUserInput>false</RequiresUserInput>
 		<CommandLine>reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" /v AllItemsIconView /t REG_DWORD /d 1 /f</CommandLine>
 		</SynchronousCommand>
-		
+
 		<SynchronousCommand wcm:action="add">
 		<Order>3</Order>
 		<RequiresUserInput>false</RequiresUserInput>
 		<CommandLine>cmd /C wmic useraccount where name="tangarora" set PasswordExpires=false</CommandLine>
 		<Description>Password Never Expires</Description>
 		</SynchronousCommand>
-		
+
 		<SynchronousCommand wcm:action="add">
 		<Order>4</Order>
 		<RequiresUserInput>true</RequiresUserInput>
@@ -5433,10 +5497,10 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: instruction for Ubuntu's convoluted support for both preseed and kickstart files. 
+# Returns: instruction for Ubuntu's convoluted support for both preseed and kickstart files.
 # Usage: rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options "directory"
 # End of documentation
-	cat $1/preseed.cfg >$1/ks.cfg 
+	cat $1/preseed.cfg >$1/ks.cfg
 		#<<- EOF
 
 		# # --------------------------------------------------- #
@@ -5469,7 +5533,7 @@ rtd_oem_preseed_ubuntu_cfg_KS_CFG_Options ()
 		#  	chmod +x /target/opt/rtd/scripts/task.sh ;\
 		#  	/bin/bash /target/opt/rtd/scripts/task.sh;\
 		# 	read -p "Press any key to continue...."
-		
+
 		# # --------------------------------------------------- #
 
 	#EOF
@@ -5482,7 +5546,7 @@ rtd_oem_preseed_cfg_Unattended_Install ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: suppress any questions. 
+# Returns: suppress any questions.
 # Usage: rtd_oem_preseed_cfg_Unattended_Install "directory"
 # End of documentation
 	cat >> $1/$PRESEED <<-'EOF'
@@ -5520,8 +5584,8 @@ rtd_oem_preseed_cfg_Network_Configuration ()
 		# The RTD default prefferred config is to rely on DHCP,
 		# and for wireless networks (systems with only wireless cards)
 		# default to an SSID named "loader" and the guest wpa string
-		# "letmein1234". This allows supported systems to be 
-		# installed directly over WiFi with no user input. 
+		# "letmein1234". This allows supported systems to be
+		# installed directly over WiFi with no user input.
 		# End of documentation
 		d-i netcfg/choose_interface select manual
 		d-i netcfg/hostname string RTD-Client
@@ -5706,7 +5770,7 @@ rtd_oem_preseed_cfg_GRUB_Bootloader_Installation ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: 
+# Returns:
 # Usage: rtd_oem_preseed_cfg_GRUB_Bootloader_Installation "directory"
 # End of documentation
 
@@ -5732,7 +5796,7 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: 
+# Returns:
 # Usage: rtd_oem_preseed_cfg_Disk_Layout "directory"
 # End of documentation
 
@@ -5745,9 +5809,9 @@ rtd_oem_preseed_cfg_Disk_Layout ()
 		# Set option to encrypt the hard disk:
 		# By default the harddisk will be encrypted to pretect data
 		# and will need to be unlocked with a password when the
-		# system is booted. In addition a default is prefferred 
-		# where the swap space is set to 200% of RAM so that 
-		# hibernate can be supported. 
+		# system is booted. In addition a default is prefferred
+		# where the swap space is set to 200% of RAM so that
+		# hibernate can be supported.
 		# End of documentation
 
 		d-i partman-auto/method string crypto
@@ -5813,7 +5877,7 @@ rtd_oem_preseed_cfg_Package_Selection ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: 
+# Returns:
 # Usage: rtd_oem_preseed_cfg_Package_Selection "directory"
 # End of documentation
 
@@ -5844,7 +5908,7 @@ rtd_oem_preseed_cfg_Package_Selection ()
 		# if you don’t want it, you can set this to "false" to turn it off.
 		# d-i pkgsel/updatedb boolean false
 		# --------------------------------------------------- #
-		
+
 	EOF
 }
 
@@ -5854,7 +5918,7 @@ rtd_oem_preseed_cfg_Addon_MinecraftServer()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: 
+# Returns:
 # Usage: rtd_oem_preseed_cfg_Addon_MinecraftServer "directory"
 # End of documentation
 
@@ -5899,14 +5963,14 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 # Globals: $PRESEED (filename)
 # Arguments: Where to place file (directory)
 # Outputs: one preseed file section
-# Returns: 
+# Returns:
 # Usage: rtd_oem_preseed_cfg_Addon_Tasks "directory"
 # End of documentation
 
 	cat >> $1/$PRESEED <<-'EOF'
 
 		# --------------------------------------------------- #
-		# Default preseed Addon Tasks 
+		# Default preseed Addon Tasks
 		# --------------------------------------------------- #
 		# End of documentation
 		d-i preseed/late_command string \
@@ -5956,8 +6020,8 @@ rtd_oem_preseed_cfg_Addon_Tasks ()
 
 generate_minecraft_server_launcher ()
 {
-# Description: Generates preseed file to build a minecraft server. 
-# Globals: 
+# Description: Generates preseed file to build a minecraft server.
+# Globals:
 # Arguments: [file location]
 # Outputs: one preseed file
 # Returns: error level of last command
@@ -5969,14 +6033,14 @@ generate_minecraft_server_launcher ()
 	#::             RTD System System Managment Script (Auto Generated)
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	#:: Author:     SLS. 
+	#:: Author:     SLS.
 	#:: Version:	1.03
 	#::
 	#::
 	#:: Purpose: The purpose of the script is to perform managment tasks on Linux systems
-	#::  
-	#:: This is a script that will start Minecraft Server on an Ubuntu or Debian (Ubuntu) based server. It will start 
-	#:: multiple panes using "byobu", and start the server etc there... 
+	#::
+	#:: This is a script that will start Minecraft Server on an Ubuntu or Debian (Ubuntu) based server. It will start
+	#:: multiple panes using "byobu", and start the server etc there...
 	#::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -5988,11 +6052,11 @@ generate_minecraft_server_launcher ()
 	#::::::::::::::          Script Settings                 ::::::::::::::::::::::
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	# Variables that govern the behavior or the script and location of files are 
-	# set here. There should be no reason to change any of this to setup and 
+	# Variables that govern the behavior or the script and location of files are
+	# set here. There should be no reason to change any of this to setup and
 	# get a working Minecraft server on Ubuntu. However, if you have updated scripts
-	# and need to download yours from someplace else you only need to change these 
-	# setings. 
+	# and need to download yours from someplace else you only need to change these
+	# setings.
 
 	# Your Minecraft version (this is a preference only), script will always
 	# get the latest Minecraft if it does not find a local server.
@@ -6014,7 +6078,7 @@ generate_minecraft_server_launcher ()
 	#
 
 	function check_dependencies (){
-		# Simple function to check if sofware is available and take action 
+		# Simple function to check if sofware is available and take action
 		# if it is not. Software name must match command to envoke it.
 		#---------------------------------------------------------------
 		echo "Checking for script dependencies and install if not there..."
@@ -6036,7 +6100,7 @@ generate_minecraft_server_launcher ()
 
 	function install_software (){
 		# Simple function to help installing software on several linux distributions
-		# Should work on Fedora, SUSE, RedHat, Ubuntu, Debian etc. unless the naming 
+		# Should work on Fedora, SUSE, RedHat, Ubuntu, Debian etc. unless the naming
 		# convention of the software package is different between distributions.
 		if hash pkcon 2>/dev/null; then
 			sudo pkcon -y  install "$@"
@@ -6055,10 +6119,10 @@ generate_minecraft_server_launcher ()
 	}
 
 	function setup_minecraft_root (){
-		# Setup and initiate the location of the mincraft server. 
+		# Setup and initiate the location of the mincraft server.
 		# For us i likes to live in /home/$USER/bin/minecraft.server/Minecraft.$VERSION
-		# This tests if the script files are available and downloades them if not. 
-		mkdir -p $MINECRAFT_HOME 
+		# This tests if the script files are available and downloades them if not.
+		mkdir -p $MINECRAFT_HOME
 
 		for i in start.sh announce.py server.properties eula.txt
 		do
@@ -6075,7 +6139,7 @@ generate_minecraft_server_launcher ()
 
 	function run_minecraft_server_manager (){
 
-		# Start byobu multi screen app... 
+		# Start byobu multi screen app...
 		byobu new-session -d -s $USER
 
 		# status screen
@@ -6104,7 +6168,7 @@ generate_minecraft_server_launcher ()
 
 
 	function check_java (){
-		java --version >/dev/null 
+		java --version >/dev/null
 		if [ $? -eq 0 ]; then
 			echo "java of some version is present. I respect your choice... and will try to run! --- OK!"
 		else
@@ -6123,7 +6187,7 @@ generate_minecraft_server_launcher ()
 
 	function minecraft_update() {
 		# Get minecraft version publication file and get the latest server URL
-		# This is an unneccessarily complicated way by Mojang! 
+		# This is an unneccessarily complicated way by Mojang!
 		cd $MINECRAFT_HOME || { echo "Failure change to Minecraft folder. Is it there?"; exit 1; }
 		wget -q -O $MINECRAFT_HOME/versions --no-check-certificate https://launchermeta.mojang.com/mc/game/version_manifest.json
 		JSONVERSION=$(cat versions | python -c "exec(\"import json,sys\nobj=json.load(sys.stdin)\nversion=obj['latest']['release']\nfor v in obj['versions']:\n   if v['id']==version:\n    print(v['url'])\")")
@@ -6135,15 +6199,15 @@ generate_minecraft_server_launcher ()
 		wget -q -O $MINECRAFT_HOME/minecraft_server.jar.update --no-check-certificate $MC_SERVER_URL
 		if [ -f $MINECRAFT_HOME/minecraft_server.jar.update ] ; then
 			if diff $MINECRAFT_HOME/$MINECRAFT_JAR $MINECRAFT_HOME/minecraft_server.jar.update >/dev/null ; then
-				dialog --title 'Minecraft Update' --msgbox "You are already running the latest version of $MINECRAFT_JAR." 0 0 
+				dialog --title 'Minecraft Update' --msgbox "You are already running the latest version of $MINECRAFT_JAR." 0 0
 		else
 			mv $MINECRAFT_JAR $MINECRAFT_JAR.previous
 			mv $MINECRAFT_HOME/minecraft_server.jar.update $MINECRAFT_HOME/$MINECRAFT_JAR
-			dialog --title 'Minecraft Update' --msgbox "Minecraft successfully updated." 0 0 
+			dialog --title 'Minecraft Update' --msgbox "Minecraft successfully updated." 0 0
 		fi
 		else
-			dialog --title 'Minecraft Update' --msgbox "Minecraft update could not be downloaded." 0 0 
-			echo 
+			dialog --title 'Minecraft Update' --msgbox "Minecraft update could not be downloaded." 0 0
+			echo
 		fi
 	}
 
@@ -6154,7 +6218,7 @@ generate_minecraft_server_launcher ()
 	#::::::::::::::                                          ::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	# This section contains content to written out to several configuration
-	# files and external scripts. 
+	# files and external scripts.
 
 
 	announce.py () {
@@ -6163,15 +6227,15 @@ generate_minecraft_server_launcher ()
 	#              RTD System System Managment Script
 	# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	# :: Author:     generated by minecraft.server 
+	# :: Author:     generated by minecraft.server
 	# :: Version 1.02
 	# ::
 	# ::
 	# :: Purpose: The purpose of the script is to:
-	# ::          1 - Broadcast service availability to the local network. 
-	# ::              This script is used to broadcast the minecraft server on the  
-	# ::              same machine (see "servers"). You may have as many minecraft 
-	# ::              servers running and broadcast as you like. 
+	# ::          1 - Broadcast service availability to the local network.
+	# ::              This script is used to broadcast the minecraft server on the
+	# ::              same machine (see "servers"). You may have as many minecraft
+	# ::              servers running and broadcast as you like.
 	# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -6215,22 +6279,22 @@ generate_minecraft_server_launcher ()
 	#::             RTD System System Managment Script
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	#:: Author:     generated by minecraft.server 
+	#:: Author:     generated by minecraft.server
 	#:: Version 1.00
 	#::
 	#::
 	#:: Purpose: The purpose of the script is to:
-	#::          1 - Launch Minecraft 
+	#::          1 - Launch Minecraft
 	#::          2 - Check that Minecraft runs for at least one minute
-	#::          3 - If Minecraft crashes or quits after one minute, restart Minecraft 
-	#::  
+	#::          3 - If Minecraft crashes or quits after one minute, restart Minecraft
+	#::
 	#::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	pushd $(dirname "$0")
 
-	MC_SERVER_NAME=`cat server.properties |grep "motd=.*" ` 
+	MC_SERVER_NAME=`cat server.properties |grep "motd=.*" `
 	export $MC_SERVER_NAME
 
 	while true; do
@@ -6328,7 +6392,7 @@ generate_minecraft_server_launcher ()
 
 
 	# Check that the software components of this script are available.
-	# iff they are not, attempt to install them. 
+	# iff they are not, attempt to install them.
 	for i in byobu speedometer htop python3 dialog
 	do
 		check_dependencies $i
@@ -6346,11 +6410,11 @@ generate_minecraft_server_launcher ()
 			esac
 	fi
 
-	# Basic check to see that the Minecraft folder is present and 
+	# Basic check to see that the Minecraft folder is present and
 	# if not crate it and download the scripts and the server jar file
-	# to enable the server. 
+	# to enable the server.
 	setup_minecraft_root
-	check_java 
+	check_java
 
 	# Start the server and monitor the server performance
 	find_active_newtork_interface
@@ -6367,8 +6431,8 @@ generate_minecraft_server_launcher ()
 
 generate_fedora_ks_cfg_file ()
 {
-# Description: Function to generate an installation configuration file for Fedora/Red Hat. 
-# Globals: 
+# Description: Function to generate an installation configuration file for Fedora/Red Hat.
+# Globals:
 # Arguments: [file path] [workstation, ssh-server, ansible-server]
 # Outputs: One configuration file.
 # Returns: 0/1
@@ -6377,7 +6441,7 @@ generate_fedora_ks_cfg_file ()
 	FILE="$1"
 	CONFIG="$2"
 
-	if [[ "${CONFIG}" == "ssh-server" ]]; then 
+	if [[ "${CONFIG}" == "ssh-server" ]]; then
 		write_information "Selected configuration is ssh-server..."
 		cat >> ${FILE} <<-'KS_EOF'
 		# Generated by: generate_fedora_ks_cfg_file
@@ -6407,7 +6471,7 @@ generate_fedora_ks_cfg_file ()
 		network --onboot=yes --bootproto=dhcp
 
 		# Root password
-		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted 
+		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 		# User password
 		user --groups=wheel --name=tangarora --password=$6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 
@@ -6428,7 +6492,7 @@ generate_fedora_ks_cfg_file ()
 		%end
 		KS_EOF
 		return
-	elif [[ "${CONFIG}" == "ansible-server" ]]; then 
+	elif [[ "${CONFIG}" == "ansible-server" ]]; then
 		write_information "Selected configuration is ansible-server..."
 		cat >> ${FILE} <<-'KS_EOF'
 		# Generated by: generate_fedora_ks_cfg_file
@@ -6458,7 +6522,7 @@ generate_fedora_ks_cfg_file ()
 		network --onboot=yes --bootproto=dhcp --hostname=ansible.localdomain
 
 		# Root password
-		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted 
+		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 		# User password
 		user --groups=wheel --name=tangarora --password=$6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 
@@ -6480,7 +6544,7 @@ generate_fedora_ks_cfg_file ()
 		%end
 		KS_EOF
 		return
-	elif [[ "${CONFIG}" == "workstation" ]]; then 
+	elif [[ "${CONFIG}" == "workstation" ]]; then
 		write_information "Selected configuration is workstation..."
 		cat >> ${FILE} <<-'KS_EOF'
 		# Generated by: generate_fedora_ks_cfg_file
@@ -6512,7 +6576,7 @@ generate_fedora_ks_cfg_file ()
 		#network --hostname=localhost.localdomain
 
 		# Root password
-		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted 
+		rootpw $6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 		# User password
 		user --groups=wheel --name=tangarora --password=$6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1 --iscrypted
 
@@ -6549,28 +6613,28 @@ generate_fedora_ks_cfg_file ()
 			# Determine log file directory
 		_LOGFILE=$_RTDLOGSD/task.log
 		_OEM_USER=tangarora
-		
+
 		tell_info() {
-			echo "starting post install tasks..." 
-			echo "SYSTEM information:"		
-			echo "File system information: "	
-			mount				
-			echo "Block Devices: "	
-			lsblk			
+			echo "starting post install tasks..."
+			echo "SYSTEM information:"
+			echo "File system information: "
+			mount
+			echo "Block Devices: "
+			lsblk
 			echo "available space: "
-			df -h		
+			df -h
 			echo "Process information: "
-			ps aux		
-			} 
+			ps aux
+			}
 
 
 
 		task_setup_rtd_basics() {
-			echo "Linux OS Found: Attempting to get instructions for Linux..." 
-			wget -q  $_RTDSRC -P $_RTDCACHE 
+			echo "Linux OS Found: Attempting to get instructions for Linux..."
+			wget -q  $_RTDSRC -P $_RTDCACHE
 			unzip -o -j $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd && rm -v $_RTDCACHE/master.zip
-			echo "Instructions sucessfully retrieved..." 
-			chmod +x $_RTDSCR/* 
+			echo "Instructions sucessfully retrieved..."
+			chmod +x $_RTDSCR/*
 			pushd /bin
 			ln -f -s $_RTDSCR/rtd* .
 			popd
@@ -6578,22 +6642,22 @@ generate_fedora_ks_cfg_file ()
 
 
 		task_setup_ssh_keys() {
-			mkdir  -p --mode=0700 /root/.ssh && cat /opt/rtd/custom/userkey.pub > /root/.ssh/authorized_keys 
-			mkdir --mode=0700 /home/tangarora/.ssh && cat /opt/rtd/custom/userkey.pub > /home/tangarora/.ssh/authorized_keys 
-			chown -R tangarora /home/tangarora/.ssh && chmod 0700 -R /home/tangarora/.ssh 
+			mkdir  -p --mode=0700 /root/.ssh && cat /opt/rtd/custom/userkey.pub > /root/.ssh/authorized_keys
+			mkdir --mode=0700 /home/tangarora/.ssh && cat /opt/rtd/custom/userkey.pub > /home/tangarora/.ssh/authorized_keys
+			chown -R tangarora /home/tangarora/.ssh && chmod 0700 -R /home/tangarora/.ssh
 		}
 
 
 
 		task_setup_oem_run_once() {
-			# Task to run the OEM post configuaration on first login. 
+			# Task to run the OEM post configuaration on first login.
 			# the OEM post configuration may allow for interaction if desired and would
-			# best run on several distributions and in a full graphic environment. 
+			# best run on several distributions and in a full graphic environment.
 				cat << CREATE_START_LINK > /etc/xdg/autostart/org.runtimedata.oem.cofig.desktop
-			# This will automatically start the RuntTime Data OEM config options on 
+			# This will automatically start the RuntTime Data OEM config options on
 				# the first login. Once run this launcher will be moved to the /opt/rtd folder
 				# so that subsequent logins will not be plagued by the OEM setup.
-				# 
+				#
 				[Desktop Entry]
 				Type=Application
 				Exec=sudo /opt/rtd/scripts/rtd-oem-linux-config.sh
@@ -6610,7 +6674,7 @@ generate_fedora_ks_cfg_file ()
 
 		task_enable_oem_elevate_priv() {
 			# Add instruction to a sudoers include file:
-			# This should be removed when OEM setup is complete as it would represent a back door... 
+			# This should be removed when OEM setup is complete as it would represent a back door...
 			echo "tangarora ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/99_sudo_include_file
 
 			# Check that your sudoers include file passed the visudo syntax checks:
@@ -6620,22 +6684,22 @@ generate_fedora_ks_cfg_file ()
 
 
 		task_ensure_oem_auto_login() {
-			# task to ensure that the temporary OEM user is loged in for 
-			# admin purposes. It is better to install crtail software at this 
-			# time since a full graphic environment is avaliable. Also the 
-			# step 2 inst the OEM load process is optimally able to run 
-			# on several distributions. 
+			# task to ensure that the temporary OEM user is loged in for
+			# admin purposes. It is better to install crtail software at this
+			# time since a full graphic environment is avaliable. Also the
+			# step 2 inst the OEM load process is optimally able to run
+			# on several distributions.
 
 
-			if [[ -f /etc/lightdm/lightdm.conf ]]; then 
+			if [[ -f /etc/lightdm/lightdm.conf ]]; then
 				cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.rtd-bak
 
 				cat << OEM_LXDM_LOGIN_OPTION > /etc/lightdm/lightdm.conf
 				# This configuration file was created by RTD Setup.
-				# You may safely replace this file with the original backed up: 
+				# You may safely replace this file with the original backed up:
 				# /etc/lightdm/lightdm.conf.rtd-bak
 				# If this file is not there, then it wa not there to begin with
-				# and you can delete this file. 
+				# and you can delete this file.
 				[SeatDefaults]
 				autologin-user=$_OEM_USER
 				autologin-user-timeout=0
@@ -6644,15 +6708,15 @@ generate_fedora_ks_cfg_file ()
 			fi
 
 
-			if [[ -f /etc/sddm.conf ]]; then 
+			if [[ -f /etc/sddm.conf ]]; then
 				cp /etc/sddm.conf /etc/sddm.conf.rtd-bak
 
 				cat << OEM_SDDM_LOGIN_OPTION > /etc/sddm.conf
 				# This configuration file was created by RTD Setup.
-				# You may safely replace this file with the original backed up: 
+				# You may safely replace this file with the original backed up:
 				# /etc/sddm.conf.rtd-bak
 				# If this file is not there, then it wa not there to begin with
-				# and you can delete this file. 
+				# and you can delete this file.
 				[Autologin]
 				User=$_OEM_USER
 				Session=plasma.desktop
@@ -6661,15 +6725,15 @@ generate_fedora_ks_cfg_file ()
 			fi
 
 
-			if [[ -f /etc/gdm3/daemon.conf ]]; then 
+			if [[ -f /etc/gdm3/daemon.conf ]]; then
 				cp /etc/gdm3/daemon.conf /etc/gdm3/daemon.conf.rtd-bak
 
 				cat << OEM_GDM3_LOGIN_OPTION > /etc/gdm3/daemon.conf
 				# This configuration file was created by RTD Setup.
-				# You may safely replace this file with the original backed up: 
+				# You may safely replace this file with the original backed up:
 				# /etc/gdm3/daemon.conf.rtd-bak
 				# If this file is not there, then it wa not there to begin with
-				# and you can delete this file. 
+				# and you can delete this file.
 				[daemon]
 				AutomaticLoginEnable=True
 				AutomaticLogin=$_OEM_USER
@@ -6682,11 +6746,11 @@ generate_fedora_ks_cfg_file ()
 
 
 		task_oem_ensure_elevated_gui () {
-			# Some Debian and other Linux distribution do not allow gui apps to 
-			# be run when invoked by "sudo" or in a root (system elevated authority) 
-			# environment. To mitigate this some stemp may need to taken. 
+			# Some Debian and other Linux distribution do not allow gui apps to
+			# be run when invoked by "sudo" or in a root (system elevated authority)
+			# environment. To mitigate this some stemp may need to taken.
 			# Will work on Slackware as well as Debian to give root permission to open X programs.
-			echo "xhost local:root" >> /home/$_OEM_USER/.bashrc  
+			echo "xhost local:root" >> /home/$_OEM_USER/.bashrc
 
 			# Allows runing an X program as root
 			touch /root/.bashrc
@@ -6703,7 +6767,7 @@ generate_fedora_ks_cfg_file ()
 			elif cat /etc/os-release |grep suse ; then
 				echo "I dont know of any OEM configuration for SuSE"
 			elif cat /etc/os-release |grep fedora ; then
-				echo "I dont know of any OEM configuration for Fedora"	
+				echo "I dont know of any OEM configuration for Fedora"
 			fi
 		}
 
@@ -6724,7 +6788,7 @@ generate_fedora_ks_cfg_file ()
 		task_ensure_oem_auto_login	&>> $_LOGFILE
 		task_oem_ensure_elevated_gui	&>> $_LOGFILE
 		task_rtd_oem_reseal		&>> $_LOGFILE
-		
+
 		EOF
 
 		bash /opt/rtd/scripts/task.sh
@@ -6740,6 +6804,125 @@ generate_fedora_ks_cfg_file ()
 
 }
 
+generate_autoyast_file ()
+{
+# Description: Function to generate an installation configuration file for Fedora/Red Hat.
+# Globals:
+# Arguments: [file path] [workstation, ssh-server, ansible-server]
+# Outputs: One configuration file.
+# Returns: 0/1
+# Usage: generate_fedora_ks_cfg_file $(mktemp) workstation
+# End of documentation
+	FILE="$1"
+	CONFIG="$2"
+
+	cat >> ${FILE} <<-'AUTOYAST_EOF'
+		<?xml version="1.0"?>
+		<!DOCTYPE profile>
+		<profile xmlns="http://www.suse.com/1.0/yast2ns"
+			xmlns:config="http://www.suse.com/1.0/configns">
+		<general>
+		<mode>
+		<confirm config:type="boolean">false</confirm>
+		</mode>
+		</general>
+		<networking>
+		<keep_install_network config:type="boolean">true</keep_install_network>
+		</networking>
+		<deploy_image>
+		<image_installation config:type="boolean">true</image_installation>
+		</deploy_image>
+		<software>
+		<install_recommended config:type="boolean">true</install_recommended>
+		<patterns config:type="list">
+		<pattern>base</pattern>
+		</patterns>
+		</software>
+		<users config:type="list">
+		<user>
+		<encrypted config:type="boolean">true</encrypted>
+		<fullname>root</fullname>
+		<gid>0</gid>
+		<home>/root</home>
+		<home_btrfs_subvolume config:type="boolean">false</home_btrfs_subvolume>
+		<password_settings>
+			<expire/>
+			<flag/>
+			<inact/>
+			<max/>
+			<min/>
+			<warn/>
+		</password_settings>
+		<shell>/bin/bash</shell>
+		<uid>0</uid>
+		<user_password>$6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1</user_password>
+		<username>root</username>
+		</user>
+		<user>
+		<encrypted config:type="boolean">true</encrypted>
+		<fullname>tangarora</fullname>
+		<gid>100</gid>
+		<home>/home/tangarora</home>
+		<home_btrfs_subvolume config:type="boolean">false</home_btrfs_subvolume>
+		<password_settings>
+			<expire/>
+			<flag/>
+			<inact/>
+			<max>99999</max>
+			<min>0</min>
+			<warn>7</warn>
+		</password_settings>
+		<shell>/bin/bash</shell>
+		<uid>1001</uid>
+		<user_password>$6$Rn5/UTzjIs68MX$9gz8vmshGlPqse3VoX8dzSfhWxRVoYv1MB6aGRD8xdvztOf.gD.SxxVWkxYrwwbShB9Q14flquK/apbdQJ65t1</user_password>
+		<username>tangarora</username>
+		</user>
+		</users>
+		<software>
+		<image/>
+		<install_recommended config:type="boolean">true</install_recommended>
+		<instsource/>
+		<packages config:type="list">
+		<package>wget</package>
+		<package>vim</package>
+		</packages>
+		<patterns config:type="list">
+		<pattern>kde</pattern>
+		<pattern>kde_games</pattern>
+		<pattern>kde_internet</pattern>
+		<pattern>kde_multimedia</pattern>
+		<pattern>kde_plasma</pattern>
+		<pattern>kde_utilities</pattern>
+		<pattern>kde_utilities_opt</pattern>
+		<pattern>kde_yast</pattern>
+		<pattern>laptop</pattern>
+		<pattern>multimedia</pattern>
+		<pattern>multimedia_opt</pattern>
+		<pattern>office</pattern>
+		<pattern>x11</pattern>
+		<pattern>x11_enhanced</pattern>
+		<pattern>x11_opt</pattern>
+		<pattern>x11_yast</pattern>
+		<pattern>yast2_basis</pattern>
+		</patterns>
+		<products config:type="list">
+		<product>openSUSE</product>
+		</products>
+		</software>
+		<services-manager>
+		<default_target>graphical</default_target>
+		</services-manager>
+		<scripts>
+		<init-scripts config:type="list">
+		<script>
+		<interpreter>shell</interpreter>
+		<location>https://github.com/vonschutter/RTD-Blind-Install/raw/master/custom/task.sh</location>
+		</script>
+		</init-scripts>
+		</scripts>
+		</profile>
+	AUTOYAST_EOF
+}
 
 
 
@@ -6750,13 +6933,8 @@ generate_fedora_ks_cfg_file ()
 
 
 
-
-
-
-
-
-#                 __ 
-#               .'  '. 
+#                 __
+#               .'  '.
 #              :      :
 #              | _  _ |
 #           .-.|(o)(o)|.-.        _._          _._
@@ -6768,7 +6946,7 @@ generate_fedora_ks_cfg_file ()
 #               `\  /'                |      |
 #               /`-.-`\_             /        \
 #         _..:;\._/V\_./:;.._       /   .--.   \
-#       .'/;:;:;\ /^\ /:;:;:\'.     |  (    )  | 
+#       .'/;:;:;\ /^\ /:;:;:\'.     |  (    )  |
 #      / /;:;:;:;\| |/:;:;:;:\ \    _\  '--'  /__
 #     / /;:;:;:;:;\_/:;:;:;:;:\ \ .'  '-.__.-'   `-.
 
@@ -6791,28 +6969,28 @@ set_colors ()
 # Description: Set colors for prompting on screen in human readable variables. These will be set globally
 # and can be can be used by in echo statements to modify the color of the message.
 # Examples:  $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
-# Usage: 
+# Usage:
 #	Simply call this function by stating its name:
 # 	set_colors
-#  
-# Globals: 
+#
+# Globals:
 # Arguments: None
 # Outputs: Sets usable variables: $picachu $music $chess $YELLOW, $RED, $ENDCOLOR (reset), $GREEN, $BLUE
 # as well as: $[yellow, darkyellow, red, darkred, endcolor, green, darkgreen, blue, darkblue, cyan, darkcyan, gray, purple, darkpurple]
-# Returns: 
+# Returns:
 # Usage: echo -e $yellow "text to display" or echo -e $picachu
-# 
+#
 # "🔴  🔵 "
 # The function will not return any sucess or failure codes. It will do its best and exit.
-# 
+#
 # End of documentation
 
 # Foreground & background colour commands
-# 
+#
 # tput setab [1-7] # Set the background colour using ANSI escape
 # tput setaf [1-7] # Set the foreground colour using ANSI escape
-# 
-#  
+#
+#
 # Black        0;30     Dark Gray     1;30
 # Red          0;31     Light Red     1;31
 # Green        0;32     Light Green   1;32
@@ -6821,7 +6999,7 @@ set_colors ()
 # Purple       0;35     Light Purple  1;35
 # Cyan         0;36     Light Cyan    1;36
 # Light Gray   0;37     White         1;37
-# 
+#
 #      Num  Colour    #define         R G B
 # 0    black     COLOR_BLACK     0,0,0
 # 1    red       COLOR_RED       1,0,0
@@ -6841,9 +7019,9 @@ set_colors ()
 # tput rev     # Turn on reverse video mode
 # tput smso    # Enter standout (bold) mode
 # tput rmso    # Exit standout mode
-# 
+#
 # Cursor movement commands
-# 
+#
 # tput cup Y X # Move cursor to screen postion X,Y (top left is 0,0)
 # tput cuf N   # Move N characters forward (right)
 # tput cub N   # Move N characters back (left)
@@ -6853,9 +7031,9 @@ set_colors ()
 # tput rc      # Restore the cursor position
 # tput lines   # Output the number of lines of the terminal
 # tput cols    # Output the number of columns of the terminal
-# 
+#
 # Clear and insert commands
-# 
+#
 # tput ech N   # Erase N characters
 # tput clear   # Clear screen and move the cursor to 0,0
 # tput el 1    # Clear to beginning of line
@@ -6863,13 +7041,13 @@ set_colors ()
 # tput ed      # Clear to end of screen
 # tput ich N   # Insert N characters (moves rest of line forward!)
 # tput il N    # Insert N lines
-# 
+#
 # Other commands
-# 
+#
 # tput sgr0    # Reset text format to the terminal's default
 # tput bel     # Play a bell
-# 
-# # Reset		
+#
+# # Reset
 # Color_Off='\033[0m'       # Text Reset
 #
 # # Regular Colors
@@ -6911,7 +7089,7 @@ set_colors ()
 # On_Purple='\033[45m'      # Purple
 # On_Cyan='\033[46m'        # Cyan
 # On_White='\033[47m'       # White
-# 
+#
 # # High Intensity
 # IBlack='\033[0;90m'       # Black
 # IRed='\033[0;91m'         # Red
@@ -6921,7 +7099,7 @@ set_colors ()
 # IPurple='\033[0;95m'      # Purple
 # ICyan='\033[0;96m'        # Cyan
 # IWhite='\033[0;97m'       # White
-# 
+#
 # # Bold High Intensity
 # BIBlack='\033[1;90m'      # Black
 # BIRed='\033[1;91m'        # Red
@@ -6931,7 +7109,7 @@ set_colors ()
 # BIPurple='\033[1;95m'     # Purple
 # BICyan='\033[1;96m'       # Cyan
 # BIWhite='\033[1;97m'      # White
-# 
+#
 # # High Intensity backgrounds
 # On_IBlack='\033[0;100m'   # Black
 # On_IRed='\033[0;101m'     # Red
@@ -7005,20 +7183,20 @@ set_colors ()
 display_result ()
 {
 # Description: Function to read a variable "result" and display its contents. The purpose of this function
-# is simply to make it easy and convenient to display a mesage to an end user in a terminal 
+# is simply to make it easy and convenient to display a mesage to an end user in a terminal
 # in a nice way. To use this function simply call it after populating the variable result.
 # Globals: ${result}, ${BRANDING}
 # Arguments: ["Title to display"]
 # Outputs: Message in dialog box
 # Returns: 0 or ESC
-# Usage: 
-# 
+# Usage:
+#
 # result=$( command with output)
-# display_result "title of the mesage" 
-# 
+# display_result "title of the mesage"
+#
 # End of Documentation
 
-	$RTD_GUI --backtitle "$BRANDING" --title "$1" --msgbox "$result" $HEIGHT $WIDTH 
+	$RTD_GUI --backtitle "$BRANDING" --title "$1" --msgbox "$result" $HEIGHT $WIDTH
 }
 
 
@@ -7027,22 +7205,22 @@ display_result ()
 
 rtd_oem_pause ()
 {
-# Description:  
-# A simple function to pause and wait for end user input. 
-# The function expects a non zero (0) argument to execute the pause 
+# Description:
+# A simple function to pause and wait for end user input.
+# The function expects a non zero (0) argument to execute the pause
 # and wait for the end user to press ENTER to continue execution.
-#  
-# Globals: 
+#
+# Globals:
 # Arguments: 0 - !0 "[optional error message]"
 # Outputs: Standard out
-# Returns: 
-# Usage:  suggestion stop on execution error: 
+# Returns:
+# Usage:  suggestion stop on execution error:
 # EXPRESSION  || rtd_oem_pause 1
 # or
 # EXPRESSION ; rtd_oem_pause $?
 #
 # In both of these cases script execution will halt and wait for confirmation
-# before continuing. 
+# before continuing.
 # End of documentation
 	ERRMSG=$@
 
@@ -7057,18 +7235,18 @@ rtd_oem_pause ()
 
 write_host ()
 {
-# Description: 
+# Description:
 # This is a simplified and consistent way to write output to the screen.
-# This function will print a message to the standard out in a color specified.  
+# This function will print a message to the standard out in a color specified.
 # Specified colors can be colord defined in the function "set_colors"
 # If no color option is specified this cunctio simply works like the echo command.
-# 
-# Globals: 
+#
+# Globals:
 # Arguments: [color option]
-# Outputs: 
-# Returns: 
+# Outputs:
+# Returns:
 # Usage: write_host [option] [String]
-# 
+#
 # where [option] is a supported color:
 # --yellow            Prints message in YELLOW
 # --darkyellow        Prints message in DARK YELLOW
@@ -7084,15 +7262,15 @@ write_host ()
 # --gray              Prints message in GRAY
 # --purple            Prints message in PURPLE
 # --darkpurple        Prints message in  DARK PURPLE
-# 
+#
 # NOTE: this function uses the "tput" mechanisms to set colors, and gice a convenient
-# and simple uman way to access them. The target system must have "tput" aavailable. 
-# 
-# 
+# and simple uman way to access them. The target system must have "tput" aavailable.
+#
+#
 # End of documentation
 	_option=$1
 
-	case ${_option} in 
+	case ${_option} in
 		--yellow ) color="$(tput bold; tput setaf 3)" ;;
 		--darkyellow ) color="$(tput dim; tput setaf 3)" ;;
 		--red ) color="$(tput bold; tput setaf 1)" ;;
@@ -7117,13 +7295,13 @@ write_host ()
 
 write_error ()
 {
-# Description: 
+# Description:
 # is a simplified and consistent way to write output to the screen.
 # write_error will print a message to the standard out in RED.
-# Globals: 
+# Globals:
 # Arguments: "text to be printed to standard out"
 # Outputs: standard out in color
-# Returns: 
+# Returns:
 # Usage: write_error "[String]"
 #
 # End of documentation
@@ -7137,13 +7315,13 @@ write_error ()
 
 write_warning ()
 {
-# Description: 
+# Description:
 # This is a simplified and consistent way to write output to the screen.
 # write_warning will print a message to the standard out in Yellow.
-# Globals: 
+# Globals:
 # Arguments: "text to be printed to standard out"
 # Outputs: standard out in color
-# Returns: 
+# Returns:
 # Usage: write_warning "[String]"
 #
 # End of documentation
@@ -7157,13 +7335,13 @@ write_warning ()
 
 write_status ()
 {
-# Description: 
+# Description:
 # This is a simplified and consistent way to write output to the screen.
 # write_status will print a message to the standard out in GREEN.
-# Globals: 
+# Globals:
 # Arguments: "text to be printed to standard out"
 # Outputs: standard out in color
-# Returns: 
+# Returns:
 # Usage: write_status "[String]"
 #
 # End of documentation
@@ -7177,13 +7355,13 @@ write_status ()
 
 write_information ()
 {
-# Description: 	
-# This is a simplified and consistent way to write output to the screen. 
+# Description:
+# This is a simplified and consistent way to write output to the screen.
 # write_information will print a message to the standard out in BLUE.
-# Globals: 
+# Globals:
 # Arguments: "text to be printed to standard out"
 # Outputs: standard out in color
-# Returns: 
+# Returns:
 # Usage: write_information "[String]"
 #
 # End of documentation
@@ -7201,10 +7379,10 @@ write_information ()
 list_loaded_internal_functions ()
 {
 # Description: Function to list all internal library functions loaded... for debugging/support purposes.
-# Globals: 
-# Arguments: none or [--zformat] 
+# Globals:
+# Arguments: none or [--zformat]
 # Outputs: Standard out, list of functions either formatted for zenity or not. Output may be used to populate a zenity menu or dialog.
-# Returns: 
+# Returns:
 # Usage: list_loaded_software_functions [] [--zformat]
 # End of documentation
 
@@ -7216,7 +7394,7 @@ list_loaded_internal_functions ()
 			echo -e "$i \n $index \n ${Description} \n"
 			((i=i+1))
 		done
-	else 
+	else
 		for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep -v "recipe_" )
 		do
 			echo "$index #$i"
@@ -7230,10 +7408,10 @@ list_loaded_internal_functions ()
 list_loaded_software_functions ()
 {
 # Description: Function to list all software (_rtd_recipes) functions loaded... for debugging/support purposes.
-# Globals: 
-# Arguments: none or [--nonum] 
+# Globals:
+# Arguments: none or [--nonum]
 # Outputs: Standard out, list of functions either numerated or not.
-# Returns: 
+# Returns:
 # Usage: list_loaded_software_functions [] [--nonum]
 # End of documentation
 
@@ -7242,8 +7420,8 @@ list_loaded_software_functions ()
 		do
 			echo ${index/recipe_/}
 		done
-	else 
-		i=1 
+	else
+		i=1
 		for index in $(declare -F | awk '{print $NF}' | sort | egrep -v "^_" |grep "recipe_")
 		do
 			echo "$i	${index/recipe_/}"
@@ -7262,9 +7440,9 @@ list_loaded_software_functions ()
 #::::::::::::::          Script Executive                ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# The following section launches the internal functions if given arguments 
-# request this. If no arguments are provided, then all the functions in this 
-# library will simply be loaded in to memory. 
+# The following section launches the internal functions if given arguments
+# request this. If no arguments are provided, then all the functions in this
+# library will simply be loaded in to memory.
 
 
 
@@ -7274,8 +7452,8 @@ export RTDFUNCTIONS=1
 
 if [ -z $1 ]; then
 	echo OK
-else 
-	case $1 in 
+else
+	case $1 in
 		--help | -? )
 			echo -e "${0##*/} :: RunTime Data Library HELP ::
 
@@ -7283,15 +7461,15 @@ else
 			valid option are :
 			--help		 : Show this help text
 			--list		 : List library functions (requires options: software, or internal, or all)
-				software : (list) software install bundles available 
-				internal : (list) internal functions loaded 
-				all	 : (list) all library functions including software 
-			--devhelp	 : diplay script developer's help 
-			EXAMPLE: 
+				software : (list) software install bundles available
+				internal : (list) internal functions loaded
+				all	 : (list) all library functions including software
+			--devhelp	 : diplay script developer's help
+			EXAMPLE:
 			${0##*/} --list --internal"
 		;;
 		--list )
-			case $2 in 
+			case $2 in
 				software ) list_loaded_software_functions ;;
 				internal ) list_loaded_internal_functions ;;
 				all ) ( echo -e $YELLOW "Software Recipies: $ENDCOLOR" && list_loaded_software_functions && echo -e $YELLOW "INTERNAL Functions: $ENDCOLOR" && list_loaded_internal_functions ) ;;
@@ -7314,9 +7492,9 @@ else
 					$selection )
 						result=$(while IFS= read -r 'line'; do
 							[[ "$line" == "$selection ()" ]]		&& printline="yes"
-							[[ "$line" == "# End of documentation"* ]]	&& printline="no" 
-							[[ "$line" == *"# End of documentation"* ]]	&& printline="no" 
-							[[ "$line" == *End*of*Documentation* ]]		&& printline="no" 
+							[[ "$line" == "# End of documentation"* ]]	&& printline="no"
+							[[ "$line" == *"# End of documentation"* ]]	&& printline="no"
+							[[ "$line" == *End*of*Documentation* ]]		&& printline="no"
 							[[ "$printline" == "yes" ]]			&& echo "$line" |grep "# " |cut -c 2-
 						done < $0 )
 						dialog --clear --no-collapse --backtitle "${0##*/} :: RunTime Data Library HELP ::" --title "RTD Functon: $selection" --msgbox "$result" "${HEIGHT:-25}" "${WIDTH:-110}"
@@ -7345,23 +7523,23 @@ else
 					"$selection" )
 						result=$(while IFS= read -r 'line'; do
 							[[ "$line" == "${selection/ /}()" ]]		&& printline="yes"
-							[[ "$line" == "# End of documentation"* ]]	&& printline="no" 
-							[[ "$line" == *"# End of documentation"* ]]	&& printline="no" 
-							[[ "$line" == *End*of*Documentation* ]]		&& printline="no" 
+							[[ "$line" == "# End of documentation"* ]]	&& printline="no"
+							[[ "$line" == *"# End of documentation"* ]]	&& printline="no"
+							[[ "$line" == *End*of*Documentation* ]]		&& printline="no"
 							[[ "$printline" == "yes" ]]			&& echo "$line" |grep "# " |cut -c 2-
 						done < $0 )
-						zenity --info  --title "RTD Functon: $selection" --text="$result" --height=600 --width=800 
+						zenity --info  --title "RTD Functon: $selection" --text="$result" --height=600 --width=800
 					;;
-					* ) 
+					* )
 					# Trap unknown exit code...
-					exit 
+					exit
 					;;
 				esac
 			done
 		;;
-		* ) 
-			echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments" 
-			echo "$0 launched with unknown parameters" >${LOGFILE:-"/var/log/$(basename $0)"} 
+		* )
+			echo "No RECOGNIZED arguments provided: loading ${0:BASENAME}" ; echo "Use ${0:BASENAME} --help to see supported arguments"
+			echo "$0 launched with unknown parameters" >${LOGFILE:-"/var/log/$(basename $0)"}
 		;;
 	esac
 fi
