@@ -755,7 +755,7 @@ show_view_informaion_about_this_system () {
 		;;
 		8 )
 			result=$(get_Windows_Product_Key)
-			: ${result:-"No Windows product key found..."}
+			: ${result:="No Windows product key found..."}
 			display_result "Windows Product Key:"
 		;;
 		esac
