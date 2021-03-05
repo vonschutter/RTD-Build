@@ -111,7 +111,6 @@ do_update ()
 {
 	rtd_wait_for_internet_availability
 	task_setup_rtd_basics
-	check_rtd_library
 	rtd_oem_make_launchers
 }
 
@@ -122,6 +121,7 @@ do_update ()
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+check_rtd_library
 ensure_admin
 
 if hash dialog ; then
