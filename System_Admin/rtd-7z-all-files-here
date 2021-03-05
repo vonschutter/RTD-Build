@@ -37,10 +37,6 @@
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-# Set default UI colors:
-YELLOW="\033[1;33m"
-RED="\033[0;31m"
-ENDCOLOR="\033[0m"
 
 # Set library path if not defined:
 rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}

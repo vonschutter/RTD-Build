@@ -25,7 +25,8 @@
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
-
+# Set library path if not defined:
+rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 check_rtd_library ()
 {
         if [[ -f ${rtd_library} ]]; then

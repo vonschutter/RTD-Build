@@ -31,6 +31,8 @@
 
 # Import the RTD functions to gain access to several useful functions.
 
+rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
 check_rtd_library ()
 {
         if [[ -f ${rtd_library} ]]; then
@@ -44,6 +46,7 @@ check_rtd_library ()
                 exit 1
         fi
 }
+
 
 
 

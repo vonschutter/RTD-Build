@@ -45,7 +45,8 @@
 #::::::::::::::          Script Settings                 ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
+# Set library path if not defined:
+rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 
 check_rtd_library ()
 {
