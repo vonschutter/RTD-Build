@@ -127,11 +127,10 @@ do_update ()
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
+ensure_admin
 
 if hash dialog ; then
 	if ( dialog --title "NOTICE!" --yesno "I am the RTD tools updater. May I update the RTD OEM tools on your system now? Press OK to continue or NO to skip doing this." 20 80 ) ; then
-		ensure_admin
 		clear && do_update
 	else
 		clear && exit
@@ -145,7 +144,6 @@ else
 	echo " "
 	read -p "Press [ ENTER ] to continue with update"
 	echo -e $ENDCOLOR
-	ensure_admin
 	do_update
 fi
 
