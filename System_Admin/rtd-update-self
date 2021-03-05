@@ -110,7 +110,7 @@ rtd_wait_for_internet_availability () {
 do_update ()
 {
 	rtd_wait_for_internet_availability
-	task_setup_rtd_basics && dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --msgbox "Updating the ${BRAND} tools done!. \n\n Press OK to confirm." 20 80 || dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: ERROR!" --msgbox "Updating the ${BRAND} \Z1 FAILED!. \n\n Press OK to confirm." 20 80
+	task_setup_rtd_basics && dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --msgbox "Updating the ${BRAND} tools done!. \n\n Press OK to confirm." 20 80 ; clear|| dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: ERROR!" --msgbox "Updating the ${BRAND} \Z1 FAILED!. \n\n Press OK to confirm." 20 80 ; clear
 	rtd_oem_make_launchers
 }
 
