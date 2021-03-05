@@ -38,18 +38,17 @@
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
-
-
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Set library path if not defined:
-rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 
 check_rtd_library ()
 {
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
         if [[ -f ${rtd_library} ]]; then
                 source ${rtd_library}
         elif [[ ! -f ${rtd_library} ]]; then
@@ -62,12 +61,11 @@ check_rtd_library ()
         fi
 }
 
-
-###########################################################################
-##                                                                       ##
-##                       Script Executive                                ##
-##                                                                       ##
-###########################################################################
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 if ! hash mencoder 2>/dev/null; then
 	if [[ "$UID" == "0" ]]; then

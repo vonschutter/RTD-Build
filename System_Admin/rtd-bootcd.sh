@@ -39,27 +39,37 @@
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
 
-###########################################################################
-##                                                                       ##
-##                       Commandlet settings                             ##
-##                                                                       ##
-###########################################################################
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-# Set library path if not defined:
-rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+check_rtd_library ()
+{
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 
-if [[ -f ${rtd_library} ]]; then
-        source ${rtd_library}
-elif [[ ! -f ${rtd_library} ]]; then
-        echo "RTD Functions not found... "
-        echo "Trying to retrieve them..."
-        wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
-        source ./_rtd_library
-else
-        exit 1
-fi
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
 
-ensure_admin
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# Ensure access to the rtd library functions:
+check_rtd_library
 
 # the name of and where to put th ISO file:
 ISO_IMAGE=$(dialog --title "${Title:="$( basename $0 )"}" --backtitle "${BRANDING:-"$( basename $0 )"}" --stdout --inputbox "\n Please enter the path/name of the ISO file to be created. \n For example: ~/MY-BOOT-CD.iso" 10 90 ) ; clear
@@ -70,13 +80,6 @@ CD_LABEL=$(dialog --title "${Title:="$( basename $0 )"}" --backtitle "${BRANDING
 # The folder where the files are:
 RH_BUILD_DIR=$(dialog --title "${Title:="$( basename $0 )"}" --backtitle "${BRANDING:-"$( basename $0 )"}" --stdout --inputbox "\n Please enter the fileder containging the files to be contained in the CD \n For example: ~/SLSBOOTCD" 10 90 ); clear
 
-
-
-###########################################################################
-##                                                                       ##
-##                       Script Executive                                ##
-##                                                                       ##
-###########################################################################
 check_dependencies mkisofs
 
 if ! -f  "${RH_BUILD_DIR}"; then

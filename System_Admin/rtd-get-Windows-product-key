@@ -40,7 +40,8 @@ check_rtd_library ()
                 exit 1
         fi
 }
-check_rtd_library
+
+check_rtd_library &>/dev/null
 get_Windows_Product_Key
 
 

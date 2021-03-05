@@ -1,25 +1,24 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::                                            A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Debian/Ubuntu system cleanup Tool //::::::::::::::::// Debian //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.02
 #::
 #::
-#::	Purpose: The purpose of this script is to do som cleaning of system files. 
-#::		 
-#::		 
+#::	Purpose: The purpose of this script is to do som cleaning of system files.
+#::
+#::
 #::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
-#:: 		
-#::     	
-#::     	
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#
 #
 #
 # This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
@@ -29,12 +28,9 @@
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
 
-
-
-
 ###########################################################################
 ##                                                                       ##
-##                       Commandlet settings                             ##
+##                       Script     settings                             ##
 ##                                                                       ##
 ###########################################################################
 

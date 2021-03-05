@@ -28,13 +28,17 @@
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 
-
-# Import the RTD functions to gain access to several useful functions.
-
-rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 check_rtd_library ()
 {
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
         if [[ -f ${rtd_library} ]]; then
                 source ${rtd_library}
         elif [[ ! -f ${rtd_library} ]]; then
@@ -47,9 +51,15 @@ check_rtd_library ()
         fi
 }
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
-
+# Ensure access to the rtd library functions:
 check_rtd_library
+# Ensure elevated privs.
 ensure_admin
+# Attempt config of HUION:
 config_huion610

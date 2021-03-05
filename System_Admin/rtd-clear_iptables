@@ -28,41 +28,40 @@
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 
-###########################################################################
-##                                                                       ##
-##                       Commandlet settings                             ##
-##                                                                       ##
-###########################################################################
 
-# Elevate the privileges to root equivalent (if not already) to manage system...
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-if [ ! "$UID" -eq 0 ]; then
-        if hash dialog 2>/dev/null ; then
-                # find  a diferent way... tempfile not universal...
-                data=$(tempfile 2>/dev/null)
-                trap "rm -f $data" 0 1 2 5 15
-                dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
-                ret=$? ; clear
-                case $ret in
-                        0) cat $data | sudo -S bash "$0" "$*" ;;
-                        1) echo "Request cancelled" ;;
-                        255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
-                        * ) rm $data &>/dev/null ; exit 1
-                esac
-                rm $data &>/dev/null
-                exit
+check_rtd_library ()
+{
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
         else
-                [ "$UID" -eq 0 ] || echo "This script needs administrative access..."
-                [ "$UID" -eq 0 ] || exec sudo -H bash "$0" "$@"
+                exit 1
         fi
-fi
+}
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-##                                                                       ##
-##                         Execute                                       ##
-##                                                                       ##
-###########################################################################
+# Ensure access to the rtd library functions:
+check_rtd_library
+# Esure elevated privs:
+ensure_admin
 
 
 

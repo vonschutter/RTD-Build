@@ -33,22 +33,15 @@
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Script Settings                 ::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-# Set library path if not defined:
-rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::          Script Functions                ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 check_rtd_library ()
 {
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
         if [[ -f ${rtd_library} ]]; then
                 source ${rtd_library}
         elif [[ ! -f ${rtd_library} ]]; then
@@ -67,6 +60,7 @@ check_rtd_library ()
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+# Ensure access to the rtd library functions:
 check_rtd_library
 # call compression function with its default behavior...
 compress_all_items_here

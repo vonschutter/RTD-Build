@@ -33,26 +33,15 @@
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Script Settings                 ::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-# Set default UI colors:
-YELLOW="\033[1;33m"
-RED="\033[0;31m"
-ENDCOLOR="\033[0m"
-
-# Set library path if not defined:
-rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
-
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::          Script Functions                ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 check_rtd_library ()
 {
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+
         if [[ -f ${rtd_library} ]]; then
                 source ${rtd_library}
         elif [[ ! -f ${rtd_library} ]]; then
@@ -71,6 +60,7 @@ check_rtd_library ()
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+# Ensure access to the rtd library functions:
 check_rtd_library
 
 # Call custom compression function with encryption option and pass agruments; function will propt for encryption pass-prase.
