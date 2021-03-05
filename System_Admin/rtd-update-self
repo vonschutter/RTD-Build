@@ -50,7 +50,7 @@ _RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /op
 # Location of base administrative scripts and commandlets to get.
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
-
+BRAND=RTD
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
@@ -125,7 +125,7 @@ check_rtd_library
 ensure_admin
 
 if hash dialog ; then
-	if ( dialog --title "NOTICE!" --yesno "I am the RTD tools updater. May I update the RTD OEM tools on your system now? Press OK to continue or NO to skip doing this." 20 80 ) ; then
+	if ( dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --yesno "May I update the ${BRAND} OEM tools on your system now? Updating the ${BRAND} tools will ensure that the lates functionality and bug fixes are applied. \n Press OK to continue or NO to skip doing this." 20 80 ) ; then
 		clear && do_update
 	else
 		clear && exit
