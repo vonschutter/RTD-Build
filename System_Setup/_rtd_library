@@ -1490,7 +1490,7 @@ ensure_admin ()
 			# find  a diferent way... tempfile not universal...
 			data=$(tempfile 2>/dev/null)
 			trap "rm -f $data" 0 1 2 5 15
-			dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+			dialog --title "${Title:-"sudo"}" --backtitle "${BackTitle:-"$( basename $0 )"}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
 			ret=$? ; clear
 			case $ret in
 				0) cat $data | sudo -S bash "$0" "$*" ;;
