@@ -50,27 +50,30 @@ _RTDLOGSD=$(if [ -f /opt/rtd/log ]; then echo /opt/rtd/log ; else ( mkdir -p /op
 # Location of base administrative scripts and commandlets to get.
 _RTDSRC=https://github.com/vonschutter/RTD-Build/archive/master.zip
 
-# Determine log file directory
-_ERRLOGFILE=$_RTDLOGSD/$( basename $0)-error.log
-_LOGFILE=$_RTDLOGSD/$( basename $0).log
-_STATUSLOG=$_RTDLOGSD/$( basename $0)-status.log
-
 
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
-#::::::::::::::          Define tasks to complete        ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+check_rtd_library ()
+{
+        # Set library path if not defined:
+        rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 
-ensure_admin () {
-	[ "$UID" -eq 0 ] || echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
-	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-	[ "$UID" -eq 0 ] || exit
-
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
 }
-
 
 task_setup_rtd_basics() {
 	echo "Task: Attempting to get the latest RTD tools..."
@@ -91,12 +94,6 @@ task_setup_rtd_basics() {
 }
 
 
-set_color () {
-	YELLOW="\033[1;33m"
-	RED="\033[0;31m"
-	ENDCOLOR="\033[0m"
-}
-
 
 
 rtd_wait_for_internet_availability () {
@@ -112,11 +109,9 @@ rtd_wait_for_internet_availability () {
 
 do_update ()
 {
-
-	set_color
 	rtd_wait_for_internet_availability
 	task_setup_rtd_basics
-	source /opt/rtd/scripts/_rtd_library
+	check_rtd_library
 	rtd_oem_make_launchers
 }
 
