@@ -82,7 +82,7 @@ task_setup_rtd_basics() {
 	unzip -o -j -q $_RTDCACHE/master.zip -d $_RTDSCR  -x *.png *.md *.yml *.cmd
 	if [ $? != 0 ]; then
 		echo -e $RED Sorry but I think I FAILED to get the latest updates! $ENDCOLOR
-		exit 1
+		return 1
 	else
 		echo "Task: Instructions sucessfully retrieved..."
 		chmod +x $_RTDSCR/*
@@ -110,7 +110,7 @@ rtd_wait_for_internet_availability () {
 do_update ()
 {
 	rtd_wait_for_internet_availability
-	task_setup_rtd_basics
+	task_setup_rtd_basics && dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --msgbox "Updating the ${BRAND} tools done!. \n\n Press OK to confirm." 20 80 || dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: ERROR!" --msgbox "Updating the ${BRAND} \Z1 FAILED!. \n\n Press OK to confirm." 20 80
 	rtd_oem_make_launchers
 }
 
@@ -125,7 +125,7 @@ check_rtd_library
 ensure_admin
 
 if hash dialog ; then
-	if ( dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --yesno "May I update the ${BRAND} OEM tools on your system now? Updating the ${BRAND} tools will ensure that the lates functionality and bug fixes are applied. \n Press OK to continue or NO to skip doing this." 20 80 ) ; then
+	if ( dialog --backtitle "$( basename $0 )" --title "${BRAND} tools updater: NOTICE!" --yesno "May I update the ${BRAND} OEM tools on your system now? Updating the ${BRAND} tools will ensure that the latest functionality and bug fixes are applied. \n\n Press OK to continue or NO to skip doing this." 20 80 ) ; then
 		clear && do_update
 	else
 		clear && exit
