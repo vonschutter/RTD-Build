@@ -703,6 +703,7 @@ show_view_informaion_about_this_system () {
 		"6" "Show detailed system CPU information" \
 		"7" "Show systems physical location (city, county etc.)" \
 		"8" "View Windows Product KEY in system BIOS (if present)" \
+		"9" "Display OS Informaton" \
 		2>&1 1>&3)
 		exit_status=$?
 		exec 3>&-
@@ -757,6 +758,11 @@ show_view_informaion_about_this_system () {
 			result=$(get_Windows_Product_Key)
 			: ${result:="No Windows product key found..."}
 			display_result "Windows Product Key:"
+		;;
+		9 )
+			result=$(hostnamectl)
+			: ${result:="No system information found..."}
+			display_result "OS Information:"
 		;;
 		esac
 	done

@@ -1,49 +1,51 @@
 # :: --    --
-# :: 					Windows PowerShell Script 
+# :: 					Windows PowerShell Script
 # ::
+# ::             			A D M I N   S C R I P T
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::::::::::// OEM System Configuration Script //:::::::::::::::::::::::::// Windows//::::::::
+# ::
 # :: Author:			Vonschutter
 # :: Version: 			1.0
 # ::
-# :: Special Thanks to: 
+# :: Special Thanks to:
 # :: 	Primary Author Source: 	https://github.com/Disassembler0/Win10-Initial-Setup-Script
 # :: 	Tweaked Source: 	https://gist.github.com/alirobe/7f3b34ad89a159e6daa1/
 # ::
-# :: 	This Script Souce:	https://github.com/vonschutter/RTD-Build 
+# :: 	This Script Souce:	https://github.com/vonschutter/RTD-Build
 # ::
 # :: Purpose: 	The purpose of the script is to:
 # ::		- Remove unnessesary software from Windows 10
 # ::		- Turn off unnessesary services and telemetry (may be turned on again)
 # ::		- Add some useful software (OSS and freeware)
-# ::		- Make some UI Tweaks for better usability		
-# ::		
+# ::		- Make some UI Tweaks for better usability
+# ::
 # ::		NOTE: Individual items may be turned on or off in the settings section of this script.
 # ::
-# :: Background: This script is shared in the hopes that someone will find it usefull. To encourage sharing changes 
+# :: Background: This script is shared in the hopes that someone will find it usefull. To encourage sharing changes
 # :: 		 back to the source this script is released under the GPL v3. (see source location for details)
 # ::		 https://github.com/vonschutter/RTD-Build/raw/master/LICENSE.md
 # ::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#	
+#
 #	NOTE:	These terminal program(s) are written and documented to a very high degree. The reason for doing this is that
-#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how 
-#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to 
+#		these apps are seldom changed and when they are, it is usefull to be able to understand why and how
+#		things were built. Obviously, this becomes a useful learning tool as well; for all people that want to
 #		learn how to write admin scripts. It is a good and necessary practice to document extensively and follow
 #		patterns when building your own apps and config scripts. Failing to do so will result in a costly mess
-#		for any organization after some years and people turnover. 
+#		for any organization after some years and people turnover.
 #
 #		As a general rule, we prefer using functions extensively because this makes it easier to manage the script
 #		and facilitates several users working on the same scripts over time.
-#		
+#
 #		Taxonomy of this script: we prioritize the use of functions over monolithic script writing, and proper indentation
 #		to make the script more readable. Each function shall also be documented to the point of the obvious.
-#		Suggested function structure per google guidelines and as per the suggestions of 
+#		Suggested function structure per google guidelines and as per the suggestions of
 #		John Savill "PowerShell Master Class series":
 #
 #		function function_name {
-#			# Documentation and comments... 
+#			# Documentation and comments...
 #			...code...
 #		}
 
@@ -54,12 +56,12 @@
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Some prerequisites need to be met before the script is likely to run at all. 
-# These items are cared for in this section. 
+# Some prerequisites need to be met before the script is likely to run at all.
+# These items are cared for in this section.
 
-# By default windows users starting a script would not have administrateive access. 
+# By default windows users starting a script would not have administrateive access.
 # Therefore we must check if we have administrative access already, and if not
-# call this script itself with elevated priviledges. 
+# call this script itself with elevated priviledges.
 
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
@@ -73,10 +75,10 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 # ::::::::::::::                                          ::::::::::::::::::::::
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Optional components for this script are listed below. Please toggle them on 
-# or off by adding or removing a pound sign "#" infront of each option you 
+# Optional components for this script are listed below. Please toggle them on
+# or off by adding or removing a pound sign "#" infront of each option you
 # want to add or remove from the script behavior. A pound sign in front of
-# a statement means that it is ignored. 
+# a statement means that it is ignored.
 
 $BRANDING = "RTD"
 
@@ -85,7 +87,7 @@ $tweaks = @(
 	"RequireAdmin",
 	### 	Create a recovery option in case of disaster
 	"CreateRestorePoint",
-	
+
 	### 	Remove Extra Windows Apps and Sponsored Content
 	"DebloatAll",
 
@@ -94,9 +96,9 @@ $tweaks = @(
 	"UnpinTaskbarIcons",
 
 	###	Install Software Managment
-	"InstallRTDProgs", 
+	"InstallRTDProgs",
 
-	###	OEM Software Tasks 
+	###	OEM Software Tasks
 	"RTDRegistryTweaks",
 	"InstallVMSDriverTools"
 	"Install7Zip",
@@ -105,12 +107,12 @@ $tweaks = @(
 	"InstallVLC",
 	"InstallPDFToolsBundle",
 	"InstallBrave",
-	"InstallFirefox", 
+	"InstallFirefox",
 	"InstallLibreOffice",
 	"InstallRTDImageBundle",
 
-	###	Privacy Tweaks: Improve the Privacy of Using Windows 
-	###	Please unsderstand that this is no guarantee of privacy 
+	###	Privacy Tweaks: Improve the Privacy of Using Windows
+	###	Please unsderstand that this is no guarantee of privacy
 	"DisableTelemetry",             # "EnableTelemetry",
 	"DisableWiFiSense",             # "EnableWiFiSense",
 	"DisableSmartScreen",           # "EnableSmartScreen",
@@ -129,7 +131,7 @@ $tweaks = @(
 	"DisableDiagTrack",             # "EnableDiagTrack",
 	"DisableWAPPush",               # "EnableWAPPush",
 
-	###	Security Hardening: to improve the security profile of Windows 
+	###	Security Hardening: to improve the security profile of Windows
 	"SetUACLow",                    # "SetUACHigh",
 	# "EnableSharingMappedDrives",  # "DisableSharingMappedDrives",
 	"DisableAdminShares",           # "EnableAdminShares",
@@ -148,9 +150,9 @@ $tweaks = @(
 	# "EnableCIMemoryIntegrity",    # "DisableCIMemoryIntegrity",
 	#"DisableScriptHost",           # "EnableScriptHost",
 	#"EnableDotNetStrongCrypto",    # "DisableDotNetStrongCrypto",
-	"DisableMeltdownCompatFlag",    # "EnableMeltdownCompatFlag"    
+	"DisableMeltdownCompatFlag",    # "EnableMeltdownCompatFlag"
 
-	###	Service Optimizations 
+	###	Service Optimizations
 	#"DisableUpdateMSRT",           # "EnableUpdateMSRT",
 	#"DisableUpdateDriver",         # "EnableUpdateDriver",
 	"DisableUpdateRestart",         # "EnableUpdateRestart",
@@ -165,8 +167,8 @@ $tweaks = @(
 	"DisableSuperfetch",            # "EnableSuperfetch",
 	"EnableIndexing",
 	"SetBIOSTimeUTC",               # "SetBIOSTimeLocal",
-	#"DisableHibernation",		# "EnableHibernation", 
-	"EnableSleepButton",		# "DisableSleepButton",         
+	#"DisableHibernation",		# "EnableHibernation",
+	"EnableSleepButton",		# "DisableSleepButton",
 	"DisableSleepTimeout",          # "EnableSleepTimeout",
 	# "DisableFastStartup",         # "EnableFastStartup",
 
@@ -179,7 +181,7 @@ $tweaks = @(
 	"DisableStickyKeys",            # "EnableStickyKeys",
 	"ShowTaskManagerDetails"        # "HideTaskManagerDetails",
 	"ShowFileOperationsDetails",    # "HideFileOperationsDetails",
-	"DisableFileDeleteConfirm",	# "EnableFileDeleteConfirm",    
+	"DisableFileDeleteConfirm",	# "EnableFileDeleteConfirm",
 	"HideTaskbarSearch",
 	#"ShowTaskbarSearchIcon",       # "ShowTaskbarSearchBox",
 	"HideTaskView",                 # "ShowTaskView",
@@ -221,7 +223,7 @@ $tweaks = @(
 	# "DisableThumbnails",          # "EnableThumbnails",
 	# "DisableThumbsDB",            # "EnableThumbsDB",
 
-	### Application Customizations 
+	### Application Customizations
         # "EnableOneDrive",
 	"UninstallMsftBloat",           # "InstallMsftBloat",
 	"UninstallThirdPartyBloat",     # "InstallThirdPartyBloat",
@@ -270,22 +272,22 @@ function OnlineInstallTask {
 	)
 
 	Write-Progress -Activity "-- $BRANDING OEM Software Tasks:" -CurrentOperation "$Title ..." -Status "Processing Software Deployment Instructions"
-	choco install $ChocoInstall -y -no-desktopshortcuts 
+	choco install $ChocoInstall -y -no-desktopshortcuts
 }
 
 Function RTDRegistryTweaks {
 	Write-Progress -Activity "Improving Windows Update to delay Feature updates and only install Security Updates" -Status "Processing"
 	### Fix Windows Update to delay feature updates and only update at certain times
 	$UpdatesPath = "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings"
-	If (!(Get-ItemProperty $UpdatesPath  BranchReadinessLevel)) { New-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20 }  
+	If (!(Get-ItemProperty $UpdatesPath  BranchReadinessLevel)) { New-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20 }
 	Set-ItemProperty -Path $UpdatesPath -Name "BranchReadinessLevel" -Type DWord -Value 20  -ErrorAction SilentlyContinue
-	If (!(Get-ItemProperty $UpdatesPath  DeferFeatureUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365	}  
+	If (!(Get-ItemProperty $UpdatesPath  DeferFeatureUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365	}
 	Set-ItemProperty -Path $UpdatesPath -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365  -ErrorAction SilentlyContinue
-	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4 } 
+	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4 }
 	Set-ItemProperty -Path $UpdatesPath -Name "DeferQualityUpdatesPeriodInDays" -Type DWord -Value 4  -ErrorAction SilentlyContinue
-	If (!(Get-ItemProperty $UpdatesPath  ActiveHoursEnd)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2	} 
+	If (!(Get-ItemProperty $UpdatesPath  ActiveHoursEnd)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2	}
 	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursEnd" -Type DWord -Value 2  -ErrorAction SilentlyContinue
-	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8 } 
+	If (!(Get-ItemProperty $UpdatesPath  DeferQualityUpdatesPeriodInDays)) { New-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8 }
 	Set-ItemProperty -Path $UpdatesPath -Name "ActiveHoursStart" -Type DWord -Value 8  -ErrorAction SilentlyContinue
 }
 
@@ -332,7 +334,7 @@ Function InstallBrave {
 	for ( $i = 0; $i -lt 100; $i++ ){
 		$systemBrowser = Get-Process | Where-Object { $_.ProcessName -eq "brave" }
 		if ( $systemBrowser ) {
-		    $systemBrowser | ForEach-Object { $_.Kill() } 
+		    $systemBrowser | ForEach-Object { $_.Kill() }
 		    $i = 100
 		}
 	}
@@ -343,24 +345,24 @@ Function Install7Zip {
 }
 
 function InstallVMSDriverTools {
-	# Software optimization check: install virtualization drivers and agents if this 
+	# Software optimization check: install virtualization drivers and agents if this
 	# script is being run in a VM. Check for Hyper-V, VMware, VirtualBox, or KVM.
-	try { 
-		$ComputerSystemInfo = Get-WmiObject -Class Win32_ComputerSystem  
-		switch ($ComputerSystemInfo.Manufacturer) { 
-		# Hyper-V Machine Type 
-		"Virtual Machine" { 
+	try {
+		$ComputerSystemInfo = Get-WmiObject -Class Win32_ComputerSystem
+		switch ($ComputerSystemInfo.Manufacturer) {
+		# Hyper-V Machine Type
+		"Virtual Machine" {
 			OnlineInstallTask -Title "Installing Drivers for VMware Hypervisor" -ChocoInstall "boxstarter.hyperv"
-			} 
-		# VMware Machine Type 
-		"VMware Virtual Platform" { 
+			}
+		# VMware Machine Type
+		"VMware Virtual Platform" {
 			OnlineInstallTask -Title "Installing Drivers for VMware Hypervisor" -ChocoInstall  "vmware-tools"
-			} 
-		# Oracle VM Machine Type 
-		"VirtualBox" { 
+			}
+		# Oracle VM Machine Type
+		"VirtualBox" {
 			OnlineInstallTask -Title "Installing Drivers for Oracle Virtualbox Hypervisor" -ChocoInstall "virtualbox-guest-additions-guest.install"
-			} 
-		# KVM/QEMU 
+			}
+		# KVM/QEMU
 		"QEMU" {
 			OnlineInstallTask -Title "Installing VirtIO Drivers for KVM Hypervisor" -ChocoInstall "virtio-drivers"
 			OnlineInstallTask -Title "Installing Spice Virtualization Client Tools" -ChocoInstall "spice-agent"
@@ -982,7 +984,7 @@ Function EnableCIMemoryIntegrity {
 	Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Type DWord -Value 1
 }
 
-# Disable Core Isolation Memory Integrity - 
+# Disable Core Isolation Memory Integrity -
 Function DisableCIMemoryIntegrity {
 	Write-Progress "Disabling Core Isolation Memory Integrity..."
 	Remove-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -ErrorAction SilentlyContinue
@@ -1364,34 +1366,34 @@ Function DisableDarkMode {
 }
 
 Function Stop-EdgePDF {
-	#Stops edge from taking over as the default .PDF viewer    
+	#Stops edge from taking over as the default .PDF viewer
 	Write-Progress "Stopping Edge from taking over as the default .PDF viewer"
 	$NoPDF = "HKCR:\.pdf"
 	$NoProgids = "HKCR:\.pdf\OpenWithProgids"
-	$NoWithList = "HKCR:\.pdf\OpenWithList" 
+	$NoWithList = "HKCR:\.pdf\OpenWithList"
 	If (!(Get-ItemProperty $NoPDF  NoOpenWith)) {
-	    New-ItemProperty $NoPDF NoOpenWith 
-	}        
+	    New-ItemProperty $NoPDF NoOpenWith
+	}
 	If (!(Get-ItemProperty $NoPDF  NoStaticDefaultVerb)) {
-	    New-ItemProperty $NoPDF  NoStaticDefaultVerb 
-	}        
+	    New-ItemProperty $NoPDF  NoStaticDefaultVerb
+	}
 	If (!(Get-ItemProperty $NoProgids  NoOpenWith)) {
-	    New-ItemProperty $NoProgids  NoOpenWith 
-	}        
+	    New-ItemProperty $NoProgids  NoOpenWith
+	}
 	If (!(Get-ItemProperty $NoProgids  NoStaticDefaultVerb)) {
-	    New-ItemProperty $NoProgids  NoStaticDefaultVerb 
-	}        
+	    New-ItemProperty $NoProgids  NoStaticDefaultVerb
+	}
 	If (!(Get-ItemProperty $NoWithList  NoOpenWith)) {
 	    New-ItemProperty $NoWithList  NoOpenWith
-	}        
-	If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
-	    New-ItemProperty $NoWithList  NoStaticDefaultVerb 
 	}
-		
+	If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
+	    New-ItemProperty $NoWithList  NoStaticDefaultVerb
+	}
+
 	#Appends an underscore '_' to the Registry key for Edge
 	$Edge = "HKCR:\AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_"
 	If (Test-Path $Edge) {
-	    Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_ 
+	    Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_
 	}
     }
 
@@ -2175,40 +2177,40 @@ Function InstallOneDrive {
 # Uninstall default Microsoft applications
 Function UninstallMsftBloat {
 	$Bloatware = @(
-		"Microsoft.3DBuilder" 
-		"Microsoft.AppConnector" 
-		"Microsoft.BingFinance" 
-		"Microsoft.BingNews" 
-		"Microsoft.BingSports" 
-		"Microsoft.BingTranslator" 
-		"Microsoft.BingWeather" 
-		"Microsoft.CommsPhone" 
-		"Microsoft.ConnectivityStore" 
-		"Microsoft.GetHelp" 
-		"Microsoft.Getstarted" 
-		"Microsoft.Messaging" 
-		"Microsoft.Microsoft3DViewer" 
-		"Microsoft.MicrosoftPowerBIForWindows" 
-		"Microsoft.MicrosoftSolitaireCollection" 
-		"Microsoft.MicrosoftStickyNotes" 
-		"Microsoft.NetworkSpeedTest" 
-		"Microsoft.Office.OneNote" 
-		"Microsoft.Office.Sway" 
-		"Microsoft.OneConnect" 
-		"Microsoft.People" 
-		"Microsoft.Print3D" 
-		"Microsoft.RemoteDesktop" 
-		"Microsoft.Wallet" 
-		"Microsoft.WindowsAlarms" 
-		"Microsoft.WindowsCamera" 
-		"microsoft.windowscommunicationsapps" 
-		"Microsoft.WindowsFeedbackHub" 
-		"Microsoft.WindowsMaps" 
-		"Microsoft.WindowsPhone" 
-		"Microsoft.Windows.Photos" 
-		"Microsoft.WindowsSoundRecorder" 
-		"Microsoft.ZuneMusic" 
-		"Microsoft.ZuneVideo" 
+		"Microsoft.3DBuilder"
+		"Microsoft.AppConnector"
+		"Microsoft.BingFinance"
+		"Microsoft.BingNews"
+		"Microsoft.BingSports"
+		"Microsoft.BingTranslator"
+		"Microsoft.BingWeather"
+		"Microsoft.CommsPhone"
+		"Microsoft.ConnectivityStore"
+		"Microsoft.GetHelp"
+		"Microsoft.Getstarted"
+		"Microsoft.Messaging"
+		"Microsoft.Microsoft3DViewer"
+		"Microsoft.MicrosoftPowerBIForWindows"
+		"Microsoft.MicrosoftSolitaireCollection"
+		"Microsoft.MicrosoftStickyNotes"
+		"Microsoft.NetworkSpeedTest"
+		"Microsoft.Office.OneNote"
+		"Microsoft.Office.Sway"
+		"Microsoft.OneConnect"
+		"Microsoft.People"
+		"Microsoft.Print3D"
+		"Microsoft.RemoteDesktop"
+		"Microsoft.Wallet"
+		"Microsoft.WindowsAlarms"
+		"Microsoft.WindowsCamera"
+		"microsoft.windowscommunicationsapps"
+		"Microsoft.WindowsFeedbackHub"
+		"Microsoft.WindowsMaps"
+		"Microsoft.WindowsPhone"
+		"Microsoft.Windows.Photos"
+		"Microsoft.WindowsSoundRecorder"
+		"Microsoft.ZuneMusic"
+		"Microsoft.ZuneVideo"
 	)
 	ForEach-Object $Bloat in $Bloatware {
 		Write-Progress --Activity "Uninstalling default third party applications" --Status "Removing: $Bloat"
@@ -2220,42 +2222,42 @@ Function UninstallMsftBloat {
 # Install default Microsoft applications
 Function InstallMsftBloat {
 	$Bloatware = @(
-		"Microsoft.3DBuilder" 
-		"Microsoft.AppConnector" 
-		"Microsoft.BingFinance" 
-		"Microsoft.BingNews" 
-		"Microsoft.BingSports" 
-		"Microsoft.BingTranslator" 
-		"Microsoft.BingWeather" 
-		"Microsoft.CommsPhone" 
-		"Microsoft.ConnectivityStore" 
-		"Microsoft.GetHelp" 
-		"Microsoft.Getstarted" 
-		"Microsoft.Messaging" 
-		"Microsoft.Microsoft3DViewer" 
-		"Microsoft.MicrosoftPowerBIForWindows" 
-		"Microsoft.MicrosoftSolitaireCollection" 
-		"Microsoft.MicrosoftStickyNotes" 
-		"Microsoft.MinecraftUWP" 
-		"Microsoft.MSPaint" 
-		"Microsoft.NetworkSpeedTest" 
-		"Microsoft.Office.Sway" 
-		"Microsoft.OneConnect" 
-		"Microsoft.People" 
-		"Microsoft.Print3D" 
-		"Microsoft.RemoteDesktop" 
-		"Microsoft.SkypeApp" 
-		"Microsoft.Wallet" 
-		"Microsoft.WindowsAlarms" 
-		"Microsoft.WindowsCamera" 
-		"Microsoft.windowscommunicationsapps" 
-		"Microsoft.WindowsFeedbackHub" 
-		"Microsoft.WindowsMaps" 
-		"Microsoft.WindowsPhone" 
-		"Microsoft.Windows.Photos" 
-		"Microsoft.WindowsSoundRecorder" 
-		"Microsoft.ZuneMusic" 
-		"Microsoft.ZuneVideo" 
+		"Microsoft.3DBuilder"
+		"Microsoft.AppConnector"
+		"Microsoft.BingFinance"
+		"Microsoft.BingNews"
+		"Microsoft.BingSports"
+		"Microsoft.BingTranslator"
+		"Microsoft.BingWeather"
+		"Microsoft.CommsPhone"
+		"Microsoft.ConnectivityStore"
+		"Microsoft.GetHelp"
+		"Microsoft.Getstarted"
+		"Microsoft.Messaging"
+		"Microsoft.Microsoft3DViewer"
+		"Microsoft.MicrosoftPowerBIForWindows"
+		"Microsoft.MicrosoftSolitaireCollection"
+		"Microsoft.MicrosoftStickyNotes"
+		"Microsoft.MinecraftUWP"
+		"Microsoft.MSPaint"
+		"Microsoft.NetworkSpeedTest"
+		"Microsoft.Office.Sway"
+		"Microsoft.OneConnect"
+		"Microsoft.People"
+		"Microsoft.Print3D"
+		"Microsoft.RemoteDesktop"
+		"Microsoft.SkypeApp"
+		"Microsoft.Wallet"
+		"Microsoft.WindowsAlarms"
+		"Microsoft.WindowsCamera"
+		"Microsoft.windowscommunicationsapps"
+		"Microsoft.WindowsFeedbackHub"
+		"Microsoft.WindowsMaps"
+		"Microsoft.WindowsPhone"
+		"Microsoft.Windows.Photos"
+		"Microsoft.WindowsSoundRecorder"
+		"Microsoft.ZuneMusic"
+		"Microsoft.ZuneVideo"
 	)
 
 	ForEach-Object $Bloat in $Bloatware {
@@ -2268,35 +2270,35 @@ Function InstallMsftBloat {
 # Remove 3rd party and sponsor bloatware
 function UninstallThirdPartyBloat {
 	$Bloatware = @(
-		"2414FC7A.Viber" 
-		"41038Axilesoft.ACGMediaPlayer" 
-		"46928bounde.EclipseManager" 
-		"4DF9E0F8.Netflix" 
-		"64885BlueEdge.OneCalendar" 
-		"7EE7776C.LinkedInforWindows" 
-		"828B5831.HiddenCityMysteryofShadows" 
-		"89006A2E.AutodeskSketchBook" 
-		"9E2F88E3.Twitter" 
-		"A278AB0D.DisneyMagicKingdoms" 
-		"A278AB0D.MarchofEmpires" 
-		"ActiproSoftwareLLC.562882FEEB491" 
-		"AdobeSystemsIncorporated.AdobePhotoshopExpress" 
-		"CAF9E577.Plex" 
-		"D52A8D61.FarmVille2CountryEscape" 
-		"D5EA27B7.Duolingo-LearnLanguagesforFree" 
-		"DB6EA5DB.CyberLinkMediaSuiteEssentials" 
-		"DolbyLaboratories.DolbyAccess" 
-		"Drawboard.DrawboardPDF" 
-		"Facebook.Facebook" 
-		"flaregamesGmbH.RoyalRevolt2" 
-		"GAMELOFTSA.Asphalt8Airborne" 
-		"KeeperSecurityInc.Keeper" 
-		"king.com.BubbleWitch3Saga" 
-		"king.com.CandyCrushSodaSaga" 
-		"PandoraMediaInc.29680B314EFC2" 
-		"SpotifyAB.SpotifyMusic" 
-		"WinZipComputing.WinZipUniversal" 
-		"XINGAG.XING" 
+		"2414FC7A.Viber"
+		"41038Axilesoft.ACGMediaPlayer"
+		"46928bounde.EclipseManager"
+		"4DF9E0F8.Netflix"
+		"64885BlueEdge.OneCalendar"
+		"7EE7776C.LinkedInforWindows"
+		"828B5831.HiddenCityMysteryofShadows"
+		"89006A2E.AutodeskSketchBook"
+		"9E2F88E3.Twitter"
+		"A278AB0D.DisneyMagicKingdoms"
+		"A278AB0D.MarchofEmpires"
+		"ActiproSoftwareLLC.562882FEEB491"
+		"AdobeSystemsIncorporated.AdobePhotoshopExpress"
+		"CAF9E577.Plex"
+		"D52A8D61.FarmVille2CountryEscape"
+		"D5EA27B7.Duolingo-LearnLanguagesforFree"
+		"DB6EA5DB.CyberLinkMediaSuiteEssentials"
+		"DolbyLaboratories.DolbyAccess"
+		"Drawboard.DrawboardPDF"
+		"Facebook.Facebook"
+		"flaregamesGmbH.RoyalRevolt2"
+		"GAMELOFTSA.Asphalt8Airborne"
+		"KeeperSecurityInc.Keeper"
+		"king.com.BubbleWitch3Saga"
+		"king.com.CandyCrushSodaSaga"
+		"PandoraMediaInc.29680B314EFC2"
+		"SpotifyAB.SpotifyMusic"
+		"WinZipComputing.WinZipUniversal"
+		"XINGAG.XING"
 	)
 	ForEach-Object $Bloat in $Bloatware {
 		Write-Progress --Activity "Uninstalling default third party applications" --Status "Removing: $Bloat"
@@ -2308,35 +2310,35 @@ function UninstallThirdPartyBloat {
 # Install 3rd party and sponsor bloatware
 Function InstallThirdPartyBloat {
 	$Bloatware = @(
-		"2414FC7A.Viber" 
-		"41038Axilesoft.ACGMediaPlayer" 
-		"46928bounde.EclipseManager" 
-		"4DF9E0F8.Netflix" 
-		"64885BlueEdge.OneCalendar" 
-		"7EE7776C.LinkedInforWindows" 
-		"828B5831.HiddenCityMysteryofShadows" 
-		"89006A2E.AutodeskSketchBook" 
-		"9E2F88E3.Twitter" 
-		"A278AB0D.DisneyMagicKingdoms" 
-		"A278AB0D.MarchofEmpires" 
-		"ActiproSoftwareLLC.562882FEEB491" 
-		"AdobeSystemsIncorporated.AdobePhotoshopExpress" 
-		"CAF9E577.Plex" 
-		"D52A8D61.FarmVille2CountryEscape" 
-		"D5EA27B7.Duolingo-LearnLanguagesforFree" 
-		"DB6EA5DB.CyberLinkMediaSuiteEssentials" 
-		"DolbyLaboratories.DolbyAccess" 
-		"Drawboard.DrawboardPDF" 
-		"Facebook.Facebook" 
-		"flaregamesGmbH.RoyalRevolt2" 
-		"GAMELOFTSA.Asphalt8Airborne" 
-		"KeeperSecurityInc.Keeper" 
-		"king.com.BubbleWitch3Saga" 
-		"king.com.CandyCrushSodaSaga" 
-		"PandoraMediaInc.29680B314EFC2" 
-		"SpotifyAB.SpotifyMusic" 
-		"WinZipComputing.WinZipUniversal" 
-		"XINGAG.XING" 
+		"2414FC7A.Viber"
+		"41038Axilesoft.ACGMediaPlayer"
+		"46928bounde.EclipseManager"
+		"4DF9E0F8.Netflix"
+		"64885BlueEdge.OneCalendar"
+		"7EE7776C.LinkedInforWindows"
+		"828B5831.HiddenCityMysteryofShadows"
+		"89006A2E.AutodeskSketchBook"
+		"9E2F88E3.Twitter"
+		"A278AB0D.DisneyMagicKingdoms"
+		"A278AB0D.MarchofEmpires"
+		"ActiproSoftwareLLC.562882FEEB491"
+		"AdobeSystemsIncorporated.AdobePhotoshopExpress"
+		"CAF9E577.Plex"
+		"D52A8D61.FarmVille2CountryEscape"
+		"D5EA27B7.Duolingo-LearnLanguagesforFree"
+		"DB6EA5DB.CyberLinkMediaSuiteEssentials"
+		"DolbyLaboratories.DolbyAccess"
+		"Drawboard.DrawboardPDF"
+		"Facebook.Facebook"
+		"flaregamesGmbH.RoyalRevolt2"
+		"GAMELOFTSA.Asphalt8Airborne"
+		"KeeperSecurityInc.Keeper"
+		"king.com.BubbleWitch3Saga"
+		"king.com.CandyCrushSodaSaga"
+		"PandoraMediaInc.29680B314EFC2"
+		"SpotifyAB.SpotifyMusic"
+		"WinZipComputing.WinZipUniversal"
+		"XINGAG.XING"
 	)
 	ForEach-Object $Bloat in $Bloatware {
 		Write-Progress --Activity "Installing Default Microsoft Applications" --Status "Installing: $Bloat"
@@ -2784,7 +2786,7 @@ Function DebloatAll {
 		"*Sway*"
 		"*Speed Test*"
 		"*Dolby*"
-		
+
 		#Optional: Typically not removed but you can if you need to for some reason
 		#"*Microsoft.Advertising.Xaml_10.1712.5.0_x64__8wekyb3d8bbwe*"
 		#"*Microsoft.Advertising.Xaml_10.1712.5.0_x86__8wekyb3d8bbwe*"

@@ -1,36 +1,36 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::             			A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::// Simple bootable CD/DVD creation Tool //:::::::::::::::::::::// Linux //::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple AVI joiner Tool //:::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.00
 #::
 #::
-#::	Purpose: The purpose of the script is to write an ISO file to an optical device verbatim. 
-#::		  
-#::		 
-#::     Usage:	Simply execute this commandlet passing the parameter indicating where the ISO is located 
-#:: 		to accomplish this task. 
-#::     	
-#::     	Example: 
-#::		rtd-burniso path/to/file.iso
-#::     	
+#::	Purpose: The purpose of the script is to join avi files in to one playable movie.
+#::
+#::
+#::     Usage:	Simply execute this commandlet passing the parameter indicating where avi files are located
+#:: 		to join them all in one file.
+#::
+#::     	Example:
+#::		rtd-join-avi *.avi
+#::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Additional information: 
+# Additional information:
 #
-# An ISO image is a disk image of an optical disc. In other words, it is an archive file that contains everything that would 
-# be written to an optical disc, sector by sector, including the optical disc file system.[1] ISO image files bear the .iso 
-# filename extension. The name ISO is taken from the ISO 9660 file system used with CD-ROM media, but what is known as an 
-# ISO image might also contain a UDF (ISO/IEC 13346) file system (commonly used by DVDs and Blu-ray Discs).
-#
-# ISO images can be created from optical discs by disk imaging software, or from a collection of files by optical disc authoring 
-# software, or from a different disk image file by means of conversion. Software distributed on bootable discs is often available 
-# for download in ISO image format. And like any other ISO image, it may be written to an optical disc such as CD or DVD. 
+# Audio Video Interleave (also Audio Video Interleaved), known by its initials AVI and the .avi filename extension,
+# is a multimedia container format introduced by Microsoft in November 1992 as part of its Video for Windows software.
+# AVI files can contain both audio and video data in a file container that allows synchronous audio-with-video playback.
+# Like the DVD video format, AVI files support multiple streaming audio and video, although these features are seldom used.
+
+# Many AVI files use the file format extensions developed by the Matrox OpenDML group in February 1996. These files
+# are supported by Microsoft, and are unofficially called "AVI 2.0". In 2010 the US government's National Archives and
+# Records Administration defined AVI as the official wrapper for preserving digital video.
 #
 # This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
 # This OEM and store nolonger exists as its owner has passed away.
@@ -46,39 +46,20 @@
 #::::::::::::::                                          ::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-# Set colors for prompting on screen.
-	YELLOW="\033[1;33m"
-	RED="\033[0;31m"
-	ENDCOLOR="\033[0m"
-	GREEN="\033[0;32m"
-	BLUE="\033[0;34m"
 
-
-if [ -f ~/bin/_rtd_functions ]; then 
-	source ~/bin/_rtd_functions
-else 
-	if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
-		source /opt/rtd/scripts/_rtd_functions
-	else 
-		echo "RTD Functions not found... "
-		echo "Trying to retrieve them..."
-		wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions 
-		source ./_rtd_functions
-	fi
-fi
-
-
-
-if [[ "$RTDFUCTIONS" = "1" ]]
-      then
-        echo -e $GREEN "RTD functions loaded!" $ENDCOLOR
-      else
-        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
-        echo -e $YELLOW " " $ENDCOLOR
-        echo -e $YELLOW "Cannit ensure that the correct software is available" $ENDCOLOR
-        echo -e $YELLOW "Quiting rather than cause potential damage..." $ENDCOLOR
-        exit 1
-fi
+check_rtd_library ()
+{
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
 
 
 ###########################################################################
@@ -86,14 +67,30 @@ fi
 ##                       Script Executive                                ##
 ##                                                                       ##
 ###########################################################################
-check_dependencies mencoder
-check_dependencies dialog
+
+if ! hash mencoder 2>/dev/null; then
+	if [[ "$UID" == "0" ]]; then
+		check_dependencies mencoder
+		exit
+	else
+		write_error "Software needed to join AVI files is missing. Please run $( basename $0 ) again with sudo so that I may correct the problem."
+		exit
+	fi
+fi
+
+if [[ -z $1 ]]; then
+	write_error "You need to provide at least one argument!
+	for example: $( basename $0 ) *.avi
+	so that I know what files to process! "
+	exit
+fi
+
 
 
 rtd_join_avis () {
-        mencoder -oac copy -ovc copy *.avi -o WHOLE-THING.avi
+        mencoder -oac copy -ovc copy $@ -o WHOLE-THING.avi
 }
 
-
+check_rtd_library
 rtd_join_avis
- 
+

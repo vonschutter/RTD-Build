@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#::                                     A D M I N   C O M M A N D L E T   
+#::                                     A D M I N   C O M M A N D L E T
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
@@ -8,13 +8,13 @@
 #:: Version 	1.00
 #::
 #::
-#::	Purpose: The purpose of this script is to "unrar" all archives in a folder herarchy. 
-#::		 
-#::		
+#::	Purpose: The purpose of this script is to "unrar" all archives in a folder herarchy.
+#::
+#::
 #::     Usage:	Simply execute this commandlet to accomplith this task.
-#:: 		
-#::     	
-#::     	
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -31,6 +31,6 @@
 
 list=`find ./ -type f -name "*.rar"`
 for line in $list; do
-DEST=${line%/*}
-unrar x $line $DEST
+        DEST=${line%/*}
+        unrar x $line $DEST
 done

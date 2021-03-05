@@ -1,20 +1,20 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::             			A D M I N   C O M M A N D L E T
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.02
 #::
 #::
-#::	Purpose: The purpose of this script is to migrate a users dropbox folder to a volume 
-#::		 that is loopmounted and formatted with extfs4. This may be needed if the dropbox folder 
-#::		 needs to reside on a Luks encrypted home folder; wich Dropbox has dropped support for. 
+#::	Purpose: The purpose of this script is to migrate a users dropbox folder to a volume
+#::		 that is loopmounted and formatted with extfs4. This may be needed if the dropbox folder
+#::		 needs to reside on a Luks encrypted home folder; wich Dropbox has dropped support for.
 #::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
-#:: 		
-#::     	
-#::     	
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -30,17 +30,20 @@
 
 
 
+if [[ -d ~/Dropbox ]]; then
+        killall dropbox
+        mv Dropbox Dropbox.bak
+        mkdir Dropbox
+        dd if=/dev/zero of=~/.dropbox/storage bs=1M count=14072
+        mkfs.ext4 /home/$USER/.dropbox/storage
+        chattr +i /home/$USER/Dropbox
+        /home/$USER/.dropbox/storage /home/$USER/Dropbox ext4 defaults,user_xattr,loop 0 0
+        mount /home/$USER/Dropbox/
 
 
-killall dropbox
-mv Dropbox Dropbox.bak
-mkdir Dropbox
-dd if=/dev/zero of=~/.dropbox/storage bs=1M count=14072
-mkfs.ext4 /home/$USER/.dropbox/storage
-chattr +i /home/$USER/Dropbox
-/home/$USER/.dropbox/storage /home/$USER/Dropbox ext4 defaults,user_xattr,loop 0 0
-mount /home/$USER/Dropbox/
-
-
-chown -R $USER /home/$USER/Dropbox
-cp -a Dropbox.bak/* Dropbox/
+        chown -R $USER /home/$USER/Dropbox
+        cp -a Dropbox.bak/* Dropbox/
+else
+        echo "Dropbox folder not found!"
+        exit 1
+fi

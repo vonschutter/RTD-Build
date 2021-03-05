@@ -610,6 +610,39 @@ rtd_wait_for_internet_availability ()
 
 
 
+io_on_notify_wait ()
+{
+	check_dependencies inotify-tools
+	EVENTS="CREATE,CLOSE_WRITE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
+
+	if [ -z "$1" ]; then
+		echo "Usage: $0 rsync -avt . host:/remote/dir ..."
+		exit -1;
+	fi
+
+	inotifywait -e "$EVENTS" -m -r --format '%:e %f' . | (
+		WAITING="";
+		while true; do
+		LINE="";
+		read -t 1 LINE;
+		if test -z "$LINE"; then
+			if test ! -z "$WAITING"; then
+				echo "CHANGE";
+				WAITING="";
+			fi;
+		else
+			WAITING=1;
+		fi;
+		done) | (
+		while true; do
+		read TMP;
+		echo $@
+		$@
+		done
+	)
+}
+
+
 
 
 
@@ -1452,14 +1485,28 @@ ensure_admin ()
 # ensure_admin
 #
 # End of documentation
-
 	if [ ! "$UID" -eq 0 ]; then
-		write_warning "This script needs administrative access..."
-		sudo bash "$0" "$*"
-		exit
-	else
-		if xset q &>/dev/null; then xhost local:root ; fi
+		if hash dialog 2>/dev/null ; then
+			# find  a diferent way... tempfile not universal...
+			data=$(tempfile 2>/dev/null)
+			trap "rm -f $data" 0 1 2 5 15
+			dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+			ret=$? ; clear
+			case $ret in
+				0) cat $data | sudo -S bash "$0" "$*" ;;
+				1) echo "Request cancelled" ;;
+				255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
+				* ) rm $data &>/dev/null ; exit 1
+			esac
+			rm $data &>/dev/null
+			exit
+		else
+			write_warning "This script needs administrative access..."
+			sudo bash "$0" "$*"
+			exit
+		fi
 	fi
+	if xset q &>/dev/null; then xhost local:root ; fi
 }
 
 
@@ -2471,15 +2518,16 @@ compress_all_items_here ()
 #		is 7z. This privides a high level of compression.
 #
 # Globals:
-# Arguments: None
+# Arguments: --noprompt, --encrypt (mutually exclusive)
 # Outputs:
 # Returns:
-# Usage:
+# Usage:	compress_all_items_here [--compress] [--noprompt]
 # Usage:	Simply call this function to accomplish this task.
 #
-# Arguments:	No parameters required.
+# Arguments:	No parameters required for basic function (user will be prompted).
 #
 # End of documentation
+
 	if hash 7z ; then
 		write_information "7z is present, good..."
 	else
@@ -2495,33 +2543,146 @@ compress_all_items_here ()
 		done
 	fi
 
-	if hash dialog 2>/dev/null ; then
-		if ( dialog --backtitle "${BRANDING:-"${FUNCNAME[0]}"}" --title "Compress Content Here" --colors --cr-wrap --no-collapse --no-button "NO: Quit" --yes-button "YES: Compress" --yesno "Hello ${USER}... I am going to compress each file or folder that I find here: $(pwd) These are: \Z5 \n$(ls -h1 -F -I "*.7z")" 20 90 ); then
-			clear
-			continue
+	if [[ ! "$1" == "--noprompt" ]]; then
+		if hash dialog 2>/dev/null ; then
+			if ( dialog --backtitle "${BRANDING:-"${FUNCNAME[0]}"} ${1}" --title "Compress Content Here" --colors --cr-wrap --no-collapse --no-button "NO: Quit" --yes-button "YES: Compress" --yesno "Hello ${USER}... I am going to compress each file or folder that I find here: $(pwd) These are: \Z5 \n$(ls -h1 -F -I "*.7z")" 20 90 ); then
+				clear
+			else
+				clear
+				exit
+			fi
 		else
 			clear
-			exit
+			write_host --cyan  "Hello ${USER}... I am going to compress each file or folder that I find in this folder. These are:"
+			ls -I "*.7z" --color=always
+			echo -e " \n"
+			write_information "To cancel this, just close the terminal or press [CRTL] + [C]."
+			read -p "Press the [ENTER] key to continue..."
 		fi
-	else
-		clear
-		write_host --cyan  "Hello ${USER}... I am going to compress each file or folder that I find in this folder. These are:"
-		ls -I "*.7z" --color=always
-		echo -e " \n"
-		write_information "To cancel this, just close the terminal or press [CRTL] + [C]."
-		read -p "Press the [ENTER] key to continue..."
 	fi
 
-	SAVEIFS=$IFS
-	IFS=$(echo -en "\n\b")
-	for line in $(ls -I "*.7z")
-	do
-		7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on $line.7z $line
-	done
-	IFS=$SAVEIFS
-	write_information "Created the following archives un-encrypted:"
-	ls *.7z
+
+	if echo ${*} |grep "encrypt" ; then
+		passtoken=$(dialog --title "${Title:="$( basename $0 )"}" --backtitle "${BRANDING:-"${FUNCNAME[0]}"}" --stdout --insecure --passwordbox "\n Please provide a passphrase for the encryption. \n Please do not forget it!" 10 90 )
+		ret=$? ; clear
+		case $ret in
+			0)
+				SAVEIFS=$IFS
+				IFS=$(echo -en "\n\b")
+				for line in $(ls -I "*.7z")
+				do
+					7z a -t7z -m0=lzma2 -mx=5 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken $line.7z $line
+				done
+				IFS=$SAVEIFS
+				result="
+				\n Created the following archives encrypted with a pass-phrase:
+
+				\n \Z1  $(ls *.7z)"
+				display_result "Done creating encrypted archives"
+			;;
+			1) echo "Request cancelled" ; exit 1;;
+			255) echo "[esc] Request aborted" ; exit 255;;
+			* )  exit 1 ;;
+		esac
+	else
+		SAVEIFS=$IFS
+		IFS=$(echo -en "\n\b")
+		for line in $(ls -I "*.7z")
+		do
+			7z a -t7z -m0=lzma2 -mx=5 -mfb=64 -md=64m -ms=on -mhe=on $line.7z $line
+		done
+		IFS=$SAVEIFS
+		result="
+		Created the following archives un-encrypted:
+
+		\n \Z1  $(ls *.7z)"
+		display_result "Done Compressing"
+	fi
 }
+
+
+
+
+
+
+compress_provided_items ()
+{
+# Description: Function to compress the contents of the present working directory.
+#
+# Purpose:	To compress all files and folders individually found in the current folder.
+#		The current folder refers to the present working directory "PWD". Compression method
+#		is 7z. This privides a high level of compression.
+#
+# Globals:
+# Arguments: --noprompt, --encrypt (mutually exclusive)
+# Outputs:
+# Returns:
+# Usage:	compress_all_items_here [--compress] [--noprompt]
+# Usage:	Simply call this function to accomplish this task.
+#
+# Arguments:	No parameters required for basic function (user will be prompted).
+#
+# End of documentation
+list="$*"
+	if echo ${1} |grep "encrypt" ; then
+		passtoken=$(dialog --title "${Title:="$( basename $0 )"}" --backtitle "${BRANDING:-"${FUNCNAME[0]}"}" --stdout --insecure --passwordbox "\n To encrypt the content you have to give me a phrase to encrypt it with. \n This can be anything in one long word, but never forget it!" 10 90 )
+		ret=$? ; clear
+		case $ret in
+			0)
+
+				echo "☕ Please be patient, Large sets of files may take serious time..."
+				list="${list:9:1000}"
+				SAVEIFS=$IFS
+				IFS=$(echo -en "\n\b")
+				for line in $list ;
+				do
+					7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken $line.7z $line
+				done
+				IFS=$SAVEIFS
+
+				result="
+				\n♹ Created the following archive(s) encrypted: \n
+				\n STATUS	FILENAME
+				$(
+				echo \\n
+				for d in $list; do
+				[[ -e $d.7z ]] && echo "Confirmed	:  $d.z7 \\n" || echo " Failed!	:  $d.z7 \\n"
+				done
+				)
+				\n Please review the above: ⏫"
+				display_result "Done creating encrypted archives"
+			;;
+			1) echo "Request cancelled" ; exit 1;;
+			255) echo "[esc] Request aborted" ; exit 255;;
+			* )  exit 1 ;;
+		esac
+	else
+		SAVEIFS=$IFS
+		IFS=$(echo -en "\n\b")
+		echo "☕ Please be patient, Large sets of files may take serious time..."
+
+		for line in $@ ;
+		do
+		7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on $line.7z $line
+		done
+
+
+		IFS=$SAVEIFS
+		result="
+		Created the following archive(s): \n
+		\n STATUS	FILENAME
+		$(
+		echo \\n
+		for d in $@; do
+		[[ -e $d.7z ]] && echo "Confirmed	:  $d.z7 \\n" || echo " Failed!	:  $d.z7 \\n"
+		done
+		)
+		\n Please review the above: ⏫"
+		display_result "Done creating encrypted archives"
+	fi
+}
+
+
 
 
 
@@ -7174,6 +7335,11 @@ set_colors ()
 	chess="♟️ ♔ ♕ ♖ ♗ ♘ ♙ ♚ ♛ ♜ ♝ ♞ ♟"
 	colorcircle="🔴 🟠 🟡 🟢 🔵 🟣 🟤"
 	colorsquares=" 🟥 🟧 🟨 🟩 🟦 🟪 🟫"
+	#⏰ 	⏱ 	⏲ 	⏳ 	⏴ 	⏵ 	⏶ 	⏷ 	⏸ 	⏹ 	⏺
+	#⏩ 	⏪ 	⏫ 	⏬ 	⏭ 	⏮ 	⏯
+	# ☔ 	☕ 	☖ 	☗ 	☘ 	☙ 	☚ 	☛ 	☜ 	☝ 	☞ 	☟
+	# ♰ 	♱ 	♲ 	♳ 	♴ 	♵ 	♶ 	♷ 	♸ 	♹ 	♺ 	♻ 	♼ 	♽ 	♾ 	♿
+	# ⚐ 	⚑ 	⚒ 	⚓ 	⚔ 	⚕ 	⚖ 	⚗ 	⚘ 	⚙ 	⚚ 	⚛ 	⚜ 	⚝ 	⚞ 	⚟
 }
 
 
@@ -7196,7 +7362,8 @@ display_result ()
 #
 # End of Documentation
 
-	$RTD_GUI --backtitle "$BRANDING" --title "$1" --msgbox "$result" $HEIGHT $WIDTH
+	${RTD_GUI:-dialog} --backtitle "$BRANDING" --colors --no-collapse --title "$1" --msgbox "$result" ${HEIGHT:-"20"} ${WIDTH:-"80"}
+	clear
 }
 
 

@@ -1,34 +1,34 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::                                    A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.02
 #::
 #::
-#::	Purpose: The purpose of this script is to clear out zombie processes. 
+#::	Purpose: The purpose of this script is to clear out zombie processes.
 #::		 This may be useful in troubleshooting. It may work, but depending on the cause
-#::		 of the zombification it may or may not work. 
+#::		 of the zombification it may or may not work.
 #::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
-#:: 		
-#::     	
-#::     	
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Additional Information: 
+# Additional Information:
 #
-# On Unix and Unix-like computer operating systems, a zombie process or defunct process is a process that has completed 
-# execution (via the exit system call) but still has an entry in the process table: it is a process in the "Terminated state". 
-# This occurs for child processes, where the entry is still needed to allow the parent process to read its child's exit status: 
-# once the exit status is read via the wait system call, the zombie's entry is removed from the process table and it is said 
-# to be "reaped". A child process always first becomes a zombie before being removed from the resource table. In most cases, 
-# under normal system operation zombies are immediately waited on by their parent and then reaped by the system – processes 
-# that stay zombies for a long time are generally an error and cause a resource leak. 
+# On Unix and Unix-like computer operating systems, a zombie process or defunct process is a process that has completed
+# execution (via the exit system call) but still has an entry in the process table: it is a process in the "Terminated state".
+# This occurs for child processes, where the entry is still needed to allow the parent process to read its child's exit status:
+# once the exit status is read via the wait system call, the zombie's entry is removed from the process table and it is said
+# to be "reaped". A child process always first becomes a zombie before being removed from the resource table. In most cases,
+# under normal system operation zombies are immediately waited on by their parent and then reaped by the system – processes
+# that stay zombies for a long time are generally an error and cause a resource leak.
 #
 # This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
 # This OEM and store nolonger exists as its owner has passed away.
@@ -42,14 +42,27 @@
 ##                                                                       ##
 ###########################################################################
 
-# Set display colors for usability
-YELLOW="\033[1;33m"
-RED="\033[0;31m"
-ENDCOLOR="\033[0m"
-
 # Elevate priveledges to administrate system
-echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
-[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+if [ ! "$UID" -eq 0 ]; then
+        if hash dialog 2>/dev/null ; then
+                # find  a diferent way... tempfile not universal...
+                data=$(tempfile 2>/dev/null)
+                trap "rm -f $data" 0 1 2 5 15
+                dialog --title "${Title}" --backtitle "${BackTitle}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+                ret=$? ; clear
+                case $ret in
+                        0) cat $data | sudo -S bash "$0" "$*" ;;
+                        1) echo "Request cancelled" ;;
+                        255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
+                        * ) rm $data &>/dev/null ; exit 1
+                esac
+                rm $data &>/dev/null
+                exit
+        else
+                [ "$UID" -eq 0 ] || echo "This script needs administrative access..."
+                [ "$UID" -eq 0 ] || exec sudo -H bash "$0" "$@"
+        fi
+fi
 
 
 ###########################################################################
@@ -58,4 +71,5 @@ echo -e $YELLOW "This script needs administrative access..." $ENDCOLOR
 ##                                                                       ##
 ###########################################################################
 
-kill $(ps -A -ostat,ppid | awk '/[zZ]/{print $2}')
+result=$(kill $(ps -A -ostat,ppid | awk '/[zZ]/{print $2}'))
+display_result "$( basename $0 )"

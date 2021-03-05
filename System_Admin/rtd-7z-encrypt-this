@@ -1,169 +1,77 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::                                      A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Compression Tool //::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.02
 #::
 #::
-#::	Purpose: To compress all files and folders individually found in the current folder. 
-#::		 The current folder refers to the present working directory "PWD". 
-#::		 
-#::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
-#:: 
-#::     
-#::     
+#::	Purpose: To compress all files and folders provided as argument.
+#::
+#::
+#::     Usage:	rtd-7z-encrypt-this file1 file2 directory1
+#::
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-#
-# This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
-# This OEM and store nolonger exists as its owner has passed away.
 # This script is shared in the hopes that someone will find it useful.
+# For convenience and supportability most actions (work) is stored in a common library used bu multiple scripts.
+# To use these functions in the library, simply load the library using the "source" bash built in command. All
+# functions will then be available for use. This script demonstrates the simplicity of using these functions.
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
+# By default this script is placed in /opt/rtd/scrips/
 #
-#
-# Tutorial Text:
-# find ./ -type f -iname "*.rar" -exec unrar e {} \;
-# a                   Add (dir1 to archive.7z)
-# -t7z                Use a 7z archive
-# -m0=lzma2           Use lzma2 method
-# -mx=9               Use the '9' level of compression = Ultra
-# -mfb=64             Use number of fast bytes for LZMA = 64
-# -md=32m             Use a dictionary size = 32 megabytes
-# -ms=on              Solid archive = on
-# -mhe=on             7z format only : enables or disables archive header encryption
-# -p{Password}        Add a password
-# Simple compression logic: 7za a -t7z $line.7z $line
-# To change all filename to have whitespace replaced with _: list=`ls | sed -e 's/ /\\\\ /g'`
-# Alternatively use: IFS=$(echo -en "\n\b") Here IFS is altered to not consider a whitespace as a separator.
-# To see all options type "man 7z"
-# or go to: https://www.mankier.com/1/7z#
+# 1 - To see options to use the rtd library type: "bash _rtd_library --help"
+# 2 - To see usefull documentation on each function in this library: "bash _rtd_library --devhelp"
 
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Settings                 ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-###########################################################################
-##                                                                       ##
-##                       Set Environment                                 ##
-##                                                                       ##
-###########################################################################
-#
-# Set colors for prompting on screen.
-source /opt/rtd/scripts/_rtd_library
+# Set default UI colors:
+YELLOW="\033[1;33m"
+RED="\033[0;31m"
+ENDCOLOR="\033[0m"
 
-# Ask for encryption phrase and store it temporarily.
-clear
-echo -e "
-Hello $YELLOW $USER $ENDCOLOR ... I am going to compress $GREEN $@ $ENDCOLOR
-To cancel this, just close the terminal or press "CRTL C".
-"
-read -p "Press the [ENTER] key to continue..."
-echo "
+# Set library path if not defined:
+rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
 
-To encrypt the content you have to give me a phrase to encrypt it with.
-This can be anything in one long word, but never forget it!
-"
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Functions                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-echo -e $YELLOW
-read -sp 'Enter encryption phrase: ' passtoken
-echo -e $ENDCOLOR
+check_rtd_library ()
+{
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
 
-###########################################################################
-##                                                                       ##
-##                       Script Executive                                ##
-##                                                                       ##
-###########################################################################
-#
-# List everything in the current folder and cpmpress each item.
-# And remember to handle or replace white spaces with underscore so the shell commands
-# don't fail. Here IFS is altered to not consider a whitespace as a separator.
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::          Script Executive                ::::::::::::::::::::::
+#::::::::::::::                                          ::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-echo "☕ Please be patient, Large sets of files may take serious time..."
+check_rtd_library
 
-  for line in $@ ;
-   do
-    7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken $line.7z $line
-   done
-
-echo "Created the following archive(s) encrypted:"
-echo " FILENAME		STATUS"
-for d in $@; do 
-	[[ -e $d.7z ]] && echo -e "$GREEN Confirmed	$ENDCOLOR: $YELLOW $d.z7 $ENDCOLOR" || echo -e "$RED Failed!	$ENDCOLOR: $YELLOW $d.z7 $ENDCOLOR"
-done
-echo "Please review the output above to review all the progress ⏫"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# DIR="$*"
-# source /opt/rtd/scripts/_rtd_library
- 
-
-
-
-# ###########################################################################
-# ##                                                                       ##
-# ##                       Script Executive                                ##
-# ##                                                                       ##
-# ###########################################################################
-# #
-# # And remember to handle or replace white spaces with underscore so the shell commands
-# # don't fail. Here IFS is altered to not consider a whitespace as a separator.
-
-# [ "$DIR" == "" ] && echo "Usage: rtd-7z-this [filename] [filename filename2] [*.ext]" ; exit 1
-
-# # Attempting to deal with filenemes with spaces in them... 
-# # Please excuse all the code for a relatively simple task.
-# OLDIFS=$IFS
-# IFS=$'\n'
-# fileArray=($(ls $@))
-# IFS=$OLDIFS
-# tLen=${#fileArray[@]}
-
-# clear
-# echo -e  "Hello $YELLOW $USER $ENDCOLOR ... I am going to compress $YELLOW $tLen $ENDCOLOR files: "
-# for (( i=0; i<${tLen}; i++ )); do echo -e $GREEN "${fileArray[$i]}        $ENDCOLOR"  ; done
-
-# echo  "To cancel this, just close the terminal or press [CRTL + C]."
-# read -p "Press the [ENTER] key to continue..."
-# echo -e "To encrypt the content you have to give me a phrase to encrypt it with. \n This can be anything in one long word, but never forget it!"
-# echo -e $YELLOW
-# read -sp 'Enter encryption phrase: ' passtoken
-# echo -e $ENDCOLOR
-# clear
-# echo -e "☕ Please be patient as lots of data may take time to compress..."
-
-# for (( i=0; i<${tLen}; i++ ));
-# do
-# 	7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=64m -ms=on -mhe=on -p$passtoken "${fileArray[$i]}".7z "${fileArray[$i]}"
-# done
-# unset passtoken
-
-# echo "Created the following archive(s) UN-encrypted:"
-# echo " FILENAME         STATUS"
-# for (( i=0; i<${tLen}; i++ )); do
-# 	[[ -e "${fileArray[$i]}".7z ]] && echo -e "$GREEN Confirmed     $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR" || echo -e "$RED Failed!    $ENDCOLOR: $YELLOW "${fileArray[$i]}".7z $ENDCOLOR"
-# done
-# echo "Please review the output above to review all the progress ⏫"
+# Call custom compression function with encryption option and pass agruments; function will propt for encryption pass-prase.
+compress_provided_items --encrypt $*

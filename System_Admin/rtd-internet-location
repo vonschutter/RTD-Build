@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::             			A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
 #:: Author:   	SLS
 #:: Version 	1.00
@@ -11,9 +11,9 @@
 #::		* File originally created.
 #::
 #::
-#::	Purpose: The purpose of the script is to find and display you internet location (geolocation) 
-#:: 	 	 Executing this command will identify you external IP and where physically it is located. 
-#::		 This is a useful function to quickly check if you VPN is working correctly. 
+#::	Purpose: The purpose of the script is to find and display you internet location (geolocation)
+#:: 	 	 Executing this command will identify you external IP and where physically it is located.
+#::		 This is a useful function to quickly check if you VPN is working correctly.
 #::
 #::
 #::
@@ -28,41 +28,22 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-_LOCALINT="ens3"
-_VPNINT="tun0"
-_LOCALNET="192.168.1.0"
-_LOCALSUB="24"
 
-# Set colors for prompting on screen.
-	YELLOW="\033[1;33m"
-	RED="\033[0;31m"
-	ENDCOLOR="\033[0m"
-	GREEN="\033[0;32m"
-	BLUE="\033[0;34m"
-	
-if [ -f ~/bin/_rtd_functions ]; then 
-	source ~/bin/_rtd_functions
-else 
-	if [ -f /opt/rtd/scripts/_rtd_functions ]; then 
-		source /opt/rtd/scripts/_rtd_functions
-	else 
-		echo "RTD Functions not found... "
-		echo "Trying to retrieve them..."
-		wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions 
-		source ./_rtd_functions
-	fi
-fi
+check_rtd_library ()
+{
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
 
-if [ "$RTDFUCTIONS" -eq "1" ]
-      then
-        echo -e $GREEN "RTD functions loaded!" $ENDCOLOR
-      else
-        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
-        echo -e $YELLOW "Will try to proceed without the ability to" $ENDCOLOR
-        echo -e $YELLOW "ensure that the correct software is available" $ENDCOLOR
-        echo -e $YELLOW "Assuming that all is setup correctly for this CMDLET" $ENDCOLOR
-fi
-
+check_rtd_library
 # This script relies on curl to send web content to standard out (screen)
 # so we need to ensure that this is available on the system.
 check_dependencies curl

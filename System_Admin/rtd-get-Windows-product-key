@@ -2,7 +2,7 @@
 #
 #::              			A D M I N   C O M M A N D L E T
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#::::::::::::::::::::::::::::::::::::::// Simple Compression Tool //::::::::::::::::::::::::::::::::::// Linux //::::::::
+#::::::::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
 #:: Author:   	SLS
 #:: Version 	1.00
@@ -26,11 +26,20 @@
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
 
-
-
-
-
-source /opt/rtd/scripts/_rtd_library &>/dev/null
+check_rtd_library ()
+{
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
+check_rtd_library
 get_Windows_Product_Key
 
 

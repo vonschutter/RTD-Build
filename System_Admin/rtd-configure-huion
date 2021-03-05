@@ -1,20 +1,20 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::             			A D M I N   C O M M A N D L E T
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple Admin Tool //::::::::::::::::::::::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.02
 #::
 #::
-#::	Purpose: The purpose of this script is to configure a Huion tablet. 
+#::	Purpose: The purpose of this script is to configure a Huion tablet.
 #::		 This is available for convenience only. Sucess may vary.
-#::		 
+#::
 #::     Usage:	Simply execute this commandlet to accomplish this task. No parameters required.
 #:: 		NOTE: Please refer to: https://www.huion.com/pen_tablet/
-#::     	
-#::     	
+#::
+#::
 #::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -31,37 +31,22 @@
 
 # Import the RTD functions to gain access to several useful functions.
 
-# Set colors for prompting on screen.
-	YELLOW="\033[1;33m"
-	RED="\033[0;31m"
-	ENDCOLOR="\033[0m"
-	GREEN="\033[0;32m"
-	BLUE="\033[0;34m"
-	
-if [ -f ~/bin/_rtd_functions ]; then 
-	source ~/bin/_rtd_functions
-else 
-	if -f [ /opt/rtd/scripts/_rtd_functions ]; then 
-		source /opt/rtd/scripts/_rtd_functions
-	else 
-		echo "RTD Functions not found... "
-		echo "Trying to retrieve them..."
-		wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_functions 
-		source ./_rtd_functions
-	fi
-fi
-
-if [[ "$RTDFUCTIONS" = "1" ]]
-      then
-        echo -e $GREEN "RTD functions loaded!" $ENDCOLOR
-      else
-        echo -e $RED "RTD functions NOT loaded!" $ENDCOLOR
-        echo -e $YELLOW "Will try to proceed without the ability to" $ENDCOLOR
-        echo -e $YELLOW "ensure that the correct software is available" $ENDCOLOR
-        echo -e $YELLOW "Assuming that all is setup correctly for this CMDLET" $ENDCOLOR
-fi
+check_rtd_library ()
+{
+        if [[ -f ${rtd_library} ]]; then
+                source ${rtd_library}
+        elif [[ ! -f ${rtd_library} ]]; then
+                echo "RTD Functions not found... "
+                echo "Trying to retrieve them..."
+                wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+                source ./_rtd_library
+        else
+                exit 1
+        fi
+}
 
 
 
+check_rtd_library
 ensure_admin
 config_huion610

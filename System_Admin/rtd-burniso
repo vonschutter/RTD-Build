@@ -1,36 +1,36 @@
 #!/bin/bash
 #
-#::             			A D M I N   C O M M A N D L E T   
+#::                                           A D M I N   C O M M A N D
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::// Simple bootable CD/DVD creation Tool //:::::::::::::::::::::// Linux //::::::::
 #::
-#:: Author:   	SLS  
+#:: Author:   	SLS
 #:: Version 	1.00
 #::
 #::
-#::	Purpose: The purpose of the script is to write an ISO file to an optical device verbatim. 
-#::		  
-#::		 
-#::     Usage:	Simply execute this commandlet passing the parameter indicating where the ISO is located 
-#:: 		to accomplish this task. 
-#::     	
-#::     	Example: 
+#::	Purpose: The purpose of the script is to write an ISO file to an optical device verbatim.
+#::
+#::
+#::     Usage:	Simply execute this commandlet passing the parameter indicating where the ISO is located
+#:: 		to accomplish this task.
+#::
+#::     	Example:
 #::		rtd-burniso path/to/file.iso
-#::     	
+#::
 #::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Additional information: 
+# Additional information:
 #
-# An ISO image is a disk image of an optical disc. In other words, it is an archive file that contains everything that would 
-# be written to an optical disc, sector by sector, including the optical disc file system.[1] ISO image files bear the .iso 
-# filename extension. The name ISO is taken from the ISO 9660 file system used with CD-ROM media, but what is known as an 
+# An ISO image is a disk image of an optical disc. In other words, it is an archive file that contains everything that would
+# be written to an optical disc, sector by sector, including the optical disc file system.[1] ISO image files bear the .iso
+# filename extension. The name ISO is taken from the ISO 9660 file system used with CD-ROM media, but what is known as an
 # ISO image might also contain a UDF (ISO/IEC 13346) file system (commonly used by DVDs and Blu-ray Discs).
 #
-# ISO images can be created from optical discs by disk imaging software, or from a collection of files by optical disc authoring 
-# software, or from a different disk image file by means of conversion. Software distributed on bootable discs is often available 
-# for download in ISO image format. And like any other ISO image, it may be written to an optical disc such as CD or DVD. 
+# ISO images can be created from optical discs by disk imaging software, or from a collection of files by optical disc authoring
+# software, or from a different disk image file by means of conversion. Software distributed on bootable discs is often available
+# for download in ISO image format. And like any other ISO image, it may be written to an optical disc such as CD or DVD.
 #
 # This  script was originally developed for RuntimeData, a small OEM in Buffalo Center, IA.
 # This OEM and store nolonger exists as its owner has passed away.
@@ -38,12 +38,42 @@
 #
 # This script is intended to live in the ~/bin/ or /bin/ folder, alternatively in the $PATH.
 #
+###########################################################################
+##                                                                       ##
+##                         Script  settings                              ##
+##                                                                       ##
+###########################################################################
+# Set library path if not defined:
+rtd_library=${rtd_library:-"/opt/rtd/scripts/_rtd_library"}
+if [[ -f ${rtd_library} ]]; then
+        source ${rtd_library}
+elif [[ ! -f ${rtd_library} ]]; then
+        echo "RTD Functions not found... "
+        echo "Trying to retrieve them..."
+        wget https://github.com/vonschutter/RTD-Build/raw/master/System_Setup/_rtd_library
+        source ./_rtd_library
+else
+        exit 1
+fi
 
 ###########################################################################
 ##                                                                       ##
 ##                       Script Executive                                ##
 ##                                                                       ##
 ###########################################################################
+
+if [[ -z "$1" ]]; then
+        echo "You must provide atleast one argument!
+        Example: $0 ~/my_videos.iso"
+        exit 1
+fi
+
+if [[ ! -f "$1" ]]; then
+        echo "The file $1 dies not exist or is not readable!"
+        exit 1
+fi
+
+check_dependencies cdrecord
 
 $IN = $ARGV[0];
 print "Writing the ISO file $IN to the cd... \n";
