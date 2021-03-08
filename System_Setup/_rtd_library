@@ -1488,21 +1488,18 @@ ensure_admin ()
 	if [ ! "$UID" -eq 0 ]; then
 		if hash dialog 2>/dev/null ; then
 			# find  a diferent way... tempfile not universal...
-			data=$(tempfile 2>/dev/null)
-			trap "rm -f $data" 0 1 2 5 15
-			dialog --title "${Title:-"sudo"}" --backtitle "${BackTitle:-"$( basename $0 )"}" --insecure --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90 2> $data
+			token=$(dialog --title "${Title:-"sudo"}" --backtitle "${BackTitle:-"$( basename $0 )"}" --insecure --stdout --passwordbox "\n This functionality requires elevated priviledges. \n Please provide your (sudo) password" 10 90)
 			ret=$? ; clear
 			case $ret in
-				0) cat $data | sudo -S bash "$0" "$*" ;;
+				0) echo $token | sudo -S bash "$0" "$@" ;;
 				1) echo "Request cancelled" ;;
-				255) [ -s $data ] && rm $data &>/dev/null || echo "[esc] Request aborted" ;;
-				* ) rm $data &>/dev/null ; exit 1
+				255) echo "[esc] Request aborted" ;;
+				* )  exit 1
 			esac
-			rm $data &>/dev/null
 			exit
 		else
 			write_warning "This script needs administrative access..."
-			sudo bash "$0" "$*"
+			sudo bash "$0" "$@"
 			exit
 		fi
 	fi
